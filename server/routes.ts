@@ -281,14 +281,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/interviews", authenticateToken, requireRole(['secretary', 'admin']), async (req: AuthRequest, res) => {
     try {
-      const requestData = insertInterviewRequestSchema.parse({
+      // Transform the data before validation
+      const transformedData = {
         ...req.body,
         requestedById: req.user!.id,
-      });
+        proposedDateTime: new Date(req.body.proposedDateTime),
+        duration: parseInt(req.body.duration),
+        managerId: req.body.managerId ? parseInt(req.body.managerId) : null,
+      };
       
+      const requestData = insertInterviewRequestSchema.parse(transformedData);
       const request = await storage.createInterviewRequest(requestData);
       res.status(201).json({ request });
     } catch (error: any) {
+      console.error('Interview request validation error:', error);
       res.status(400).json({ message: error.message });
     }
   });
