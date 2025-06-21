@@ -97,7 +97,9 @@ The deployment uses:
 
 ## Changelog
 
-- June 21, 2025. Initial setup
+- June 21, 2025: Initial setup of office management system
+- June 21, 2025: Completed full-stack implementation with authentication, role-based access control, user management, interview request system, todo management, and reports dashboard
+- June 21, 2025: Created admin user (username: admin, password: admin123) and set up database schema
 
 ## User Preferences
 
