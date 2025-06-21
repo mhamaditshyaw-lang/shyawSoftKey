@@ -283,19 +283,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Transform the data before validation
       const transformedData = {
-        ...req.body,
+        position: req.body.position,
+        candidateName: req.body.candidateName,
+        candidateEmail: req.body.candidateEmail || null,
         requestedById: req.user!.id,
         proposedDateTime: new Date(req.body.proposedDateTime),
         duration: parseInt(req.body.duration),
         managerId: req.body.managerId ? parseInt(req.body.managerId) : null,
+        description: req.body.description || null,
       };
       
+
       const requestData = insertInterviewRequestSchema.parse(transformedData);
       const request = await storage.createInterviewRequest(requestData);
       res.status(201).json({ request });
     } catch (error: any) {
       console.error('Interview request validation error:', error);
-      res.status(400).json({ message: error.message });
+      console.error('Request body:', req.body);
+      if (error.issues) {
+        console.error('Validation issues:', error.issues);
+      }
+      res.status(400).json({ 
+        message: error.message,
+        details: error.issues || error
+      });
     }
   });
 
