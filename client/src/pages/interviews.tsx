@@ -10,12 +10,17 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Clock, Check, X, Edit, Calendar, Plus } from "lucide-react";
 import InterviewRequestModal from "@/components/modals/interview-request-modal";
+import InterviewDetailsModal from "@/components/modals/interview-details-modal";
+import ModifyInterviewModal from "@/components/modals/modify-interview-modal";
 
 export default function InterviewsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [statusFilter, setStatusFilter] = useState("all");
   const [showRequestModal, setShowRequestModal] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<any>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showModifyModal, setShowModifyModal] = useState(false);
 
   const { data: interviewsData, isLoading } = useQuery({
     queryKey: ["/api/interviews"],
@@ -80,6 +85,21 @@ export default function InterviewsPage() {
         rejectionReason: reason || "Request rejected"
       }
     });
+  };
+
+  const handleViewDetails = (request: any) => {
+    setSelectedRequest(request);
+    setShowDetailsModal(true);
+  };
+
+  const handleModify = (request: any) => {
+    setSelectedRequest(request);
+    setShowModifyModal(true);
+  };
+
+  const handleReschedule = (request: any) => {
+    setSelectedRequest(request);
+    setShowModifyModal(true);
   };
 
   if (isLoading) {
@@ -235,6 +255,7 @@ export default function InterviewsPage() {
                       </Button>
                       <Button
                         variant="outline"
+                        onClick={() => handleModify(request)}
                         disabled={updateRequestMutation.isPending}
                       >
                         <Edit className="w-4 h-4 mr-2" />
@@ -246,12 +267,18 @@ export default function InterviewsPage() {
                   {/* View details button for approved requests */}
                   {request.status === "approved" && (
                     <div className="flex flex-col space-y-2 ml-6">
-                      <Button variant="outline">
+                      <Button 
+                        variant="outline"
+                        onClick={() => handleViewDetails(request)}
+                      >
                         <Calendar className="w-4 h-4 mr-2" />
                         View Details
                       </Button>
                       {(user?.role === "manager" || user?.role === "admin") && (
-                        <Button variant="outline">
+                        <Button 
+                          variant="outline"
+                          onClick={() => handleReschedule(request)}
+                        >
                           <Edit className="w-4 h-4 mr-2" />
                           Reschedule
                         </Button>
@@ -268,6 +295,18 @@ export default function InterviewsPage() {
       <InterviewRequestModal 
         open={showRequestModal} 
         onOpenChange={setShowRequestModal} 
+      />
+      
+      <InterviewDetailsModal
+        open={showDetailsModal}
+        onOpenChange={setShowDetailsModal}
+        request={selectedRequest}
+      />
+      
+      <ModifyInterviewModal
+        open={showModifyModal}
+        onOpenChange={setShowModifyModal}
+        request={selectedRequest}
       />
     </div>
   );
