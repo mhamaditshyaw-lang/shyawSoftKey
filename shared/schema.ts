@@ -120,13 +120,17 @@ export const insertTodoItemSchema = createInsertSchema(todoItems).omit({
 });
 
 export const insertInterviewRequestSchema = createInsertSchema(interviewRequests, {
-  candidateEmail: z.string().nullable().optional(),
-  description: z.string().nullable().optional(),
+  candidateEmail: z.string().optional().or(z.literal("")),
+  description: z.string().optional().or(z.literal("")),
 }).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
-});
+}).transform((data) => ({
+  ...data,
+  candidateEmail: data.candidateEmail && data.candidateEmail.trim() !== "" ? data.candidateEmail : undefined,
+  description: data.description && data.description.trim() !== "" ? data.description : undefined,
+}));
 
 export const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
