@@ -7,6 +7,7 @@ import {
   Calendar,
   CheckSquare,
   MessageSquare,
+  Calculator,
   Archive,
   TrendingUp,
 } from "lucide-react";
@@ -49,7 +50,12 @@ const navItems: NavItem[] = [
     icon: MessageSquare,
     roles: ["admin", "manager", "secretary"],
   },
-
+  {
+    title: "Number Input",
+    href: "/metrics",
+    icon: Calculator,
+    roles: ["admin", "manager", "secretary"],
+  },
   {
     title: "Archive",
     href: "/archive",
