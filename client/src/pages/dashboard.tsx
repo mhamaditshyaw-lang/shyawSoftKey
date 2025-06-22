@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { authenticatedRequest } from "@/lib/auth";
 import { useLocation } from "wouter";
+import { getRelativeTime } from "@/lib/utils";
 import {
   Users,
   Clock,
@@ -165,7 +166,7 @@ export default function DashboardPage() {
                       {request.candidateName} - {request.requestedBy.firstName} {request.requestedBy.lastName}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      {new Date(request.createdAt).toRelativeTimeString()}
+                      {getRelativeTime(request.createdAt)}
                     </p>
                   </div>
                   <Badge variant={request.status === "pending" ? "secondary" : request.status === "approved" ? "default" : "destructive"}>
@@ -185,7 +186,7 @@ export default function DashboardPage() {
                       {list.items.length} tasks - {list.createdBy.firstName} {list.createdBy.lastName}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      {new Date(list.createdAt).toRelativeTimeString()}
+                      {getRelativeTime(list.createdAt)}
                     </p>
                   </div>
                 </div>
