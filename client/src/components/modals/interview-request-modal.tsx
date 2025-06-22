@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,7 +20,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
     position: "",
     candidateName: "",
     candidateEmail: "",
-    managerId: "",
+    managerId: "none",
     proposedDateTime: "",
     duration: "60",
     description: "",
@@ -42,7 +42,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
         ...requestData,
         proposedDateTime: new Date(requestData.proposedDateTime).toISOString(),
         duration: parseInt(requestData.duration),
-        managerId: requestData.managerId && requestData.managerId !== "" ? parseInt(requestData.managerId) : null,
+        managerId: requestData.managerId && requestData.managerId !== "" && requestData.managerId !== "none" ? parseInt(requestData.managerId) : null,
       });
       return await response.json();
     },
@@ -57,7 +57,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
         position: "",
         candidateName: "",
         candidateEmail: "",
-        managerId: "",
+        managerId: "none",
         proposedDateTime: "",
         duration: "60",
         description: "",
@@ -84,6 +84,9 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Request Interview</DialogTitle>
+          <DialogDescription>
+            Schedule a new interview by providing candidate details and preferred timing.
+          </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -128,7 +131,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
                 <SelectValue placeholder="Select manager to assign" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No specific manager</SelectItem>
+                <SelectItem value="none">No specific manager</SelectItem>
                 {managers.map((manager: any) => (
                   <SelectItem key={manager.id} value={manager.id.toString()}>
                     {manager.firstName} {manager.lastName} ({manager.username})

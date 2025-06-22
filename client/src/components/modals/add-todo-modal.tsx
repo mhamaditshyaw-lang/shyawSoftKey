@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +21,7 @@ export default function AddTodoModal({ open, onOpenChange }: AddTodoModalProps) 
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    assignedToId: "",
+    assignedToId: "none",
     priority: "medium",
   });
   const { toast } = useToast();
@@ -40,7 +40,7 @@ export default function AddTodoModal({ open, onOpenChange }: AddTodoModalProps) 
     mutationFn: async (todoData: any) => {
       const response = await authenticatedRequest("POST", "/api/todos", {
         ...todoData,
-        assignedToId: todoData.assignedToId ? parseInt(todoData.assignedToId) : null,
+        assignedToId: todoData.assignedToId && todoData.assignedToId !== "none" ? parseInt(todoData.assignedToId) : null,
       });
       return await response.json();
     },
@@ -54,7 +54,7 @@ export default function AddTodoModal({ open, onOpenChange }: AddTodoModalProps) 
       setFormData({
         title: "",
         description: "",
-        assignedToId: "",
+        assignedToId: "none",
         priority: "medium",
       });
     },
@@ -79,6 +79,9 @@ export default function AddTodoModal({ open, onOpenChange }: AddTodoModalProps) 
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Create Todo List</DialogTitle>
+          <DialogDescription>
+            Create a new todo list and optionally assign it to a team member.
+          </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -112,6 +115,7 @@ export default function AddTodoModal({ open, onOpenChange }: AddTodoModalProps) 
                   <SelectValue placeholder="Select user to assign" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">No assignment</SelectItem>
                   {users.map((user: any) => (
                     <SelectItem key={user.id} value={user.id.toString()}>
                       {user.firstName} {user.lastName} ({user.role})
