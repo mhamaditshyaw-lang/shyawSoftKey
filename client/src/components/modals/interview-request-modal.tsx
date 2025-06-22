@@ -42,7 +42,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
         ...requestData,
         proposedDateTime: new Date(requestData.proposedDateTime).toISOString(),
         duration: parseInt(requestData.duration),
-        managerId: requestData.managerId ? parseInt(requestData.managerId) : null,
+        managerId: requestData.managerId && requestData.managerId !== "" ? parseInt(requestData.managerId) : null,
       });
       return await response.json();
     },
@@ -128,9 +128,10 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
                 <SelectValue placeholder="Select manager to assign" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="">No specific manager</SelectItem>
                 {managers.map((manager: any) => (
                   <SelectItem key={manager.id} value={manager.id.toString()}>
-                    {manager.firstName} {manager.lastName}
+                    {manager.firstName} {manager.lastName} ({manager.username})
                   </SelectItem>
                 ))}
               </SelectContent>

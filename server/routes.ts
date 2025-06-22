@@ -260,18 +260,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/interviews", authenticateToken, async (req: AuthRequest, res) => {
     try {
       let requests: any[] = [];
-      switch (req.user!.role) {
-        case 'admin':
-          requests = await storage.getInterviewRequests();
-          break;
-        case 'manager':
-          requests = await storage.getInterviewRequestsByManager(req.user!.id);
-          break;
-        case 'secretary':
-          requests = await storage.getInterviewRequestsBySecretary(req.user!.id);
-          break;
-        default:
-          requests = [];
+      if (req.user!.role === 'admin') {
+        requests = await storage.getInterviewRequests();
+      } else if (req.user!.role === 'manager') {
+        // Managers see requests assigned to them OR unassigned requests
+        const allRequests = await storage.getInterviewRequests();
+        requests = allRequests.filter(r => 
+          r.managerId === req.user!.id || r.managerId === null
+        );
+      } else if (req.user!.role === 'secretary') {
+        requests = await storage.getInterviewRequestsBySecretary(req.user!.id);
       }
       res.json({ requests });
     } catch (error: any) {
@@ -289,7 +287,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         requestedById: req.user!.id,
         proposedDateTime: new Date(req.body.proposedDateTime),
         duration: parseInt(req.body.duration),
-        managerId: req.body.managerId ? parseInt(req.body.managerId) : null,
+        managerId: req.body.managerId && req.body.managerId !== "" ? parseInt(req.body.managerId) : null,
         description: req.body.description && req.body.description.trim() !== "" ? req.body.description : undefined,
       };
       
