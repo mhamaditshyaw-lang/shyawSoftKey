@@ -9,7 +9,7 @@ import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Archive, Search, Calendar, User, FileText, RotateCcw, Eye, Edit } from "lucide-react";
+import { Archive, Search, Calendar, User, FileText, RotateCcw, Eye, Edit, Filter, X } from "lucide-react";
 import { getRelativeTime } from "@/lib/utils";
 import ArchiveDetailsModal from "@/components/modals/archive-details-modal";
 import EditArchiveModal from "@/components/modals/edit-archive-modal";
@@ -19,6 +19,8 @@ export default function ArchivePage() {
   const { toast } = useToast();
   const [typeFilter, setTypeFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchCategory, setSearchCategory] = useState("all");
+  const [dateFilter, setDateFilter] = useState("");
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
