@@ -57,6 +57,7 @@ export interface IStorage {
   // Archive methods
   archiveItem(itemType: string, itemId: number, itemData: any, archivedById: number, reason?: string): Promise<any>;
   getArchivedItems(): Promise<any[]>;
+  updateArchivedItem(archiveId: number, updates: any): Promise<any>;
   restoreArchivedItem(archiveId: number, itemType: string): Promise<void>;
 }
 
@@ -310,6 +311,11 @@ export class DatabaseStorage implements IStorage {
   async getArchivedItems(): Promise<any[]> {
     const { FeedbackService } = await import("./feedback-service");
     return await FeedbackService.getArchivedItems();
+  }
+
+  async updateArchivedItem(archiveId: number, updates: any): Promise<any> {
+    const { FeedbackService } = await import("./feedback-service");
+    return await FeedbackService.updateArchivedItem(archiveId, updates);
   }
 
   async restoreArchivedItem(archiveId: number, itemType: string): Promise<void> {

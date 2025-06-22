@@ -76,6 +76,16 @@ export class FeedbackService {
     return archived;
   }
 
+  static async updateArchivedItem(archiveId: number, updates: any): Promise<any> {
+    const [updatedItem] = await db
+      .update(archivedItems)
+      .set(updates)
+      .where(eq(archivedItems.id, archiveId))
+      .returning();
+
+    return updatedItem;
+  }
+
   static async restoreItem(archiveId: number, itemType: string): Promise<void> {
     // Get the archived item
     const [archivedItem] = await db

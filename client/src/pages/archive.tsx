@@ -9,9 +9,10 @@ import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Archive, Search, Calendar, User, FileText, RotateCcw, Eye } from "lucide-react";
+import { Archive, Search, Calendar, User, FileText, RotateCcw, Eye, Edit } from "lucide-react";
 import { getRelativeTime } from "@/lib/utils";
 import ArchiveDetailsModal from "@/components/modals/archive-details-modal";
+import EditArchiveModal from "@/components/modals/edit-archive-modal";
 
 export default function ArchivePage() {
   const { user } = useAuth();
@@ -20,6 +21,7 @@ export default function ArchivePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const { data: archiveData, isLoading } = useQuery({
     queryKey: ["/api/archive"],
@@ -160,6 +162,11 @@ export default function ArchivePage() {
   const handleViewDetails = (item: any) => {
     setSelectedItem(item);
     setShowDetailsModal(true);
+  };
+
+  const handleEditInfo = (item: any) => {
+    setSelectedItem(item);
+    setShowEditModal(true);
   };
 
   if (user?.role !== "admin" && user?.role !== "manager") {
@@ -352,6 +359,16 @@ export default function ArchivePage() {
                       <Eye className="w-4 h-4 mr-2" />
                       Details
                     </Button>
+                    {item.itemType === "interview" && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditInfo(item)}
+                      >
+                        <Edit className="w-4 h-4 mr-2" />
+                        Edit Info
+                      </Button>
+                    )}
                     <Button
                       variant="outline"
                       size="sm"
@@ -372,6 +389,12 @@ export default function ArchivePage() {
       <ArchiveDetailsModal
         open={showDetailsModal}
         onOpenChange={setShowDetailsModal}
+        archivedItem={selectedItem}
+      />
+
+      <EditArchiveModal
+        open={showEditModal}
+        onOpenChange={setShowEditModal}
         archivedItem={selectedItem}
       />
     </div>
