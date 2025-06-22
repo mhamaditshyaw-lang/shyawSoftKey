@@ -120,8 +120,8 @@ export const insertTodoItemSchema = createInsertSchema(todoItems).omit({
 });
 
 export const insertInterviewRequestSchema = createInsertSchema(interviewRequests, {
-  candidateEmail: z.string().optional(),
-  description: z.string().optional(),
+  candidateEmail: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
 }).omit({
   id: true,
   createdAt: true,
