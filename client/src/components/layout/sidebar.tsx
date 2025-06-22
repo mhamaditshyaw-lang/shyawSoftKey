@@ -51,7 +51,7 @@ const navItems: NavItem[] = [
     roles: ["admin", "manager", "secretary"],
   },
   {
-    title: "Number Input",
+    title: "Employee Tracking",
     href: "/metrics",
     icon: Calculator,
     roles: ["admin", "manager", "secretary"],

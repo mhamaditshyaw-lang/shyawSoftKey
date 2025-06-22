@@ -47,8 +47,8 @@ export default function MetricsPage() {
     const min = Math.min(...numbers);
 
     toast({
-      title: "Numbers Saved Successfully",
-      description: `Sum: ${sum.toFixed(2)} | Average: ${average.toFixed(2)} | Max: ${max} | Min: ${min}`,
+      title: "Employee Data Saved Successfully",
+      description: `Total: ${sum.toFixed(0)} | Average: ${average.toFixed(1)} | Max: ${max} | Min: ${min}`,
     });
 
     // Reset form
@@ -100,8 +100,8 @@ export default function MetricsPage() {
       className="max-w-4xl mx-auto"
     >
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Number Input</h2>
-        <p className="text-gray-600">Enter up to 7 numbers for calculation and tracking</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Employee Tracking</h2>
+        <p className="text-gray-600">Track daily employee attendance and shift information</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -111,17 +111,25 @@ export default function MetricsPage() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Calculator className="w-5 h-5 text-blue-600" />
-                <span>Enter Numbers</span>
+                <span>Employee Data Entry</span>
               </CardTitle>
               <CardDescription>
-                Input numerical values in the fields below
+                Enter daily employee attendance and shift information
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {Array.from({ length: 7 }, (_, index) => {
-                    const fieldName = `number${index + 1}` as keyof typeof formData;
+                  {[
+                    { field: 'number1', label: 'Total employees today', placeholder: 'Enter total employees today' },
+                    { field: 'number2', label: 'Permanent employees', placeholder: 'Enter permanent employees count' },
+                    { field: 'number3', label: 'Non-permanent employees', placeholder: 'Enter non-permanent employees count' },
+                    { field: 'number4', label: 'Day - Start of work', placeholder: 'Enter day shift start count' },
+                    { field: 'number5', label: 'Day - Giving up', placeholder: 'Enter day shift giving up count' },
+                    { field: 'number6', label: 'Night - Start of work', placeholder: 'Enter night shift start count' },
+                    { field: 'number7', label: 'Night - Giving up', placeholder: 'Enter night shift giving up count' },
+                  ].map((item, index) => {
+                    const fieldName = item.field as keyof typeof formData;
                     return (
                       <motion.div
                         key={fieldName}
@@ -131,12 +139,12 @@ export default function MetricsPage() {
                         className="space-y-2"
                       >
                         <Label htmlFor={fieldName} className="text-sm font-medium">
-                          Number {index + 1}
+                          {item.label}
                         </Label>
                         <Input
                           id={fieldName}
                           type="text"
-                          placeholder={`Enter number ${index + 1}`}
+                          placeholder={item.placeholder}
                           value={formData[fieldName]}
                           onChange={(e) => handleInputChange(fieldName, e.target.value)}
                           className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
@@ -153,7 +161,7 @@ export default function MetricsPage() {
                     disabled={Object.values(formData).every(val => val === "")}
                   >
                     <Save className="w-4 h-4" />
-                    <span>Save Numbers</span>
+                    <span>Save Employee Data</span>
                   </Button>
                   <Button 
                     type="button" 
@@ -240,13 +248,13 @@ export default function MetricsPage() {
                     <div className="text-lg font-bold text-gray-700">
                       {stats.count} / 7
                     </div>
-                    <div className="text-sm text-gray-600">Numbers Entered</div>
+                    <div className="text-sm text-gray-600">Fields Completed</div>
                   </motion.div>
                 </div>
               ) : (
                 <div className="text-center py-8">
                   <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-500">Enter numbers to see statistics</p>
+                  <p className="text-gray-500">Enter employee data to see statistics</p>
                 </div>
               )}
             </CardContent>
@@ -263,15 +271,15 @@ export default function MetricsPage() {
                 size="sm" 
                 className="w-full"
                 onClick={() => {
-                  // Fill with sample data
+                  // Fill with sample employee data
                   setFormData({
-                    number1: "10",
-                    number2: "20",
-                    number3: "30",
-                    number4: "40",
-                    number5: "50",
-                    number6: "60",
-                    number7: "70",
+                    number1: "150", // Total employees today
+                    number2: "120", // Permanent employees 
+                    number3: "30",  // Non-permanent employees
+                    number4: "75",  // Day - Start of work
+                    number5: "5",   // Day - Giving up
+                    number6: "40",  // Night - Start of work
+                    number7: "2",   // Night - Giving up
                   });
                 }}
               >
@@ -284,15 +292,21 @@ export default function MetricsPage() {
                 size="sm" 
                 className="w-full"
                 onClick={() => {
-                  // Fill with random numbers
+                  // Fill with random employee data
+                  const totalEmployees = Math.floor(Math.random() * 200) + 50;
+                  const permanentEmployees = Math.floor(totalEmployees * 0.7);
+                  const nonPermanentEmployees = totalEmployees - permanentEmployees;
+                  const dayStart = Math.floor(totalEmployees * 0.6);
+                  const nightStart = totalEmployees - dayStart;
+                  
                   setFormData({
-                    number1: Math.floor(Math.random() * 100).toString(),
-                    number2: Math.floor(Math.random() * 100).toString(),
-                    number3: Math.floor(Math.random() * 100).toString(),
-                    number4: Math.floor(Math.random() * 100).toString(),
-                    number5: Math.floor(Math.random() * 100).toString(),
-                    number6: Math.floor(Math.random() * 100).toString(),
-                    number7: Math.floor(Math.random() * 100).toString(),
+                    number1: totalEmployees.toString(),
+                    number2: permanentEmployees.toString(),
+                    number3: nonPermanentEmployees.toString(),
+                    number4: dayStart.toString(),
+                    number5: Math.floor(Math.random() * 10).toString(),
+                    number6: nightStart.toString(),
+                    number7: Math.floor(Math.random() * 5).toString(),
                   });
                 }}
               >
