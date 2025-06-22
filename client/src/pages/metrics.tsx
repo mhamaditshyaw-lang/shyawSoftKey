@@ -93,7 +93,7 @@ export default function MetricsPage() {
     const deviceMin = Math.min(...deviceNumbers);
 
     toast({
-      title: "Device Data Saved Successfully",
+      title: "Operations Data Saved Successfully",
       description: `Total: ${deviceSum.toFixed(0)} | Average: ${deviceAverage.toFixed(1)} | Max: ${deviceMax} | Min: ${deviceMin}`,
     });
 
@@ -173,7 +173,7 @@ export default function MetricsPage() {
     >
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Daily Operations Dashboard</h2>
-        <p className="text-gray-600">Track employee attendance and device operations</p>
+        <p className="text-gray-600">Track employee attendance and operational activities</p>
       </div>
 
       {/* Employee Tracking Section */}
@@ -396,7 +396,7 @@ export default function MetricsPage() {
 
       {/* Device Operations Section */}
       <div className="mb-8">
-        <h3 className="text-2xl font-bold text-gray-800 mb-6">Device Operations</h3>
+        <h3 className="text-2xl font-bold text-gray-800 mb-6">Operations Tracking</h3>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Device Input Form */}
           <div className="lg:col-span-2">
@@ -404,22 +404,22 @@ export default function MetricsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <BarChart3 className="w-5 h-5 text-green-600" />
-                  <span>Device Data Entry</span>
+                  <span>Operations Data Entry</span>
                 </CardTitle>
                 <CardDescription>
-                  Enter device operation numbers and working status
+                  Enter ice cream production, Albany operations, and Do activities by shift
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleDeviceSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
-                      { field: 'device1', label: 'Working Devices', placeholder: 'Enter number of working devices' },
-                      { field: 'device2', label: 'Maintenance Devices', placeholder: 'Enter devices under maintenance' },
-                      { field: 'device3', label: 'Broken Devices', placeholder: 'Enter number of broken devices' },
-                      { field: 'device4', label: 'New Devices', placeholder: 'Enter newly installed devices' },
-                      { field: 'device5', label: 'Total Capacity', placeholder: 'Enter total device capacity' },
-                      { field: 'device6', label: 'Operating Hours', placeholder: 'Enter total operating hours' },
+                      { field: 'device1', label: 'Day - Ice cream', placeholder: 'Enter day ice cream production' },
+                      { field: 'device2', label: 'Night - Ice cream', placeholder: 'Enter night ice cream production' },
+                      { field: 'device3', label: 'Day - Albany', placeholder: 'Enter day Albany operations' },
+                      { field: 'device4', label: 'Night - Albany', placeholder: 'Enter night Albany operations' },
+                      { field: 'device5', label: 'Day - Do', placeholder: 'Enter day Do activities' },
+                      { field: 'device6', label: 'Night - Do', placeholder: 'Enter night Do activities' },
                     ].map((item, index) => {
                       const fieldName = item.field as keyof typeof deviceData;
                       return (
@@ -453,7 +453,7 @@ export default function MetricsPage() {
                       disabled={Object.values(deviceData).every(val => val === "")}
                     >
                       <Save className="w-4 h-4" />
-                      <span>Save Device Data</span>
+                      <span>Save Operations Data</span>
                     </Button>
                     <Button 
                       type="button" 
@@ -475,7 +475,7 @@ export default function MetricsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <TrendingUp className="w-5 h-5 text-green-600" />
-                  <span>Device Statistics</span>
+                  <span>Operations Statistics</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -546,16 +546,16 @@ export default function MetricsPage() {
                 ) : (
                   <div className="text-center py-8">
                     <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-500">Enter device data to see statistics</p>
+                    <p className="text-gray-500">Enter operations data to see statistics</p>
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            {/* Device Quick Actions */}
+            {/* Operations Quick Actions */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Device Quick Actions</CardTitle>
+                <CardTitle className="text-lg">Operations Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button 
@@ -565,12 +565,12 @@ export default function MetricsPage() {
                   onClick={() => {
                     // Fill with sample device data
                     setDeviceData({
-                      device1: "45", // Working Devices
-                      device2: "8",  // Maintenance Devices
-                      device3: "2",  // Broken Devices
-                      device4: "3",  // New Devices
-                      device5: "100", // Total Capacity
-                      device6: "16", // Operating Hours
+                      device1: "250", // Day - Ice cream
+                      device2: "180", // Night - Ice cream
+                      device3: "45",  // Day - Albany
+                      device4: "32",  // Night - Albany
+                      device5: "15",  // Day - Do
+                      device6: "12",  // Night - Do
                     });
                   }}
                 >
@@ -585,12 +585,12 @@ export default function MetricsPage() {
                   onClick={() => {
                     // Fill with random device data
                     setDeviceData({
-                      device1: Math.floor(Math.random() * 50 + 20).toString(),
-                      device2: Math.floor(Math.random() * 10 + 2).toString(),
-                      device3: Math.floor(Math.random() * 5).toString(),
-                      device4: Math.floor(Math.random() * 8).toString(),
-                      device5: Math.floor(Math.random() * 50 + 80).toString(),
-                      device6: Math.floor(Math.random() * 8 + 12).toString(),
+                      device1: Math.floor(Math.random() * 200 + 150).toString(), // Day - Ice cream
+                      device2: Math.floor(Math.random() * 150 + 100).toString(), // Night - Ice cream
+                      device3: Math.floor(Math.random() * 40 + 20).toString(),   // Day - Albany
+                      device4: Math.floor(Math.random() * 30 + 15).toString(),   // Night - Albany
+                      device5: Math.floor(Math.random() * 20 + 5).toString(),    // Day - Do
+                      device6: Math.floor(Math.random() * 15 + 5).toString(),    // Night - Do
                     });
                   }}
                 >

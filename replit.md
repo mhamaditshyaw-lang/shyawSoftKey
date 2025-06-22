@@ -104,6 +104,8 @@ The deployment uses:
 - June 22, 2025: Added comprehensive notification system with real-time updates, notification bell, and automatic notifications for user creation, interview requests, status changes, and todo assignments
 - June 22, 2025: Created feedback system with rating capabilities and archive functionality for managing completed interviews, todos, and users
 - June 22, 2025: Updated system terminology and branding to reflect internal employee management focus rather than external hiring
+- June 22, 2025: Enhanced operations tracking with dual-form dashboard for employee attendance (7 fields) and operational activities (6 fields)
+- June 22, 2025: Updated operations fields to track ice cream production, Albany operations, and Do activities across day/night shifts
 
 ## User Preferences
 
