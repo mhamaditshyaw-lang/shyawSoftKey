@@ -146,6 +146,8 @@ export type TodoItem = typeof todoItems.$inferSelect;
 export type InsertTodoItem = z.infer<typeof insertTodoItemSchema>;
 export type InterviewRequest = typeof interviewRequests.$inferSelect;
 export type InsertInterviewRequest = z.infer<typeof insertInterviewRequestSchema>;
+export type Metric = typeof metrics.$inferSelect;
+export type InsertMetric = z.infer<typeof insertMetricSchema>;
 export type LoginCredentials = z.infer<typeof loginSchema>;
 
 // Export notification types
