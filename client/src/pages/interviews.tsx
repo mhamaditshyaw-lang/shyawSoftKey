@@ -12,6 +12,7 @@ import { Clock, Check, X, Edit, Calendar, Plus, Archive } from "lucide-react";
 import InterviewRequestModal from "@/components/modals/interview-request-modal";
 import InterviewDetailsModal from "@/components/modals/interview-details-modal";
 import ModifyInterviewModal from "@/components/modals/modify-interview-modal";
+import ArchiveInterviewModal from "@/components/modals/archive-interview-modal";
 
 export default function InterviewsPage() {
   const { user } = useAuth();
@@ -21,6 +22,7 @@ export default function InterviewsPage() {
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showModifyModal, setShowModifyModal] = useState(false);
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
 
   const { data: interviewsData, isLoading } = useQuery({
     queryKey: ["/api/interviews"],
@@ -102,37 +104,9 @@ export default function InterviewsPage() {
     setShowModifyModal(true);
   };
 
-  const archiveRequestMutation = useMutation({
-    mutationFn: async ({ requestId, requestData }: { requestId: number; requestData: any }) => {
-      const response = await authenticatedRequest("POST", "/api/archive", {
-        itemType: "interview",
-        itemId: requestId,
-        itemData: requestData,
-        reason: "Interview completed/closed"
-      });
-      return await response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/interviews"] });
-      toast({
-        title: "Success",
-        description: "Interview request archived successfully",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to archive request",
-        variant: "destructive",
-      });
-    },
-  });
-
   const archiveRequest = (request: any) => {
-    archiveRequestMutation.mutate({
-      requestId: request.id,
-      requestData: request
-    });
+    setSelectedRequest(request);
+    setShowArchiveModal(true);
   };
 
   if (isLoading) {
@@ -349,6 +323,12 @@ export default function InterviewsPage() {
         open={showModifyModal}
         onOpenChange={setShowModifyModal}
         request={selectedRequest}
+      />
+      
+      <ArchiveInterviewModal
+        open={showArchiveModal}
+        onOpenChange={setShowArchiveModal}
+        interview={selectedRequest}
       />
     </div>
   );

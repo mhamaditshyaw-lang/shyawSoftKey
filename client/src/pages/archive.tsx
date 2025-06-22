@@ -9,14 +9,17 @@ import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Archive, Search, Calendar, User, FileText, RotateCcw } from "lucide-react";
+import { Archive, Search, Calendar, User, FileText, RotateCcw, Eye } from "lucide-react";
 import { getRelativeTime } from "@/lib/utils";
+import ArchiveDetailsModal from "@/components/modals/archive-details-modal";
 
 export default function ArchivePage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [typeFilter, setTypeFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   const { data: archiveData, isLoading } = useQuery({
     queryKey: ["/api/archive"],
@@ -90,14 +93,32 @@ export default function ArchivePage() {
     
     switch (item.itemType) {
       case "interview":
+        const archiveDetails = itemData.archiveDetails;
         return (
           <div>
             <h4 className="font-medium text-gray-900">{itemData.position}</h4>
             <p className="text-sm text-gray-600">Candidate: {itemData.candidateName}</p>
-            {itemData.proposedDateTime && (
-              <p className="text-sm text-gray-600">
-                Date: {new Date(itemData.proposedDateTime).toLocaleDateString()}
-              </p>
+            {archiveDetails && (
+              <div className="mt-2 space-y-1">
+                {archiveDetails.decision && (
+                  <p className="text-sm text-gray-600">
+                    Decision: <span className={`font-medium ${
+                      archiveDetails.decision === 'hired' ? 'text-green-600' : 
+                      archiveDetails.decision === 'rejected' ? 'text-red-600' : 'text-yellow-600'
+                    }`}>
+                      {archiveDetails.decision.charAt(0).toUpperCase() + archiveDetails.decision.slice(1).replace('_', ' ')}
+                    </span>
+                  </p>
+                )}
+                {archiveDetails.candidateRating && (
+                  <p className="text-sm text-gray-600">Rating: {archiveDetails.candidateRating}/10</p>
+                )}
+                {archiveDetails.interviewDate && (
+                  <p className="text-sm text-gray-600">
+                    Interview Date: {new Date(archiveDetails.interviewDate).toLocaleDateString()}
+                  </p>
+                )}
+              </div>
             )}
           </div>
         );
@@ -134,6 +155,11 @@ export default function ArchivePage() {
       id: item.id,
       itemType: item.itemType
     });
+  };
+
+  const handleViewDetails = (item: any) => {
+    setSelectedItem(item);
+    setShowDetailsModal(true);
   };
 
   if (user?.role !== "admin" && user?.role !== "manager") {
@@ -321,6 +347,14 @@ export default function ArchivePage() {
                     <Button
                       variant="outline"
                       size="sm"
+                      onClick={() => handleViewDetails(item)}
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Details
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleRestore(item)}
                       disabled={restoreItemMutation.isPending}
                     >
@@ -334,6 +368,12 @@ export default function ArchivePage() {
           ))
         )}
       </div>
+
+      <ArchiveDetailsModal
+        open={showDetailsModal}
+        onOpenChange={setShowDetailsModal}
+        archivedItem={selectedItem}
+      />
     </div>
   );
 }
