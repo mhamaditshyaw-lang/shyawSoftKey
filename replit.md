@@ -113,3 +113,4 @@ Preferred communication style: Simple, everyday language.
 - Each new description entry should be stored with timestamp and preserved (multiple entries supported)
 - Archive page should support searching by employee name, category/position, and date filters
 - Remove feedback quick action from dashboard (keep only in sidebar navigation)
+- Added animated welcome dashboard with greeting, time-based messages, role badges, and smooth animations

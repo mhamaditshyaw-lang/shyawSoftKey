@@ -6,6 +6,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { authenticatedRequest } from "@/lib/auth";
 import { useLocation } from "wouter";
 import { getRelativeTime } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import {
   Users,
   Clock,
@@ -16,11 +18,17 @@ import {
   Calendar,
   PlusCircle,
   BarChart3,
+  Star,
+  Award,
+  TrendingUp,
+  Sparkles,
 } from "lucide-react";
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   const { data: stats, isLoading } = useQuery({
     queryKey: ["/api/stats"],
@@ -48,6 +56,60 @@ export default function DashboardPage() {
     },
   });
 
+  // Update time every minute
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Get greeting based on time
+  const getGreeting = () => {
+    const hour = currentTime.getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 17) return "Good Afternoon";
+    return "Good Evening";
+  };
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.5 }
+    }
+  };
+
+  const welcomeVariants = {
+    hidden: { scale: 0.8, opacity: 0 },
+    visible: {
+      scale: 1,
+      opacity: 1,
+      transition: {
+        duration: 0.8,
+        ease: "easeOut"
+      }
+    },
+    exit: {
+      scale: 0.9,
+      opacity: 0,
+      transition: { duration: 0.3 }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="animate-pulse">
@@ -65,188 +127,406 @@ export default function DashboardPage() {
   }
 
   return (
-    <div>
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h2>
-        <p className="text-gray-600">Welcome back, here's what's happening in your organization</p>
-      </div>
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {/* Animated Welcome Header */}
+      <motion.div 
+        className="mb-8 relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-8"
+        variants={welcomeVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-l from-blue-200/20 to-transparent rounded-full -translate-y-32 translate-x-32"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-r from-purple-200/20 to-transparent rounded-full translate-y-24 -translate-x-24"></div>
+        
+        <div className="relative z-10">
+          <motion.div
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="flex items-center space-x-3 mb-4"
+          >
+            <motion.div
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+            >
+              <Sparkles className="w-8 h-8 text-yellow-500" />
+            </motion.div>
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                {getGreeting()}, {user?.firstName || user?.username}!
+              </h1>
+              <p className="text-lg text-gray-600 mt-1">
+                {currentTime.toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </p>
+            </div>
+          </motion.div>
+          
+          <motion.p 
+            className="text-gray-700 text-lg mb-6"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            Ready to make today productive? Here's your employee affairs overview.
+          </motion.p>
+
+          {/* Quick stats badges */}
+          <motion.div 
+            className="flex flex-wrap gap-3"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+          >
+            <motion.div 
+              className="flex items-center space-x-2 bg-white/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Star className="w-4 h-4 text-yellow-500" />
+              <span className="text-sm font-medium text-gray-700">
+                {user?.role === 'admin' ? 'Administrator' : 
+                 user?.role === 'manager' ? 'Manager' : 'Secretary'}
+              </span>
+            </motion.div>
+            
+            <motion.div 
+              className="flex items-center space-x-2 bg-white/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <TrendingUp className="w-4 h-4 text-green-500" />
+              <span className="text-sm font-medium text-gray-700">Active Status</span>
+            </motion.div>
+            
+            <motion.div 
+              className="flex items-center space-x-2 bg-white/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Award className="w-4 h-4 text-blue-500" />
+              <span className="text-sm font-medium text-gray-700">Employee Affairs</span>
+            </motion.div>
+          </motion.div>
+        </div>
+      </motion.div>
 
       {user?.role === "admin" && stats && (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Users</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{stats.users.totalUsers}</p>
-                  <p className="text-sm text-green-600 mt-2 flex items-center">
-                    <ArrowUp className="w-4 h-4 mr-1" />
-                    {stats.users.activeUsers} active
-                  </p>
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8"
+          variants={containerVariants}
+        >
+          <motion.div variants={itemVariants}>
+            <Card className="hover:shadow-lg transition-shadow duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Total Employees</p>
+                    <motion.p 
+                      className="text-3xl font-bold text-gray-900 mt-2"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
+                    >
+                      {stats.users.totalUsers}
+                    </motion.p>
+                    <p className="text-sm text-green-600 mt-2 flex items-center">
+                      <ArrowUp className="w-4 h-4 mr-1" />
+                      {stats.users.activeUsers} active
+                    </p>
+                  </div>
+                  <motion.div 
+                    className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <Users className="w-6 h-6 text-primary" />
+                  </motion.div>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Users className="w-6 h-6 text-primary" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Pending Requests</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{stats.interviews.pendingRequests}</p>
-                  <p className="text-sm text-yellow-600 mt-2 flex items-center">
-                    <Clock className="w-4 h-4 mr-1" />
-                    Needs attention
-                  </p>
+          <motion.div variants={itemVariants}>
+            <Card className="hover:shadow-lg transition-shadow duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Pending Reviews</p>
+                    <motion.p 
+                      className="text-3xl font-bold text-gray-900 mt-2"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
+                    >
+                      {stats.interviews.pendingRequests}
+                    </motion.p>
+                    <p className="text-sm text-yellow-600 mt-2 flex items-center">
+                      <Clock className="w-4 h-4 mr-1" />
+                      Needs attention
+                    </p>
+                  </div>
+                  <motion.div 
+                    className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center"
+                    whileHover={{ scale: 1.1, rotate: -5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <Clock className="w-6 h-6 text-orange-600" />
+                  </motion.div>
                 </div>
-                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-orange-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Completed Tasks</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{stats.todos.completedTodos}</p>
-                  <p className="text-sm text-green-600 mt-2 flex items-center">
-                    <CheckCircle className="w-4 h-4 mr-1" />
-                    This period
-                  </p>
+          <motion.div variants={itemVariants}>
+            <Card className="hover:shadow-lg transition-shadow duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Completed Tasks</p>
+                    <motion.p 
+                      className="text-3xl font-bold text-gray-900 mt-2"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.7, type: "spring", stiffness: 200 }}
+                    >
+                      {stats.todos.completedTodos}
+                    </motion.p>
+                    <p className="text-sm text-green-600 mt-2 flex items-center">
+                      <CheckCircle className="w-4 h-4 mr-1" />
+                      This period
+                    </p>
+                  </div>
+                  <motion.div 
+                    className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center"
+                    whileHover={{ scale: 1.1, rotate: 10 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <CheckCircle className="w-6 h-6 text-green-600" />
+                  </motion.div>
                 </div>
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-green-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">System Health</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">98%</p>
-                  <p className="text-sm text-green-600 mt-2 flex items-center">
-                    <ArrowUp className="w-4 h-4 mr-1" />
-                    All systems operational
-                  </p>
+          <motion.div variants={itemVariants}>
+            <Card className="hover:shadow-lg transition-shadow duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">System Health</p>
+                    <motion.p 
+                      className="text-3xl font-bold text-gray-900 mt-2"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
+                    >
+                      98%
+                    </motion.p>
+                    <p className="text-sm text-green-600 mt-2 flex items-center">
+                      <ArrowUp className="w-4 h-4 mr-1" />
+                      All systems operational
+                    </p>
+                  </div>
+                  <motion.div 
+                    className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center"
+                    whileHover={{ scale: 1.1, rotate: -10 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <Server className="w-6 h-6 text-green-600" />
+                  </motion.div>
                 </div>
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <Server className="w-6 h-6 text-green-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </motion.div>
       )}
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+      <motion.div 
+        className="grid grid-cols-1 xl:grid-cols-2 gap-8"
+        variants={containerVariants}
+      >
         {/* Recent Activity */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentInterviews?.requests?.slice(0, 3).map((request: any) => (
-                <div key={request.id} className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Calendar className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-900">Interview request for {request.position}</p>
-                    <p className="text-xs text-gray-600 mt-1">
-                      {request.candidateName} - {request.requestedBy.firstName} {request.requestedBy.lastName}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {getRelativeTime(request.createdAt)}
-                    </p>
-                  </div>
-                  <Badge variant={request.status === "pending" ? "secondary" : request.status === "approved" ? "default" : "destructive"}>
-                    {request.status}
-                  </Badge>
-                </div>
-              ))}
+        <motion.div variants={itemVariants}>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <motion.div
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                >
+                  <Clock className="w-5 h-5 text-blue-600" />
+                </motion.div>
+                <span>Recent Activity</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {recentInterviews?.requests?.slice(0, 3).map((request: any, index: number) => (
+                  <motion.div 
+                    key={request.id} 
+                    className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: index * 0.1 + 1, duration: 0.4 }}
+                    whileHover={{ x: 5 }}
+                  >
+                    <motion.div 
+                      className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0"
+                      whileHover={{ scale: 1.1 }}
+                    >
+                      <Calendar className="w-4 h-4 text-primary" />
+                    </motion.div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-gray-900">Employee review for {request.position}</p>
+                      <p className="text-xs text-gray-600 mt-1">
+                        {request.candidateName} - {request.requestedBy.firstName} {request.requestedBy.lastName}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {getRelativeTime(request.createdAt)}
+                      </p>
+                    </div>
+                    <Badge variant={request.status === "pending" ? "secondary" : request.status === "approved" ? "default" : "destructive"}>
+                      {request.status}
+                    </Badge>
+                  </motion.div>
+                ))}
 
-              {recentTodos?.todoLists?.slice(0, 2).map((list: any) => (
-                <div key={list.id} className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-900">Todo list updated: {list.title}</p>
-                    <p className="text-xs text-gray-600 mt-1">
-                      {list.items.length} tasks - {list.createdBy.firstName} {list.createdBy.lastName}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {getRelativeTime(list.createdAt)}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                {recentTodos?.todoLists?.slice(0, 2).map((list: any, index: number) => (
+                  <motion.div 
+                    key={list.id} 
+                    className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: (index + 3) * 0.1 + 1, duration: 0.4 }}
+                    whileHover={{ x: 5 }}
+                  >
+                    <motion.div 
+                      className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0"
+                      whileHover={{ scale: 1.1 }}
+                    >
+                      <CheckCircle className="w-4 h-4 text-green-600" />
+                    </motion.div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-gray-900">Task list updated: {list.title}</p>
+                      <p className="text-xs text-gray-600 mt-1">
+                        {list.items.length} tasks - {list.createdBy.firstName} {list.createdBy.lastName}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {getRelativeTime(list.createdAt)}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              {user?.role === "admin" && (
-                <Button
-                  variant="outline"
-                  className="p-6 h-auto flex-col space-y-2"
-                  onClick={() => setLocation("/users")}
+        <motion.div variants={itemVariants}>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
                 >
-                  <UserPlus className="w-8 h-8 text-primary" />
-                  <span>Add User</span>
-                </Button>
-              )}
+                  <Sparkles className="w-5 h-5 text-purple-600" />
+                </motion.div>
+                <span>Quick Actions</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                {user?.role === "admin" && (
+                  <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 1.2, type: "spring", stiffness: 200 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      variant="outline"
+                      className="p-6 h-auto flex-col space-y-2 w-full border-2 hover:border-blue-300 hover:bg-blue-50 transition-all duration-300"
+                      onClick={() => setLocation("/users")}
+                    >
+                      <UserPlus className="w-8 h-8 text-primary" />
+                      <span>Add Employee</span>
+                    </Button>
+                  </motion.div>
+                )}
 
-              <Button
-                variant="outline"
-                className="p-6 h-auto flex-col space-y-2"
-                onClick={() => setLocation("/interviews")}
-              >
-                <Calendar className="w-8 h-8 text-green-600" />
-                <span>
-                  {user?.role === "secretary" ? "Request Interview" : "Review Requests"}
-                </span>
-              </Button>
-
-              <Button
-                variant="outline"
-                className="p-6 h-auto flex-col space-y-2"
-                onClick={() => setLocation("/todos")}
-              >
-                <PlusCircle className="w-8 h-8 text-purple-600" />
-                <span>Create Todo</span>
-              </Button>
-
-              {user?.role === "admin" && (
-                <Button
-                  variant="outline"
-                  className="p-6 h-auto flex-col space-y-2"
-                  onClick={() => setLocation("/reports")}
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 1.3, type: "spring", stiffness: 200 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <BarChart3 className="w-8 h-8 text-orange-600" />
-                  <span>View Reports</span>
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+                  <Button
+                    variant="outline"
+                    className="p-6 h-auto flex-col space-y-2 w-full border-2 hover:border-green-300 hover:bg-green-50 transition-all duration-300"
+                    onClick={() => setLocation("/interviews")}
+                  >
+                    <Calendar className="w-8 h-8 text-green-600" />
+                    <span>
+                      {user?.role === "secretary" ? "Schedule Review" : "Employee Reviews"}
+                    </span>
+                  </Button>
+                </motion.div>
+
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 1.4, type: "spring", stiffness: 200 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="outline"
+                    className="p-6 h-auto flex-col space-y-2 w-full border-2 hover:border-purple-300 hover:bg-purple-50 transition-all duration-300"
+                    onClick={() => setLocation("/todos")}
+                  >
+                    <PlusCircle className="w-8 h-8 text-purple-600" />
+                    <span>Create Task</span>
+                  </Button>
+                </motion.div>
+
+                {user?.role === "admin" && (
+                  <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 1.5, type: "spring", stiffness: 200 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      variant="outline"
+                      className="p-6 h-auto flex-col space-y-2 w-full border-2 hover:border-orange-300 hover:bg-orange-50 transition-all duration-300"
+                      onClick={() => setLocation("/reports")}
+                    >
+                      <BarChart3 className="w-8 h-8 text-orange-600" />
+                      <span>View Reports</span>
+                    </Button>
+                  </motion.div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }
