@@ -108,3 +108,4 @@ The deployment uses:
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+- Edit archive form should only have name, date, and description fields (simplified from complex evaluation form)
