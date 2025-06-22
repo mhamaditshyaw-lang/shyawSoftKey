@@ -34,7 +34,7 @@ export default function EditArchiveModal({ open, onOpenChange, archivedItem }: E
       setFormData({
         employeeName: itemData.candidateName || archiveDetails.employeeName || "",
         reviewDate: archiveDetails.reviewDate || archiveDetails.interviewDate || "",
-        description: itemData.description || archiveDetails.description || "",
+        description: "", // Always start with empty description for new writing
       });
     }
   }, [archivedItem]);
@@ -84,10 +84,10 @@ export default function EditArchiveModal({ open, onOpenChange, archivedItem }: E
         <DialogHeader>
           <DialogTitle className="flex items-center">
             <Edit className="w-5 h-5 mr-2" />
-            Edit Archive Information - {itemData.position}
+            Add Information - {itemData.position}
           </DialogTitle>
           <DialogDescription>
-            Update or add detailed information about this archived interview.
+            Add detailed information about this archived employee review.
           </DialogDescription>
         </DialogHeader>
         
@@ -124,12 +124,15 @@ export default function EditArchiveModal({ open, onOpenChange, archivedItem }: E
                 <Label htmlFor="description">Description</Label>
                 <Textarea
                   id="description"
-                  placeholder="Describe the review purpose, outcomes, feedback, and any important notes..."
+                  placeholder="Write a new description for this employee review - include outcomes, feedback, performance notes, recommendations, and any other important information..."
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={5}
+                  rows={6}
                   required
                 />
+                <p className="text-sm text-gray-500">
+                  Start writing a fresh description. This will replace any existing description.
+                </p>
               </div>
             </div>
           </div>
