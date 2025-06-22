@@ -44,6 +44,11 @@ export interface IStorage {
   getUserStats(): Promise<{ totalUsers: number; activeUsers: number; pendingUsers: number }>;
   getTodoStats(): Promise<{ totalTodos: number; completedTodos: number; pendingTodos: number }>;
   getInterviewStats(): Promise<{ totalRequests: number; pendingRequests: number; approvedRequests: number }>;
+  
+  // Notification methods
+  getUserNotifications(userId: number): Promise<any[]>;
+  markNotificationAsRead(notificationId: number, userId: number): Promise<void>;
+  markAllNotificationsAsRead(userId: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -261,6 +266,21 @@ export class DatabaseStorage implements IStorage {
       pendingRequests: Number(stats.pendingRequests),
       approvedRequests: Number(stats.approvedRequests),
     };
+  }
+
+  async getUserNotifications(userId: number): Promise<any[]> {
+    const { NotificationService } = await import("./notification-service");
+    return await NotificationService.getUserNotifications(userId);
+  }
+
+  async markNotificationAsRead(notificationId: number, userId: number): Promise<void> {
+    const { NotificationService } = await import("./notification-service");
+    await NotificationService.markAsRead(notificationId, userId);
+  }
+
+  async markAllNotificationsAsRead(userId: number): Promise<void> {
+    const { NotificationService } = await import("./notification-service");
+    await NotificationService.markAllAsRead(userId);
   }
 }
 

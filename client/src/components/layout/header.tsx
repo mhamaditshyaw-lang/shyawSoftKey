@@ -1,8 +1,9 @@
-import { Bell, Building, User, LogOut } from "lucide-react";
+import { Building, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
+import NotificationBell from "@/components/notifications/notification-bell";
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -34,12 +35,7 @@ export default function Header() {
         </div>
 
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              3
-            </span>
-          </Button>
+          <NotificationBell />
 
           <div className="flex items-center space-x-3">
             <Avatar>

@@ -167,6 +167,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status: 'active', // Admin created users are active by default
       });
 
+      // Send notification about new user creation
+      const { NotificationService } = await import("./notification-service");
+      await NotificationService.notifyUserCreated(user.id, req.user!.id);
+
       const { password, ...userWithoutPassword } = user;
       res.status(201).json({ user: userWithoutPassword });
     } catch (error: any) {
@@ -219,6 +223,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const todoList = await storage.createTodoList(todoData);
       const fullTodoList = await storage.getTodoList(todoList.id);
+      
+      // Send notification if todo is assigned to someone
+      if (todoData.assignedToId && todoData.assignedToId !== req.user!.id) {
+        const { NotificationService } = await import("./notification-service");
+        await NotificationService.notifyTodoAssigned(todoList.id, todoData.assignedToId, req.user!.id);
+      }
+      
       res.status(201).json({ todoList: fullTodoList });
     } catch (error: any) {
       res.status(400).json({ message: error.message });
@@ -294,6 +305,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const requestData = insertInterviewRequestSchema.parse(transformedData);
       const request = await storage.createInterviewRequest(requestData);
+      
+      // Send notification about new interview request
+      const { NotificationService } = await import("./notification-service");
+      await NotificationService.notifyInterviewRequest(
+        request.id, 
+        req.user!.id, 
+        requestData.managerId || undefined
+      );
+      
       res.status(201).json({ request });
     } catch (error: any) {
       console.error('Interview request validation error:', error);
@@ -313,9 +333,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const id = parseInt(req.params.id);
       const updates = req.body;
       
+      // Get original request to get requestedById
+      const allRequests = await storage.getInterviewRequests();
+      const original = allRequests.find(r => r.id === id);
+      
       const request = await storage.updateInterviewRequest(id, updates);
       if (!request) {
         return res.status(404).json({ message: "Interview request not found" });
+      }
+
+      // Send notification if status changed
+      if (updates.status && original && (updates.status === 'approved' || updates.status === 'rejected')) {
+        const { NotificationService } = await import("./notification-service");
+        await NotificationService.notifyInterviewStatus(
+          id, 
+          updates.status, 
+          original.requestedBy.id, 
+          req.user!.id
+        );
       }
 
       res.json({ request });
@@ -348,6 +383,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const managers = await storage.getUsersByRole('manager');
       const managersWithoutPasswords = managers.map(({ password, ...manager }) => manager);
       res.json({ managers: managersWithoutPasswords });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Notification routes
+  app.get("/api/notifications", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const notifications = await storage.getUserNotifications(req.user!.id);
+      res.json({ notifications });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.patch("/api/notifications/:id", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.markNotificationAsRead(id, req.user!.id);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.patch("/api/notifications/mark-all-read", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      await storage.markAllNotificationsAsRead(req.user!.id);
+      res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
