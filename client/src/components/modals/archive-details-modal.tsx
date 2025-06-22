@@ -77,14 +77,21 @@ export default function ArchiveDetailsModal({ open, onOpenChange, archivedItem }
                 <div className="space-y-4">
                   {archiveDetails.descriptions.map((entry: any, index: number) => (
                     <div key={index} className="bg-gray-50 p-4 rounded-md border-l-4 border-blue-500">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <p className="text-sm font-medium text-gray-700">
-                            Entry #{index + 1}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            Added on {new Date(entry.addedAt).toLocaleDateString()} at {new Date(entry.addedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </p>
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex items-center space-x-2">
+                          <div>
+                            <div className="flex items-center space-x-2">
+                              <p className="text-sm font-medium text-gray-700">
+                                Entry #{index + 1}
+                              </p>
+                              {entry.emoji && (
+                                <span className="text-lg" title="Highlight">{entry.emoji}</span>
+                              )}
+                            </div>
+                            <p className="text-xs text-gray-500">
+                              Added on {new Date(entry.addedAt).toLocaleDateString()} at {new Date(entry.addedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                          </div>
                         </div>
                         {entry.reviewDate && (
                           <p className="text-xs text-gray-500">
@@ -93,6 +100,16 @@ export default function ArchiveDetailsModal({ open, onOpenChange, archivedItem }
                         )}
                       </div>
                       <p className="text-gray-700 whitespace-pre-wrap">{entry.description}</p>
+                      {entry.emoji && (
+                        <div className="mt-3 pt-2 border-t border-gray-200">
+                          <div className="flex items-center space-x-2 text-xs text-gray-500">
+                            <span>Highlighted as:</span>
+                            <span className="bg-white px-2 py-1 rounded-full border flex items-center space-x-1">
+                              <span>{entry.emoji}</span>
+                            </span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

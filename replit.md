@@ -114,3 +114,4 @@ Preferred communication style: Simple, everyday language.
 - Archive page should support searching by employee name, category/position, and date filters
 - Remove feedback quick action from dashboard (keep only in sidebar navigation)
 - Added animated welcome dashboard with greeting, time-based messages, role badges, and smooth animations
+- Implemented emoji/icon picker for description highlights with categorized selection (Performance, Feedback, Areas)

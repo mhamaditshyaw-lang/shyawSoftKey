@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-
+import { EmojiPicker } from "@/components/ui/emoji-picker";
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Edit } from "lucide-react";
+import { Edit, Smile } from "lucide-react";
 
 interface EditArchiveModalProps {
   open: boolean;
@@ -22,6 +22,7 @@ export default function EditArchiveModal({ open, onOpenChange, archivedItem }: E
     employeeName: "",
     reviewDate: "",
     description: "",
+    emoji: "",
   });
   const { toast } = useToast();
 
@@ -35,6 +36,7 @@ export default function EditArchiveModal({ open, onOpenChange, archivedItem }: E
         employeeName: itemData.candidateName || archiveDetails.employeeName || "",
         reviewDate: archiveDetails.reviewDate || archiveDetails.interviewDate || "",
         description: "", // Always start with empty description for new writing
+        emoji: "",
       });
     }
   }, [archivedItem]);
@@ -47,6 +49,7 @@ export default function EditArchiveModal({ open, onOpenChange, archivedItem }: E
       // Create new description entry with timestamp
       const newDescriptionEntry = {
         description: updateData.description,
+        emoji: updateData.emoji,
         addedAt: new Date().toISOString(),
         addedBy: updateData.employeeName,
         reviewDate: updateData.reviewDate
@@ -141,7 +144,16 @@ export default function EditArchiveModal({ open, onOpenChange, archivedItem }: E
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="description">New Description Entry</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="description">New Description Entry</Label>
+                  <div className="flex items-center space-x-2">
+                    <Label className="text-xs text-gray-500">Add highlight:</Label>
+                    <EmojiPicker
+                      selectedEmoji={formData.emoji}
+                      onEmojiSelect={(emoji) => setFormData({ ...formData, emoji })}
+                    />
+                  </div>
+                </div>
                 <Textarea
                   id="description"
                   placeholder="Write a new description for this employee review - include outcomes, feedback, performance notes, recommendations, and any other important information..."
@@ -150,6 +162,15 @@ export default function EditArchiveModal({ open, onOpenChange, archivedItem }: E
                   rows={6}
                   required
                 />
+                {formData.emoji && (
+                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                    <span>Highlight:</span>
+                    <span className="bg-gray-100 px-2 py-1 rounded-full flex items-center space-x-1">
+                      <span>{formData.emoji}</span>
+                      <span className="text-xs">Selected</span>
+                    </span>
+                  </div>
+                )}
                 <p className="text-sm text-gray-500">
                   This will add a new description entry with timestamp. Previous descriptions will be preserved.
                 </p>
