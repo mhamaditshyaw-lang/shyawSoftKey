@@ -102,6 +102,7 @@ The deployment uses:
 - June 21, 2025: Created admin user (username: admin, password: admin123) and set up database schema
 - June 22, 2025: Fixed SelectItem errors in modals and added proper accessibility features
 - June 22, 2025: Added comprehensive notification system with real-time updates, notification bell, and automatic notifications for user creation, interview requests, status changes, and todo assignments
+- June 22, 2025: Created feedback system with rating capabilities and archive functionality for managing completed interviews, todos, and users
 
 ## User Preferences
 

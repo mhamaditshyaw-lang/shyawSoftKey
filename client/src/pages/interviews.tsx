@@ -8,7 +8,7 @@ import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Clock, Check, X, Edit, Calendar, Plus } from "lucide-react";
+import { Clock, Check, X, Edit, Calendar, Plus, Archive } from "lucide-react";
 import InterviewRequestModal from "@/components/modals/interview-request-modal";
 import InterviewDetailsModal from "@/components/modals/interview-details-modal";
 import ModifyInterviewModal from "@/components/modals/modify-interview-modal";
@@ -100,6 +100,39 @@ export default function InterviewsPage() {
   const handleReschedule = (request: any) => {
     setSelectedRequest(request);
     setShowModifyModal(true);
+  };
+
+  const archiveRequestMutation = useMutation({
+    mutationFn: async ({ requestId, requestData }: { requestId: number; requestData: any }) => {
+      const response = await authenticatedRequest("POST", "/api/archive", {
+        itemType: "interview",
+        itemId: requestId,
+        itemData: requestData,
+        reason: "Interview completed/closed"
+      });
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/interviews"] });
+      toast({
+        title: "Success",
+        description: "Interview request archived successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to archive request",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const archiveRequest = (request: any) => {
+    archiveRequestMutation.mutate({
+      requestId: request.id,
+      requestData: request
+    });
   };
 
   if (isLoading) {
@@ -275,13 +308,22 @@ export default function InterviewsPage() {
                         View Details
                       </Button>
                       {(user?.role === "manager" || user?.role === "admin") && (
-                        <Button 
-                          variant="outline"
-                          onClick={() => handleReschedule(request)}
-                        >
-                          <Edit className="w-4 h-4 mr-2" />
-                          Reschedule
-                        </Button>
+                        <>
+                          <Button 
+                            variant="outline"
+                            onClick={() => handleReschedule(request)}
+                          >
+                            <Edit className="w-4 h-4 mr-2" />
+                            Reschedule
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            onClick={() => archiveRequest(request)}
+                          >
+                            <Archive className="w-4 h-4 mr-2" />
+                            Archive
+                          </Button>
+                        </>
                       )}
                     </div>
                   )}

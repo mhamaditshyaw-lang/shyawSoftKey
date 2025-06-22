@@ -49,6 +49,15 @@ export interface IStorage {
   getUserNotifications(userId: number): Promise<any[]>;
   markNotificationAsRead(notificationId: number, userId: number): Promise<void>;
   markAllNotificationsAsRead(userId: number): Promise<void>;
+  
+  // Feedback methods
+  createFeedback(feedbackData: any): Promise<any>;
+  getAllFeedback(): Promise<any[]>;
+  
+  // Archive methods
+  archiveItem(itemType: string, itemId: number, itemData: any, archivedById: number, reason?: string): Promise<any>;
+  getArchivedItems(): Promise<any[]>;
+  restoreArchivedItem(archiveId: number, itemType: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -281,6 +290,31 @@ export class DatabaseStorage implements IStorage {
   async markAllNotificationsAsRead(userId: number): Promise<void> {
     const { NotificationService } = await import("./notification-service");
     await NotificationService.markAllAsRead(userId);
+  }
+
+  async createFeedback(feedbackData: any): Promise<any> {
+    const { FeedbackService } = await import("./feedback-service");
+    return await FeedbackService.createFeedback(feedbackData);
+  }
+
+  async getAllFeedback(): Promise<any[]> {
+    const { FeedbackService } = await import("./feedback-service");
+    return await FeedbackService.getAllFeedback();
+  }
+
+  async archiveItem(itemType: string, itemId: number, itemData: any, archivedById: number, reason?: string): Promise<any> {
+    const { FeedbackService } = await import("./feedback-service");
+    return await FeedbackService.archiveItem(itemType, itemId, itemData, archivedById, reason);
+  }
+
+  async getArchivedItems(): Promise<any[]> {
+    const { FeedbackService } = await import("./feedback-service");
+    return await FeedbackService.getArchivedItems();
+  }
+
+  async restoreArchivedItem(archiveId: number, itemType: string): Promise<void> {
+    const { FeedbackService } = await import("./feedback-service");
+    await FeedbackService.restoreItem(archiveId, itemType);
   }
 }
 

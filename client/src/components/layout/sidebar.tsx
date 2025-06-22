@@ -6,6 +6,8 @@ import {
   Users,
   Calendar,
   CheckSquare,
+  MessageSquare,
+  Archive,
   TrendingUp,
 } from "lucide-react";
 
@@ -40,6 +42,18 @@ const navItems: NavItem[] = [
     href: "/todos",
     icon: CheckSquare,
     roles: ["admin", "manager", "secretary"],
+  },
+  {
+    title: "Feedback & Reviews",
+    href: "/feedback",
+    icon: MessageSquare,
+    roles: ["admin", "manager", "secretary"],
+  },
+  {
+    title: "Archive",
+    href: "/archive",
+    icon: Archive,
+    roles: ["admin", "manager"],
   },
   {
     title: "Reports & Analytics",

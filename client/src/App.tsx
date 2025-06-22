@@ -10,6 +10,8 @@ import DashboardPage from "@/pages/dashboard";
 import UsersPage from "@/pages/users";
 import InterviewsPage from "@/pages/interviews";
 import TodosPage from "@/pages/todos";
+import FeedbackPage from "@/pages/feedback";
+import ArchivePage from "@/pages/archive";
 import ReportsPage from "@/pages/reports";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/header";
@@ -65,6 +67,16 @@ function Router() {
       <Route path="/todos">
         <ProtectedRoute>
           <TodosPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/feedback">
+        <ProtectedRoute>
+          <FeedbackPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/archive">
+        <ProtectedRoute>
+          <ArchivePage />
         </ProtectedRoute>
       </Route>
       <Route path="/reports">

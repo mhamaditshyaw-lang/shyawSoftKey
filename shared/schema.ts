@@ -150,3 +150,6 @@ export type LoginCredentials = z.infer<typeof loginSchema>;
 
 // Export notification types
 export * from "./notification-schema";
+
+// Export feedback and archive types
+export * from "./feedback-schema";

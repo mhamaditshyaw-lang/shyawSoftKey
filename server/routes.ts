@@ -417,6 +417,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Feedback routes
+  app.get("/api/feedback", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const feedback = await storage.getAllFeedback();
+      res.json({ feedback });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/feedback", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const feedbackData = {
+        ...req.body,
+        submittedById: req.user!.id,
+      };
+      const feedback = await storage.createFeedback(feedbackData);
+      res.status(201).json({ feedback });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Archive routes
+  app.get("/api/archive", authenticateToken, requireRole(['admin', 'manager']), async (req: AuthRequest, res) => {
+    try {
+      const archivedItems = await storage.getArchivedItems();
+      res.json({ archivedItems });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/archive", authenticateToken, requireRole(['admin', 'manager']), async (req: AuthRequest, res) => {
+    try {
+      const { itemType, itemId, itemData, reason } = req.body;
+      const archivedItem = await storage.archiveItem(itemType, itemId, itemData, req.user!.id, reason);
+      res.status(201).json({ archivedItem });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/archive/:id/restore", authenticateToken, requireRole(['admin', 'manager']), async (req: AuthRequest, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { itemType } = req.body;
+      await storage.restoreArchivedItem(id, itemType);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
