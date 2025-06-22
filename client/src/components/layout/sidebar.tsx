@@ -49,12 +49,7 @@ const navItems: NavItem[] = [
     icon: MessageSquare,
     roles: ["admin", "manager", "secretary"],
   },
-  {
-    title: "Personal Metrics",
-    href: "/metrics",
-    icon: TrendingUp,
-    roles: ["admin", "manager", "secretary"],
-  },
+
   {
     title: "Archive",
     href: "/archive",

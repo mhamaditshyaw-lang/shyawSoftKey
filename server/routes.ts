@@ -482,51 +482,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Metrics routes
-  app.get("/api/metrics", authenticateToken, async (req: AuthRequest, res) => {
-    try {
-      const metrics = await storage.getUserMetrics(req.user!.id);
-      res.json({ metrics });
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
-  });
-
-  app.post("/api/metrics", authenticateToken, async (req: AuthRequest, res) => {
-    try {
-      const metricData = {
-        ...req.body,
-        createdById: req.user!.id
-      };
-      const metric = await storage.createMetric(metricData);
-      res.status(201).json({ metric });
-    } catch (error: any) {
-      res.status(400).json({ message: error.message });
-    }
-  });
-
-  app.patch("/api/metrics/:id", authenticateToken, async (req: AuthRequest, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      const metric = await storage.updateMetric(id, req.body, req.user!.id);
-      if (!metric) {
-        return res.status(404).json({ message: "Metric not found or not authorized" });
-      }
-      res.json({ metric });
-    } catch (error: any) {
-      res.status(400).json({ message: error.message });
-    }
-  });
-
-  app.delete("/api/metrics/:id", authenticateToken, async (req: AuthRequest, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      await storage.deleteMetric(id, req.user!.id);
-      res.json({ success: true });
-    } catch (error: any) {
-      res.status(400).json({ message: error.message });
-    }
-  });
 
   const httpServer = createServer(app);
   return httpServer;

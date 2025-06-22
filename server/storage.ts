@@ -60,11 +60,7 @@ export interface IStorage {
   updateArchivedItem(archiveId: number, updates: any): Promise<any>;
   restoreArchivedItem(archiveId: number, itemType: string): Promise<void>;
   
-  // Metrics methods
-  getUserMetrics(userId: number): Promise<Metric[]>;
-  createMetric(metricData: InsertMetric): Promise<Metric>;
-  updateMetric(id: number, updates: Partial<Metric>, userId: number): Promise<Metric | undefined>;
-  deleteMetric(id: number, userId: number): Promise<void>;
+
 }
 
 export class DatabaseStorage implements IStorage {
@@ -329,121 +325,7 @@ export class DatabaseStorage implements IStorage {
     await FeedbackService.restoreItem(archiveId, itemType);
   }
 
-  async getUserMetrics(userId: number): Promise<Metric[]> {
-    const userMetrics = await db
-      .select({
-        id: metrics.id,
-        title: metrics.title,
-        value: metrics.value,
-        unit: metrics.unit,
-        category: metrics.category,
-        description: metrics.description,
-        target: metrics.target,
-        createdAt: metrics.createdAt,
-        updatedAt: metrics.updatedAt,
-        createdBy: {
-          id: users.id,
-          firstName: users.firstName,
-          lastName: users.lastName,
-        }
-      })
-      .from(metrics)
-      .leftJoin(users, eq(metrics.createdById, users.id))
-      .where(eq(metrics.createdById, userId))
-      .orderBy(desc(metrics.updatedAt));
 
-    return userMetrics.map(metric => ({
-      ...metric,
-      value: parseFloat(metric.value),
-      target: metric.target ? parseFloat(metric.target) : undefined,
-    }));
-  }
-
-  async createMetric(metricData: InsertMetric): Promise<Metric> {
-    const [metric] = await db.insert(metrics).values(metricData).returning();
-    
-    // Get the metric with user information
-    const [fullMetric] = await db
-      .select({
-        id: metrics.id,
-        title: metrics.title,
-        value: metrics.value,
-        unit: metrics.unit,
-        category: metrics.category,
-        description: metrics.description,
-        target: metrics.target,
-        createdAt: metrics.createdAt,
-        updatedAt: metrics.updatedAt,
-        createdBy: {
-          id: users.id,
-          firstName: users.firstName,
-          lastName: users.lastName,
-        }
-      })
-      .from(metrics)
-      .leftJoin(users, eq(metrics.createdById, users.id))
-      .where(eq(metrics.id, metric.id));
-
-    return {
-      ...fullMetric,
-      value: parseFloat(fullMetric.value),
-      target: fullMetric.target ? parseFloat(fullMetric.target) : undefined,
-    };
-  }
-
-  async updateMetric(id: number, updates: Partial<Metric>, userId: number): Promise<Metric | undefined> {
-    // First check if the metric belongs to the user
-    const [existingMetric] = await db
-      .select()
-      .from(metrics)
-      .where(and(eq(metrics.id, id), eq(metrics.createdById, userId)));
-
-    if (!existingMetric) {
-      return undefined;
-    }
-
-    await db
-      .update(metrics)
-      .set({
-        ...updates,
-        updatedAt: new Date(),
-      })
-      .where(eq(metrics.id, id));
-
-    // Return the updated metric with user info
-    const [updatedMetric] = await db
-      .select({
-        id: metrics.id,
-        title: metrics.title,
-        value: metrics.value,
-        unit: metrics.unit,
-        category: metrics.category,
-        description: metrics.description,
-        target: metrics.target,
-        createdAt: metrics.createdAt,
-        updatedAt: metrics.updatedAt,
-        createdBy: {
-          id: users.id,
-          firstName: users.firstName,
-          lastName: users.lastName,
-        }
-      })
-      .from(metrics)
-      .leftJoin(users, eq(metrics.createdById, users.id))
-      .where(eq(metrics.id, id));
-
-    return {
-      ...updatedMetric,
-      value: parseFloat(updatedMetric.value),
-      target: updatedMetric.target ? parseFloat(updatedMetric.target) : undefined,
-    };
-  }
-
-  async deleteMetric(id: number, userId: number): Promise<void> {
-    await db
-      .delete(metrics)
-      .where(and(eq(metrics.id, id), eq(metrics.createdById, userId)));
-  }
 }
 
 export const storage = new DatabaseStorage();
