@@ -26,10 +26,29 @@ export default function MetricsPage() {
     number7: "",
   });
 
+  const [deviceData, setDeviceData] = useState({
+    device1: "",
+    device2: "",
+    device3: "",
+    device4: "",
+    device5: "",
+    device6: "",
+  });
+
   const handleInputChange = (field: string, value: string) => {
     // Only allow numbers
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
       setFormData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    }
+  };
+
+  const handleDeviceInputChange = (field: string, value: string) => {
+    // Only allow numbers
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      setDeviceData(prev => ({
         ...prev,
         [field]: value
       }));
@@ -63,6 +82,32 @@ export default function MetricsPage() {
     });
   };
 
+  const handleDeviceSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Convert strings to numbers for calculation
+    const deviceNumbers = Object.values(deviceData).map(val => parseFloat(val) || 0);
+    const deviceSum = deviceNumbers.reduce((acc, num) => acc + num, 0);
+    const deviceAverage = deviceSum / deviceNumbers.length;
+    const deviceMax = Math.max(...deviceNumbers);
+    const deviceMin = Math.min(...deviceNumbers);
+
+    toast({
+      title: "Device Data Saved Successfully",
+      description: `Total: ${deviceSum.toFixed(0)} | Average: ${deviceAverage.toFixed(1)} | Max: ${deviceMax} | Min: ${deviceMin}`,
+    });
+
+    // Reset device form
+    setDeviceData({
+      device1: "",
+      device2: "",
+      device3: "",
+      device4: "",
+      device5: "",
+      device6: "",
+    });
+  };
+
   const clearForm = () => {
     setFormData({
       number1: "",
@@ -72,6 +117,17 @@ export default function MetricsPage() {
       number5: "",
       number6: "",
       number7: "",
+    });
+  };
+
+  const clearDeviceForm = () => {
+    setDeviceData({
+      device1: "",
+      device2: "",
+      device3: "",
+      device4: "",
+      device5: "",
+      device6: "",
     });
   };
 
@@ -90,7 +146,23 @@ export default function MetricsPage() {
     return { sum, average, max, min, count: numbers.length };
   };
 
+  const calculateDeviceStats = () => {
+    const numbers = Object.values(deviceData)
+      .filter(val => val !== "")
+      .map(val => parseFloat(val));
+    
+    if (numbers.length === 0) return null;
+
+    const sum = numbers.reduce((acc, num) => acc + num, 0);
+    const average = sum / numbers.length;
+    const max = Math.max(...numbers);
+    const min = Math.min(...numbers);
+
+    return { sum, average, max, min, count: numbers.length };
+  };
+
   const stats = calculateStats();
+  const deviceStats = calculateDeviceStats();
 
   return (
     <motion.div
@@ -100,12 +172,15 @@ export default function MetricsPage() {
       className="max-w-4xl mx-auto"
     >
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Employee Tracking</h2>
-        <p className="text-gray-600">Track daily employee attendance and shift information</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Daily Operations Dashboard</h2>
+        <p className="text-gray-600">Track employee attendance and device operations</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Input Form */}
+      {/* Employee Tracking Section */}
+      <div className="mb-12">
+        <h3 className="text-2xl font-bold text-gray-800 mb-6">Employee Tracking</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Input Form */}
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
@@ -315,6 +390,216 @@ export default function MetricsPage() {
               </Button>
             </CardContent>
           </Card>
+        </div>
+      </div>
+      </div>
+
+      {/* Device Operations Section */}
+      <div className="mb-8">
+        <h3 className="text-2xl font-bold text-gray-800 mb-6">Device Operations</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Device Input Form */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <BarChart3 className="w-5 h-5 text-green-600" />
+                  <span>Device Data Entry</span>
+                </CardTitle>
+                <CardDescription>
+                  Enter device operation numbers and working status
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleDeviceSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { field: 'device1', label: 'Working Devices', placeholder: 'Enter number of working devices' },
+                      { field: 'device2', label: 'Maintenance Devices', placeholder: 'Enter devices under maintenance' },
+                      { field: 'device3', label: 'Broken Devices', placeholder: 'Enter number of broken devices' },
+                      { field: 'device4', label: 'New Devices', placeholder: 'Enter newly installed devices' },
+                      { field: 'device5', label: 'Total Capacity', placeholder: 'Enter total device capacity' },
+                      { field: 'device6', label: 'Operating Hours', placeholder: 'Enter total operating hours' },
+                    ].map((item, index) => {
+                      const fieldName = item.field as keyof typeof deviceData;
+                      return (
+                        <motion.div
+                          key={fieldName}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 + 0.5, duration: 0.3 }}
+                          className="space-y-2"
+                        >
+                          <Label htmlFor={fieldName} className="text-sm font-medium">
+                            {item.label}
+                          </Label>
+                          <Input
+                            id={fieldName}
+                            type="text"
+                            placeholder={item.placeholder}
+                            value={deviceData[fieldName]}
+                            onChange={(e) => handleDeviceInputChange(fieldName, e.target.value)}
+                            className="transition-all duration-200 focus:ring-2 focus:ring-green-500"
+                          />
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="flex space-x-4 pt-4">
+                    <Button 
+                      type="submit" 
+                      className="flex items-center space-x-2 bg-green-600 hover:bg-green-700"
+                      disabled={Object.values(deviceData).every(val => val === "")}
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Save Device Data</span>
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant="outline"
+                      onClick={clearDeviceForm}
+                      disabled={Object.values(deviceData).every(val => val === "")}
+                    >
+                      Clear All
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Device Statistics Panel */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <TrendingUp className="w-5 h-5 text-green-600" />
+                  <span>Device Statistics</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {deviceStats ? (
+                  <div className="space-y-4">
+                    <motion.div 
+                      className="bg-green-50 p-4 rounded-lg"
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div className="text-2xl font-bold text-green-700">
+                        {deviceStats.sum.toFixed(2)}
+                      </div>
+                      <div className="text-sm text-green-600">Total Count</div>
+                    </motion.div>
+
+                    <motion.div 
+                      className="bg-blue-50 p-4 rounded-lg"
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.1 }}
+                    >
+                      <div className="text-2xl font-bold text-blue-700">
+                        {deviceStats.average.toFixed(2)}
+                      </div>
+                      <div className="text-sm text-blue-600">Average</div>
+                    </motion.div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <motion.div 
+                        className="bg-indigo-50 p-3 rounded-lg"
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.3, delay: 0.2 }}
+                      >
+                        <div className="text-lg font-bold text-indigo-700">
+                          {deviceStats.max}
+                        </div>
+                        <div className="text-xs text-indigo-600">Maximum</div>
+                      </motion.div>
+
+                      <motion.div 
+                        className="bg-red-50 p-3 rounded-lg"
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.3, delay: 0.3 }}
+                      >
+                        <div className="text-lg font-bold text-red-700">
+                          {deviceStats.min}
+                        </div>
+                        <div className="text-xs text-red-600">Minimum</div>
+                      </motion.div>
+                    </div>
+
+                    <motion.div 
+                      className="bg-gray-50 p-4 rounded-lg"
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.4 }}
+                    >
+                      <div className="text-lg font-bold text-gray-700">
+                        {deviceStats.count} / 6
+                      </div>
+                      <div className="text-sm text-gray-600">Fields Completed</div>
+                    </motion.div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-500">Enter device data to see statistics</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Device Quick Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Device Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => {
+                    // Fill with sample device data
+                    setDeviceData({
+                      device1: "45", // Working Devices
+                      device2: "8",  // Maintenance Devices
+                      device3: "2",  // Broken Devices
+                      device4: "3",  // New Devices
+                      device5: "100", // Total Capacity
+                      device6: "16", // Operating Hours
+                    });
+                  }}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Fill Sample Data
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => {
+                    // Fill with random device data
+                    setDeviceData({
+                      device1: Math.floor(Math.random() * 50 + 20).toString(),
+                      device2: Math.floor(Math.random() * 10 + 2).toString(),
+                      device3: Math.floor(Math.random() * 5).toString(),
+                      device4: Math.floor(Math.random() * 8).toString(),
+                      device5: Math.floor(Math.random() * 50 + 80).toString(),
+                      device6: Math.floor(Math.random() * 8 + 12).toString(),
+                    });
+                  }}
+                >
+                  <Calculator className="w-4 h-4 mr-2" />
+                  Generate Random
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </motion.div>
