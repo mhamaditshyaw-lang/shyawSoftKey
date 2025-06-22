@@ -110,3 +110,4 @@ The deployment uses:
 Preferred communication style: Simple, everyday language.
 - Edit archive form should only have name, date, and description fields (simplified from complex evaluation form)
 - Description field should always start empty for writing new content, not pre-filled with existing data
+- Each new description entry should be stored with timestamp and preserved (multiple entries supported)

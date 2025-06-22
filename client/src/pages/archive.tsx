@@ -366,7 +366,7 @@ export default function ArchivePage() {
                         onClick={() => handleEditInfo(item)}
                       >
                         <Edit className="w-4 h-4 mr-2" />
-                        Edit Info
+                        Add Description
                       </Button>
                     )}
                     <Button

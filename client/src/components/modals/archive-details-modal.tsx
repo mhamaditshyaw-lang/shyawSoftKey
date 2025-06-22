@@ -64,22 +64,52 @@ export default function ArchiveDetailsModal({ open, onOpenChange, archivedItem }
             </div>
           </div>
 
-          {/* New Description */}
-          {archiveDetails && archiveDetails.description && (
+          {/* Description Entries */}
+          {archiveDetails && (archiveDetails.descriptions || archiveDetails.description) && (
             <div className="border rounded-lg p-4">
               <h3 className="text-lg font-semibold mb-4 flex items-center">
                 <FileText className="w-5 h-5 mr-2" />
-                Review Description
+                Review Descriptions
               </h3>
-              <div className="bg-gray-50 p-4 rounded-md">
-                <p className="text-gray-700 whitespace-pre-wrap">{archiveDetails.description}</p>
-              </div>
-              {archiveDetails.reviewDate && (
-                <div className="mt-3">
-                  <p className="text-sm text-gray-500">
-                    Review Date: {new Date(archiveDetails.reviewDate).toLocaleDateString()}
-                  </p>
+              
+              {/* Multiple description entries */}
+              {archiveDetails.descriptions && archiveDetails.descriptions.length > 0 ? (
+                <div className="space-y-4">
+                  {archiveDetails.descriptions.map((entry: any, index: number) => (
+                    <div key={index} className="bg-gray-50 p-4 rounded-md border-l-4 border-blue-500">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">
+                            Entry #{index + 1}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Added on {new Date(entry.addedAt).toLocaleDateString()} at {new Date(entry.addedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                        {entry.reviewDate && (
+                          <p className="text-xs text-gray-500">
+                            Review Date: {new Date(entry.reviewDate).toLocaleDateString()}
+                          </p>
+                        )}
+                      </div>
+                      <p className="text-gray-700 whitespace-pre-wrap">{entry.description}</p>
+                    </div>
+                  ))}
                 </div>
+              ) : (
+                /* Fallback for single description (backward compatibility) */
+                archiveDetails.description && (
+                  <div className="bg-gray-50 p-4 rounded-md">
+                    <p className="text-gray-700 whitespace-pre-wrap">{archiveDetails.description}</p>
+                    {archiveDetails.reviewDate && (
+                      <div className="mt-3">
+                        <p className="text-sm text-gray-500">
+                          Review Date: {new Date(archiveDetails.reviewDate).toLocaleDateString()}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )
               )}
             </div>
           )}

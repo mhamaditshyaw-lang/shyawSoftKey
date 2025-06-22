@@ -42,9 +42,29 @@ export default function EditArchiveModal({ open, onOpenChange, archivedItem }: E
   const updateArchiveMutation = useMutation({
     mutationFn: async (updateData: any) => {
       const itemData = JSON.parse(archivedItem.itemData);
+      const existingDetails = itemData.archiveDetails || {};
+      
+      // Create new description entry with timestamp
+      const newDescriptionEntry = {
+        description: updateData.description,
+        addedAt: new Date().toISOString(),
+        addedBy: updateData.employeeName,
+        reviewDate: updateData.reviewDate
+      };
+      
+      // Add to descriptions array (keep existing descriptions)
+      const existingDescriptions = existingDetails.descriptions || [];
+      const updatedDescriptions = [...existingDescriptions, newDescriptionEntry];
+      
       const updatedItemData = {
         ...itemData,
-        archiveDetails: updateData
+        archiveDetails: {
+          ...existingDetails,
+          descriptions: updatedDescriptions,
+          employeeName: updateData.employeeName,
+          reviewDate: updateData.reviewDate,
+          description: updateData.description // Keep for backward compatibility
+        }
       };
       
       const response = await authenticatedRequest("PATCH", `/api/archive/${archivedItem.id}`, {
@@ -56,14 +76,14 @@ export default function EditArchiveModal({ open, onOpenChange, archivedItem }: E
       queryClient.invalidateQueries({ queryKey: ["/api/archive"] });
       toast({
         title: "Success",
-        description: "Archive information updated successfully",
+        description: "New description entry added successfully",
       });
       onOpenChange(false);
     },
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to update archive information",
+        description: error.message || "Failed to add description entry",
         variant: "destructive",
       });
     },
@@ -121,7 +141,7 @@ export default function EditArchiveModal({ open, onOpenChange, archivedItem }: E
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">New Description Entry</Label>
                 <Textarea
                   id="description"
                   placeholder="Write a new description for this employee review - include outcomes, feedback, performance notes, recommendations, and any other important information..."
@@ -131,7 +151,7 @@ export default function EditArchiveModal({ open, onOpenChange, archivedItem }: E
                   required
                 />
                 <p className="text-sm text-gray-500">
-                  Start writing a fresh description. This will replace any existing description.
+                  This will add a new description entry with timestamp. Previous descriptions will be preserved.
                 </p>
               </div>
             </div>
@@ -147,7 +167,7 @@ export default function EditArchiveModal({ open, onOpenChange, archivedItem }: E
               Cancel
             </Button>
             <Button type="submit" disabled={updateArchiveMutation.isPending}>
-              {updateArchiveMutation.isPending ? "Updating..." : "Update Information"}
+              {updateArchiveMutation.isPending ? "Adding..." : "Add Description Entry"}
             </Button>
           </div>
         </form>
