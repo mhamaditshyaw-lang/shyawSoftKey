@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a full-stack web application built for office management with role-based access control. The system manages users, todo lists, and interview requests with three user roles: admin, manager, and secretary. The application uses a modern React frontend with shadcn/ui components and an Express.js backend with PostgreSQL database.
+This is a full-stack web application built for internal employee management with role-based access control. The system manages internal employees, todo lists, and internal interview/evaluation requests with three user roles: admin, manager, and secretary. The application is designed for managing existing company employees' affairs, performance reviews, internal role changes, and administrative tasks. It uses a modern React frontend with shadcn/ui components and an Express.js backend with PostgreSQL database.
 
 ## System Architecture
 
@@ -42,10 +42,10 @@ The Express.js backend implements:
 
 The PostgreSQL schema includes:
 
-- **Users Table**: User accounts with roles (admin, manager, secretary) and status tracking
-- **Todo Lists Table**: Task lists with assignment and priority management
-- **Todo Items Table**: Individual tasks within lists with completion tracking
-- **Interview Requests Table**: Interview scheduling requests with approval workflow
+- **Users Table**: Internal employee accounts with roles (admin, manager, secretary) and status tracking
+- **Todo Lists Table**: Internal task lists with assignment and priority management for employee affairs
+- **Todo Items Table**: Individual administrative tasks within lists with completion tracking
+- **Interview Requests Table**: Internal employee evaluation/review scheduling and internal role change interviews
 
 Key relationships:
 - Users can create and be assigned todo lists
@@ -103,6 +103,7 @@ The deployment uses:
 - June 22, 2025: Fixed SelectItem errors in modals and added proper accessibility features
 - June 22, 2025: Added comprehensive notification system with real-time updates, notification bell, and automatic notifications for user creation, interview requests, status changes, and todo assignments
 - June 22, 2025: Created feedback system with rating capabilities and archive functionality for managing completed interviews, todos, and users
+- June 22, 2025: Updated system terminology and branding to reflect internal employee management focus rather than external hiring
 
 ## User Preferences
 

@@ -28,7 +28,7 @@ export default function Header() {
       <div className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center space-x-4">
           <Building className="w-8 h-8 text-primary" />
-          <h1 className="text-2xl font-bold text-gray-900">ManageFlow</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Employee Affairs Manager</h1>
           <Badge className={getRoleBadgeColor(user.role)}>
             {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
           </Badge>

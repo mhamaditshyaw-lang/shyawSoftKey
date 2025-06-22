@@ -83,18 +83,18 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Request Interview</DialogTitle>
+          <DialogTitle>Schedule Employee Review</DialogTitle>
           <DialogDescription>
-            Schedule a new interview by providing candidate details and preferred timing.
+            Schedule an employee evaluation, performance review, or internal role change interview.
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="position">Position</Label>
+            <Label htmlFor="position">Review Type / Position</Label>
             <Input
               id="position"
-              placeholder="e.g., Marketing Manager"
+              placeholder="e.g., Performance Review, Role Change to Manager"
               value={formData.position}
               onChange={(e) => setFormData({ ...formData, position: e.target.value })}
               required
@@ -103,7 +103,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="candidateName">Candidate Name</Label>
+              <Label htmlFor="candidateName">Employee Name</Label>
               <Input
                 id="candidateName"
                 placeholder="John Doe"
@@ -113,11 +113,11 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="candidateEmail">Candidate Email (Optional)</Label>
+              <Label htmlFor="candidateEmail">Employee Email (Optional)</Label>
               <Input
                 id="candidateEmail"
                 type="email"
-                placeholder="john@example.com"
+                placeholder="john@company.com"
                 value={formData.candidateEmail}
                 onChange={(e) => setFormData({ ...formData, candidateEmail: e.target.value })}
               />
@@ -170,10 +170,10 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="description">Interview Details (Optional)</Label>
+            <Label htmlFor="description">Review Details (Optional)</Label>
             <Textarea
               id="description"
-              placeholder="Describe the interview requirements, skills to assess, etc."
+              placeholder="Describe the review purpose, areas to evaluate, performance goals, etc."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={3}
@@ -190,7 +190,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
               Cancel
             </Button>
             <Button type="submit" disabled={createRequestMutation.isPending}>
-              {createRequestMutation.isPending ? "Creating..." : "Create Request"}
+              {createRequestMutation.isPending ? "Scheduling..." : "Schedule Review"}
             </Button>
           </div>
         </form>

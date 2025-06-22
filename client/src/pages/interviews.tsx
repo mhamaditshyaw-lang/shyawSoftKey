@@ -130,14 +130,14 @@ export default function InterviewsPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Interview Requests</h2>
-            <p className="text-gray-600">Manage interview scheduling and approvals</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Employee Reviews & Evaluations</h2>
+            <p className="text-gray-600">Manage internal employee evaluations, performance reviews, and role change interviews</p>
           </div>
           <div className="flex space-x-3">
             {(user?.role === "secretary" || user?.role === "admin") && (
               <Button onClick={() => setShowRequestModal(true)}>
                 <Plus className="w-4 h-4 mr-2" />
-                Request Interview
+                Schedule Employee Review
               </Button>
             )}
             <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -171,7 +171,7 @@ export default function InterviewsPage() {
               {(user?.role === "secretary" || user?.role === "admin") && (
                 <Button onClick={() => setShowRequestModal(true)}>
                   <Plus className="w-4 h-4 mr-2" />
-                  Create First Request
+                  Schedule First Review
                 </Button>
               )}
             </CardContent>

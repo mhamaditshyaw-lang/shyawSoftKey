@@ -119,12 +119,12 @@ export default function UsersPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">User Management</h2>
-            <p className="text-gray-600">Manage system users and their roles</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Employee Management</h2>
+            <p className="text-gray-600">Manage internal employees and their roles within the company</p>
           </div>
           <Button onClick={() => setShowAddModal(true)}>
             <Plus className="w-4 h-4 mr-2" />
-            Add New User
+            Add New Employee
           </Button>
         </div>
       </div>
@@ -135,7 +135,7 @@ export default function UsersPage() {
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex-1 min-w-64">
               <Input
-                placeholder="Search users..."
+                placeholder="Search employees..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -171,7 +171,7 @@ export default function UsersPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>User</TableHead>
+              <TableHead>Employee</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Last Active</TableHead>

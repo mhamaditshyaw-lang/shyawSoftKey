@@ -26,19 +26,19 @@ const navItems: NavItem[] = [
     roles: ["admin", "manager", "secretary"],
   },
   {
-    title: "User Management",
+    title: "Employee Management",
     href: "/users",
     icon: Users,
     roles: ["admin"],
   },
   {
-    title: "Interview Requests",
+    title: "Employee Reviews & Evaluations",
     href: "/interviews",
     icon: Calendar,
     roles: ["admin", "manager", "secretary"],
   },
   {
-    title: "Todo Management",
+    title: "Employee Affairs Tasks",
     href: "/todos",
     icon: CheckSquare,
     roles: ["admin", "manager", "secretary"],

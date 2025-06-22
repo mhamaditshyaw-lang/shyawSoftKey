@@ -64,9 +64,9 @@ export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add New User</DialogTitle>
+          <DialogTitle>Add New Employee</DialogTitle>
           <DialogDescription>
-            Create a new user account with role-based access permissions.
+            Add a new employee to the company system with appropriate role and permissions.
           </DialogDescription>
         </DialogHeader>
         
@@ -148,7 +148,7 @@ export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) 
               Cancel
             </Button>
             <Button type="submit" disabled={createUserMutation.isPending}>
-              {createUserMutation.isPending ? "Creating..." : "Add User"}
+              {createUserMutation.isPending ? "Adding..." : "Add Employee"}
             </Button>
           </div>
         </form>
