@@ -101,6 +101,23 @@ export const interviewRequestsRelations = relations(interviewRequests, ({ one })
   }),
 }));
 
+export const metrics = pgTable("metrics", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  value: decimal("value", { precision: 10, scale: 2 }).notNull(),
+  unit: varchar("unit", { length: 50 }).notNull(),
+  category: varchar("category", { length: 50 }).notNull(),
+  description: text("description"),
+  target: decimal("target", { precision: 10, scale: 2 }),
+  createdById: integer("created_by_id").notNull().references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const metricsRelations = relations(metrics, ({ one }) => ({
+  createdBy: one(users, { fields: [metrics.createdById], references: [users.id] }),
+}));
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -131,6 +148,12 @@ export const insertInterviewRequestSchema = createInsertSchema(interviewRequests
   candidateEmail: data.candidateEmail && data.candidateEmail.trim() !== "" ? data.candidateEmail : undefined,
   description: data.description && data.description.trim() !== "" ? data.description : undefined,
 }));
+
+export const insertMetricSchema = createInsertSchema(metrics).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
 
 export const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
