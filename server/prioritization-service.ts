@@ -236,9 +236,9 @@ export class PrioritizationService {
     
     const topPriority = prioritizedTodos.filter(p => p.score >= 75).slice(0, 3);
     const quickWins = prioritizedTodos.filter(p => 
-      p.factors.completion > 70 && p.score >= 60
+      p.factors && p.factors.completion > 70 && p.score >= 60
     ).slice(0, 3);
-    const overdue = prioritizedTodos.filter(p => p.factors.urgency === 100);
+    const overdue = prioritizedTodos.filter(p => p.factors && p.factors.urgency === 100);
 
     const suggestions = this.generateDailySuggestions(prioritizedTodos);
 
@@ -260,8 +260,8 @@ export class PrioritizationService {
     }
 
     const highPriorityCount = priorities.filter(p => p.score >= 75).length;
-    const overdueCount = priorities.filter(p => p.factors.urgency === 100).length;
-    const lowProgressCount = priorities.filter(p => p.factors.completion < 30).length;
+    const overdueCount = priorities.filter(p => p.factors && p.factors.urgency === 100).length;
+    const lowProgressCount = priorities.filter(p => p.factors && p.factors.completion < 30).length;
 
     if (overdueCount > 0) {
       suggestions.push(`⚠️ You have ${overdueCount} overdue task(s). Consider addressing these first.`);

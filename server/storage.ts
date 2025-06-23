@@ -33,6 +33,7 @@ export interface IStorage {
   createTodoItem(item: InsertTodoItem): Promise<TodoItem>;
   updateTodoItem(id: number, updates: Partial<TodoItem>): Promise<TodoItem | undefined>;
   deleteTodoItem(id: number): Promise<boolean>;
+  deleteAllTodoItems(todoListId: number): Promise<boolean>;
   
   // Interview request methods
   getInterviewRequests(): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;
@@ -202,6 +203,18 @@ export class DatabaseStorage implements IStorage {
       return true;
     } catch (error) {
       console.error("Storage: Error deleting todo item:", error);
+      return false;
+    }
+  }
+
+  async deleteAllTodoItems(todoListId: number): Promise<boolean> {
+    try {
+      await db
+        .delete(todoItems)
+        .where(eq(todoItems.todoListId, todoListId));
+      return true;
+    } catch (error) {
+      console.error("Storage: Error deleting all todo items:", error);
       return false;
     }
   }

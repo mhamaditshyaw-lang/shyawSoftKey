@@ -199,15 +199,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Todo routes
+  // Todo routes (users only see their own)
   app.get("/api/todos", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      let todoLists;
-      if (req.user!.role === 'admin') {
-        todoLists = await storage.getTodoLists();
-      } else {
-        todoLists = await storage.getTodoListsByUser(req.user!.id);
-      }
+      // All users (including managers and admins) only see their own todos
+      const todoLists = await storage.getTodoListsByUser(req.user!.id);
       res.json({ todoLists });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -313,12 +309,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete all tasks in a todo list
+  app.delete("/api/todos/:id/items", authenticateToken, async (req, res) => {
+    try {
+      const todoListId = parseInt(req.params.id);
+      const success = await storage.deleteAllTodoItems(todoListId);
+      
+      if (!success) {
+        return res.status(404).json({ message: "Todo list not found" });
+      }
+
+      res.json({ message: "All tasks deleted successfully" });
+    } catch (error: any) {
+      console.error("Error deleting all todo items:", error);
+      res.status(500).json({ message: error.message || "Failed to delete all tasks" });
+    }
+  });
+
   // Smart prioritization endpoints
   app.get("/api/todos/priorities", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const { PrioritizationService } = await import("./prioritization-service");
-      const userId = req.user!.role === 'admin' ? undefined : req.user!.id;
-      const priorities = await PrioritizationService.getPrioritizedTodos(userId);
+      // All users only see their own priority analysis
+      const priorities = await PrioritizationService.getPrioritizedTodos(req.user!.id);
       res.json({ priorities });
     } catch (error: any) {
       console.error("Error getting prioritized todos:", error);

@@ -314,6 +314,38 @@ export default function TodosPage() {
     });
   };
 
+  // Remove all tasks mutation
+  const removeAllTasksMutation = useMutation({
+    mutationFn: async (todoListId: number) => {
+      const response = await authenticatedRequest("DELETE", `/api/todos/${todoListId}/items`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to remove all tasks');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
+      toast({
+        title: "Success",
+        description: "All tasks removed successfully!",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to remove all tasks",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleRemoveAllTasks = (todoListId: number) => {
+    if (window.confirm("Are you sure you want to remove all tasks? This action cannot be undone.")) {
+      removeAllTasksMutation.mutate(todoListId);
+    }
+  };
+
   const getCompletionPercentage = (items: TodoItem[]) => {
     if (items.length === 0) return 0;
     const completed = items.filter(item => item.isCompleted).length;
