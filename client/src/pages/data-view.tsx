@@ -43,6 +43,40 @@ export default function DataViewPage() {
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
   const { preferences, updateDataViewPreferences } = useUserPreferences();
 
+  // Helper functions - defined early to avoid hoisting issues
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'employee': return <Users className="w-5 h-5 text-blue-600" />;
+      case 'operations': return <BarChart3 className="w-5 h-5 text-green-600" />;
+      case 'staffCount': return <TrendingUp className="w-5 h-5 text-purple-600" />;
+      case 'yesterdayProduction': return <Clock className="w-5 h-5 text-orange-600" />;
+      case 'yesterdayLoading': return <Truck className="w-5 h-5 text-teal-600" />;
+      default: return <Database className="w-5 h-5 text-gray-600" />;
+    }
+  };
+
+  const getTypeName = (type: string) => {
+    switch (type) {
+      case 'employee': return 'Employee Data';
+      case 'operations': return 'Operations Data';
+      case 'staffCount': return 'Staff Count Data';
+      case 'yesterdayProduction': return 'Yesterday\'s Production';
+      case 'yesterdayLoading': return 'Yesterday\'s Loading';
+      default: return type;
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'employee': return 'border-blue-200 bg-blue-50';
+      case 'operations': return 'border-green-200 bg-green-50';
+      case 'staffCount': return 'border-purple-200 bg-purple-50';
+      case 'yesterdayProduction': return 'border-orange-200 bg-orange-50';
+      case 'yesterdayLoading': return 'border-teal-200 bg-teal-50';
+      default: return 'border-gray-200 bg-gray-50';
+    }
+  };
+
   // Load user preferences and set initial filter
   useEffect(() => {
     if (preferences.dataView.defaultFilter !== filter) {
@@ -152,39 +186,6 @@ export default function DataViewPage() {
   const handleFilterChange = (newFilter: string) => {
     setFilter(newFilter);
     updateDataViewPreferences({ defaultFilter: newFilter });
-  };
-
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'employee': return <Users className="w-5 h-5 text-blue-600" />;
-      case 'operations': return <BarChart3 className="w-5 h-5 text-green-600" />;
-      case 'staffCount': return <TrendingUp className="w-5 h-5 text-purple-600" />;
-      case 'yesterdayProduction': return <Clock className="w-5 h-5 text-orange-600" />;
-      case 'yesterdayLoading': return <Truck className="w-5 h-5 text-teal-600" />;
-      default: return <Database className="w-5 h-5 text-gray-600" />;
-    }
-  };
-
-  const getTypeName = (type: string) => {
-    switch (type) {
-      case 'employee': return 'Employee Data';
-      case 'operations': return 'Operations Data';
-      case 'staffCount': return 'Staff Count Data';
-      case 'yesterdayProduction': return 'Yesterday\'s Production';
-      case 'yesterdayLoading': return 'Yesterday\'s Loading';
-      default: return type;
-    }
-  };
-
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'employee': return 'border-blue-200 bg-blue-50';
-      case 'operations': return 'border-green-200 bg-green-50';
-      case 'staffCount': return 'border-purple-200 bg-purple-50';
-      case 'yesterdayProduction': return 'border-orange-200 bg-orange-50';
-      case 'yesterdayLoading': return 'border-teal-200 bg-teal-50';
-      default: return 'border-gray-200 bg-gray-50';
-    }
   };
 
   return (
