@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { DeleteConfirmationModal } from "@/components/modals/delete-confirmation-modal";
 import { 
   Users, 
   BarChart3, 
@@ -35,6 +36,11 @@ export default function DataViewPage() {
   const [allData, setAllData] = useState<DataEntry[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    entry?: DataEntry;
+    isClearing?: boolean;
+  }>({ isOpen: false });
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -108,6 +114,26 @@ export default function DataViewPage() {
     link.href = url;
     link.download = `operations-data-${new Date().toISOString().split('T')[0]}.json`;
     link.click();
+  };
+
+  const openDeleteModal = (entry: DataEntry) => {
+    setDeleteModal({ isOpen: true, entry });
+  };
+
+  const openClearModal = () => {
+    setDeleteModal({ isOpen: true, isClearing: true });
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModal({ isOpen: false });
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteModal.isClearing) {
+      clearAllData();
+    } else if (deleteModal.entry) {
+      removeDataEntry(deleteModal.entry.id);
+    }
   };
 
   const removeDataEntry = (entryId: string) => {
@@ -275,7 +301,7 @@ export default function DataViewPage() {
                 {isAdmin && allData.length > 0 && (
                   <Button 
                     variant="outline" 
-                    onClick={clearAllData}
+                    onClick={openClearModal}
                     className="bg-red-50 hover:bg-red-100 border-red-200 text-red-700 hover:text-red-800 shadow-sm"
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
@@ -338,7 +364,7 @@ export default function DataViewPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => removeDataEntry(entry.id)}
+                          onClick={() => openDeleteModal(entry)}
                           className="bg-red-50 hover:bg-red-100 border-red-200 text-red-700 hover:text-red-800 shadow-sm"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -409,6 +435,16 @@ export default function DataViewPage() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={deleteModal.isOpen}
+        onClose={closeDeleteModal}
+        onConfirm={handleConfirmDelete}
+        entry={deleteModal.entry}
+        isClearing={deleteModal.isClearing}
+        totalEntries={allData.length}
+      />
     </div>
   );
 }
