@@ -10,7 +10,8 @@ import {
   Save,
   Calculator,
   BarChart3,
-  TrendingUp
+  TrendingUp,
+  Users
 } from "lucide-react";
 
 export default function MetricsPage() {
@@ -35,6 +36,15 @@ export default function MetricsPage() {
     device6: "",
   });
 
+  const [employeeCountData, setEmployeeCountData] = useState({
+    count1: "",
+    count2: "",
+    count3: "",
+    count4: "",
+    count5: "",
+    count6: "",
+  });
+
   const handleInputChange = (field: string, value: string) => {
     // Only allow numbers
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
@@ -49,6 +59,16 @@ export default function MetricsPage() {
     // Only allow numbers
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
       setDeviceData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    }
+  };
+
+  const handleEmployeeCountInputChange = (field: string, value: string) => {
+    // Only allow numbers
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      setEmployeeCountData(prev => ({
         ...prev,
         [field]: value
       }));
@@ -108,6 +128,32 @@ export default function MetricsPage() {
     });
   };
 
+  const handleEmployeeCountSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Convert strings to numbers for calculation
+    const countNumbers = Object.values(employeeCountData).map(val => parseFloat(val) || 0);
+    const countSum = countNumbers.reduce((acc, num) => acc + num, 0);
+    const countAverage = countSum / countNumbers.length;
+    const countMax = Math.max(...countNumbers);
+    const countMin = Math.min(...countNumbers);
+
+    toast({
+      title: "Employee Count Data Saved Successfully",
+      description: `Total: ${countSum.toFixed(0)} | Average: ${countAverage.toFixed(1)} | Max: ${countMax} | Min: ${countMin}`,
+    });
+
+    // Reset employee count form
+    setEmployeeCountData({
+      count1: "",
+      count2: "",
+      count3: "",
+      count4: "",
+      count5: "",
+      count6: "",
+    });
+  };
+
   const clearForm = () => {
     setFormData({
       number1: "",
@@ -128,6 +174,17 @@ export default function MetricsPage() {
       device4: "",
       device5: "",
       device6: "",
+    });
+  };
+
+  const clearEmployeeCountForm = () => {
+    setEmployeeCountData({
+      count1: "",
+      count2: "",
+      count3: "",
+      count4: "",
+      count5: "",
+      count6: "",
     });
   };
 
@@ -161,8 +218,24 @@ export default function MetricsPage() {
     return { sum, average, max, min, count: numbers.length };
   };
 
+  const calculateEmployeeCountStats = () => {
+    const numbers = Object.values(employeeCountData)
+      .filter(val => val !== "")
+      .map(val => parseFloat(val));
+    
+    if (numbers.length === 0) return null;
+
+    const sum = numbers.reduce((acc, num) => acc + num, 0);
+    const average = sum / numbers.length;
+    const max = Math.max(...numbers);
+    const min = Math.min(...numbers);
+
+    return { sum, average, max, min, count: numbers.length };
+  };
+
   const stats = calculateStats();
   const deviceStats = calculateDeviceStats();
+  const employeeCountStats = calculateEmployeeCountStats();
 
   return (
     <motion.div
@@ -173,7 +246,7 @@ export default function MetricsPage() {
     >
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Daily Operations Dashboard</h2>
-        <p className="text-gray-600">Track employee attendance and operational activities</p>
+        <p className="text-gray-600">Track employee attendance, operational activities, and department staffing</p>
       </div>
 
       {/* Employee Tracking Section */}
@@ -591,6 +664,215 @@ export default function MetricsPage() {
                       device4: Math.floor(Math.random() * 30 + 15).toString(),   // Night - Albany
                       device5: Math.floor(Math.random() * 20 + 5).toString(),    // Day - Do
                       device6: Math.floor(Math.random() * 15 + 5).toString(),    // Night - Do
+                    });
+                  }}
+                >
+                  <Calculator className="w-4 h-4 mr-2" />
+                  Generate Random
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      {/* Employee Count Section */}
+      <div className="mb-8">
+        <h3 className="text-2xl font-bold text-gray-800 mb-6">Employee Count Tracking</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Employee Count Input Form */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Users className="w-5 h-5 text-purple-600" />
+                  <span>Employee Count Data Entry</span>
+                </CardTitle>
+                <CardDescription>
+                  Enter detailed employee count information by category and department
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleEmployeeCountSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { field: 'count1', label: 'Production Staff', placeholder: 'Enter production staff count' },
+                      { field: 'count2', label: 'Administrative Staff', placeholder: 'Enter administrative staff count' },
+                      { field: 'count3', label: 'Quality Control', placeholder: 'Enter quality control staff count' },
+                      { field: 'count4', label: 'Maintenance Team', placeholder: 'Enter maintenance team count' },
+                      { field: 'count5', label: 'Supervisors', placeholder: 'Enter supervisors count' },
+                      { field: 'count6', label: 'Support Staff', placeholder: 'Enter support staff count' },
+                    ].map((item, index) => {
+                      const fieldName = item.field as keyof typeof employeeCountData;
+                      return (
+                        <motion.div
+                          key={fieldName}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 + 0.7, duration: 0.3 }}
+                          className="space-y-2"
+                        >
+                          <Label htmlFor={fieldName} className="text-sm font-medium">
+                            {item.label}
+                          </Label>
+                          <Input
+                            id={fieldName}
+                            type="text"
+                            placeholder={item.placeholder}
+                            value={employeeCountData[fieldName]}
+                            onChange={(e) => handleEmployeeCountInputChange(fieldName, e.target.value)}
+                            className="transition-all duration-200 focus:ring-2 focus:ring-purple-500"
+                          />
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="flex space-x-4 pt-4">
+                    <Button 
+                      type="submit" 
+                      className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700"
+                      disabled={Object.values(employeeCountData).every(val => val === "")}
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Save Employee Count Data</span>
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant="outline"
+                      onClick={clearEmployeeCountForm}
+                      disabled={Object.values(employeeCountData).every(val => val === "")}
+                    >
+                      Clear All
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Employee Count Statistics Panel */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <TrendingUp className="w-5 h-5 text-purple-600" />
+                  <span>Employee Count Statistics</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {employeeCountStats ? (
+                  <div className="space-y-4">
+                    <motion.div 
+                      className="bg-purple-50 p-4 rounded-lg"
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div className="text-2xl font-bold text-purple-700">
+                        {employeeCountStats.sum.toFixed(0)}
+                      </div>
+                      <div className="text-sm text-purple-600">Total Employees</div>
+                    </motion.div>
+
+                    <motion.div 
+                      className="bg-indigo-50 p-4 rounded-lg"
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.1 }}
+                    >
+                      <div className="text-2xl font-bold text-indigo-700">
+                        {employeeCountStats.average.toFixed(1)}
+                      </div>
+                      <div className="text-sm text-indigo-600">Average per Category</div>
+                    </motion.div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <motion.div 
+                        className="bg-teal-50 p-3 rounded-lg"
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.3, delay: 0.2 }}
+                      >
+                        <div className="text-lg font-bold text-teal-700">
+                          {employeeCountStats.max}
+                        </div>
+                        <div className="text-xs text-teal-600">Largest Category</div>
+                      </motion.div>
+
+                      <motion.div 
+                        className="bg-orange-50 p-3 rounded-lg"
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.3, delay: 0.3 }}
+                      >
+                        <div className="text-lg font-bold text-orange-700">
+                          {employeeCountStats.min}
+                        </div>
+                        <div className="text-xs text-orange-600">Smallest Category</div>
+                      </motion.div>
+                    </div>
+
+                    <motion.div 
+                      className="bg-gray-50 p-4 rounded-lg"
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.4 }}
+                    >
+                      <div className="text-lg font-bold text-gray-700">
+                        {employeeCountStats.count} / 6
+                      </div>
+                      <div className="text-sm text-gray-600">Categories Completed</div>
+                    </motion.div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Users className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-500">Enter employee count data to see statistics</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Employee Count Quick Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Employee Count Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => {
+                    // Fill with sample employee count data
+                    setEmployeeCountData({
+                      count1: "45", // Production Staff
+                      count2: "12", // Administrative Staff
+                      count3: "8",  // Quality Control
+                      count4: "6",  // Maintenance Team
+                      count5: "5",  // Supervisors
+                      count6: "10", // Support Staff
+                    });
+                  }}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Fill Sample Data
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => {
+                    // Fill with random employee count data
+                    setEmployeeCountData({
+                      count1: Math.floor(Math.random() * 40 + 30).toString(), // Production Staff
+                      count2: Math.floor(Math.random() * 10 + 8).toString(),  // Administrative Staff
+                      count3: Math.floor(Math.random() * 8 + 4).toString(),   // Quality Control
+                      count4: Math.floor(Math.random() * 6 + 3).toString(),   // Maintenance Team
+                      count5: Math.floor(Math.random() * 5 + 3).toString(),   // Supervisors
+                      count6: Math.floor(Math.random() * 12 + 6).toString(),  // Support Staff
                     });
                   }}
                 >
