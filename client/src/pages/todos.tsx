@@ -245,7 +245,7 @@ export default function TodosPage() {
     
     addTodoItemMutation.mutate({
       todoListId,
-      text: newItemText,
+      text: newItemText.trim(),
       priority: "medium",
     });
   };

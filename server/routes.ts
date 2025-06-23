@@ -236,6 +236,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/todos/items", authenticateToken, async (req, res) => {
+    try {
+      const { todoListId, text, priority } = req.body;
+      const itemData = insertTodoItemSchema.parse({
+        todoListId,
+        title: text,
+        description: "",
+        priority: priority || "medium",
+      });
+      
+      const todoItem = await storage.createTodoItem(itemData);
+      res.status(201).json({ todoItem });
+    } catch (error: any) {
+      console.error("Error creating todo item:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
   app.post("/api/todos/:id/items", authenticateToken, async (req, res) => {
     try {
       const todoListId = parseInt(req.params.id);
