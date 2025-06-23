@@ -12,7 +12,8 @@ import {
   BarChart3,
   TrendingUp,
   Users,
-  Clock
+  Clock,
+  Truck
 } from "lucide-react";
 
 export default function MetricsPage() {
@@ -53,6 +54,12 @@ export default function MetricsPage() {
     prod4: "",
     prod5: "",
     prod6: "",
+  });
+
+  const [yesterdayLoadingData, setYesterdayLoadingData] = useState({
+    load1: "",
+    load2: "",
+    load3: "",
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -329,6 +336,14 @@ export default function MetricsPage() {
     });
   };
 
+  const clearYesterdayLoadingForm = () => {
+    setYesterdayLoadingData({
+      load1: "",
+      load2: "",
+      load3: "",
+    });
+  };
+
   const calculateStats = () => {
     const numbers = Object.values(formData)
       .filter(val => val !== "")
@@ -393,6 +408,7 @@ export default function MetricsPage() {
   const deviceStats = calculateDeviceStats();
   const employeeCountStats = calculateEmployeeCountStats();
   const yesterdayProductionStats = calculateYesterdayProductionStats();
+  const yesterdayLoadingStats = calculateYesterdayLoadingStats();
 
   return (
     <motion.div

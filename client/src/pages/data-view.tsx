@@ -16,13 +16,14 @@ import {
   RefreshCw,
   Clock,
   Search,
-  X
+  X,
+  Truck
 } from "lucide-react";
 
 interface DataEntry {
   id: string;
   timestamp: string;
-  type: 'employee' | 'operations' | 'staffCount' | 'yesterdayProduction';
+  type: 'employee' | 'operations' | 'staffCount' | 'yesterdayProduction' | 'yesterdayLoading';
   data: Record<string, string>;
   stats: {
     total: number;
@@ -253,6 +254,15 @@ export default function DataViewPage() {
             >
               <Clock className="w-4 h-4" />
               Yesterday's Production
+            </Button>
+            <Button
+              variant={filter === 'yesterdayLoading' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilter('yesterdayLoading')}
+              className="flex items-center gap-2"
+            >
+              <Truck className="w-4 h-4" />
+              Yesterday's Loading
             </Button>
           </div>
 
