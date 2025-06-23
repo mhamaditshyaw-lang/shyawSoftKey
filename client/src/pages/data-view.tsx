@@ -38,12 +38,15 @@ interface DataEntry {
 
 export default function DataViewPage() {
   const [allData, setAllData] = useState<DataEntry[]>([]);
-  const [filter, setFilter] = useState<'all' | 'employee' | 'operations' | 'staffCount' | 'yesterdayProduction'>('all');
+  const [filter, setFilter] = useState<'all' | 'employee' | 'operations' | 'staffCount' | 'yesterdayProduction' | 'yesterdayLoading'>('all');
+  const [searchTerm, setSearchTerm] = useState('');
   const [dateFilter, setDateFilter] = useState({
     startDate: '',
     endDate: '',
     searchDate: ''
   });
+  const { isLoading: isExportLoading, startLoading: startExportLoading, stopLoading: stopExportLoading } = useLoadingVisualization();
+  const { isLoading: isRefreshLoading, startLoading: startRefreshLoading, stopLoading: stopRefreshLoading } = useLoadingVisualization();
 
   // Load data from localStorage on component mount
   useEffect(() => {

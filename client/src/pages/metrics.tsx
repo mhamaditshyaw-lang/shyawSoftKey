@@ -328,6 +328,63 @@ export default function MetricsPage() {
     });
   };
 
+  const handleYesterdayLoadingInputChange = (field: keyof typeof yesterdayLoadingData, value: string) => {
+    // Only allow numbers
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      setYesterdayLoadingData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    }
+  };
+
+  const handleYesterdayLoadingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    startLoadingVehiclesLoading();
+    
+    // Simulate processing time for better UX
+    await new Promise(resolve => setTimeout(resolve, 2200));
+    
+    // Convert strings to numbers for calculation
+    const loadNumbers = Object.values(yesterdayLoadingData).map(val => parseFloat(val) || 0);
+    const loadSum = loadNumbers.reduce((acc, num) => acc + num, 0);
+    const loadAverage = loadSum / loadNumbers.length;
+    const loadMax = Math.max(...loadNumbers);
+    const loadMin = Math.min(...loadNumbers);
+
+    // Save to localStorage for data view
+    const newEntry = {
+      id: Date.now().toString(),
+      timestamp: new Date().toISOString(),
+      type: 'yesterdayLoading' as const,
+      data: {
+        'Ice cream / Loading vehicles': yesterdayLoadingData.load1,
+        'Albany / Loading vehicles': yesterdayLoadingData.load2,
+        'Do / Loading vehicles': yesterdayLoadingData.load3,
+      },
+      stats: { total: loadSum, average: loadAverage, max: loadMax, min: loadMin }
+    };
+    
+    const existingData = JSON.parse(localStorage.getItem('operationsData') || '[]');
+    existingData.push(newEntry);
+    localStorage.setItem('operationsData', JSON.stringify(existingData));
+
+    stopLoadingVehiclesLoading();
+
+    toast({
+      title: "Yesterday's Loading Vehicles Saved Successfully",
+      description: `Total: ${loadSum} vehicles | Average: ${loadAverage.toFixed(1)} | Max: ${loadMax} | Min: ${loadMin}`,
+    });
+
+    // Reset yesterday loading form
+    setYesterdayLoadingData({
+      load1: "",
+      load2: "",
+      load3: "",
+    });
+  };
+
   const clearForm = () => {
     setFormData({
       number1: "",
@@ -1328,6 +1385,287 @@ export default function MetricsPage() {
           </div>
         </div>
       </div>
+
+      {/* Yesterday's Loading Section */}
+      <div className="mb-8">
+        <h3 className="text-2xl font-bold text-gray-800 mb-6">Yesterday's Loading Vehicles</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Yesterday's Loading Input Form */}
+          <div className="lg:col-span-2">
+            <Card className="border-teal-200 shadow-lg">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg font-semibold flex items-center text-teal-700">
+                  <Truck className="w-5 h-5 mr-2" />
+                  Yesterday's Loading Vehicles
+                </CardTitle>
+                <p className="text-sm text-gray-600">Track loading vehicle counts from yesterday</p>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleYesterdayLoadingSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { field: 'load1', label: 'Ice cream / Loading vehicles', placeholder: 'Enter number of ice cream loading vehicles' },
+                      { field: 'load2', label: 'Albany / Loading vehicles', placeholder: 'Enter number of Albany loading vehicles' },
+                      { field: 'load3', label: 'Do / Loading vehicles', placeholder: 'Enter number of Do loading vehicles' },
+                    ].map((item, index) => {
+                      const fieldName = item.field as keyof typeof yesterdayLoadingData;
+                      return (
+                        <motion.div
+                          key={fieldName}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 + 1.5, duration: 0.3 }}
+                          className="space-y-2"
+                        >
+                          <Label htmlFor={fieldName} className="text-sm font-medium">
+                            {item.label}
+                          </Label>
+                          <Input
+                            id={fieldName}
+                            type="text"
+                            placeholder={item.placeholder}
+                            value={yesterdayLoadingData[fieldName]}
+                            onChange={(e) => handleYesterdayLoadingInputChange(fieldName, e.target.value)}
+                            className="transition-all duration-200 focus:ring-2 focus:ring-teal-500"
+                          />
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="flex space-x-4 pt-4">
+                    <Button 
+                      type="submit" 
+                      className="flex items-center space-x-2 bg-teal-600 hover:bg-teal-700"
+                      disabled={Object.values(yesterdayLoadingData).every(val => val === "")}
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Save Yesterday's Loading Vehicles</span>
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant="outline"
+                      onClick={clearYesterdayLoadingForm}
+                      disabled={Object.values(yesterdayLoadingData).every(val => val === "")}
+                    >
+                      Clear All
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Yesterday's Loading Statistics Panel */}
+          <div className="lg:col-span-1">
+            <div className="space-y-6">
+              <Card className="h-full border-teal-200 shadow-lg">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg font-semibold text-teal-700">Loading Vehicle Stats</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {yesterdayLoadingStats ? (
+                    <div className="space-y-4">
+                      <motion.div 
+                        className="bg-teal-50 p-4 rounded-lg"
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <div className="text-2xl font-bold text-teal-700">
+                          {yesterdayLoadingStats.sum}
+                        </div>
+                        <div className="text-sm text-teal-600">Total Vehicles</div>
+                      </motion.div>
+
+                      <motion.div 
+                        className="bg-cyan-50 p-4 rounded-lg"
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.3, delay: 0.1 }}
+                      >
+                        <div className="text-2xl font-bold text-cyan-700">
+                          {yesterdayLoadingStats.average.toFixed(1)}
+                        </div>
+                        <div className="text-sm text-cyan-600">Average per Category</div>
+                      </motion.div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <motion.div 
+                          className="bg-emerald-50 p-3 rounded-lg"
+                          initial={{ scale: 0.9, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ duration: 0.3, delay: 0.2 }}
+                        >
+                          <div className="text-lg font-bold text-emerald-700">
+                            {yesterdayLoadingStats.max}
+                          </div>
+                          <div className="text-xs text-emerald-600">Most Vehicles</div>
+                        </motion.div>
+
+                        <motion.div 
+                          className="bg-red-50 p-3 rounded-lg"
+                          initial={{ scale: 0.9, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ duration: 0.3, delay: 0.3 }}
+                        >
+                          <div className="text-lg font-bold text-red-700">
+                            {yesterdayLoadingStats.min}
+                          </div>
+                          <div className="text-xs text-red-600">Fewest Vehicles</div>
+                        </motion.div>
+                      </div>
+
+                      <motion.div 
+                        className="bg-gray-50 p-4 rounded-lg"
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.3, delay: 0.4 }}
+                      >
+                        <div className="text-lg font-bold text-gray-700">
+                          {yesterdayLoadingStats.count} / 3
+                        </div>
+                        <div className="text-sm text-gray-600">Vehicle Categories Completed</div>
+                      </motion.div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Truck className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                      <p className="text-gray-500">Enter yesterday's loading vehicle data to see statistics</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Yesterday's Loading Quick Actions */}
+              <Card className="border-teal-200 shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-lg">Loading Quick Actions</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full"
+                    onClick={() => {
+                      // Fill with sample yesterday loading data
+                      setYesterdayLoadingData({
+                        load1: "8",  // Ice cream / Loading vehicles
+                        load2: "5",  // Albany / Loading vehicles
+                        load3: "3",  // Do / Loading vehicles
+                      });
+                    }}
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Fill Sample Data
+                  </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full"
+                    onClick={() => {
+                      // Fill with random yesterday loading data
+                      setYesterdayLoadingData({
+                        load1: Math.floor(Math.random() * 10 + 5).toString(),  // Ice cream / Loading vehicles
+                        load2: Math.floor(Math.random() * 8 + 3).toString(),   // Albany / Loading vehicles
+                        load3: Math.floor(Math.random() * 6 + 2).toString(),   // Do / Loading vehicles
+                      });
+                    }}
+                  >
+                    <Calculator className="w-4 h-4 mr-2" />
+                    Generate Random Data
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Data View Section */}
+      <div className="mb-8">
+        <h3 className="text-2xl font-bold text-gray-800 mb-6">Data View and Export</h3>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <BarChart3 className="w-5 h-5 text-purple-600" />
+              <span>View Saved Data</span>
+            </CardTitle>
+            <CardDescription>
+              Access all your saved operational data and export for further analysis
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              onClick={() => window.location.href = '/data-view'} 
+              className="w-full bg-purple-600 hover:bg-purple-700"
+            >
+              <BarChart3 className="w-4 h-4 mr-2" />
+              Open Data View Page
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Loading Visualizations */}
+      <LoadingVisualization 
+        isLoading={isEmployeeLoading} 
+        title="Processing Employee Data"
+        steps={[
+          { id: "validate", label: "Validating employee data", icon: CheckCircle, duration: 600, color: "text-blue-500" },
+          { id: "calculate", label: "Calculating statistics", icon: Calculator, duration: 800, color: "text-green-500" },
+          { id: "process", label: "Processing shift information", icon: Users, duration: 700, color: "text-purple-500" },
+          { id: "save", label: "Saving to database", icon: Database, duration: 900, color: "text-orange-500" },
+          { id: "complete", label: "Finalizing employee record", icon: CheckCircle, duration: 500, color: "text-teal-500" },
+        ]}
+      />
+      
+      <LoadingVisualization 
+        isLoading={isOperationsLoading} 
+        title="Processing Operations Data"
+        steps={[
+          { id: "init", label: "Initializing operations scan", icon: Zap, duration: 500, color: "text-blue-500" },
+          { id: "analyze", label: "Analyzing operational metrics", icon: BarChart3, duration: 900, color: "text-green-500" },
+          { id: "validate", label: "Validating shift data", icon: Clock, duration: 600, color: "text-purple-500" },
+          { id: "calculate", label: "Computing totals", icon: Calculator, duration: 800, color: "text-orange-500" },
+          { id: "store", label: "Storing operations data", icon: Database, duration: 600, color: "text-teal-500" },
+        ]}
+      />
+      
+      <LoadingVisualization 
+        isLoading={isStaffCountLoading} 
+        title="Processing Staff Count Data"
+        steps={[
+          { id: "count", label: "Counting staff members", icon: Users, duration: 700, color: "text-blue-500" },
+          { id: "verify", label: "Verifying headcount data", icon: CheckCircle, duration: 600, color: "text-green-500" },
+          { id: "analyze", label: "Analyzing staff distribution", icon: BarChart3, duration: 800, color: "text-purple-500" },
+          { id: "save", label: "Saving staff records", icon: Database, duration: 700, color: "text-orange-500" },
+        ]}
+      />
+      
+      <LoadingVisualization 
+        isLoading={isProductionLoading} 
+        title="Processing Production Data"
+        steps={[
+          { id: "scan", label: "Scanning production metrics", icon: Zap, duration: 800, color: "text-blue-500" },
+          { id: "calculate", label: "Calculating production totals", icon: Calculator, duration: 900, color: "text-green-500" },
+          { id: "validate", label: "Validating shift outputs", icon: CheckCircle, duration: 700, color: "text-purple-500" },
+          { id: "analyze", label: "Analyzing performance trends", icon: TrendingUp, duration: 800, color: "text-orange-500" },
+          { id: "store", label: "Storing production data", icon: Database, duration: 600, color: "text-teal-500" },
+        ]}
+      />
+      
+      <LoadingVisualization 
+        isLoading={isLoadingVehiclesLoading} 
+        title="Processing Loading Vehicle Data"
+        steps={[
+          { id: "scan", label: "Scanning vehicle fleet", icon: Truck, duration: 600, color: "text-blue-500" },
+          { id: "count", label: "Counting loading vehicles", icon: Calculator, duration: 700, color: "text-green-500" },
+          { id: "verify", label: "Verifying vehicle data", icon: CheckCircle, duration: 500, color: "text-purple-500" },
+          { id: "save", label: "Saving vehicle records", icon: Database, duration: 600, color: "text-orange-500" },
+        ]}
+      />
     </motion.div>
   );
 }
