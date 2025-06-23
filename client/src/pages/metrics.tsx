@@ -52,6 +52,7 @@ export default function MetricsPage() {
     prod3: "",
     prod4: "",
     prod5: "",
+    prod6: "",
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -260,9 +261,10 @@ export default function MetricsPage() {
         'Day - Albany / Tons': yesterdayProductionData.prod3,
         'Night - Albany / Tons': yesterdayProductionData.prod4,
         'Day - Do / Tons': yesterdayProductionData.prod5,
+        'Night - Do / Tons': yesterdayProductionData.prod6,
         'Total Ice cream / Cartoon': (parseFloat(yesterdayProductionData.prod1 || '0') + parseFloat(yesterdayProductionData.prod2 || '0')).toString(),
         'Total Albany / Tons': (parseFloat(yesterdayProductionData.prod3 || '0') + parseFloat(yesterdayProductionData.prod4 || '0')).toString(),
-        'Total Do / Tons': yesterdayProductionData.prod5,
+        'Total Do / Tons': (parseFloat(yesterdayProductionData.prod5 || '0') + parseFloat(yesterdayProductionData.prod6 || '0')).toString(),
       },
       stats: { total: prodSum, average: prodAverage, max: prodMax, min: prodMin }
     };
@@ -278,6 +280,7 @@ export default function MetricsPage() {
       prod3: "",
       prod4: "",
       prod5: "",
+      prod6: "",
     });
   };
 
@@ -322,6 +325,7 @@ export default function MetricsPage() {
       prod3: "",
       prod4: "",
       prod5: "",
+      prod6: "",
     });
   };
 
@@ -1063,6 +1067,7 @@ export default function MetricsPage() {
                       { field: 'prod3', label: 'Day - Albany / Tons', placeholder: 'Enter day Albany production in tons' },
                       { field: 'prod4', label: 'Night - Albany / Tons', placeholder: 'Enter night Albany production in tons' },
                       { field: 'prod5', label: 'Day - Do / Tons', placeholder: 'Enter day Do activities in tons' },
+                      { field: 'prod6', label: 'Night - Do / Tons', placeholder: 'Enter night Do activities in tons' },
                     ].map((item, index) => {
                       const fieldName = item.field as keyof typeof yesterdayProductionData;
                       return (
@@ -1087,6 +1092,31 @@ export default function MetricsPage() {
                         </motion.div>
                       );
                     })}
+                  </div>
+
+                  {/* Calculated Totals Display */}
+                  <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Calculated Totals</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="p-3 bg-white rounded border">
+                        <div className="text-lg font-bold text-orange-700">
+                          {(parseFloat(yesterdayProductionData.prod1 || '0') + parseFloat(yesterdayProductionData.prod2 || '0')).toFixed(0)}
+                        </div>
+                        <div className="text-sm text-gray-600">Total Ice cream / Cartoon</div>
+                      </div>
+                      <div className="p-3 bg-white rounded border">
+                        <div className="text-lg font-bold text-orange-700">
+                          {(parseFloat(yesterdayProductionData.prod3 || '0') + parseFloat(yesterdayProductionData.prod4 || '0')).toFixed(1)}
+                        </div>
+                        <div className="text-sm text-gray-600">Total Albany / Tons</div>
+                      </div>
+                      <div className="p-3 bg-white rounded border">
+                        <div className="text-lg font-bold text-orange-700">
+                          {(parseFloat(yesterdayProductionData.prod5 || '0') + parseFloat(yesterdayProductionData.prod6 || '0')).toFixed(1)}
+                        </div>
+                        <div className="text-sm text-gray-600">Total Do / Tons</div>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex space-x-4 pt-4">
@@ -1181,7 +1211,7 @@ export default function MetricsPage() {
                       transition={{ duration: 0.3, delay: 0.4 }}
                     >
                       <div className="text-lg font-bold text-gray-700">
-                        {yesterdayProductionStats.count} / 5
+                        {yesterdayProductionStats.count} / 6
                       </div>
                       <div className="text-sm text-gray-600">Categories Completed</div>
                     </motion.div>
@@ -1213,6 +1243,7 @@ export default function MetricsPage() {
                       prod3: "45",   // Day - Albany / Tons
                       prod4: "32",   // Night - Albany / Tons
                       prod5: "18",   // Day - Do / Tons
+                      prod6: "14",   // Night - Do / Tons
                     });
                   }}
                 >
@@ -1232,6 +1263,7 @@ export default function MetricsPage() {
                       prod3: Math.floor(Math.random() * 20 + 30).toString(),    // Day - Albany / Tons
                       prod4: Math.floor(Math.random() * 15 + 25).toString(),    // Night - Albany / Tons
                       prod5: Math.floor(Math.random() * 10 + 10).toString(),    // Day - Do / Tons
+                      prod6: Math.floor(Math.random() * 8 + 8).toString(),      // Night - Do / Tons
                     });
                   }}
                 >
