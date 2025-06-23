@@ -47,16 +47,7 @@ export default function DataViewPage() {
   });
 
 
-  // Load data from localStorage on component mount
-  useEffect(() => {
-    const loadStoredData = () => {
-      const storedData = localStorage.getItem('operationsData');
-      if (storedData) {
-        setAllData(JSON.parse(storedData));
-      }
-    };
-    loadStoredData();
-  }, []);
+
 
   // Sample data for demonstration (in real app, this would come from backend)
   useEffect(() => {
@@ -480,7 +471,12 @@ export default function DataViewPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Yesterday's Production</p>
-                <p className="text-2xl font-bold">{allData.filter(d => d.type === 'yesterdayProduction').length}</p>
+                <p className="text-2xl font-bold text-orange-700">
+                  {allData.filter(d => d.type === 'yesterdayProduction').length}
+                </p>
+                <p className="text-xs text-gray-500">
+                  Total data: {allData.length} | Types: {[...new Set(allData.map(d => d.type))].join(', ')}
+                </p>
               </div>
               <Clock className="w-8 h-8 text-orange-600" />
             </div>
@@ -492,7 +488,12 @@ export default function DataViewPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Yesterday's Loading</p>
-                <p className="text-2xl font-bold">{allData.filter(d => d.type === 'yesterdayLoading').length}</p>
+                <p className="text-2xl font-bold text-teal-700">
+                  {allData.filter(d => d.type === 'yesterdayLoading').length}
+                </p>
+                <p className="text-xs text-gray-500">
+                  Debug: {JSON.stringify(allData.map(d => d.type))}
+                </p>
               </div>
               <Truck className="w-8 h-8 text-teal-600" />
             </div>
