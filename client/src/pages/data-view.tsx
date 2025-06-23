@@ -20,6 +20,8 @@ import {
   Database,
   Search,
   Trash2,
+  Calendar,
+  Filter,
 } from "lucide-react";
 
 interface DataEntry {
@@ -39,6 +41,9 @@ export default function DataViewPage() {
   const [allData, setAllData] = useState<DataEntry[]>([]);
   const [filter, setFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [dateFilter, setDateFilter] = useState<string>("today");
+  const [customDate, setCustomDate] = useState<string>("");
+  const [autoRefresh, setAutoRefresh] = useState<boolean>(true);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     entry?: DataEntry;
