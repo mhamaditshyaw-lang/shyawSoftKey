@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { LoadingVisualization, useLoadingVisualization } from "@/components/ui/loading-visualization";
+import { TestLoading } from "@/components/test-loading";
 import { 
   Plus, 
   Save,
@@ -514,6 +515,12 @@ export default function MetricsPage() {
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Daily Operations Dashboard</h2>
         <p className="text-gray-600">Track employee attendance, operational activities, shift staffing levels, and production data</p>
+        
+        {/* Test Loading Component */}
+        <div className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+          <h3 className="text-lg font-semibold mb-2">Test Loading Visualization</h3>
+          <TestLoading />
+        </div>
       </div>
 
       {/* Employee Tracking Section */}
@@ -573,10 +580,10 @@ export default function MetricsPage() {
                   <Button 
                     type="submit" 
                     className="flex items-center space-x-2"
-                    disabled={Object.values(formData).every(val => val === "")}
+                    disabled={Object.values(formData).every(val => val === "") || isEmployeeLoading}
                   >
                     <Save className="w-4 h-4" />
-                    <span>Save Employee Data</span>
+                    <span>{isEmployeeLoading ? 'Processing...' : 'Save Employee Data'}</span>
                   </Button>
                   <Button 
                     type="button" 

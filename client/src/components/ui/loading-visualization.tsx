@@ -216,8 +216,12 @@ export function LoadingVisualization({
 export function useLoadingVisualization() {
   const [isLoading, setIsLoading] = useState(false);
 
-  const startLoading = () => setIsLoading(true);
-  const stopLoading = () => setIsLoading(false);
+  const startLoading = () => {
+    setIsLoading(true);
+  };
+  const stopLoading = () => {
+    setIsLoading(false);
+  };
 
   return {
     isLoading,
