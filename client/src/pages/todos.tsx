@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { authenticatedRequest } from "@/lib/auth";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -72,11 +73,7 @@ export default function TodosPage() {
   const { data: todosData, isLoading } = useQuery({
     queryKey: ["/api/todos"],
     queryFn: async () => {
-      const response = await fetch("/api/todos", {
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await authenticatedRequest("GET", "/api/todos");
       return response.json();
     },
   });
@@ -169,7 +166,8 @@ export default function TodosPage() {
   // Create todo list mutation
   const createTodoListMutation = useMutation({
     mutationFn: async (data: { title: string; description: string; priority: string }) => {
-      return apiRequest("POST", "/api/todos", data);
+      const response = await authenticatedRequest("POST", "/api/todos", data);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
@@ -194,7 +192,8 @@ export default function TodosPage() {
   // Add todo item mutation
   const addTodoItemMutation = useMutation({
     mutationFn: async (data: { todoListId: number; text: string; priority: string }) => {
-      return apiRequest("POST", "/api/todos/items", data);
+      const response = await authenticatedRequest("POST", "/api/todos/items", data);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
@@ -216,7 +215,8 @@ export default function TodosPage() {
   // Toggle todo item completion mutation
   const toggleTodoItemMutation = useMutation({
     mutationFn: async (data: { itemId: number; isCompleted: boolean }) => {
-      return apiRequest("PATCH", `/api/todos/items/${data.itemId}`, { isCompleted: data.isCompleted });
+      const response = await authenticatedRequest("PATCH", `/api/todos/items/${data.itemId}`, { isCompleted: data.isCompleted });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
