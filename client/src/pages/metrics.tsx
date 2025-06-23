@@ -322,6 +322,11 @@ export default function MetricsPage() {
       title: "Yesterday's Production Data Saved Successfully",
       description: `Total: ${prodSum.toFixed(0)} | Average: ${prodAverage.toFixed(1)} | Max: ${prodMax} | Min: ${prodMin}`,
     });
+    
+    // Force page reload to update data view
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('localStorageUpdate'));
+    }, 100);
 
     // Reset yesterday production form
     setYesterdayProductionData({
@@ -387,6 +392,11 @@ export default function MetricsPage() {
       title: "Yesterday's Loading Vehicles Saved Successfully",
       description: `Total: ${loadSum} vehicles | Average: ${loadAverage.toFixed(1)} | Max: ${loadMax} | Min: ${loadMin}`,
     });
+    
+    // Force page reload to update data view
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('localStorageUpdate'));
+    }, 100);
 
     // Reset yesterday loading form
     setYesterdayLoadingData({
@@ -528,7 +538,7 @@ export default function MetricsPage() {
   const deviceStats = calculateDeviceStats();
   const employeeCountStats = calculateEmployeeCountStats();
   const yesterdayProductionStats = calculateYesterdayProductionStats();
-  const yesterdayLoadingStats = calculateYesterdayLoadingStats();
+
 
   return (
     <motion.div
