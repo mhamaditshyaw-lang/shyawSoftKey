@@ -130,3 +130,4 @@ Preferred communication style: Simple, everyday language.
 - Updated Data View to clean, minimal design with better spacing and modern card layout
 - Enhanced Data View with beautiful gradient backgrounds, improved typography, and modern glass-morphism effects
 - Removed all test fields and debug sections from dashboard for clean production interface
+- Added admin-only data removal functionality in Data View with individual entry deletion and clear all data options

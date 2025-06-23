@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Users, 
   BarChart3, 
@@ -12,7 +14,8 @@ import {
   RefreshCw,
   Download,
   Database,
-  Search
+  Search,
+  Trash2
 } from "lucide-react";
 
 interface DataEntry {
@@ -32,6 +35,8 @@ export default function DataViewPage() {
   const [allData, setAllData] = useState<DataEntry[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -104,6 +109,50 @@ export default function DataViewPage() {
     link.download = `operations-data-${new Date().toISOString().split('T')[0]}.json`;
     link.click();
   };
+
+  const removeDataEntry = (entryId: string) => {
+    try {
+      const storedData = localStorage.getItem('operationsData');
+      if (storedData) {
+        const parsedData = JSON.parse(storedData);
+        const updatedData = parsedData.filter((entry: DataEntry) => entry.id !== entryId);
+        localStorage.setItem('operationsData', JSON.stringify(updatedData));
+        setAllData(updatedData);
+        
+        toast({
+          title: "Data Removed",
+          description: "Selected data entry has been successfully removed.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to remove data entry. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const clearAllData = () => {
+    try {
+      localStorage.removeItem('operationsData');
+      setAllData([]);
+      
+      toast({
+        title: "All Data Cleared",
+        description: "All operational data has been removed.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to clear data. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Check if user is admin
+  const isAdmin = user?.role === 'admin';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
@@ -223,6 +272,16 @@ export default function DataViewPage() {
                   <Download className="w-4 h-4 mr-2" />
                   Export Data
                 </Button>
+                {isAdmin && allData.length > 0 && (
+                  <Button 
+                    variant="outline" 
+                    onClick={clearAllData}
+                    className="bg-red-50 hover:bg-red-100 border-red-200 text-red-700 hover:text-red-800 shadow-sm"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Clear All Data
+                  </Button>
+                )}
               </div>
             </div>
           </CardContent>
@@ -268,12 +327,24 @@ export default function DataViewPage() {
                         </p>
                       </div>
                     </div>
-                    <Badge 
-                      variant="secondary" 
-                      className="bg-white/80 text-gray-700 border border-gray-200 shadow-sm px-3 py-1"
-                    >
-                      {new Date(entry.timestamp).toLocaleString()}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge 
+                        variant="secondary" 
+                        className="bg-white/80 text-gray-700 border border-gray-200 shadow-sm px-3 py-1"
+                      >
+                        {new Date(entry.timestamp).toLocaleString()}
+                      </Badge>
+                      {isAdmin && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeDataEntry(entry.id)}
+                          className="bg-red-50 hover:bg-red-100 border-red-200 text-red-700 hover:text-red-800 shadow-sm"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </CardHeader>
                 
