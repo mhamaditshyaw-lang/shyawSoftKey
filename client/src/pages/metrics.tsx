@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import { LoadingVisualization, useLoadingVisualization } from "@/components/ui/loading-visualization";
 import { 
   Plus, 
   Save,
@@ -13,11 +14,19 @@ import {
   TrendingUp,
   Users,
   Clock,
-  Truck
+  Truck,
+  Database,
+  Zap,
+  CheckCircle
 } from "lucide-react";
 
 export default function MetricsPage() {
   const { toast } = useToast();
+  const { isLoading: isEmployeeLoading, startLoading: startEmployeeLoading, stopLoading: stopEmployeeLoading } = useLoadingVisualization();
+  const { isLoading: isOperationsLoading, startLoading: startOperationsLoading, stopLoading: stopOperationsLoading } = useLoadingVisualization();
+  const { isLoading: isStaffCountLoading, startLoading: startStaffCountLoading, stopLoading: stopStaffCountLoading } = useLoadingVisualization();
+  const { isLoading: isProductionLoading, startLoading: startProductionLoading, stopLoading: stopProductionLoading } = useLoadingVisualization();
+  const { isLoading: isLoadingVehiclesLoading, startLoading: startLoadingVehiclesLoading, stopLoading: stopLoadingVehiclesLoading } = useLoadingVisualization();
   
   const [formData, setFormData] = useState({
     number1: "",
@@ -102,8 +111,13 @@ export default function MetricsPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    startEmployeeLoading();
+    
+    // Simulate processing time for better UX
+    await new Promise(resolve => setTimeout(resolve, 3000));
     
     // Convert strings to numbers for calculation
     const numbers = Object.values(formData).map(val => parseFloat(val) || 0);
@@ -111,11 +125,6 @@ export default function MetricsPage() {
     const average = sum / numbers.length;
     const max = Math.max(...numbers);
     const min = Math.min(...numbers);
-
-    toast({
-      title: "Employee Data Saved Successfully",
-      description: `Total: ${sum.toFixed(0)} | Average: ${average.toFixed(1)} | Max: ${max} | Min: ${min}`,
-    });
 
     // Save to localStorage for data view
     const newEntry = {
@@ -138,6 +147,13 @@ export default function MetricsPage() {
     existingData.push(newEntry);
     localStorage.setItem('operationsData', JSON.stringify(existingData));
 
+    stopEmployeeLoading();
+
+    toast({
+      title: "Employee Data Saved Successfully",
+      description: `Total: ${sum.toFixed(0)} | Average: ${average.toFixed(1)} | Max: ${max} | Min: ${min}`,
+    });
+
     // Reset form
     setFormData({
       number1: "",
@@ -150,8 +166,13 @@ export default function MetricsPage() {
     });
   };
 
-  const handleDeviceSubmit = (e: React.FormEvent) => {
+  const handleDeviceSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    startOperationsLoading();
+    
+    // Simulate processing time for better UX
+    await new Promise(resolve => setTimeout(resolve, 2800));
     
     // Convert strings to numbers for calculation
     const deviceNumbers = Object.values(deviceData).map(val => parseFloat(val) || 0);
@@ -159,11 +180,6 @@ export default function MetricsPage() {
     const deviceAverage = deviceSum / deviceNumbers.length;
     const deviceMax = Math.max(...deviceNumbers);
     const deviceMin = Math.min(...deviceNumbers);
-
-    toast({
-      title: "Operations Data Saved Successfully",
-      description: `Total: ${deviceSum.toFixed(0)} | Average: ${deviceAverage.toFixed(1)} | Max: ${deviceMax} | Min: ${deviceMin}`,
-    });
 
     // Save to localStorage for data view
     const newEntry = {
@@ -185,6 +201,13 @@ export default function MetricsPage() {
     existingData.push(newEntry);
     localStorage.setItem('operationsData', JSON.stringify(existingData));
 
+    stopOperationsLoading();
+
+    toast({
+      title: "Operations Data Saved Successfully",
+      description: `Total: ${deviceSum.toFixed(0)} | Average: ${deviceAverage.toFixed(1)} | Max: ${deviceMax} | Min: ${deviceMin}`,
+    });
+
     // Reset device form
     setDeviceData({
       device1: "",
@@ -196,8 +219,13 @@ export default function MetricsPage() {
     });
   };
 
-  const handleEmployeeCountSubmit = (e: React.FormEvent) => {
+  const handleEmployeeCountSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    startStaffCountLoading();
+    
+    // Simulate processing time for better UX
+    await new Promise(resolve => setTimeout(resolve, 2500));
     
     // Convert strings to numbers for calculation
     const countNumbers = Object.values(employeeCountData).map(val => parseFloat(val) || 0);
@@ -205,11 +233,6 @@ export default function MetricsPage() {
     const countAverage = countSum / countNumbers.length;
     const countMax = Math.max(...countNumbers);
     const countMin = Math.min(...countNumbers);
-
-    toast({
-      title: "Staff Count Data Saved Successfully",
-      description: `Total: ${countSum.toFixed(0)} | Average: ${countAverage.toFixed(1)} | Max: ${countMax} | Min: ${countMin}`,
-    });
 
     // Save to localStorage for data view
     const newEntry = {
@@ -231,6 +254,13 @@ export default function MetricsPage() {
     existingData.push(newEntry);
     localStorage.setItem('operationsData', JSON.stringify(existingData));
 
+    stopStaffCountLoading();
+
+    toast({
+      title: "Staff Count Data Saved Successfully",
+      description: `Total: ${countSum.toFixed(0)} | Average: ${countAverage.toFixed(1)} | Max: ${countMax} | Min: ${countMin}`,
+    });
+
     // Reset employee count form
     setEmployeeCountData({
       count1: "",
@@ -242,8 +272,13 @@ export default function MetricsPage() {
     });
   };
 
-  const handleYesterdayProductionSubmit = (e: React.FormEvent) => {
+  const handleYesterdayProductionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    startProductionLoading();
+    
+    // Simulate processing time for better UX
+    await new Promise(resolve => setTimeout(resolve, 3200));
     
     // Convert strings to numbers for calculation
     const prodNumbers = Object.values(yesterdayProductionData).map(val => parseFloat(val) || 0);
@@ -251,11 +286,6 @@ export default function MetricsPage() {
     const prodAverage = prodSum / prodNumbers.length;
     const prodMax = Math.max(...prodNumbers);
     const prodMin = Math.min(...prodNumbers);
-
-    toast({
-      title: "Yesterday's Production Data Saved Successfully",
-      description: `Total: ${prodSum.toFixed(0)} | Average: ${prodAverage.toFixed(1)} | Max: ${prodMax} | Min: ${prodMin}`,
-    });
 
     // Save to localStorage for data view
     const newEntry = {
@@ -279,6 +309,13 @@ export default function MetricsPage() {
     const existingData = JSON.parse(localStorage.getItem('operationsData') || '[]');
     existingData.push(newEntry);
     localStorage.setItem('operationsData', JSON.stringify(existingData));
+
+    stopProductionLoading();
+
+    toast({
+      title: "Yesterday's Production Data Saved Successfully",
+      description: `Total: ${prodSum.toFixed(0)} | Average: ${prodAverage.toFixed(1)} | Max: ${prodMax} | Min: ${prodMin}`,
+    });
 
     // Reset yesterday production form
     setYesterdayProductionData({

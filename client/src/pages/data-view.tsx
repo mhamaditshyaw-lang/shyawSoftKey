@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
+import { LoadingVisualization, useLoadingVisualization } from "@/components/ui/loading-visualization";
 import { 
   Database, 
   Calendar,
@@ -17,7 +18,9 @@ import {
   Clock,
   Search,
   X,
-  Truck
+  Truck,
+  FileText,
+  Filter
 } from "lucide-react";
 
 interface DataEntry {
@@ -178,7 +181,12 @@ export default function DataViewPage() {
     });
   };
 
-  const exportData = () => {
+  const exportData = async () => {
+    startExportLoading();
+    
+    // Simulate processing time for better UX
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    
     const dataStr = JSON.stringify(filteredData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
@@ -186,13 +194,22 @@ export default function DataViewPage() {
     link.href = url;
     link.download = `operations-data-${new Date().toISOString().split('T')[0]}.json`;
     link.click();
+    
+    stopExportLoading();
   };
 
-  const refreshData = () => {
+  const refreshData = async () => {
+    startRefreshLoading();
+    
+    // Simulate processing time for better UX
+    await new Promise(resolve => setTimeout(resolve, 1800));
+    
     const storedData = localStorage.getItem('operationsData');
     if (storedData) {
       setAllData(JSON.parse(storedData));
     }
+    
+    stopRefreshLoading();
   };
 
   return (
