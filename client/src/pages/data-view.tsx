@@ -1,32 +1,23 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
-
 import { 
-  Database, 
-  Calendar,
-  Users,
-  BarChart3,
+  Users, 
+  BarChart3, 
+  Clock, 
+  Truck, 
   TrendingUp,
-  Download,
   RefreshCw,
-  Clock,
-  Search,
-  X,
-  Truck,
-  FileText,
-  Filter
+  Download,
+  Database
 } from "lucide-react";
 
 interface DataEntry {
   id: string;
   timestamp: string;
-  type: 'employee' | 'operations' | 'staffCount' | 'yesterdayProduction' | 'yesterdayLoading';
+  type: string;
   data: Record<string, string>;
   stats: {
     total: number;
@@ -38,143 +29,40 @@ interface DataEntry {
 
 export default function DataViewPage() {
   const [allData, setAllData] = useState<DataEntry[]>([]);
-  const [filter, setFilter] = useState<'all' | 'employee' | 'operations' | 'staffCount' | 'yesterdayProduction' | 'yesterdayLoading'>('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [dateFilter, setDateFilter] = useState({
-    startDate: '',
-    endDate: '',
-    searchDate: ''
-  });
+  const [filter, setFilter] = useState<string>('all');
 
-
-
-
-  // Sample data for demonstration (in real app, this would come from backend)
+  // Load data from localStorage
   useEffect(() => {
-    if (allData.length === 0) {
-      const sampleData: DataEntry[] = [
-        {
-          id: '1',
-          timestamp: new Date().toISOString(),
-          type: 'employee',
-          data: {
-            'Total employees today': '85',
-            'Permanent employees': '65',
-            'Non-permanent employees': '20',
-            'Day - Start of work': '42',
-            'Day - Giving up': '8',
-            'Night - Start of work': '35',
-            'Night - Giving up': '5'
-          },
-          stats: { total: 260, average: 37.1, max: 85, min: 5 }
-        },
-        {
-          id: '2',
-          timestamp: new Date(Date.now() - 3600000).toISOString(),
-          type: 'operations',
-          data: {
-            'Day - Ice cream': '250',
-            'Night - Ice cream': '180',
-            'Day - Albany': '45',
-            'Night - Albany': '32',
-            'Day - Do': '15',
-            'Night - Do': '12'
-          },
-          stats: { total: 534, average: 89.0, max: 250, min: 12 }
-        },
-        {
-          id: '3',
-          timestamp: new Date(Date.now() - 7200000).toISOString(),
-          type: 'staffCount',
-          data: {
-            'Day - Ice cream': '25',
-            'Night - Ice cream': '18',
-            'Day - Albany': '12',
-            'Night - Albany': '8',
-            'Day - Do': '6',
-            'Night - Do': '4'
-          },
-          stats: { total: 73, average: 12.2, max: 25, min: 4 }
-        }
-      ];
-      setAllData(sampleData);
-      localStorage.setItem('operationsData', JSON.stringify(sampleData));
-    }
-  }, [allData.length]);
+    const loadData = () => {
+      const storedData = localStorage.getItem('operationsData');
+      if (storedData) {
+        const parsedData = JSON.parse(storedData);
+        setAllData(parsedData);
+        console.log('Loaded data:', parsedData);
+        console.log('Data types:', [...new Set(parsedData.map((d: any) => d.type))]);
+      }
+    };
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'employee': return <Users className="w-4 h-4" />;
-      case 'operations': return <BarChart3 className="w-4 h-4" />;
-      case 'staffCount': return <TrendingUp className="w-4 h-4" />;
-      case 'yesterdayProduction': return <Clock className="w-4 h-4" />;
-      default: return <Database className="w-4 h-4" />;
-    }
-  };
-
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'employee': return 'bg-blue-100 text-blue-800';
-      case 'operations': return 'bg-green-100 text-green-800';
-      case 'staffCount': return 'bg-purple-100 text-purple-800';
-      case 'yesterdayProduction': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getTypeName = (type: string) => {
-    switch (type) {
-      case 'employee': return 'Employee Tracking';
-      case 'operations': return 'Operations Tracking';
-      case 'staffCount': return 'Staff Count Tracking';
-      case 'yesterdayProduction': return 'Yesterday\'s Production';
-      default: return 'Unknown';
-    }
-  };
-
-  // Apply type filter
-  let filteredData = filter === 'all' ? allData : allData.filter(entry => entry.type === filter);
-
-  // Apply date filter
-  if (dateFilter.searchDate) {
-    const searchDate = new Date(dateFilter.searchDate);
-    filteredData = filteredData.filter(entry => {
-      const entryDate = new Date(entry.timestamp);
-      return entryDate.toDateString() === searchDate.toDateString();
-    });
-  } else if (dateFilter.startDate && dateFilter.endDate) {
-    const startDate = new Date(dateFilter.startDate);
-    const endDate = new Date(dateFilter.endDate);
-    endDate.setHours(23, 59, 59, 999); // Include the entire end date
+    loadData();
     
-    filteredData = filteredData.filter(entry => {
-      const entryDate = new Date(entry.timestamp);
-      return entryDate >= startDate && entryDate <= endDate;
-    });
-  } else if (dateFilter.startDate) {
-    const startDate = new Date(dateFilter.startDate);
-    filteredData = filteredData.filter(entry => {
-      const entryDate = new Date(entry.timestamp);
-      return entryDate >= startDate;
-    });
-  } else if (dateFilter.endDate) {
-    const endDate = new Date(dateFilter.endDate);
-    endDate.setHours(23, 59, 59, 999);
-    filteredData = filteredData.filter(entry => {
-      const entryDate = new Date(entry.timestamp);
-      return entryDate <= endDate;
-    });
-  }
+    // Refresh every 2 seconds
+    const interval = setInterval(loadData, 2000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
-  const clearDateFilters = () => {
-    setDateFilter({
-      startDate: '',
-      endDate: '',
-      searchDate: ''
-    });
+  // Filter data based on selected filter
+  const filteredData = filter === 'all' ? allData : allData.filter(d => d.type === filter);
+
+  const refreshData = () => {
+    const storedData = localStorage.getItem('operationsData');
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      setAllData(parsedData);
+    }
   };
 
-  const exportData = async () => {
+  const exportData = () => {
     const dataStr = JSON.stringify(filteredData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
@@ -184,16 +72,36 @@ export default function DataViewPage() {
     link.click();
   };
 
-  const refreshData = () => {
-    console.log('Refreshing data...');
-    const storedData = localStorage.getItem('operationsData');
-    if (storedData) {
-      const parsedData = JSON.parse(storedData);
-      console.log('Refreshed data:', parsedData);
-      setAllData(parsedData);
-    } else {
-      console.log('No data to refresh');
-      setAllData([]);
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'employee': return <Users className="w-5 h-5 text-blue-600" />;
+      case 'operations': return <BarChart3 className="w-5 h-5 text-green-600" />;
+      case 'staffCount': return <TrendingUp className="w-5 h-5 text-purple-600" />;
+      case 'yesterdayProduction': return <Clock className="w-5 h-5 text-orange-600" />;
+      case 'yesterdayLoading': return <Truck className="w-5 h-5 text-teal-600" />;
+      default: return <Database className="w-5 h-5 text-gray-600" />;
+    }
+  };
+
+  const getTypeName = (type: string) => {
+    switch (type) {
+      case 'employee': return 'Employee Data';
+      case 'operations': return 'Operations Data';
+      case 'staffCount': return 'Staff Count Data';
+      case 'yesterdayProduction': return 'Yesterday\'s Production';
+      case 'yesterdayLoading': return 'Yesterday\'s Loading';
+      default: return type;
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'employee': return 'border-blue-200 bg-blue-50';
+      case 'operations': return 'border-green-200 bg-green-50';
+      case 'staffCount': return 'border-purple-200 bg-purple-50';
+      case 'yesterdayProduction': return 'border-orange-200 bg-orange-50';
+      case 'yesterdayLoading': return 'border-teal-200 bg-teal-50';
+      default: return 'border-gray-200 bg-gray-50';
     }
   };
 
@@ -202,304 +110,126 @@ export default function DataViewPage() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="max-w-6xl mx-auto"
+      className="max-w-7xl mx-auto p-6"
     >
+      {/* Header */}
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Operations Data View</h2>
-        <p className="text-gray-600">View and analyze all saved operational data entries</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Data View</h1>
+        <p className="text-gray-600">View and manage all operational tracking data</p>
       </div>
 
-      {/* Filter and Actions Bar */}
-      <div className="mb-6 space-y-4">
-        {/* Type Filters */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant={filter === 'all' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setFilter('all')}
-            >
-              All Data
-            </Button>
-            <Button
-              variant={filter === 'employee' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setFilter('employee')}
-              className="flex items-center gap-2"
-            >
-              <Users className="w-4 h-4" />
-              Employee
-            </Button>
-            <Button
-              variant={filter === 'operations' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setFilter('operations')}
-              className="flex items-center gap-2"
-            >
-              <BarChart3 className="w-4 h-4" />
-              Operations
-            </Button>
-            <Button
-              variant={filter === 'staffCount' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setFilter('staffCount')}
-              className="flex items-center gap-2"
-            >
-              <TrendingUp className="w-4 h-4" />
-              Staff Count
-            </Button>
-            <Button
-              variant={filter === 'yesterdayProduction' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setFilter('yesterdayProduction')}
-              className="flex items-center gap-2"
-            >
-              <Clock className="w-4 h-4" />
-              Yesterday's Production
-            </Button>
-            <Button
-              variant={filter === 'yesterdayLoading' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setFilter('yesterdayLoading')}
-              className="flex items-center gap-2"
-            >
-              <Truck className="w-4 h-4" />
-              Yesterday's Loading
-            </Button>
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
+        <Card className="text-center p-4 border-blue-200 bg-blue-50">
+          <Users className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-blue-700">
+            {allData.filter(d => d.type === 'employee').length}
           </div>
+          <div className="text-sm text-blue-600">Employee Records</div>
+        </Card>
 
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={refreshData}>
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Refresh
-            </Button>
-            <Button variant="outline" size="sm" onClick={exportData}>
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </Button>
+        <Card className="text-center p-4 border-green-200 bg-green-50">
+          <BarChart3 className="w-8 h-8 text-green-600 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-green-700">
+            {allData.filter(d => d.type === 'operations').length}
           </div>
+          <div className="text-sm text-green-600">Operations Records</div>
+        </Card>
+
+        <Card className="text-center p-4 border-purple-200 bg-purple-50">
+          <TrendingUp className="w-8 h-8 text-purple-600 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-purple-700">
+            {allData.filter(d => d.type === 'staffCount').length}
+          </div>
+          <div className="text-sm text-purple-600">Staff Count Records</div>
+        </Card>
+
+        <Card className="text-center p-4 border-orange-200 bg-orange-50">
+          <Clock className="w-8 h-8 text-orange-600 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-orange-700">
+            {allData.filter(d => d.type === 'yesterdayProduction').length}
+          </div>
+          <div className="text-sm text-orange-600">Production Records</div>
+        </Card>
+
+        <Card className="text-center p-4 border-teal-200 bg-teal-50">
+          <Truck className="w-8 h-8 text-teal-600 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-teal-700">
+            {allData.filter(d => d.type === 'yesterdayLoading').length}
+          </div>
+          <div className="text-sm text-teal-600">Loading Records</div>
+        </Card>
+      </div>
+
+      {/* Controls */}
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant={filter === 'all' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('all')}
+          >
+            All Data
+          </Button>
+          <Button
+            variant={filter === 'employee' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('employee')}
+          >
+            Employee
+          </Button>
+          <Button
+            variant={filter === 'operations' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('operations')}
+          >
+            Operations
+          </Button>
+          <Button
+            variant={filter === 'staffCount' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('staffCount')}
+          >
+            Staff Count
+          </Button>
+          <Button
+            variant={filter === 'yesterdayProduction' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('yesterdayProduction')}
+          >
+            Production
+          </Button>
+          <Button
+            variant={filter === 'yesterdayLoading' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('yesterdayLoading')}
+          >
+            Loading
+          </Button>
         </div>
 
-        {/* Date Filters */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Calendar className="w-5 h-5" />
-              Date Search & Filters
-            </CardTitle>
-            <CardDescription>
-              Search by specific date or filter by date range
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {/* Specific Date Search */}
-              <div className="space-y-2">
-                <Label htmlFor="searchDate" className="text-sm font-medium">
-                  Search Specific Date
-                </Label>
-                <Input
-                  id="searchDate"
-                  type="date"
-                  value={dateFilter.searchDate}
-                  onChange={(e) => setDateFilter(prev => ({
-                    ...prev,
-                    searchDate: e.target.value,
-                    startDate: '', // Clear range filters when using specific date
-                    endDate: ''
-                  }))}
-                  className="w-full"
-                />
-              </div>
-
-              {/* Date Range Filters */}
-              <div className="space-y-2">
-                <Label htmlFor="startDate" className="text-sm font-medium">
-                  From Date
-                </Label>
-                <Input
-                  id="startDate"
-                  type="date"
-                  value={dateFilter.startDate}
-                  onChange={(e) => setDateFilter(prev => ({
-                    ...prev,
-                    startDate: e.target.value,
-                    searchDate: '' // Clear specific date when using range
-                  }))}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="endDate" className="text-sm font-medium">
-                  To Date
-                </Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  value={dateFilter.endDate}
-                  onChange={(e) => setDateFilter(prev => ({
-                    ...prev,
-                    endDate: e.target.value,
-                    searchDate: '' // Clear specific date when using range
-                  }))}
-                  className="w-full"
-                />
-              </div>
-
-              {/* Clear Filters */}
-              <div className="flex items-end">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={clearDateFilters}
-                  disabled={!dateFilter.searchDate && !dateFilter.startDate && !dateFilter.endDate}
-                  className="w-full flex items-center gap-2"
-                >
-                  <X className="w-4 h-4" />
-                  Clear Dates
-                </Button>
-              </div>
-            </div>
-
-            {/* Active Filters Display */}
-            {(dateFilter.searchDate || dateFilter.startDate || dateFilter.endDate) && (
-              <div className="mt-4 pt-4 border-t">
-                <p className="text-sm text-gray-600 mb-2">Active Date Filters:</p>
-                <div className="flex flex-wrap gap-2">
-                  {dateFilter.searchDate && (
-                    <Badge variant="secondary" className="flex items-center gap-1">
-                      <Search className="w-3 h-3" />
-                      Specific: {new Date(dateFilter.searchDate).toLocaleDateString()}
-                      <button
-                        onClick={() => setDateFilter(prev => ({ ...prev, searchDate: '' }))}
-                        className="ml-1 hover:bg-gray-300 rounded-full p-0.5"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </Badge>
-                  )}
-                  {dateFilter.startDate && (
-                    <Badge variant="secondary" className="flex items-center gap-1">
-                      From: {new Date(dateFilter.startDate).toLocaleDateString()}
-                      <button
-                        onClick={() => setDateFilter(prev => ({ ...prev, startDate: '' }))}
-                        className="ml-1 hover:bg-gray-300 rounded-full p-0.5"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </Badge>
-                  )}
-                  {dateFilter.endDate && (
-                    <Badge variant="secondary" className="flex items-center gap-1">
-                      To: {new Date(dateFilter.endDate).toLocaleDateString()}
-                      <button
-                        onClick={() => setDateFilter(prev => ({ ...prev, endDate: '' }))}
-                        className="ml-1 hover:bg-gray-300 rounded-full p-0.5"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </Badge>
-                  )}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={refreshData}>
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Refresh
+          </Button>
+          <Button variant="outline" size="sm" onClick={exportData}>
+            <Download className="w-4 h-4 mr-2" />
+            Export
+          </Button>
+        </div>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  {(dateFilter.searchDate || dateFilter.startDate || dateFilter.endDate) 
-                    ? 'Filtered Entries' 
-                    : 'Total Entries'
-                  }
-                </p>
-                <p className="text-2xl font-bold">{filteredData.length}</p>
-                {(dateFilter.searchDate || dateFilter.startDate || dateFilter.endDate) && (
-                  <p className="text-xs text-gray-500">of {allData.length} total</p>
-                )}
-              </div>
-              <Database className="w-8 h-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Employee Entries</p>
-                <p className="text-2xl font-bold">{allData.filter(d => d.type === 'employee').length}</p>
-              </div>
-              <Users className="w-8 h-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Operations Entries</p>
-                <p className="text-2xl font-bold">{allData.filter(d => d.type === 'operations').length}</p>
-              </div>
-              <BarChart3 className="w-8 h-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Staff Count Entries</p>
-                <p className="text-2xl font-bold">{allData.filter(d => d.type === 'staffCount').length}</p>
-              </div>
-              <TrendingUp className="w-8 h-8 text-purple-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Yesterday's Production</p>
-                <p className="text-2xl font-bold text-orange-700">
-                  {allData.filter(d => d.type === 'yesterdayProduction').length}
-                </p>
-                <p className="text-xs text-gray-500">
-                  Total data: {allData.length} | Types: {[...new Set(allData.map(d => d.type))].join(', ')}
-                </p>
-              </div>
-              <Clock className="w-8 h-8 text-orange-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Yesterday's Loading</p>
-                <p className="text-2xl font-bold text-teal-700">
-                  {allData.filter(d => d.type === 'yesterdayLoading').length}
-                </p>
-                <p className="text-xs text-gray-500">
-                  Debug: {JSON.stringify(allData.map(d => d.type))}
-                </p>
-              </div>
-              <Truck className="w-8 h-8 text-teal-600" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Debug Info */}
+      <Card className="mb-6 border-yellow-200 bg-yellow-50">
+        <CardContent className="p-4">
+          <div className="text-sm">
+            <strong>Debug Info:</strong> Total entries: {allData.length} | 
+            Types found: {[...new Set(allData.map(d => d.type))].join(', ')} | 
+            Filtered: {filteredData.length}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Data Entries */}
       <div className="space-y-6">
@@ -509,11 +239,9 @@ export default function DataViewPage() {
               <Database className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-600 mb-2">No Data Found</h3>
               <p className="text-gray-500">
-                {(dateFilter.searchDate || dateFilter.startDate || dateFilter.endDate)
-                  ? 'No entries found for the selected date criteria. Try adjusting your date filters.'
-                  : filter === 'all' 
-                    ? 'No operational data entries have been saved yet.'
-                    : `No ${getTypeName(filter)} entries found.`
+                {filter === 'all' 
+                  ? 'No operational data entries have been saved yet.'
+                  : `No ${getTypeName(filter)} entries found.`
                 }
               </p>
             </CardContent>
@@ -526,58 +254,45 @@ export default function DataViewPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1, duration: 0.3 }}
             >
-              <Card>
-                <CardHeader>
+              <Card className={`${getTypeColor(entry.type)} hover:shadow-lg transition-shadow`}>
+                <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Badge className={getTypeColor(entry.type)}>
-                        {getTypeIcon(entry.type)}
-                        <span className="ml-1">{getTypeName(entry.type)}</span>
-                      </Badge>
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <Clock className="w-4 h-4" />
-                        {new Date(entry.timestamp).toLocaleString()}
-                      </div>
+                    <div className="flex items-center space-x-2">
+                      {getTypeIcon(entry.type)}
+                      <CardTitle className="text-lg">{getTypeName(entry.type)}</CardTitle>
                     </div>
+                    <Badge variant="secondary" className="text-xs">
+                      {new Date(entry.timestamp).toLocaleString()}
+                    </Badge>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Data Fields */}
-                    <div className="lg:col-span-2">
-                      <h4 className="text-sm font-semibold text-gray-700 mb-3">Data Fields</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {Object.entries(entry.data).map(([key, value]) => (
-                          <div key={key} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                            <span className="text-sm font-medium text-gray-600">{key}</span>
-                            <span className="text-sm font-bold">{value}</span>
-                          </div>
-                        ))}
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                    {Object.entries(entry.data).map(([key, value]) => (
+                      <div key={key} className="bg-white p-2 rounded border">
+                        <div className="text-xs font-medium text-gray-600">{key}</div>
+                        <div className="text-sm font-bold">{value}</div>
                       </div>
-                    </div>
-
-                    {/* Statistics */}
-                    <div>
-                      <h4 className="text-sm font-semibold text-gray-700 mb-3">Statistics</h4>
-                      <div className="space-y-3">
-                        <div className="p-3 bg-blue-50 rounded-lg">
-                          <div className="text-lg font-bold text-blue-700">{entry.stats.total}</div>
-                          <div className="text-xs text-blue-600">Total</div>
-                        </div>
-                        <div className="p-3 bg-green-50 rounded-lg">
-                          <div className="text-lg font-bold text-green-700">{entry.stats.average.toFixed(1)}</div>
-                          <div className="text-xs text-green-600">Average</div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="p-2 bg-indigo-50 rounded-lg">
-                            <div className="text-sm font-bold text-indigo-700">{entry.stats.max}</div>
-                            <div className="text-xs text-indigo-600">Max</div>
-                          </div>
-                          <div className="p-2 bg-red-50 rounded-lg">
-                            <div className="text-sm font-bold text-red-700">{entry.stats.min}</div>
-                            <div className="text-xs text-red-600">Min</div>
-                          </div>
-                        </div>
+                    ))}
+                  </div>
+                  
+                  <div className="border-t pt-3 mt-3">
+                    <div className="grid grid-cols-4 gap-3 text-sm">
+                      <div className="text-center">
+                        <div className="font-bold text-blue-600">{entry.stats.total.toFixed(1)}</div>
+                        <div className="text-xs text-gray-500">Total</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold text-green-600">{entry.stats.average.toFixed(1)}</div>
+                        <div className="text-xs text-gray-500">Average</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold text-orange-600">{entry.stats.max}</div>
+                        <div className="text-xs text-gray-500">Max</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold text-red-600">{entry.stats.min}</div>
+                        <div className="text-xs text-gray-500">Min</div>
                       </div>
                     </div>
                   </div>
