@@ -288,7 +288,14 @@ export default function TodosPage() {
   };
 
   const handleAddTodoItem = (todoListId: number) => {
-    if (!newItemText.trim()) return;
+    if (!newItemText.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a task description",
+        variant: "destructive",
+      });
+      return;
+    }
     
     console.log("Adding todo item to list:", todoListId, "with text:", newItemText.trim());
     
@@ -870,17 +877,20 @@ export default function TodosPage() {
                         placeholder="Add new task..."
                         value={newItemText}
                         onChange={(e) => setNewItemText(e.target.value)}
-                        onKeyPress={(e) => {
+                        onKeyDown={(e) => {
                           if (e.key === "Enter" && newItemText.trim()) {
+                            e.preventDefault();
                             handleAddTodoItem(list.id);
                           }
                         }}
                         className="text-sm"
+                        disabled={addTodoItemMutation.isPending}
                       />
                       <Button
                         size="sm"
                         onClick={() => handleAddTodoItem(list.id)}
                         disabled={!newItemText.trim() || addTodoItemMutation.isPending}
+                        className="shrink-0"
                       >
                         {addTodoItemMutation.isPending ? (
                           <RefreshCw className="w-4 h-4 animate-spin" />
