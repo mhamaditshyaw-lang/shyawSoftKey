@@ -6,17 +6,17 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { DeleteConfirmationModal } from "@/components/modals/delete-confirmation-modal";
-import { 
-  Users, 
-  BarChart3, 
-  Clock, 
-  Truck, 
+import {
+  Users,
+  BarChart3,
+  Clock,
+  Truck,
   TrendingUp,
   RefreshCw,
   Download,
   Database,
   Search,
-  Trash2
+  Trash2,
 } from "lucide-react";
 
 interface DataEntry {
@@ -34,8 +34,8 @@ interface DataEntry {
 
 export default function DataViewPage() {
   const [allData, setAllData] = useState<DataEntry[]>([]);
-  const [filter, setFilter] = useState<string>('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState("");
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     entry?: DataEntry;
@@ -46,30 +46,42 @@ export default function DataViewPage() {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'employee': return <Users className="w-4 h-4 text-blue-600" />;
-      case 'operations': return <BarChart3 className="w-4 h-4 text-green-600" />;
-      case 'staffCount': return <TrendingUp className="w-4 h-4 text-purple-600" />;
-      case 'yesterdayProduction': return <Clock className="w-4 h-4 text-orange-600" />;
-      case 'yesterdayLoading': return <Truck className="w-4 h-4 text-teal-600" />;
-      default: return <Database className="w-4 h-4 text-gray-600" />;
+      case "employee":
+        return <Users className="w-4 h-4 text-blue-600" />;
+      case "operations":
+        return <BarChart3 className="w-4 h-4 text-green-600" />;
+      case "staffCount":
+        return <TrendingUp className="w-4 h-4 text-purple-600" />;
+      case "yesterdayProduction":
+        return <Clock className="w-4 h-4 text-orange-600" />;
+      case "yesterdayLoading":
+        return <Truck className="w-4 h-4 text-teal-600" />;
+      default:
+        return <Database className="w-4 h-4 text-gray-600" />;
     }
   };
 
   const getTypeName = (type: string) => {
     switch (type) {
-      case 'employee': return 'Employee';
-      case 'operations': return 'Operations';
-      case 'staffCount': return 'Staff Count';
-      case 'yesterdayProduction': return 'Production';
-      case 'yesterdayLoading': return 'Loading';
-      default: return type;
+      case "employee":
+        return "Employee";
+      case "operations":
+        return "Operations";
+      case "staffCount":
+        return "Staff Count";
+      case "yesterdayProduction":
+        return "Production";
+      case "yesterdayLoading":
+        return "Loading";
+      default:
+        return type;
     }
   };
 
   // Load data from localStorage
   useEffect(() => {
     const loadData = () => {
-      const storedData = localStorage.getItem('operationsData');
+      const storedData = localStorage.getItem("operationsData");
       if (storedData) {
         const parsedData = JSON.parse(storedData);
         setAllData(parsedData);
@@ -83,23 +95,27 @@ export default function DataViewPage() {
 
   // Filter data
   const filteredData = (() => {
-    let data = filter === 'all' ? allData : allData.filter(d => d.type === filter);
-    
+    let data =
+      filter === "all" ? allData : allData.filter((d) => d.type === filter);
+
     if (searchTerm) {
-      data = data.filter(entry => 
-        getTypeName(entry.type).toLowerCase().includes(searchTerm.toLowerCase()) ||
-        Object.values(entry.data).some(value => 
-          value.toLowerCase().includes(searchTerm.toLowerCase())
-        ) ||
-        new Date(entry.timestamp).toLocaleDateString().includes(searchTerm)
+      data = data.filter(
+        (entry) =>
+          getTypeName(entry.type)
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          Object.values(entry.data).some((value) =>
+            value.toLowerCase().includes(searchTerm.toLowerCase()),
+          ) ||
+          new Date(entry.timestamp).toLocaleDateString().includes(searchTerm),
       );
     }
-    
+
     return data;
   })();
 
   const refreshData = () => {
-    const storedData = localStorage.getItem('operationsData');
+    const storedData = localStorage.getItem("operationsData");
     if (storedData) {
       const parsedData = JSON.parse(storedData);
       setAllData(parsedData);
@@ -108,11 +124,11 @@ export default function DataViewPage() {
 
   const exportData = () => {
     const dataStr = JSON.stringify(filteredData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `operations-data-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `operations-data-${new Date().toISOString().split("T")[0]}.json`;
     link.click();
   };
 
@@ -138,13 +154,15 @@ export default function DataViewPage() {
 
   const removeDataEntry = (entryId: string) => {
     try {
-      const storedData = localStorage.getItem('operationsData');
+      const storedData = localStorage.getItem("operationsData");
       if (storedData) {
         const parsedData = JSON.parse(storedData);
-        const updatedData = parsedData.filter((entry: DataEntry) => entry.id !== entryId);
-        localStorage.setItem('operationsData', JSON.stringify(updatedData));
+        const updatedData = parsedData.filter(
+          (entry: DataEntry) => entry.id !== entryId,
+        );
+        localStorage.setItem("operationsData", JSON.stringify(updatedData));
         setAllData(updatedData);
-        
+
         toast({
           title: "Data Removed",
           description: "Selected data entry has been successfully removed.",
@@ -161,9 +179,9 @@ export default function DataViewPage() {
 
   const clearAllData = () => {
     try {
-      localStorage.removeItem('operationsData');
+      localStorage.removeItem("operationsData");
       setAllData([]);
-      
+
       toast({
         title: "All Data Cleared",
         description: "All operational data has been removed.",
@@ -178,23 +196,12 @@ export default function DataViewPage() {
   };
 
   // Check if user is admin
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === "admin";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Beautiful Header */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl mb-4 shadow-lg">
-            <Database className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-3">
-            Data View
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Explore and analyze your operational data with powerful search and filtering capabilities
-          </p>
-        </div>
 
         {/* Search and Filters Card */}
         <Card className="mb-8 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
@@ -210,88 +217,158 @@ export default function DataViewPage() {
                   className="pl-12 h-12 text-lg border-gray-200 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
                 />
               </div>
-              
+
+              {/* Date Filter Controls */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg border">
+                <div className="space-y-2">
+                  <Label htmlFor="date-filter" className="text-sm font-medium flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    Date Filter
+                  </Label>
+                  <Select value={dateFilter} onValueChange={setDateFilter}>
+                    <SelectTrigger id="date-filter">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="today">Today Only</SelectItem>
+                      <SelectItem value="week">This Week</SelectItem>
+                      <SelectItem value="month">This Month</SelectItem>
+                      <SelectItem value="custom">Custom Date</SelectItem>
+                      <SelectItem value="all">All Dates</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {dateFilter === 'custom' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="custom-date" className="text-sm font-medium">
+                      Select Date
+                    </Label>
+                    <Input
+                      id="custom-date"
+                      type="date"
+                      value={customDate}
+                      onChange={(e) => setCustomDate(e.target.value)}
+                      className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <Label htmlFor="auto-refresh" className="text-sm font-medium flex items-center gap-2">
+                    <RefreshCw className={`w-4 h-4 ${autoRefresh ? 'animate-spin text-green-600' : 'text-gray-400'}`} />
+                    Auto Refresh
+                  </Label>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="auto-refresh"
+                      checked={autoRefresh}
+                      onCheckedChange={setAutoRefresh}
+                    />
+                    <span className="text-sm text-gray-600">
+                      {autoRefresh ? 'Every 30s' : 'Disabled'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
               {/* Filter Buttons */}
               <div className="flex flex-wrap justify-center gap-3">
                 <Button
-                  variant={filter === 'all' ? 'default' : 'outline'}
+                  variant={filter === "all" ? "default" : "outline"}
                   size="lg"
-                  onClick={() => setFilter('all')}
-                  className={`${filter === 'all' 
-                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg' 
-                    : 'hover:bg-blue-50 hover:border-blue-300'} transition-all duration-200`}
+                  onClick={() => setFilter("all")}
+                  className={`${
+                    filter === "all"
+                      ? "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg"
+                      : "hover:bg-blue-50 hover:border-blue-300"
+                  } transition-all duration-200`}
                 >
                   All Data
                 </Button>
                 <Button
-                  variant={filter === 'employee' ? 'default' : 'outline'}
+                  variant={filter === "employee" ? "default" : "outline"}
                   size="lg"
-                  onClick={() => setFilter('employee')}
-                  className={`${filter === 'employee' 
-                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg' 
-                    : 'hover:bg-blue-50 hover:border-blue-300'} transition-all duration-200`}
+                  onClick={() => setFilter("employee")}
+                  className={`${
+                    filter === "employee"
+                      ? "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg"
+                      : "hover:bg-blue-50 hover:border-blue-300"
+                  } transition-all duration-200`}
                 >
                   <Users className="w-4 h-4 mr-2" />
                   Employee
                 </Button>
                 <Button
-                  variant={filter === 'operations' ? 'default' : 'outline'}
+                  variant={filter === "operations" ? "default" : "outline"}
                   size="lg"
-                  onClick={() => setFilter('operations')}
-                  className={`${filter === 'operations' 
-                    ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-lg' 
-                    : 'hover:bg-green-50 hover:border-green-300'} transition-all duration-200`}
+                  onClick={() => setFilter("operations")}
+                  className={`${
+                    filter === "operations"
+                      ? "bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-lg"
+                      : "hover:bg-green-50 hover:border-green-300"
+                  } transition-all duration-200`}
                 >
                   <BarChart3 className="w-4 h-4 mr-2" />
                   Operations
                 </Button>
                 <Button
-                  variant={filter === 'staffCount' ? 'default' : 'outline'}
+                  variant={filter === "staffCount" ? "default" : "outline"}
                   size="lg"
-                  onClick={() => setFilter('staffCount')}
-                  className={`${filter === 'staffCount' 
-                    ? 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg' 
-                    : 'hover:bg-purple-50 hover:border-purple-300'} transition-all duration-200`}
+                  onClick={() => setFilter("staffCount")}
+                  className={`${
+                    filter === "staffCount"
+                      ? "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg"
+                      : "hover:bg-purple-50 hover:border-purple-300"
+                  } transition-all duration-200`}
                 >
                   <TrendingUp className="w-4 h-4 mr-2" />
                   Staff Count
                 </Button>
                 <Button
-                  variant={filter === 'yesterdayProduction' ? 'default' : 'outline'}
+                  variant={
+                    filter === "yesterdayProduction" ? "default" : "outline"
+                  }
                   size="lg"
-                  onClick={() => setFilter('yesterdayProduction')}
-                  className={`${filter === 'yesterdayProduction' 
-                    ? 'bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 shadow-lg' 
-                    : 'hover:bg-orange-50 hover:border-orange-300'} transition-all duration-200`}
+                  onClick={() => setFilter("yesterdayProduction")}
+                  className={`${
+                    filter === "yesterdayProduction"
+                      ? "bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 shadow-lg"
+                      : "hover:bg-orange-50 hover:border-orange-300"
+                  } transition-all duration-200`}
                 >
                   <Clock className="w-4 h-4 mr-2" />
                   Production
                 </Button>
                 <Button
-                  variant={filter === 'yesterdayLoading' ? 'default' : 'outline'}
+                  variant={
+                    filter === "yesterdayLoading" ? "default" : "outline"
+                  }
                   size="lg"
-                  onClick={() => setFilter('yesterdayLoading')}
-                  className={`${filter === 'yesterdayLoading' 
-                    ? 'bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 shadow-lg' 
-                    : 'hover:bg-teal-50 hover:border-teal-300'} transition-all duration-200`}
+                  onClick={() => setFilter("yesterdayLoading")}
+                  className={`${
+                    filter === "yesterdayLoading"
+                      ? "bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 shadow-lg"
+                      : "hover:bg-teal-50 hover:border-teal-300"
+                  } transition-all duration-200`}
                 >
                   <Truck className="w-4 h-4 mr-2" />
                   Loading
                 </Button>
               </div>
-              
+
               {/* Action Buttons */}
               <div className="flex justify-center gap-3">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={refreshData}
                   className="bg-white hover:bg-gray-50 border-gray-200 shadow-sm"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Refresh Data
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={exportData}
                   className="bg-white hover:bg-gray-50 border-gray-200 shadow-sm"
                 >
@@ -299,8 +376,8 @@ export default function DataViewPage() {
                   Export Data
                 </Button>
                 {isAdmin && allData.length > 0 && (
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={openClearModal}
                     className="bg-red-50 hover:bg-red-100 border-red-200 text-red-700 hover:text-red-800 shadow-sm"
                   >
@@ -321,11 +398,13 @@ export default function DataViewPage() {
                 <Database className="w-10 h-10 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                {allData.length === 0 ? "No Data Available" : "No Matching Results"}
+                {allData.length === 0
+                  ? "No Data Available"
+                  : "No Matching Results"}
               </h3>
               <p className="text-gray-600">
-                {allData.length === 0 
-                  ? "Start adding operational data from the dashboard to see entries here." 
+                {allData.length === 0
+                  ? "Start adding operational data from the dashboard to see entries here."
                   : "Try adjusting your search terms or filters to find what you're looking for."}
               </p>
             </CardContent>
@@ -333,8 +412,8 @@ export default function DataViewPage() {
         ) : (
           <div className="grid gap-6">
             {filteredData.map((entry, index) => (
-              <Card 
-                key={entry.id} 
+              <Card
+                key={entry.id}
                 className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/90 backdrop-blur-sm hover:bg-white overflow-hidden"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
@@ -354,8 +433,8 @@ export default function DataViewPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge 
-                        variant="secondary" 
+                      <Badge
+                        variant="secondary"
                         className="bg-white/80 text-gray-700 border border-gray-200 shadow-sm px-3 py-1"
                       >
                         {new Date(entry.timestamp).toLocaleString()}
@@ -373,13 +452,13 @@ export default function DataViewPage() {
                     </div>
                   </div>
                 </CardHeader>
-                
+
                 <CardContent className="p-6">
                   {/* Data Fields Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
                     {Object.entries(entry.data).map(([key, value]) => (
-                      <div 
-                        key={key} 
+                      <div
+                        key={key}
                         className="group/item bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:shadow-md transition-all duration-200"
                       >
                         <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
@@ -391,7 +470,7 @@ export default function DataViewPage() {
                       </div>
                     ))}
                   </div>
-                  
+
                   {/* Statistics Bar */}
                   <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-100">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
