@@ -567,8 +567,6 @@ export default function MetricsPage() {
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Daily Operations Dashboard</h2>
         <p className="text-gray-600">Track employee attendance, operational activities, shift staffing levels, and production data</p>
-        
-
       </div>
 
       {/* Employee Tracking Section */}
