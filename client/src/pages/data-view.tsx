@@ -184,11 +184,6 @@ export default function DataViewPage() {
   };
 
   const exportData = async () => {
-    startExportLoading();
-    
-    // Simulate processing time for better UX
-    await new Promise(resolve => setTimeout(resolve, 2500));
-    
     const dataStr = JSON.stringify(filteredData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
@@ -196,22 +191,13 @@ export default function DataViewPage() {
     link.href = url;
     link.download = `operations-data-${new Date().toISOString().split('T')[0]}.json`;
     link.click();
-    
-    stopExportLoading();
   };
 
-  const refreshData = async () => {
-    startRefreshLoading();
-    
-    // Simulate processing time for better UX
-    await new Promise(resolve => setTimeout(resolve, 1800));
-    
+  const refreshData = () => {
     const storedData = localStorage.getItem('operationsData');
     if (storedData) {
       setAllData(JSON.parse(storedData));
     }
-    
-    stopRefreshLoading();
   };
 
   return (
@@ -264,6 +250,15 @@ export default function DataViewPage() {
             >
               <TrendingUp className="w-4 h-4" />
               Staff Count
+            </Button>
+            <Button
+              variant={filter === 'yesterdayProduction' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilter('yesterdayProduction')}
+              className="flex items-center gap-2"
+            >
+              <Clock className="w-4 h-4" />
+              Yesterday's Production
             </Button>
             <Button
               variant={filter === 'yesterdayProduction' ? 'default' : 'outline'}
