@@ -312,6 +312,7 @@ export default function MetricsPage() {
     existingData.push(newEntry);
     localStorage.setItem('operationsData', JSON.stringify(existingData));
     console.log('Updated localStorage with', existingData.length, 'entries');
+    console.log('All data after saving:', existingData);
 
     stopProductionLoading();
 
@@ -374,6 +375,7 @@ export default function MetricsPage() {
     existingData.push(newEntry);
     localStorage.setItem('operationsData', JSON.stringify(existingData));
     console.log('Updated localStorage with', existingData.length, 'entries');
+    console.log('All data after saving:', existingData);
 
     stopLoadingVehiclesLoading();
 
