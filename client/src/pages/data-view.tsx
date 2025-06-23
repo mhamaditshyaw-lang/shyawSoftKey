@@ -261,15 +261,6 @@ export default function DataViewPage() {
               Yesterday's Production
             </Button>
             <Button
-              variant={filter === 'yesterdayProduction' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setFilter('yesterdayProduction')}
-              className="flex items-center gap-2"
-            >
-              <Clock className="w-4 h-4" />
-              Yesterday's Production
-            </Button>
-            <Button
               variant={filter === 'yesterdayLoading' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setFilter('yesterdayLoading')}
