@@ -106,149 +106,238 @@ export default function DataViewPage() {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Data View</h1>
-        <p className="text-gray-600">View and search operational data entries</p>
-      </div>
-
-      {/* Search and Filters */}
-      <div className="mb-6 space-y-4">
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        
-        <div className="flex flex-wrap gap-2">
-          <Button
-            variant={filter === 'all' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('all')}
-          >
-            All
-          </Button>
-          <Button
-            variant={filter === 'employee' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('employee')}
-          >
-            <Users className="w-4 h-4 mr-1" />
-            Employee
-          </Button>
-          <Button
-            variant={filter === 'operations' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('operations')}
-          >
-            <BarChart3 className="w-4 h-4 mr-1" />
-            Operations
-          </Button>
-          <Button
-            variant={filter === 'staffCount' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('staffCount')}
-          >
-            <TrendingUp className="w-4 h-4 mr-1" />
-            Staff
-          </Button>
-          <Button
-            variant={filter === 'yesterdayProduction' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('yesterdayProduction')}
-          >
-            <Clock className="w-4 h-4 mr-1" />
-            Production
-          </Button>
-          <Button
-            variant={filter === 'yesterdayLoading' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('yesterdayLoading')}
-          >
-            <Truck className="w-4 h-4 mr-1" />
-            Loading
-          </Button>
-          
-          <div className="ml-auto flex gap-2">
-            <Button variant="outline" size="sm" onClick={refreshData}>
-              <RefreshCw className="w-4 h-4 mr-1" />
-              Refresh
-            </Button>
-            <Button variant="outline" size="sm" onClick={exportData}>
-              <Download className="w-4 h-4 mr-1" />
-              Export
-            </Button>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Beautiful Header */}
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl mb-4 shadow-lg">
+            <Database className="w-8 h-8 text-white" />
           </div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-3">
+            Data View
+          </h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Explore and analyze your operational data with powerful search and filtering capabilities
+          </p>
         </div>
-      </div>
 
-      {/* Data Grid */}
-      {filteredData.length === 0 ? (
-        <Card className="text-center py-12">
-          <CardContent>
-            <Database className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">
-              {allData.length === 0 ? "No data available" : "No matching data found"}
-            </p>
+        {/* Search and Filters Card */}
+        <Card className="mb-8 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+          <CardContent className="p-6">
+            <div className="space-y-6">
+              {/* Search Bar */}
+              <div className="relative max-w-lg mx-auto">
+                <Search className="absolute left-4 top-4 h-5 w-5 text-gray-400" />
+                <Input
+                  placeholder="Search across all data entries..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-12 h-12 text-lg border-gray-200 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                />
+              </div>
+              
+              {/* Filter Buttons */}
+              <div className="flex flex-wrap justify-center gap-3">
+                <Button
+                  variant={filter === 'all' ? 'default' : 'outline'}
+                  size="lg"
+                  onClick={() => setFilter('all')}
+                  className={`${filter === 'all' 
+                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg' 
+                    : 'hover:bg-blue-50 hover:border-blue-300'} transition-all duration-200`}
+                >
+                  All Data
+                </Button>
+                <Button
+                  variant={filter === 'employee' ? 'default' : 'outline'}
+                  size="lg"
+                  onClick={() => setFilter('employee')}
+                  className={`${filter === 'employee' 
+                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg' 
+                    : 'hover:bg-blue-50 hover:border-blue-300'} transition-all duration-200`}
+                >
+                  <Users className="w-4 h-4 mr-2" />
+                  Employee
+                </Button>
+                <Button
+                  variant={filter === 'operations' ? 'default' : 'outline'}
+                  size="lg"
+                  onClick={() => setFilter('operations')}
+                  className={`${filter === 'operations' 
+                    ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-lg' 
+                    : 'hover:bg-green-50 hover:border-green-300'} transition-all duration-200`}
+                >
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  Operations
+                </Button>
+                <Button
+                  variant={filter === 'staffCount' ? 'default' : 'outline'}
+                  size="lg"
+                  onClick={() => setFilter('staffCount')}
+                  className={`${filter === 'staffCount' 
+                    ? 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg' 
+                    : 'hover:bg-purple-50 hover:border-purple-300'} transition-all duration-200`}
+                >
+                  <TrendingUp className="w-4 h-4 mr-2" />
+                  Staff Count
+                </Button>
+                <Button
+                  variant={filter === 'yesterdayProduction' ? 'default' : 'outline'}
+                  size="lg"
+                  onClick={() => setFilter('yesterdayProduction')}
+                  className={`${filter === 'yesterdayProduction' 
+                    ? 'bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 shadow-lg' 
+                    : 'hover:bg-orange-50 hover:border-orange-300'} transition-all duration-200`}
+                >
+                  <Clock className="w-4 h-4 mr-2" />
+                  Production
+                </Button>
+                <Button
+                  variant={filter === 'yesterdayLoading' ? 'default' : 'outline'}
+                  size="lg"
+                  onClick={() => setFilter('yesterdayLoading')}
+                  className={`${filter === 'yesterdayLoading' 
+                    ? 'bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 shadow-lg' 
+                    : 'hover:bg-teal-50 hover:border-teal-300'} transition-all duration-200`}
+                >
+                  <Truck className="w-4 h-4 mr-2" />
+                  Loading
+                </Button>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex justify-center gap-3">
+                <Button 
+                  variant="outline" 
+                  onClick={refreshData}
+                  className="bg-white hover:bg-gray-50 border-gray-200 shadow-sm"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Refresh Data
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={exportData}
+                  className="bg-white hover:bg-gray-50 border-gray-200 shadow-sm"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Export Data
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
-      ) : (
-        <div className="grid gap-4">
-          {filteredData.map((entry) => (
-            <Card key={entry.id} className="hover:shadow-md transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {getTypeIcon(entry.type)}
-                    <CardTitle className="text-lg">{getTypeName(entry.type)}</CardTitle>
-                  </div>
-                  <Badge variant="secondary" className="text-xs">
-                    {new Date(entry.timestamp).toLocaleString()}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-4">
-                  {Object.entries(entry.data).map(([key, value]) => (
-                    <div key={key} className="bg-gray-50 p-3 rounded-lg">
-                      <div className="text-xs text-gray-600 mb-1">{key}</div>
-                      <div className="font-semibold">{value}</div>
+
+        {/* Data Grid */}
+        {filteredData.length === 0 ? (
+          <Card className="text-center py-16 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+            <CardContent>
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full mb-6">
+                <Database className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                {allData.length === 0 ? "No Data Available" : "No Matching Results"}
+              </h3>
+              <p className="text-gray-600">
+                {allData.length === 0 
+                  ? "Start adding operational data from the dashboard to see entries here." 
+                  : "Try adjusting your search terms or filters to find what you're looking for."}
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-6">
+            {filteredData.map((entry, index) => (
+              <Card 
+                key={entry.id} 
+                className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/90 backdrop-blur-sm hover:bg-white overflow-hidden"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <CardHeader className="pb-4 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-white shadow-sm">
+                        {getTypeIcon(entry.type)}
+                      </div>
+                      <div>
+                        <CardTitle className="text-xl font-bold text-gray-800">
+                          {getTypeName(entry.type)}
+                        </CardTitle>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {Object.keys(entry.data).length} data fields recorded
+                        </p>
+                      </div>
                     </div>
-                  ))}
-                </div>
+                    <Badge 
+                      variant="secondary" 
+                      className="bg-white/80 text-gray-700 border border-gray-200 shadow-sm px-3 py-1"
+                    >
+                      {new Date(entry.timestamp).toLocaleString()}
+                    </Badge>
+                  </div>
+                </CardHeader>
                 
-                <div className="flex justify-between items-center pt-3 border-t">
-                  <div className="flex gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-600">Total: </span>
-                      <span className="font-semibold text-blue-600">{entry.stats.total.toFixed(1)}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Avg: </span>
-                      <span className="font-semibold text-green-600">{entry.stats.average.toFixed(1)}</span>
+                <CardContent className="p-6">
+                  {/* Data Fields Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+                    {Object.entries(entry.data).map(([key, value]) => (
+                      <div 
+                        key={key} 
+                        className="group/item bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:shadow-md transition-all duration-200"
+                      >
+                        <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                          {key}
+                        </div>
+                        <div className="text-lg font-bold text-gray-800 group-hover/item:text-blue-600 transition-colors">
+                          {value}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Statistics Bar */}
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-100">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-blue-600 mb-1">
+                          {entry.stats.total.toFixed(1)}
+                        </div>
+                        <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                          Total
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-green-600 mb-1">
+                          {entry.stats.average.toFixed(1)}
+                        </div>
+                        <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                          Average
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-orange-600 mb-1">
+                          {entry.stats.max}
+                        </div>
+                        <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                          Maximum
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-red-600 mb-1">
+                          {entry.stats.min}
+                        </div>
+                        <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                          Minimum
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-600">Max: </span>
-                      <span className="font-semibold text-orange-600">{entry.stats.max}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Min: </span>
-                      <span className="font-semibold text-red-600">{entry.stats.min}</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
