@@ -11,7 +11,8 @@ import {
   Calculator,
   BarChart3,
   TrendingUp,
-  Users
+  Users,
+  Clock
 } from "lucide-react";
 
 export default function MetricsPage() {
@@ -45,6 +46,15 @@ export default function MetricsPage() {
     count6: "",
   });
 
+  const [yesterdayProductionData, setYesterdayProductionData] = useState({
+    prod1: "",
+    prod2: "",
+    prod3: "",
+    prod4: "",
+    prod5: "",
+    prod6: "",
+  });
+
   const handleInputChange = (field: string, value: string) => {
     // Only allow numbers
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
@@ -69,6 +79,16 @@ export default function MetricsPage() {
     // Only allow numbers
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
       setEmployeeCountData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    }
+  };
+
+  const handleYesterdayProductionInputChange = (field: string, value: string) => {
+    // Only allow numbers
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      setYesterdayProductionData(prev => ({
         ...prev,
         [field]: value
       }));
@@ -215,6 +235,52 @@ export default function MetricsPage() {
     });
   };
 
+  const handleYesterdayProductionSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Convert strings to numbers for calculation
+    const prodNumbers = Object.values(yesterdayProductionData).map(val => parseFloat(val) || 0);
+    const prodSum = prodNumbers.reduce((acc, num) => acc + num, 0);
+    const prodAverage = prodSum / prodNumbers.length;
+    const prodMax = Math.max(...prodNumbers);
+    const prodMin = Math.min(...prodNumbers);
+
+    toast({
+      title: "Yesterday's Production Data Saved Successfully",
+      description: `Total: ${prodSum.toFixed(0)} | Average: ${prodAverage.toFixed(1)} | Max: ${prodMax} | Min: ${prodMin}`,
+    });
+
+    // Save to localStorage for data view
+    const newEntry = {
+      id: Date.now().toString(),
+      timestamp: new Date().toISOString(),
+      type: 'yesterdayProduction' as const,
+      data: {
+        'Day - Ice cream / Cartoon': yesterdayProductionData.prod1,
+        'Night - Ice cream / Cartoon': yesterdayProductionData.prod2,
+        'Day - Albany / Tons': yesterdayProductionData.prod3,
+        'Night - Albany / Tons': yesterdayProductionData.prod4,
+        'Day - Do / Tons': yesterdayProductionData.prod5,
+        'Night - Do / Tons': yesterdayProductionData.prod6,
+      },
+      stats: { total: prodSum, average: prodAverage, max: prodMax, min: prodMin }
+    };
+    
+    const existingData = JSON.parse(localStorage.getItem('operationsData') || '[]');
+    existingData.push(newEntry);
+    localStorage.setItem('operationsData', JSON.stringify(existingData));
+
+    // Reset yesterday production form
+    setYesterdayProductionData({
+      prod1: "",
+      prod2: "",
+      prod3: "",
+      prod4: "",
+      prod5: "",
+      prod6: "",
+    });
+  };
+
   const clearForm = () => {
     setFormData({
       number1: "",
@@ -246,6 +312,17 @@ export default function MetricsPage() {
       count4: "",
       count5: "",
       count6: "",
+    });
+  };
+
+  const clearYesterdayProductionForm = () => {
+    setYesterdayProductionData({
+      prod1: "",
+      prod2: "",
+      prod3: "",
+      prod4: "",
+      prod5: "",
+      prod6: "",
     });
   };
 
@@ -294,9 +371,25 @@ export default function MetricsPage() {
     return { sum, average, max, min, count: numbers.length };
   };
 
+  const calculateYesterdayProductionStats = () => {
+    const numbers = Object.values(yesterdayProductionData)
+      .filter(val => val !== "")
+      .map(val => parseFloat(val));
+    
+    if (numbers.length === 0) return null;
+
+    const sum = numbers.reduce((acc, num) => acc + num, 0);
+    const average = sum / numbers.length;
+    const max = Math.max(...numbers);
+    const min = Math.min(...numbers);
+
+    return { sum, average, max, min, count: numbers.length };
+  };
+
   const stats = calculateStats();
   const deviceStats = calculateDeviceStats();
   const employeeCountStats = calculateEmployeeCountStats();
+  const yesterdayProductionStats = calculateYesterdayProductionStats();
 
   return (
     <motion.div
@@ -307,7 +400,7 @@ export default function MetricsPage() {
     >
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Daily Operations Dashboard</h2>
-        <p className="text-gray-600">Track employee attendance, operational activities, and shift staffing levels</p>
+        <p className="text-gray-600">Track employee attendance, operational activities, shift staffing levels, and production data</p>
       </div>
 
       {/* Employee Tracking Section */}
@@ -934,6 +1027,215 @@ export default function MetricsPage() {
                       count4: Math.floor(Math.random() * 8 + 5).toString(),   // Night - Albany
                       count5: Math.floor(Math.random() * 6 + 3).toString(),   // Day - Do
                       count6: Math.floor(Math.random() * 5 + 2).toString(),   // Night - Do
+                    });
+                  }}
+                >
+                  <Calculator className="w-4 h-4 mr-2" />
+                  Generate Random
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      {/* Yesterday's Production Section */}
+      <div className="mb-8">
+        <h3 className="text-2xl font-bold text-gray-800 mb-6">Yesterday's Production Tracking</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Yesterday's Production Input Form */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Clock className="w-5 h-5 text-orange-600" />
+                  <span>Yesterday's Production Data Entry</span>
+                </CardTitle>
+                <CardDescription>
+                  Enter yesterday's production numbers for ice cream, Albany operations, and Do activities by shift
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleYesterdayProductionSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { field: 'prod1', label: 'Day - Ice cream / Cartoon', placeholder: 'Enter day ice cream production in cartons' },
+                      { field: 'prod2', label: 'Night - Ice cream / Cartoon', placeholder: 'Enter night ice cream production in cartons' },
+                      { field: 'prod3', label: 'Day - Albany / Tons', placeholder: 'Enter day Albany production in tons' },
+                      { field: 'prod4', label: 'Night - Albany / Tons', placeholder: 'Enter night Albany production in tons' },
+                      { field: 'prod5', label: 'Day - Do / Tons', placeholder: 'Enter day Do activities in tons' },
+                      { field: 'prod6', label: 'Night - Do / Tons', placeholder: 'Enter night Do activities in tons' },
+                    ].map((item, index) => {
+                      const fieldName = item.field as keyof typeof yesterdayProductionData;
+                      return (
+                        <motion.div
+                          key={fieldName}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 + 0.9, duration: 0.3 }}
+                          className="space-y-2"
+                        >
+                          <Label htmlFor={fieldName} className="text-sm font-medium">
+                            {item.label}
+                          </Label>
+                          <Input
+                            id={fieldName}
+                            type="text"
+                            placeholder={item.placeholder}
+                            value={yesterdayProductionData[fieldName]}
+                            onChange={(e) => handleYesterdayProductionInputChange(fieldName, e.target.value)}
+                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500"
+                          />
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="flex space-x-4 pt-4">
+                    <Button 
+                      type="submit" 
+                      className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700"
+                      disabled={Object.values(yesterdayProductionData).every(val => val === "")}
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Save Yesterday's Production</span>
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant="outline"
+                      onClick={clearYesterdayProductionForm}
+                      disabled={Object.values(yesterdayProductionData).every(val => val === "")}
+                    >
+                      Clear All
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Yesterday's Production Statistics Panel */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <TrendingUp className="w-5 h-5 text-orange-600" />
+                  <span>Production Statistics</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {yesterdayProductionStats ? (
+                  <div className="space-y-4">
+                    <motion.div 
+                      className="bg-orange-50 p-4 rounded-lg"
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div className="text-2xl font-bold text-orange-700">
+                        {yesterdayProductionStats.sum.toFixed(0)}
+                      </div>
+                      <div className="text-sm text-orange-600">Total Production</div>
+                    </motion.div>
+
+                    <motion.div 
+                      className="bg-amber-50 p-4 rounded-lg"
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.1 }}
+                    >
+                      <div className="text-2xl font-bold text-amber-700">
+                        {yesterdayProductionStats.average.toFixed(1)}
+                      </div>
+                      <div className="text-sm text-amber-600">Average per Category</div>
+                    </motion.div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <motion.div 
+                        className="bg-yellow-50 p-3 rounded-lg"
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.3, delay: 0.2 }}
+                      >
+                        <div className="text-lg font-bold text-yellow-700">
+                          {yesterdayProductionStats.max}
+                        </div>
+                        <div className="text-xs text-yellow-600">Highest Output</div>
+                      </motion.div>
+
+                      <motion.div 
+                        className="bg-red-50 p-3 rounded-lg"
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.3, delay: 0.3 }}
+                      >
+                        <div className="text-lg font-bold text-red-700">
+                          {yesterdayProductionStats.min}
+                        </div>
+                        <div className="text-xs text-red-600">Lowest Output</div>
+                      </motion.div>
+                    </div>
+
+                    <motion.div 
+                      className="bg-gray-50 p-4 rounded-lg"
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.4 }}
+                    >
+                      <div className="text-lg font-bold text-gray-700">
+                        {yesterdayProductionStats.count} / 6
+                      </div>
+                      <div className="text-sm text-gray-600">Categories Completed</div>
+                    </motion.div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Clock className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-500">Enter yesterday's production data to see statistics</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Yesterday's Production Quick Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Production Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => {
+                    // Fill with sample yesterday production data
+                    setYesterdayProductionData({
+                      prod1: "1250", // Day - Ice cream / Cartoon
+                      prod2: "950",  // Night - Ice cream / Cartoon
+                      prod3: "45",   // Day - Albany / Tons
+                      prod4: "32",   // Night - Albany / Tons
+                      prod5: "18",   // Day - Do / Tons
+                      prod6: "14",   // Night - Do / Tons
+                    });
+                  }}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Fill Sample Data
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => {
+                    // Fill with random yesterday production data
+                    setYesterdayProductionData({
+                      prod1: Math.floor(Math.random() * 500 + 1000).toString(), // Day - Ice cream / Cartoon
+                      prod2: Math.floor(Math.random() * 400 + 800).toString(),  // Night - Ice cream / Cartoon
+                      prod3: Math.floor(Math.random() * 20 + 30).toString(),    // Day - Albany / Tons
+                      prod4: Math.floor(Math.random() * 15 + 25).toString(),    // Night - Albany / Tons
+                      prod5: Math.floor(Math.random() * 10 + 10).toString(),    // Day - Do / Tons
+                      prod6: Math.floor(Math.random() * 8 + 8).toString(),      // Night - Do / Tons
                     });
                   }}
                 >

@@ -22,7 +22,7 @@ import {
 interface DataEntry {
   id: string;
   timestamp: string;
-  type: 'employee' | 'operations' | 'staffCount';
+  type: 'employee' | 'operations' | 'staffCount' | 'yesterdayProduction';
   data: Record<string, string>;
   stats: {
     total: number;
@@ -34,7 +34,7 @@ interface DataEntry {
 
 export default function DataViewPage() {
   const [allData, setAllData] = useState<DataEntry[]>([]);
-  const [filter, setFilter] = useState<'all' | 'employee' | 'operations' | 'staffCount'>('all');
+  const [filter, setFilter] = useState<'all' | 'employee' | 'operations' | 'staffCount' | 'yesterdayProduction'>('all');
   const [dateFilter, setDateFilter] = useState({
     startDate: '',
     endDate: '',
@@ -110,6 +110,7 @@ export default function DataViewPage() {
       case 'employee': return <Users className="w-4 h-4" />;
       case 'operations': return <BarChart3 className="w-4 h-4" />;
       case 'staffCount': return <TrendingUp className="w-4 h-4" />;
+      case 'yesterdayProduction': return <Clock className="w-4 h-4" />;
       default: return <Database className="w-4 h-4" />;
     }
   };
@@ -119,6 +120,7 @@ export default function DataViewPage() {
       case 'employee': return 'bg-blue-100 text-blue-800';
       case 'operations': return 'bg-green-100 text-green-800';
       case 'staffCount': return 'bg-purple-100 text-purple-800';
+      case 'yesterdayProduction': return 'bg-orange-100 text-orange-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -128,6 +130,7 @@ export default function DataViewPage() {
       case 'employee': return 'Employee Tracking';
       case 'operations': return 'Operations Tracking';
       case 'staffCount': return 'Staff Count Tracking';
+      case 'yesterdayProduction': return 'Yesterday\'s Production';
       default: return 'Unknown';
     }
   };
@@ -241,6 +244,15 @@ export default function DataViewPage() {
             >
               <TrendingUp className="w-4 h-4" />
               Staff Count
+            </Button>
+            <Button
+              variant={filter === 'yesterdayProduction' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilter('yesterdayProduction')}
+              className="flex items-center gap-2"
+            >
+              <Clock className="w-4 h-4" />
+              Yesterday's Production
             </Button>
           </div>
 
@@ -385,7 +397,7 @@ export default function DataViewPage() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -438,6 +450,18 @@ export default function DataViewPage() {
                 <p className="text-2xl font-bold">{allData.filter(d => d.type === 'staffCount').length}</p>
               </div>
               <TrendingUp className="w-8 h-8 text-purple-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Yesterday's Production</p>
+                <p className="text-2xl font-bold">{allData.filter(d => d.type === 'yesterdayProduction').length}</p>
+              </div>
+              <Clock className="w-8 h-8 text-orange-600" />
             </div>
           </CardContent>
         </Card>
