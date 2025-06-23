@@ -139,7 +139,7 @@ export default function MetricsPage() {
     const countMin = Math.min(...countNumbers);
 
     toast({
-      title: "Employee Count Data Saved Successfully",
+      title: "Staff Count Data Saved Successfully",
       description: `Total: ${countSum.toFixed(0)} | Average: ${countAverage.toFixed(1)} | Max: ${countMax} | Min: ${countMin}`,
     });
 
@@ -246,7 +246,7 @@ export default function MetricsPage() {
     >
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Daily Operations Dashboard</h2>
-        <p className="text-gray-600">Track employee attendance, operational activities, and department staffing</p>
+        <p className="text-gray-600">Track employee attendance, operational activities, and shift staffing levels</p>
       </div>
 
       {/* Employee Tracking Section */}
@@ -678,7 +678,7 @@ export default function MetricsPage() {
 
       {/* Employee Count Section */}
       <div className="mb-8">
-        <h3 className="text-2xl font-bold text-gray-800 mb-6">Employee Count Tracking</h3>
+        <h3 className="text-2xl font-bold text-gray-800 mb-6">Staff Count Tracking</h3>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Employee Count Input Form */}
           <div className="lg:col-span-2">
@@ -686,22 +686,22 @@ export default function MetricsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Users className="w-5 h-5 text-purple-600" />
-                  <span>Employee Count Data Entry</span>
+                  <span>Staff Count Data Entry</span>
                 </CardTitle>
                 <CardDescription>
-                  Enter detailed employee count information by category and department
+                  Enter staff counts for ice cream production, Albany operations, and Do activities by shift
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleEmployeeCountSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
-                      { field: 'count1', label: 'Production Staff', placeholder: 'Enter production staff count' },
-                      { field: 'count2', label: 'Administrative Staff', placeholder: 'Enter administrative staff count' },
-                      { field: 'count3', label: 'Quality Control', placeholder: 'Enter quality control staff count' },
-                      { field: 'count4', label: 'Maintenance Team', placeholder: 'Enter maintenance team count' },
-                      { field: 'count5', label: 'Supervisors', placeholder: 'Enter supervisors count' },
-                      { field: 'count6', label: 'Support Staff', placeholder: 'Enter support staff count' },
+                      { field: 'count1', label: 'Day - Ice cream', placeholder: 'Enter day ice cream staff count' },
+                      { field: 'count2', label: 'Night - Ice cream', placeholder: 'Enter night ice cream staff count' },
+                      { field: 'count3', label: 'Day - Albany', placeholder: 'Enter day Albany staff count' },
+                      { field: 'count4', label: 'Night - Albany', placeholder: 'Enter night Albany staff count' },
+                      { field: 'count5', label: 'Day - Do', placeholder: 'Enter day Do staff count' },
+                      { field: 'count6', label: 'Night - Do', placeholder: 'Enter night Do staff count' },
                     ].map((item, index) => {
                       const fieldName = item.field as keyof typeof employeeCountData;
                       return (
@@ -735,7 +735,7 @@ export default function MetricsPage() {
                       disabled={Object.values(employeeCountData).every(val => val === "")}
                     >
                       <Save className="w-4 h-4" />
-                      <span>Save Employee Count Data</span>
+                      <span>Save Staff Count Data</span>
                     </Button>
                     <Button 
                       type="button" 
@@ -757,7 +757,7 @@ export default function MetricsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <TrendingUp className="w-5 h-5 text-purple-600" />
-                  <span>Employee Count Statistics</span>
+                  <span>Staff Count Statistics</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -772,7 +772,7 @@ export default function MetricsPage() {
                       <div className="text-2xl font-bold text-purple-700">
                         {employeeCountStats.sum.toFixed(0)}
                       </div>
-                      <div className="text-sm text-purple-600">Total Employees</div>
+                      <div className="text-sm text-purple-600">Total Staff</div>
                     </motion.div>
 
                     <motion.div 
@@ -784,7 +784,7 @@ export default function MetricsPage() {
                       <div className="text-2xl font-bold text-indigo-700">
                         {employeeCountStats.average.toFixed(1)}
                       </div>
-                      <div className="text-sm text-indigo-600">Average per Category</div>
+                      <div className="text-sm text-indigo-600">Average per Shift</div>
                     </motion.div>
 
                     <div className="grid grid-cols-2 gap-3">
@@ -797,7 +797,7 @@ export default function MetricsPage() {
                         <div className="text-lg font-bold text-teal-700">
                           {employeeCountStats.max}
                         </div>
-                        <div className="text-xs text-teal-600">Largest Category</div>
+                        <div className="text-xs text-teal-600">Largest Shift</div>
                       </motion.div>
 
                       <motion.div 
@@ -809,7 +809,7 @@ export default function MetricsPage() {
                         <div className="text-lg font-bold text-orange-700">
                           {employeeCountStats.min}
                         </div>
-                        <div className="text-xs text-orange-600">Smallest Category</div>
+                        <div className="text-xs text-orange-600">Smallest Shift</div>
                       </motion.div>
                     </div>
 
@@ -822,22 +822,22 @@ export default function MetricsPage() {
                       <div className="text-lg font-bold text-gray-700">
                         {employeeCountStats.count} / 6
                       </div>
-                      <div className="text-sm text-gray-600">Categories Completed</div>
+                      <div className="text-sm text-gray-600">Shifts Completed</div>
                     </motion.div>
                   </div>
                 ) : (
                   <div className="text-center py-8">
                     <Users className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-500">Enter employee count data to see statistics</p>
+                    <p className="text-gray-500">Enter staff count data to see statistics</p>
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            {/* Employee Count Quick Actions */}
+            {/* Staff Count Quick Actions */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Employee Count Quick Actions</CardTitle>
+                <CardTitle className="text-lg">Staff Count Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button 
@@ -847,12 +847,12 @@ export default function MetricsPage() {
                   onClick={() => {
                     // Fill with sample employee count data
                     setEmployeeCountData({
-                      count1: "45", // Production Staff
-                      count2: "12", // Administrative Staff
-                      count3: "8",  // Quality Control
-                      count4: "6",  // Maintenance Team
-                      count5: "5",  // Supervisors
-                      count6: "10", // Support Staff
+                      count1: "25", // Day - Ice cream
+                      count2: "18", // Night - Ice cream
+                      count3: "12", // Day - Albany
+                      count4: "8",  // Night - Albany
+                      count5: "6",  // Day - Do
+                      count6: "4",  // Night - Do
                     });
                   }}
                 >
@@ -867,12 +867,12 @@ export default function MetricsPage() {
                   onClick={() => {
                     // Fill with random employee count data
                     setEmployeeCountData({
-                      count1: Math.floor(Math.random() * 40 + 30).toString(), // Production Staff
-                      count2: Math.floor(Math.random() * 10 + 8).toString(),  // Administrative Staff
-                      count3: Math.floor(Math.random() * 8 + 4).toString(),   // Quality Control
-                      count4: Math.floor(Math.random() * 6 + 3).toString(),   // Maintenance Team
-                      count5: Math.floor(Math.random() * 5 + 3).toString(),   // Supervisors
-                      count6: Math.floor(Math.random() * 12 + 6).toString(),  // Support Staff
+                      count1: Math.floor(Math.random() * 20 + 15).toString(), // Day - Ice cream
+                      count2: Math.floor(Math.random() * 15 + 12).toString(), // Night - Ice cream
+                      count3: Math.floor(Math.random() * 10 + 8).toString(),  // Day - Albany
+                      count4: Math.floor(Math.random() * 8 + 5).toString(),   // Night - Albany
+                      count5: Math.floor(Math.random() * 6 + 3).toString(),   // Day - Do
+                      count6: Math.floor(Math.random() * 5 + 2).toString(),   // Night - Do
                     });
                   }}
                 >

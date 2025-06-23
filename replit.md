@@ -106,6 +106,8 @@ The deployment uses:
 - June 22, 2025: Updated system terminology and branding to reflect internal employee management focus rather than external hiring
 - June 22, 2025: Enhanced operations tracking with dual-form dashboard for employee attendance (7 fields) and operational activities (6 fields)
 - June 22, 2025: Updated operations fields to track ice cream production, Albany operations, and Do activities across day/night shifts
+- June 23, 2025: Added third tracking component for staff count with 6 fields matching operational categories (Day/Night Ice cream, Albany, Do)
+- June 23, 2025: Unified dashboard terminology across all three sections to consistently reflect ice cream and Albany business operations
 
 ## User Preferences
 
