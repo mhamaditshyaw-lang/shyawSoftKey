@@ -126,3 +126,4 @@ Preferred communication style: Simple, everyday language.
 - Remove feedback quick action from dashboard (keep only in sidebar navigation)
 - Added animated welcome dashboard with greeting, time-based messages, role badges, and smooth animations
 - Implemented emoji/icon picker for description highlights with categorized selection (Performance, Feedback, Areas)
+- Prefers old/simple design for Data View with search functionality and icons on filter buttons

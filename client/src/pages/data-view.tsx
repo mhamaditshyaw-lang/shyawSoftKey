@@ -3,10 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
-import { useUserPreferences } from "@/hooks/use-user-preferences";
-import { PreferencesModal } from "@/components/modals/preferences-modal";
 import { 
   Users, 
   BarChart3, 
@@ -16,10 +13,7 @@ import {
   RefreshCw,
   Download,
   Database,
-  Settings,
-  Search,
-  SortAsc,
-  SortDesc
+  Search
 } from "lucide-react";
 
 interface DataEntry {
@@ -39,9 +33,6 @@ export default function DataViewPage() {
   const [allData, setAllData] = useState<DataEntry[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
-  const { preferences, updateDataViewPreferences } = useUserPreferences();
 
   // Helper functions - defined early to avoid hoisting issues
   const getTypeIcon = (type: string) => {
@@ -77,13 +68,6 @@ export default function DataViewPage() {
     }
   };
 
-  // Load user preferences and set initial filter
-  useEffect(() => {
-    if (preferences.dataView.defaultFilter !== filter) {
-      setFilter(preferences.dataView.defaultFilter);
-    }
-  }, [preferences.dataView.defaultFilter]);
-
   // Load data from localStorage
   useEffect(() => {
     const loadData = () => {
@@ -98,15 +82,14 @@ export default function DataViewPage() {
 
     loadData();
     
-    // Use user preference for refresh interval
-    if (preferences.dataView.autoRefresh) {
-      const interval = setInterval(loadData, preferences.dataView.refreshInterval);
-      return () => clearInterval(interval);
-    }
-  }, [preferences.dataView.autoRefresh, preferences.dataView.refreshInterval]);
+    // Refresh every 2 seconds
+    const interval = setInterval(loadData, 2000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
-  // Filter and sort data based on preferences and search
-  const filteredAndSortedData = (() => {
+  // Filter data based on selected filter and search
+  const filteredData = (() => {
     let data = filter === 'all' ? allData : allData.filter(d => d.type === filter);
     
     // Apply search filter
@@ -120,49 +103,8 @@ export default function DataViewPage() {
       );
     }
     
-    // Apply sorting based on preferences
-    data.sort((a, b) => {
-      let aValue, bValue;
-      
-      switch (preferences.dataView.sortBy) {
-        case 'timestamp':
-          aValue = new Date(a.timestamp).getTime();
-          bValue = new Date(b.timestamp).getTime();
-          break;
-        case 'type':
-          aValue = getTypeName(a.type);
-          bValue = getTypeName(b.type);
-          break;
-        case 'total':
-          aValue = a.stats.total;
-          bValue = b.stats.total;
-          break;
-        default:
-          aValue = new Date(a.timestamp).getTime();
-          bValue = new Date(b.timestamp).getTime();
-      }
-      
-      if (preferences.dataView.sortOrder === 'asc') {
-        return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
-      }
-    });
-    
     return data;
   })();
-
-  // Pagination
-  const totalPages = Math.ceil(filteredAndSortedData.length / preferences.dataView.itemsPerPage);
-  const paginatedData = filteredAndSortedData.slice(
-    (currentPage - 1) * preferences.dataView.itemsPerPage,
-    currentPage * preferences.dataView.itemsPerPage
-  );
-
-  // Reset to first page when filter changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filter, searchTerm]);
 
   const refreshData = () => {
     const storedData = localStorage.getItem('operationsData');
@@ -173,19 +115,13 @@ export default function DataViewPage() {
   };
 
   const exportData = () => {
-    const dataStr = JSON.stringify(filteredAndSortedData, null, 2);
+    const dataStr = JSON.stringify(filteredData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
     link.download = `operations-data-${new Date().toISOString().split('T')[0]}.json`;
     link.click();
-  };
-
-  // Save filter preference when changed
-  const handleFilterChange = (newFilter: string) => {
-    setFilter(newFilter);
-    updateDataViewPreferences({ defaultFilter: newFilter });
   };
 
   return (
@@ -245,89 +181,76 @@ export default function DataViewPage() {
       </div>
 
       {/* Search and Controls */}
-      <div className="space-y-4 mb-6">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex-1 min-w-64">
-            <div className="relative">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search data entries..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div className="flex flex-wrap gap-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search data entries..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 w-64"
+            />
           </div>
           
-          <Select value={filter} onValueChange={handleFilterChange}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Filter by type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Data</SelectItem>
-              <SelectItem value="employee">Employee Data</SelectItem>
-              <SelectItem value="operations">Operations Data</SelectItem>
-              <SelectItem value="staffCount">Staff Count Data</SelectItem>
-              <SelectItem value="yesterdayProduction">Yesterday's Production</SelectItem>
-              <SelectItem value="yesterdayLoading">Yesterday's Loading</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setIsPreferencesOpen(true)}>
-              <Settings className="w-4 h-4 mr-2" />
-              Preferences
-            </Button>
-            <Button variant="outline" size="sm" onClick={refreshData}>
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Refresh
-            </Button>
-            <Button variant="outline" size="sm" onClick={exportData}>
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </Button>
-          </div>
+          <Button
+            variant={filter === 'all' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('all')}
+          >
+            All Data
+          </Button>
+          <Button
+            variant={filter === 'employee' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('employee')}
+          >
+            <Users className="w-4 h-4 mr-1" />
+            Employee
+          </Button>
+          <Button
+            variant={filter === 'operations' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('operations')}
+          >
+            <BarChart3 className="w-4 h-4 mr-1" />
+            Operations
+          </Button>
+          <Button
+            variant={filter === 'staffCount' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('staffCount')}
+          >
+            <TrendingUp className="w-4 h-4 mr-1" />
+            Staff Count
+          </Button>
+          <Button
+            variant={filter === 'yesterdayProduction' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('yesterdayProduction')}
+          >
+            <Clock className="w-4 h-4 mr-1" />
+            Production
+          </Button>
+          <Button
+            variant={filter === 'yesterdayLoading' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('yesterdayLoading')}
+          >
+            <Truck className="w-4 h-4 mr-1" />
+            Loading
+          </Button>
         </div>
 
-        {/* Sort and View Options */}
-        <div className="flex flex-wrap items-center gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <span className="text-gray-600">Sort by:</span>
-            <Select 
-              value={preferences.dataView.sortBy} 
-              onValueChange={(value: 'timestamp' | 'type' | 'total') => 
-                updateDataViewPreferences({ sortBy: value })
-              }
-            >
-              <SelectTrigger className="w-32 h-8">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="timestamp">Date</SelectItem>
-                <SelectItem value="type">Type</SelectItem>
-                <SelectItem value="total">Total</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => updateDataViewPreferences({ 
-                sortOrder: preferences.dataView.sortOrder === 'asc' ? 'desc' : 'asc' 
-              })}
-            >
-              {preferences.dataView.sortOrder === 'desc' ? 
-                <SortDesc className="w-4 h-4" /> : 
-                <SortAsc className="w-4 h-4" />
-              }
-            </Button>
-          </div>
-
-          <div className="flex items-center gap-2 ml-auto">
-            <span className="text-gray-600">
-              Showing {paginatedData.length} of {filteredAndSortedData.length} entries
-            </span>
-          </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={refreshData}>
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Refresh
+          </Button>
+          <Button variant="outline" size="sm" onClick={exportData}>
+            <Download className="w-4 h-4 mr-2" />
+            Export
+          </Button>
         </div>
       </div>
 
@@ -337,16 +260,14 @@ export default function DataViewPage() {
           <div className="text-sm">
             <strong>Debug Info:</strong> Total entries: {allData.length} | 
             Types found: {[...new Set(allData.map(d => d.type))].join(', ')} | 
-            Filtered: {filteredAndSortedData.length} | 
-            Page: {currentPage}/{totalPages} | 
-            Auto-refresh: {preferences.dataView.autoRefresh ? 'ON' : 'OFF'}
+            Filtered: {filteredData.length}
           </div>
         </CardContent>
       </Card>
 
       {/* Data Entries */}
       <div className="space-y-6">
-        {filteredAndSortedData.length === 0 ? (
+        {filteredData.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
               <Database className="w-16 h-16 text-gray-400 mx-auto mb-4" />
@@ -360,7 +281,7 @@ export default function DataViewPage() {
             </CardContent>
           </Card>
         ) : (
-          paginatedData.map((entry, index) => (
+          filteredData.map((entry, index) => (
             <motion.div
               key={entry.id}
               initial={{ opacity: 0, x: -20 }}
@@ -380,58 +301,35 @@ export default function DataViewPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  {preferences.dataView.compactView ? (
-                    <div className="space-y-2">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                        {Object.entries(entry.data).slice(0, 3).map(([key, value]) => (
-                          <div key={key} className="flex justify-between">
-                            <span className="text-gray-600">{key}:</span>
-                            <span className="font-medium">{value}</span>
-                          </div>
-                        ))}
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                    {Object.entries(entry.data).map(([key, value]) => (
+                      <div key={key} className="bg-white p-2 rounded border">
+                        <div className="text-xs font-medium text-gray-600">{key}</div>
+                        <div className="text-sm font-bold">{value}</div>
                       </div>
-                      {preferences.dataView.showStats && (
-                        <div className="flex justify-between text-xs text-gray-500 pt-2 border-t">
-                          <span>Total: {entry.stats.total.toFixed(1)}</span>
-                          <span>Avg: {entry.stats.average.toFixed(1)}</span>
-                        </div>
-                      )}
+                    ))}
+                  </div>
+                  
+                  <div className="border-t pt-3 mt-3">
+                    <div className="grid grid-cols-4 gap-3 text-sm">
+                      <div className="text-center">
+                        <div className="font-bold text-blue-600">{entry.stats.total.toFixed(1)}</div>
+                        <div className="text-xs text-gray-500">Total</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold text-green-600">{entry.stats.average.toFixed(1)}</div>
+                        <div className="text-xs text-gray-500">Average</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold text-orange-600">{entry.stats.max}</div>
+                        <div className="text-xs text-gray-500">Max</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold text-red-600">{entry.stats.min}</div>
+                        <div className="text-xs text-gray-500">Min</div>
+                      </div>
                     </div>
-                  ) : (
-                    <>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
-                        {Object.entries(entry.data).map(([key, value]) => (
-                          <div key={key} className="bg-white p-2 rounded border">
-                            <div className="text-xs font-medium text-gray-600">{key}</div>
-                            <div className="text-sm font-bold">{value}</div>
-                          </div>
-                        ))}
-                      </div>
-                      
-                      {preferences.dataView.showStats && (
-                        <div className="border-t pt-3 mt-3">
-                          <div className="grid grid-cols-4 gap-3 text-sm">
-                            <div className="text-center">
-                              <div className="font-bold text-blue-600">{entry.stats.total.toFixed(1)}</div>
-                              <div className="text-xs text-gray-500">Total</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="font-bold text-green-600">{entry.stats.average.toFixed(1)}</div>
-                              <div className="text-xs text-gray-500">Average</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="font-bold text-orange-600">{entry.stats.max}</div>
-                              <div className="text-xs text-gray-500">Max</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="font-bold text-red-600">{entry.stats.min}</div>
-                              <div className="text-xs text-gray-500">Min</div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </>
-                  )}
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -439,51 +337,6 @@ export default function DataViewPage() {
         )}
       </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-8">
-          <div className="text-sm text-gray-600">
-            Page {currentPage} of {totalPages}
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </Button>
-            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
-              return (
-                <Button
-                  key={pageNum}
-                  variant={pageNum === currentPage ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setCurrentPage(pageNum)}
-                >
-                  {pageNum}
-                </Button>
-              );
-            })}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Preferences Modal */}
-      <PreferencesModal 
-        isOpen={isPreferencesOpen} 
-        onClose={() => setIsPreferencesOpen(false)} 
-      />
     </motion.div>
   );
 }
