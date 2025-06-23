@@ -330,6 +330,30 @@ export default function DashboardPage() {
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
+              <Filter className="w-4 h-4 text-blue-500" />
+              <span className="text-sm font-medium text-gray-700">
+                {filteredTodos.length} todos, {filteredInterviews.length} interviews
+              </span>
+            </motion.div>
+            
+            {dateFilter === "today" && (
+              <motion.div 
+                className="flex items-center space-x-2 bg-green-100/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm border border-green-200"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <Calendar className="w-4 h-4 text-green-600" />
+                <span className="text-sm font-medium text-green-700">
+                  Today's Data Only
+                </span>
+              </motion.div>
+            )}
+            
+            <motion.div 
+              className="flex items-center space-x-2 bg-white/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
               <TrendingUp className="w-4 h-4 text-green-500" />
               <span className="text-sm font-medium text-gray-700">Active Status</span>
             </motion.div>
@@ -345,6 +369,82 @@ export default function DashboardPage() {
           </motion.div>
         </div>
       </motion.div>
+
+      {/* Search and Filter Controls */}
+      <Card className="mb-8">
+        <CardContent className="p-6">
+          <div className="space-y-6">
+            {/* Search Bar */}
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Search todos, interviews, or users..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Date Filter Controls */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg border">
+              <div className="space-y-2">
+                <Label htmlFor="date-filter" className="text-sm font-medium flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  Date Filter
+                </Label>
+                <Select value={dateFilter} onValueChange={setDateFilter}>
+                  <SelectTrigger id="date-filter">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="today">Today Only</SelectItem>
+                    <SelectItem value="week">This Week</SelectItem>
+                    <SelectItem value="month">This Month</SelectItem>
+                    <SelectItem value="custom">Custom Date</SelectItem>
+                    <SelectItem value="all">All Dates</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {dateFilter === 'custom' && (
+                <div className="space-y-2">
+                  <Label htmlFor="custom-date" className="text-sm font-medium">
+                    Select Date
+                  </Label>
+                  <Input
+                    id="custom-date"
+                    type="date"
+                    value={customDate}
+                    onChange={(e) => setCustomDate(e.target.value)}
+                    className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="auto-refresh" className="text-sm font-medium flex items-center gap-2">
+                  <RefreshCw className={`w-4 h-4 ${autoRefresh ? 'animate-spin text-green-600' : 'text-gray-400'}`} />
+                  Auto Refresh
+                </Label>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="auto-refresh"
+                    checked={autoRefresh}
+                    onCheckedChange={setAutoRefresh}
+                  />
+                  <span className="text-sm text-gray-600">
+                    {autoRefresh ? 'Every 30s' : 'Disabled'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {user?.role === "admin" && stats && (
         <motion.div 
