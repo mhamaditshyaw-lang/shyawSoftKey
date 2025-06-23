@@ -13,6 +13,7 @@ import TodosPage from "@/pages/todos";
 import FeedbackPage from "@/pages/feedback";
 import ArchivePage from "@/pages/archive";
 import MetricsPage from "@/pages/metrics";
+import DataViewPage from "@/pages/data-view";
 import ReportsPage from "@/pages/reports";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/header";
@@ -83,6 +84,11 @@ function Router() {
       <Route path="/metrics">
         <ProtectedRoute>
           <MetricsPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/data-view">
+        <ProtectedRoute>
+          <DataViewPage />
         </ProtectedRoute>
       </Route>
       <Route path="/reports">

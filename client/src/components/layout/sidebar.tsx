@@ -10,6 +10,7 @@ import {
   Calculator,
   Archive,
   TrendingUp,
+  Database,
 } from "lucide-react";
 
 interface NavItem {
@@ -54,6 +55,12 @@ const navItems: NavItem[] = [
     title: "Employee Tracking",
     href: "/metrics",
     icon: Calculator,
+    roles: ["admin", "manager", "secretary"],
+  },
+  {
+    title: "Data View",
+    href: "/data-view",
+    icon: Database,
     roles: ["admin", "manager", "secretary"],
   },
   {

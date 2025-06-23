@@ -90,6 +90,27 @@ export default function MetricsPage() {
       description: `Total: ${sum.toFixed(0)} | Average: ${average.toFixed(1)} | Max: ${max} | Min: ${min}`,
     });
 
+    // Save to localStorage for data view
+    const newEntry = {
+      id: Date.now().toString(),
+      timestamp: new Date().toISOString(),
+      type: 'employee' as const,
+      data: {
+        'Total employees today': formData.number1,
+        'Permanent employees': formData.number2,
+        'Non-permanent employees': formData.number3,
+        'Day - Start of work': formData.number4,
+        'Day - Giving up': formData.number5,
+        'Night - Start of work': formData.number6,
+        'Night - Giving up': formData.number7,
+      },
+      stats: { total: sum, average, max, min }
+    };
+    
+    const existingData = JSON.parse(localStorage.getItem('operationsData') || '[]');
+    existingData.push(newEntry);
+    localStorage.setItem('operationsData', JSON.stringify(existingData));
+
     // Reset form
     setFormData({
       number1: "",
@@ -117,6 +138,26 @@ export default function MetricsPage() {
       description: `Total: ${deviceSum.toFixed(0)} | Average: ${deviceAverage.toFixed(1)} | Max: ${deviceMax} | Min: ${deviceMin}`,
     });
 
+    // Save to localStorage for data view
+    const newEntry = {
+      id: Date.now().toString(),
+      timestamp: new Date().toISOString(),
+      type: 'operations' as const,
+      data: {
+        'Day - Ice cream': deviceData.device1,
+        'Night - Ice cream': deviceData.device2,
+        'Day - Albany': deviceData.device3,
+        'Night - Albany': deviceData.device4,
+        'Day - Do': deviceData.device5,
+        'Night - Do': deviceData.device6,
+      },
+      stats: { total: deviceSum, average: deviceAverage, max: deviceMax, min: deviceMin }
+    };
+    
+    const existingData = JSON.parse(localStorage.getItem('operationsData') || '[]');
+    existingData.push(newEntry);
+    localStorage.setItem('operationsData', JSON.stringify(existingData));
+
     // Reset device form
     setDeviceData({
       device1: "",
@@ -142,6 +183,26 @@ export default function MetricsPage() {
       title: "Staff Count Data Saved Successfully",
       description: `Total: ${countSum.toFixed(0)} | Average: ${countAverage.toFixed(1)} | Max: ${countMax} | Min: ${countMin}`,
     });
+
+    // Save to localStorage for data view
+    const newEntry = {
+      id: Date.now().toString(),
+      timestamp: new Date().toISOString(),
+      type: 'staffCount' as const,
+      data: {
+        'Day - Ice cream': employeeCountData.count1,
+        'Night - Ice cream': employeeCountData.count2,
+        'Day - Albany': employeeCountData.count3,
+        'Night - Albany': employeeCountData.count4,
+        'Day - Do': employeeCountData.count5,
+        'Night - Do': employeeCountData.count6,
+      },
+      stats: { total: countSum, average: countAverage, max: countMax, min: countMin }
+    };
+    
+    const existingData = JSON.parse(localStorage.getItem('operationsData') || '[]');
+    existingData.push(newEntry);
+    localStorage.setItem('operationsData', JSON.stringify(existingData));
 
     // Reset employee count form
     setEmployeeCountData({
