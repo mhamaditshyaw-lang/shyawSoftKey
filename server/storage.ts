@@ -159,11 +159,22 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createTodoItem(item: InsertTodoItem): Promise<TodoItem> {
-    const [todoItem] = await db
-      .insert(todoItems)
-      .values(item)
-      .returning();
-    return todoItem;
+    console.log("Storage: Creating todo item with:", item);
+    try {
+      const [todoItem] = await db
+        .insert(todoItems)
+        .values({
+          ...item,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .returning();
+      console.log("Storage: Created todo item:", todoItem);
+      return todoItem;
+    } catch (error) {
+      console.error("Storage: Error creating todo item:", error);
+      throw error;
+    }
   }
 
   async updateTodoItem(id: number, updates: Partial<TodoItem>): Promise<TodoItem | undefined> {

@@ -114,9 +114,13 @@ export const insertTodoListSchema = createInsertSchema(todoLists).omit({
   createdAt: true,
 });
 
-export const insertTodoItemSchema = createInsertSchema(todoItems).omit({
+export const insertTodoItemSchema = createInsertSchema(todoItems, {
+  title: z.string().min(1, "Title is required"),
+  priority: z.enum(["low", "medium", "high", "urgent"]).default("medium"),
+}).omit({
   id: true,
   createdAt: true,
+  updatedAt: true,
   completedAt: true,
 });
 

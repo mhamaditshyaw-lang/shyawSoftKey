@@ -193,6 +193,10 @@ export default function TodosPage() {
   const addTodoItemMutation = useMutation({
     mutationFn: async (data: { todoListId: number; text: string; priority: string }) => {
       const response = await authenticatedRequest("POST", "/api/todos/items", data);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add task');
+      }
       return response.json();
     },
     onSuccess: () => {
@@ -686,7 +690,7 @@ export default function TodosPage() {
                         value={newItemText}
                         onChange={(e) => setNewItemText(e.target.value)}
                         onKeyPress={(e) => {
-                          if (e.key === "Enter") {
+                          if (e.key === "Enter" && newItemText.trim()) {
                             handleAddTodoItem(list.id);
                           }
                         }}
@@ -697,7 +701,11 @@ export default function TodosPage() {
                         onClick={() => handleAddTodoItem(list.id)}
                         disabled={!newItemText.trim() || addTodoItemMutation.isPending}
                       >
-                        <Plus className="w-4 h-4" />
+                        {addTodoItemMutation.isPending ? (
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Plus className="w-4 h-4" />
+                        )}
                       </Button>
                     </div>
                     
