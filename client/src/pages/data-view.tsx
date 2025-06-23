@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
-import { LoadingVisualization, useLoadingVisualization } from "@/components/ui/loading-visualization";
+
 import { 
   Database, 
   Calendar,
@@ -45,8 +45,7 @@ export default function DataViewPage() {
     endDate: '',
     searchDate: ''
   });
-  const { isLoading: isExportLoading, startLoading: startExportLoading, stopLoading: stopExportLoading } = useLoadingVisualization();
-  const { isLoading: isRefreshLoading, startLoading: startRefreshLoading, stopLoading: stopRefreshLoading } = useLoadingVisualization();
+
 
   // Load data from localStorage on component mount
   useEffect(() => {
