@@ -170,7 +170,6 @@ export class DatabaseStorage implements IStorage {
           description: item.description || "",
           isCompleted: item.isCompleted || false,
           priority: item.priority || "medium",
-          createdAt: new Date(),
         })
         .returning();
       console.log("Storage: Created todo item:", todoItem);
@@ -193,6 +192,18 @@ export class DatabaseStorage implements IStorage {
       .where(eq(todoItems.id, id))
       .returning();
     return item || undefined;
+  }
+
+  async deleteTodoItem(id: number): Promise<boolean> {
+    try {
+      await db
+        .delete(todoItems)
+        .where(eq(todoItems.id, id));
+      return true;
+    } catch (error) {
+      console.error("Storage: Error deleting todo item:", error);
+      return false;
+    }
   }
 
   async getInterviewRequests(): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]> {

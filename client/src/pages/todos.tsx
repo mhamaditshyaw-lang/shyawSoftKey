@@ -832,7 +832,7 @@ export default function TodosPage() {
                           initial="initial"
                           animate={item.isCompleted ? "completed" : "initial"}
                           exit={{ opacity: 0, x: -20 }}
-                          className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${
+                          className={`group flex items-center gap-3 p-2 rounded-lg transition-colors ${
                             item.isCompleted ? 'bg-green-50 border border-green-200' : 'bg-gray-50 hover:bg-gray-100'
                           }`}
                         >
@@ -854,20 +854,30 @@ export default function TodosPage() {
                               <Circle className="w-5 h-5 text-gray-400 hover:text-blue-500" />
                             )}
                           </motion.button>
-                          <span className={`flex-1 text-sm ${
-                            item.isCompleted ? 'text-green-700 line-through' : 'text-gray-700'
+                          <span className={`flex-1 text-sm font-medium ${
+                            item.isCompleted ? 'text-green-700 line-through' : 'text-gray-900'
                           }`}>
-                            {item.text}
+                            {item.title || item.text}
                           </span>
-                          {item.isCompleted && (
-                            <motion.div
-                              initial={{ scale: 0, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              transition={{ delay: 0.2 }}
+                          <div className="flex items-center gap-2">
+                            {item.isCompleted && (
+                              <motion.div
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.2 }}
+                              >
+                                <Sparkles className="w-4 h-4 text-green-500" />
+                              </motion.div>
+                            )}
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleRemoveTask(item.id)}
+                              className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 hover:bg-red-50 p-1"
                             >
-                              <Sparkles className="w-4 h-4 text-green-500" />
-                            </motion.div>
-                          )}
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
                         </motion.div>
                       ))}
                     </AnimatePresence>
