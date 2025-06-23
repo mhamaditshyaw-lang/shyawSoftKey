@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { LoadingVisualization, useLoadingVisualization } from "@/components/ui/loading-visualization";
-import { TestLoading } from "@/components/test-loading";
+
 import { 
   Plus, 
   Save,
@@ -499,6 +499,21 @@ export default function MetricsPage() {
     return { sum, average, max, min, count: numbers.length };
   };
 
+  const calculateYesterdayLoadingStats = () => {
+    const numbers = Object.values(yesterdayLoadingData)
+      .filter(val => val !== "")
+      .map(val => parseFloat(val));
+    
+    if (numbers.length === 0) return null;
+
+    const sum = numbers.reduce((acc, num) => acc + num, 0);
+    const average = sum / numbers.length;
+    const max = Math.max(...numbers);
+    const min = Math.min(...numbers);
+
+    return { sum, average, max, min, count: numbers.length };
+  };
+
   const stats = calculateStats();
   const deviceStats = calculateDeviceStats();
   const employeeCountStats = calculateEmployeeCountStats();
@@ -516,11 +531,7 @@ export default function MetricsPage() {
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Daily Operations Dashboard</h2>
         <p className="text-gray-600">Track employee attendance, operational activities, shift staffing levels, and production data</p>
         
-        {/* Test Loading Component */}
-        <div className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-          <h3 className="text-lg font-semibold mb-2">Test Loading Visualization</h3>
-          <TestLoading />
-        </div>
+
       </div>
 
       {/* Employee Tracking Section */}
