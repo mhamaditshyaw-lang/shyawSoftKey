@@ -1388,53 +1388,7 @@ export default function MetricsPage() {
               </CardContent>
             </Card>
 
-            {/* Yesterday's Production Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Production Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full"
-                  onClick={() => {
-                    // Fill with sample yesterday production data
-                    setYesterdayProductionData({
-                      prod1: "1250", // Day - Ice cream / Cartoon
-                      prod2: "950",  // Night - Ice cream / Cartoon
-                      prod3: "45",   // Day - Albany / Tons
-                      prod4: "32",   // Night - Albany / Tons
-                      prod5: "18",   // Day - Do / Tons
-                      prod6: "14",   // Night - Do / Tons
-                    });
-                  }}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Fill Sample Data
-                </Button>
-                
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full"
-                  onClick={() => {
-                    // Fill with random yesterday production data
-                    setYesterdayProductionData({
-                      prod1: Math.floor(Math.random() * 500 + 1000).toString(), // Day - Ice cream / Cartoon
-                      prod2: Math.floor(Math.random() * 400 + 800).toString(),  // Night - Ice cream / Cartoon
-                      prod3: Math.floor(Math.random() * 20 + 30).toString(),    // Day - Albany / Tons
-                      prod4: Math.floor(Math.random() * 15 + 25).toString(),    // Night - Albany / Tons
-                      prod5: Math.floor(Math.random() * 10 + 10).toString(),    // Day - Do / Tons
-                      prod6: Math.floor(Math.random() * 8 + 8).toString(),      // Night - Do / Tons
-                    });
-                  }}
-                >
-                  <Calculator className="w-4 h-4 mr-2" />
-                  Generate Random
-                </Button>
-              </CardContent>
-            </Card>
+
           </div>
         </div>
       </div>
