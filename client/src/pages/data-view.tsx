@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
 import { 
@@ -12,7 +14,9 @@ import {
   TrendingUp,
   Download,
   RefreshCw,
-  Clock
+  Clock,
+  Search,
+  X
 } from "lucide-react";
 
 interface DataEntry {
@@ -31,6 +35,11 @@ interface DataEntry {
 export default function DataViewPage() {
   const [allData, setAllData] = useState<DataEntry[]>([]);
   const [filter, setFilter] = useState<'all' | 'employee' | 'operations' | 'staffCount'>('all');
+  const [dateFilter, setDateFilter] = useState({
+    startDate: '',
+    endDate: '',
+    searchDate: ''
+  });
 
   // Load data from localStorage on component mount
   useEffect(() => {
@@ -123,7 +132,47 @@ export default function DataViewPage() {
     }
   };
 
-  const filteredData = filter === 'all' ? allData : allData.filter(entry => entry.type === filter);
+  // Apply type filter
+  let filteredData = filter === 'all' ? allData : allData.filter(entry => entry.type === filter);
+
+  // Apply date filter
+  if (dateFilter.searchDate) {
+    const searchDate = new Date(dateFilter.searchDate);
+    filteredData = filteredData.filter(entry => {
+      const entryDate = new Date(entry.timestamp);
+      return entryDate.toDateString() === searchDate.toDateString();
+    });
+  } else if (dateFilter.startDate && dateFilter.endDate) {
+    const startDate = new Date(dateFilter.startDate);
+    const endDate = new Date(dateFilter.endDate);
+    endDate.setHours(23, 59, 59, 999); // Include the entire end date
+    
+    filteredData = filteredData.filter(entry => {
+      const entryDate = new Date(entry.timestamp);
+      return entryDate >= startDate && entryDate <= endDate;
+    });
+  } else if (dateFilter.startDate) {
+    const startDate = new Date(dateFilter.startDate);
+    filteredData = filteredData.filter(entry => {
+      const entryDate = new Date(entry.timestamp);
+      return entryDate >= startDate;
+    });
+  } else if (dateFilter.endDate) {
+    const endDate = new Date(dateFilter.endDate);
+    endDate.setHours(23, 59, 59, 999);
+    filteredData = filteredData.filter(entry => {
+      const entryDate = new Date(entry.timestamp);
+      return entryDate <= endDate;
+    });
+  }
+
+  const clearDateFilters = () => {
+    setDateFilter({
+      startDate: '',
+      endDate: '',
+      searchDate: ''
+    });
+  };
 
   const exportData = () => {
     const dataStr = JSON.stringify(filteredData, null, 2);
@@ -155,54 +204,184 @@ export default function DataViewPage() {
       </div>
 
       {/* Filter and Actions Bar */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap gap-2">
-          <Button
-            variant={filter === 'all' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('all')}
-          >
-            All Data
-          </Button>
-          <Button
-            variant={filter === 'employee' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('employee')}
-            className="flex items-center gap-2"
-          >
-            <Users className="w-4 h-4" />
-            Employee
-          </Button>
-          <Button
-            variant={filter === 'operations' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('operations')}
-            className="flex items-center gap-2"
-          >
-            <BarChart3 className="w-4 h-4" />
-            Operations
-          </Button>
-          <Button
-            variant={filter === 'staffCount' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('staffCount')}
-            className="flex items-center gap-2"
-          >
-            <TrendingUp className="w-4 h-4" />
-            Staff Count
-          </Button>
+      <div className="mb-6 space-y-4">
+        {/* Type Filters */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant={filter === 'all' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilter('all')}
+            >
+              All Data
+            </Button>
+            <Button
+              variant={filter === 'employee' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilter('employee')}
+              className="flex items-center gap-2"
+            >
+              <Users className="w-4 h-4" />
+              Employee
+            </Button>
+            <Button
+              variant={filter === 'operations' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilter('operations')}
+              className="flex items-center gap-2"
+            >
+              <BarChart3 className="w-4 h-4" />
+              Operations
+            </Button>
+            <Button
+              variant={filter === 'staffCount' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilter('staffCount')}
+              className="flex items-center gap-2"
+            >
+              <TrendingUp className="w-4 h-4" />
+              Staff Count
+            </Button>
+          </div>
+
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={refreshData}>
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Refresh
+            </Button>
+            <Button variant="outline" size="sm" onClick={exportData}>
+              <Download className="w-4 h-4 mr-2" />
+              Export
+            </Button>
+          </div>
         </div>
 
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={refreshData}>
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh
-          </Button>
-          <Button variant="outline" size="sm" onClick={exportData}>
-            <Download className="w-4 h-4 mr-2" />
-            Export
-          </Button>
-        </div>
+        {/* Date Filters */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Calendar className="w-5 h-5" />
+              Date Search & Filters
+            </CardTitle>
+            <CardDescription>
+              Search by specific date or filter by date range
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {/* Specific Date Search */}
+              <div className="space-y-2">
+                <Label htmlFor="searchDate" className="text-sm font-medium">
+                  Search Specific Date
+                </Label>
+                <Input
+                  id="searchDate"
+                  type="date"
+                  value={dateFilter.searchDate}
+                  onChange={(e) => setDateFilter(prev => ({
+                    ...prev,
+                    searchDate: e.target.value,
+                    startDate: '', // Clear range filters when using specific date
+                    endDate: ''
+                  }))}
+                  className="w-full"
+                />
+              </div>
+
+              {/* Date Range Filters */}
+              <div className="space-y-2">
+                <Label htmlFor="startDate" className="text-sm font-medium">
+                  From Date
+                </Label>
+                <Input
+                  id="startDate"
+                  type="date"
+                  value={dateFilter.startDate}
+                  onChange={(e) => setDateFilter(prev => ({
+                    ...prev,
+                    startDate: e.target.value,
+                    searchDate: '' // Clear specific date when using range
+                  }))}
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="endDate" className="text-sm font-medium">
+                  To Date
+                </Label>
+                <Input
+                  id="endDate"
+                  type="date"
+                  value={dateFilter.endDate}
+                  onChange={(e) => setDateFilter(prev => ({
+                    ...prev,
+                    endDate: e.target.value,
+                    searchDate: '' // Clear specific date when using range
+                  }))}
+                  className="w-full"
+                />
+              </div>
+
+              {/* Clear Filters */}
+              <div className="flex items-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearDateFilters}
+                  disabled={!dateFilter.searchDate && !dateFilter.startDate && !dateFilter.endDate}
+                  className="w-full flex items-center gap-2"
+                >
+                  <X className="w-4 h-4" />
+                  Clear Dates
+                </Button>
+              </div>
+            </div>
+
+            {/* Active Filters Display */}
+            {(dateFilter.searchDate || dateFilter.startDate || dateFilter.endDate) && (
+              <div className="mt-4 pt-4 border-t">
+                <p className="text-sm text-gray-600 mb-2">Active Date Filters:</p>
+                <div className="flex flex-wrap gap-2">
+                  {dateFilter.searchDate && (
+                    <Badge variant="secondary" className="flex items-center gap-1">
+                      <Search className="w-3 h-3" />
+                      Specific: {new Date(dateFilter.searchDate).toLocaleDateString()}
+                      <button
+                        onClick={() => setDateFilter(prev => ({ ...prev, searchDate: '' }))}
+                        className="ml-1 hover:bg-gray-300 rounded-full p-0.5"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {dateFilter.startDate && (
+                    <Badge variant="secondary" className="flex items-center gap-1">
+                      From: {new Date(dateFilter.startDate).toLocaleDateString()}
+                      <button
+                        onClick={() => setDateFilter(prev => ({ ...prev, startDate: '' }))}
+                        className="ml-1 hover:bg-gray-300 rounded-full p-0.5"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {dateFilter.endDate && (
+                    <Badge variant="secondary" className="flex items-center gap-1">
+                      To: {new Date(dateFilter.endDate).toLocaleDateString()}
+                      <button
+                        onClick={() => setDateFilter(prev => ({ ...prev, endDate: '' }))}
+                        className="ml-1 hover:bg-gray-300 rounded-full p-0.5"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       {/* Summary Cards */}
@@ -211,8 +390,16 @@ export default function DataViewPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Entries</p>
+                <p className="text-sm font-medium text-gray-600">
+                  {(dateFilter.searchDate || dateFilter.startDate || dateFilter.endDate) 
+                    ? 'Filtered Entries' 
+                    : 'Total Entries'
+                  }
+                </p>
                 <p className="text-2xl font-bold">{filteredData.length}</p>
+                {(dateFilter.searchDate || dateFilter.startDate || dateFilter.endDate) && (
+                  <p className="text-xs text-gray-500">of {allData.length} total</p>
+                )}
               </div>
               <Database className="w-8 h-8 text-blue-600" />
             </div>
@@ -264,9 +451,11 @@ export default function DataViewPage() {
               <Database className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-600 mb-2">No Data Found</h3>
               <p className="text-gray-500">
-                {filter === 'all' 
-                  ? 'No operational data entries have been saved yet.'
-                  : `No ${getTypeName(filter)} entries found.`
+                {(dateFilter.searchDate || dateFilter.startDate || dateFilter.endDate)
+                  ? 'No entries found for the selected date criteria. Try adjusting your date filters.'
+                  : filter === 'all' 
+                    ? 'No operational data entries have been saved yet.'
+                    : `No ${getTypeName(filter)} entries found.`
                 }
               </p>
             </CardContent>
