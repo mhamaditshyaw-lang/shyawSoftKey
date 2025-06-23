@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { LoadingVisualization, useLoadingVisualization } from "@/components/ui/loading-visualization";
-import { SimpleTest } from "@/components/simple-test";
+
 
 import { 
   Plus, 
@@ -568,7 +568,7 @@ export default function MetricsPage() {
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Daily Operations Dashboard</h2>
         <p className="text-gray-600">Track employee attendance, operational activities, shift staffing levels, and production data</p>
         
-        <SimpleTest />
+
       </div>
 
       {/* Employee Tracking Section */}
