@@ -239,11 +239,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/todos/items", authenticateToken, async (req, res) => {
     try {
       const { todoListId, text, priority } = req.body;
-      console.log("Creating todo item with data:", { todoListId, text, priority });
+      console.log("Creating todo item with data:", { todoListId, text, priority, user: req.user?.id });
+      
+      // Validate input
+      if (!todoListId || !text || !text.trim()) {
+        return res.status(400).json({ message: "Todo list ID and task text are required" });
+      }
       
       const itemData = {
         todoListId: parseInt(todoListId),
-        title: text,
+        title: text.trim(),
         description: "",
         priority: priority || "medium",
         isCompleted: false,
@@ -256,8 +261,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json({ todoItem });
     } catch (error: any) {
       console.error("Error creating todo item:", error);
-      console.error("Error details:", error.stack);
-      res.status(400).json({ message: error.message, details: error.stack });
+      res.status(500).json({ message: error.message || "Failed to create todo item" });
     }
   });
 

@@ -36,6 +36,12 @@ export async function authenticatedRequest(
   });
 
   if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      // Token is invalid, clear it and redirect to login
+      localStorage.removeItem("token");
+      window.location.reload();
+      throw new Error("Authentication failed. Please log in again.");
+    }
     const text = (await response.text()) || response.statusText;
     throw new Error(`${response.status}: ${text}`);
   }

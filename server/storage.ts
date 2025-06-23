@@ -164,9 +164,12 @@ export class DatabaseStorage implements IStorage {
       const [todoItem] = await db
         .insert(todoItems)
         .values({
-          ...item,
+          todoListId: item.todoListId,
+          title: item.title,
+          description: item.description || "",
+          isCompleted: item.isCompleted || false,
+          priority: item.priority || "medium",
           createdAt: new Date(),
-          updatedAt: new Date(),
         })
         .returning();
       console.log("Storage: Created todo item:", todoItem);

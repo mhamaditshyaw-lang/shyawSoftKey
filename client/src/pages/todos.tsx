@@ -192,14 +192,27 @@ export default function TodosPage() {
   // Add todo item mutation
   const addTodoItemMutation = useMutation({
     mutationFn: async (data: { todoListId: number; text: string; priority: string }) => {
-      const response = await authenticatedRequest("POST", "/api/todos/items", data);
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to add task');
+      console.log("Mutation function called with:", data);
+      try {
+        const response = await authenticatedRequest("POST", "/api/todos/items", data);
+        console.log("Response status:", response.status);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Error response:", errorText);
+          throw new Error(errorText || 'Failed to add task');
+        }
+        
+        const result = await response.json();
+        console.log("Success response:", result);
+        return result;
+      } catch (error) {
+        console.error("Mutation error:", error);
+        throw error;
       }
-      return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Todo item created successfully:", data);
       queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
       setNewItemText("");
       toast({
@@ -207,10 +220,11 @@ export default function TodosPage() {
         description: "Task added successfully!",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Todo item creation failed:", error);
       toast({
         title: "Error",
-        description: "Failed to add task",
+        description: error.message || "Failed to add task",
         variant: "destructive",
       });
     },
@@ -246,6 +260,8 @@ export default function TodosPage() {
 
   const handleAddTodoItem = (todoListId: number) => {
     if (!newItemText.trim()) return;
+    
+    console.log("Adding todo item to list:", todoListId, "with text:", newItemText.trim());
     
     addTodoItemMutation.mutate({
       todoListId,
