@@ -8,6 +8,11 @@ import { useLocation } from "wouter";
 import { getRelativeTime } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { queryClient } from "@/lib/queryClient";
 import {
   Users,
   Clock,
@@ -22,6 +27,9 @@ import {
   Award,
   TrendingUp,
   Sparkles,
+  Search,
+  RefreshCw,
+  Filter,
 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -29,6 +37,10 @@ export default function DashboardPage() {
   const [, setLocation] = useLocation();
   const [showWelcome, setShowWelcome] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dateFilter, setDateFilter] = useState("today");
+  const [customDate, setCustomDate] = useState("");
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
   const { data: stats, isLoading } = useQuery({
     queryKey: ["/api/stats"],
@@ -46,6 +58,119 @@ export default function DashboardPage() {
       const response = await authenticatedRequest("GET", "/api/todos");
       return await response.json();
     },
+  });
+
+  const { data: interviewsData } = useQuery({
+    queryKey: ["/api/interviews"],
+    queryFn: async () => {
+      const response = await authenticatedRequest("GET", "/api/interviews");
+      return await response.json();
+    },
+  });
+
+  // Date filtering functions
+  const isToday = (date: string): boolean => {
+    const today = new Date();
+    const entryDate = new Date(date);
+    return entryDate.toDateString() === today.toDateString();
+  };
+
+  const isThisWeek = (date: string): boolean => {
+    const today = new Date();
+    const entryDate = new Date(date);
+    const weekStart = new Date(today.setDate(today.getDate() - today.getDay()));
+    return entryDate >= weekStart;
+  };
+
+  const isThisMonth = (date: string): boolean => {
+    const today = new Date();
+    const entryDate = new Date(date);
+    return entryDate.getMonth() === today.getMonth() && entryDate.getFullYear() === today.getFullYear();
+  };
+
+  const matchesCustomDate = (date: string): boolean => {
+    if (!customDate) return true;
+    const entryDate = new Date(date);
+    const targetDate = new Date(customDate);
+    return entryDate.toDateString() === targetDate.toDateString();
+  };
+
+  // Auto-refresh effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (autoRefresh) {
+      interval = setInterval(() => {
+        queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/interviews"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
+      }, 30000); // Refresh every 30 seconds
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [autoRefresh]);
+
+  // Filter data based on search and date criteria
+  const todos = recentTodos?.todoLists || [];
+  const interviews = interviewsData?.requests || [];
+
+  const filteredTodos = todos.filter((todo: any) => {
+    const matchesSearch = searchTerm === "" || 
+      todo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      todo.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (todo.assignedTo?.firstName + " " + todo.assignedTo?.lastName).toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Date filtering
+    let matchesDate = true;
+    switch (dateFilter) {
+      case "today":
+        matchesDate = isToday(todo.createdAt);
+        break;
+      case "week":
+        matchesDate = isThisWeek(todo.createdAt);
+        break;
+      case "month":
+        matchesDate = isThisMonth(todo.createdAt);
+        break;
+      case "custom":
+        matchesDate = matchesCustomDate(todo.createdAt);
+        break;
+      case "all":
+      default:
+        matchesDate = true;
+        break;
+    }
+
+    return matchesSearch && matchesDate;
+  });
+
+  const filteredInterviews = interviews.filter((interview: any) => {
+    const matchesSearch = searchTerm === "" || 
+      interview.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      interview.candidateName.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Date filtering
+    let matchesDate = true;
+    switch (dateFilter) {
+      case "today":
+        matchesDate = isToday(interview.createdAt);
+        break;
+      case "week":
+        matchesDate = isThisWeek(interview.createdAt);
+        break;
+      case "month":
+        matchesDate = isThisMonth(interview.createdAt);
+        break;
+      case "custom":
+        matchesDate = matchesCustomDate(interview.createdAt);
+        break;
+      case "all":
+      default:
+        matchesDate = true;
+        break;
+    }
+
+    return matchesSearch && matchesDate;
   });
 
   const { data: recentInterviews } = useQuery({
