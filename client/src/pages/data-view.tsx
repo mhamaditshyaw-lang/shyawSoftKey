@@ -194,9 +194,15 @@ export default function DataViewPage() {
   };
 
   const refreshData = () => {
+    console.log('Refreshing data...');
     const storedData = localStorage.getItem('operationsData');
     if (storedData) {
-      setAllData(JSON.parse(storedData));
+      const parsedData = JSON.parse(storedData);
+      console.log('Refreshed data:', parsedData);
+      setAllData(parsedData);
+    } else {
+      console.log('No data to refresh');
+      setAllData([]);
     }
   };
 

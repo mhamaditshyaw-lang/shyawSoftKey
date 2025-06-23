@@ -307,9 +307,11 @@ export default function MetricsPage() {
       stats: { total: prodSum, average: prodAverage, max: prodMax, min: prodMin }
     };
     
+    console.log('Saving production data:', newEntry);
     const existingData = JSON.parse(localStorage.getItem('operationsData') || '[]');
     existingData.push(newEntry);
     localStorage.setItem('operationsData', JSON.stringify(existingData));
+    console.log('Updated localStorage with', existingData.length, 'entries');
 
     stopProductionLoading();
 
@@ -367,9 +369,11 @@ export default function MetricsPage() {
       stats: { total: loadSum, average: loadAverage, max: loadMax, min: loadMin }
     };
     
+    console.log('Saving loading data:', newEntry);
     const existingData = JSON.parse(localStorage.getItem('operationsData') || '[]');
     existingData.push(newEntry);
     localStorage.setItem('operationsData', JSON.stringify(existingData));
+    console.log('Updated localStorage with', existingData.length, 'entries');
 
     stopLoadingVehiclesLoading();
 
