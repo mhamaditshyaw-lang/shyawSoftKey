@@ -276,6 +276,8 @@ export default function MetricsPage() {
   const handleYesterdayProductionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log('Production form submitted with data:', yesterdayProductionData);
+    
     startProductionLoading();
     
     // Simulate processing time for better UX
@@ -344,6 +346,8 @@ export default function MetricsPage() {
 
   const handleYesterdayLoadingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    console.log('Loading form submitted with data:', yesterdayLoadingData);
     
     startLoadingVehiclesLoading();
     
@@ -1488,7 +1492,7 @@ export default function MetricsPage() {
                   <CardTitle className="text-lg font-semibold text-teal-700">Loading Vehicle Stats</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {yesterdayLoadingStats ? (
+                  {calculateYesterdayLoadingStats() ? (
                     <div className="space-y-4">
                       <motion.div 
                         className="bg-teal-50 p-4 rounded-lg"
@@ -1497,7 +1501,7 @@ export default function MetricsPage() {
                         transition={{ duration: 0.3 }}
                       >
                         <div className="text-2xl font-bold text-teal-700">
-                          {yesterdayLoadingStats.sum}
+                          {calculateYesterdayLoadingStats()?.sum}
                         </div>
                         <div className="text-sm text-teal-600">Total Vehicles</div>
                       </motion.div>
@@ -1509,7 +1513,7 @@ export default function MetricsPage() {
                         transition={{ duration: 0.3, delay: 0.1 }}
                       >
                         <div className="text-2xl font-bold text-cyan-700">
-                          {yesterdayLoadingStats.average.toFixed(1)}
+                          {calculateYesterdayLoadingStats()?.average.toFixed(1)}
                         </div>
                         <div className="text-sm text-cyan-600">Average per Category</div>
                       </motion.div>
@@ -1522,7 +1526,7 @@ export default function MetricsPage() {
                           transition={{ duration: 0.3, delay: 0.2 }}
                         >
                           <div className="text-lg font-bold text-emerald-700">
-                            {yesterdayLoadingStats.max}
+                            {calculateYesterdayLoadingStats()?.max}
                           </div>
                           <div className="text-xs text-emerald-600">Most Vehicles</div>
                         </motion.div>
@@ -1534,7 +1538,7 @@ export default function MetricsPage() {
                           transition={{ duration: 0.3, delay: 0.3 }}
                         >
                           <div className="text-lg font-bold text-red-700">
-                            {yesterdayLoadingStats.min}
+                            {calculateYesterdayLoadingStats()?.min}
                           </div>
                           <div className="text-xs text-red-600">Fewest Vehicles</div>
                         </motion.div>
@@ -1547,7 +1551,7 @@ export default function MetricsPage() {
                         transition={{ duration: 0.3, delay: 0.4 }}
                       >
                         <div className="text-lg font-bold text-gray-700">
-                          {yesterdayLoadingStats.count} / 3
+                          {calculateYesterdayLoadingStats()?.count || 0} / 3
                         </div>
                         <div className="text-sm text-gray-600">Vehicle Categories Completed</div>
                       </motion.div>
