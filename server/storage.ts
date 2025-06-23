@@ -32,6 +32,7 @@ export interface IStorage {
   getTodoList(id: number): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] }) | undefined>;
   createTodoItem(item: InsertTodoItem): Promise<TodoItem>;
   updateTodoItem(id: number, updates: Partial<TodoItem>): Promise<TodoItem | undefined>;
+  deleteTodoItem(id: number): Promise<boolean>;
   
   // Interview request methods
   getInterviewRequests(): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;

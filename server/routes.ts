@@ -296,6 +296,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete todo item
+  app.delete("/api/todos/items/:id", authenticateToken, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteTodoItem(id);
+      
+      if (!success) {
+        return res.status(404).json({ message: "Todo item not found" });
+      }
+
+      res.json({ message: "Todo item deleted successfully" });
+    } catch (error: any) {
+      console.error("Error deleting todo item:", error);
+      res.status(500).json({ message: error.message || "Failed to delete todo item" });
+    }
+  });
+
   // Smart prioritization endpoints
   app.get("/api/todos/priorities", authenticateToken, async (req: AuthRequest, res) => {
     try {

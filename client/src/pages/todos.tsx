@@ -38,6 +38,7 @@ import {
   TrendingDown,
   BarChart,
   Lightbulb,
+  X,
 } from "lucide-react";
 
 interface TodoItem {

@@ -33,13 +33,16 @@ export const todoLists = pgTable("todo_lists", {
 
 export const todoItems = pgTable("todo_items", {
   id: serial("id").primaryKey(),
-  todoListId: integer("todo_list_id").references(() => todoLists.id).notNull(),
+  todoListId: integer("todo_list_id").references(() => todoLists.id, {
+    onDelete: "cascade"
+  }).notNull(),
   title: text("title").notNull(),
   description: text("description"),
   isCompleted: boolean("is_completed").notNull().default(false),
   priority: priorityEnum("priority").notNull().default("medium"),
   dueDate: timestamp("due_date"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
   completedAt: timestamp("completed_at"),
 });
 
