@@ -494,6 +494,18 @@ export default function DataViewPage() {
             </div>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Yesterday's Loading</p>
+                <p className="text-2xl font-bold">{allData.filter(d => d.type === 'yesterdayLoading').length}</p>
+              </div>
+              <Truck className="w-8 h-8 text-teal-600" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Data Entries */}
