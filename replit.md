@@ -140,6 +140,7 @@ The deployment uses:
 - June 24, 2025: Removed debug information and cleaned up Data View page for production, enhanced dark mode support throughout the interface
 - June 24, 2025: Created comprehensive cPanel deployment guide and automated deployment script with production optimization, environment configuration, and step-by-step instructions
 - June 24, 2025: Successfully integrated PostgreSQL database for operational data persistence, replacing localStorage with authenticated API endpoints, maintaining all filtering and timestamp functionality
+- June 24, 2025: Enhanced admin-only data removal controls in Data View with clear visual indicators and role-based access restrictions
 
 ## User Preferences
 

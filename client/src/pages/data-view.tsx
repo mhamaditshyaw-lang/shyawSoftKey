@@ -517,7 +517,7 @@ export default function DataViewPage() {
                     className="bg-red-50 hover:bg-red-100 border-red-200 text-red-700 hover:text-red-800 shadow-sm"
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
-                    Clear All Data
+                    Admin: Clear All Data
                   </Button>
                 )}
               </div>
@@ -582,8 +582,10 @@ export default function DataViewPage() {
                           size="sm"
                           onClick={() => openDeleteModal(entry)}
                           className="bg-red-50 hover:bg-red-100 border-red-200 text-red-700 hover:text-red-800 shadow-sm"
+                          title="Admin Only: Delete Entry"
                         >
                           <Trash2 className="w-4 h-4" />
+                          <span className="ml-1 text-xs">Admin</span>
                         </Button>
                       )}
                     </div>
