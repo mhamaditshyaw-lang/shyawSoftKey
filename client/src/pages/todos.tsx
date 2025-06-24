@@ -39,6 +39,8 @@ import {
   BarChart,
   Lightbulb,
   X,
+  Archive,
+  Undo2,
 } from "lucide-react";
 
 interface TodoItem {
