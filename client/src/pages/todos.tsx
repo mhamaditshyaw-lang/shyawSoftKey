@@ -389,14 +389,25 @@ export default function TodosPage() {
   // Archive mutations
   const archiveTodoList = useMutation({
     mutationFn: async (listId: number) => {
-      return apiRequest("/api/archive", {
+      const response = await fetch("/api/archive", {
         method: "POST",
-        body: {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
           itemType: "todo_list",
           itemId: listId,
           reason: "Task list completed or no longer needed"
-        }
+        })
       });
+      
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error);
+      }
+      
+      return response.json();
     },
     onSuccess: (data, listId) => {
       const listData = todoLists.find(list => list.id === listId);
@@ -425,14 +436,25 @@ export default function TodosPage() {
 
   const archiveTodoItem = useMutation({
     mutationFn: async (itemId: number) => {
-      return apiRequest("/api/archive", {
+      const response = await fetch("/api/archive", {
         method: "POST",
-        body: {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
           itemType: "todo_item",
           itemId: itemId,
           reason: "Task completed and archived"
-        }
+        })
       });
+      
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error);
+      }
+      
+      return response.json();
     },
     onSuccess: (data, itemId) => {
       // Find the item data before it's removed
@@ -520,14 +542,23 @@ export default function TodosPage() {
       // Archive all items sequentially
       for (const task of allTasks) {
         try {
-          await apiRequest("/api/archive", {
+          const response = await fetch("/api/archive", {
             method: "POST",
-            body: {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
               itemType: task.type === 'list' ? 'todo_list' : 'todo_item',
               itemId: task.id,
               reason: `Bulk archive operation - ${task.type === 'list' ? 'Todo list' : 'Todo item'} archived`
-            }
+            })
           });
+          
+          if (!response.ok) {
+            const error = await response.text();
+            throw new Error(error);
+          }
         } catch (error) {
           console.warn(`Failed to archive ${task.type} ${task.id}:`, error);
         }
@@ -582,14 +613,23 @@ export default function TodosPage() {
       // Archive selected items sequentially
       for (const item of selectedItems) {
         try {
-          await apiRequest("/api/archive", {
+          const response = await fetch("/api/archive", {
             method: "POST",
-            body: {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
               itemType: item.type === 'list' ? 'todo_list' : 'todo_item',
               itemId: item.id,
               reason: `Selected archive operation - ${item.type === 'list' ? 'Todo list' : 'Todo item'} archived`
-            }
+            })
           });
+          
+          if (!response.ok) {
+            const error = await response.text();
+            throw new Error(error);
+          }
         } catch (error) {
           console.warn(`Failed to archive ${item.type} ${item.id}:`, error);
         }
