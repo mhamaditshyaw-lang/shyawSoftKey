@@ -108,18 +108,28 @@ export default function DataViewPage() {
   const isToday = (date: string): boolean => {
     const today = new Date();
     const entryDate = new Date(date);
-    return (
-      entryDate.getDate() === today.getDate() &&
-      entryDate.getMonth() === today.getMonth() &&
-      entryDate.getFullYear() === today.getFullYear()
-    );
+    
+    // Reset time to compare only dates
+    today.setHours(0, 0, 0, 0);
+    entryDate.setHours(0, 0, 0, 0);
+    
+    return entryDate.getTime() === today.getTime();
   };
 
   const isThisWeek = (date: string): boolean => {
     const today = new Date();
     const entryDate = new Date(date);
-    const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
-    const endOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+    
+    // Get start of current week (Sunday)
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+    
+    // Get end of current week (Saturday)
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+    
     return entryDate >= startOfWeek && entryDate <= endOfWeek;
   };
 
@@ -136,34 +146,55 @@ export default function DataViewPage() {
     if (!customDate) return false;
     const entryDate = new Date(date);
     const filterDate = new Date(customDate);
-    return (
-      entryDate.getDate() === filterDate.getDate() &&
-      entryDate.getMonth() === filterDate.getMonth() &&
-      entryDate.getFullYear() === filterDate.getFullYear()
-    );
+    
+    // Reset time to compare only dates
+    entryDate.setHours(0, 0, 0, 0);
+    filterDate.setHours(0, 0, 0, 0);
+    
+    return entryDate.getTime() === filterDate.getTime();
   };
 
-  // Filter data
+  // Filter data with debugging
   const filteredData = (() => {
     let data =
       filter === "all" ? allData : allData.filter((d) => d.type === filter);
 
+    console.log("All data entries:", allData.length);
+    console.log("After type filter:", data.length);
+    console.log("Date filter:", dateFilter);
+    console.log("Custom date:", customDate);
+
     // Apply date filtering
     if (dateFilter !== "all") {
+      const beforeDateFilter = data.length;
       data = data.filter((entry) => {
+        const entryTimestamp = entry.timestamp;
+        console.log("Checking entry timestamp:", entryTimestamp);
+        
+        let result = false;
         switch (dateFilter) {
           case "today":
-            return isToday(entry.timestamp);
+            result = isToday(entryTimestamp);
+            console.log("Today filter result:", result);
+            break;
           case "week":
-            return isThisWeek(entry.timestamp);
+            result = isThisWeek(entryTimestamp);
+            console.log("Week filter result:", result);
+            break;
           case "month":
-            return isThisMonth(entry.timestamp);
+            result = isThisMonth(entryTimestamp);
+            console.log("Month filter result:", result);
+            break;
           case "custom":
-            return isCustomDate(entry.timestamp);
+            result = isCustomDate(entryTimestamp);
+            console.log("Custom date filter result:", result);
+            break;
           default:
-            return true;
+            result = true;
         }
+        return result;
       });
+      console.log("After date filter:", data.length, "from", beforeDateFilter);
     }
 
     if (searchTerm) {
@@ -179,6 +210,7 @@ export default function DataViewPage() {
       );
     }
 
+    console.log("Final filtered data:", data.length);
     return data;
   })();
 
@@ -489,6 +521,24 @@ export default function DataViewPage() {
                   </Button>
                 )}
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Debug Info */}
+        <Card className="mb-4 bg-yellow-50 border-yellow-200">
+          <CardContent className="p-4">
+            <div className="text-sm space-y-1">
+              <div><strong>Debug Info:</strong></div>
+              <div>Total entries: {allData.length}</div>
+              <div>Filtered entries: {filteredData.length}</div>
+              <div>Current date filter: {dateFilter}</div>
+              <div>Custom date: {customDate || "None"}</div>
+              <div>Type filter: {filter}</div>
+              <div>Search term: {searchTerm || "None"}</div>
+              {allData.length > 0 && (
+                <div>Sample timestamp: {allData[0]?.timestamp}</div>
+              )}
             </div>
           </CardContent>
         </Card>
