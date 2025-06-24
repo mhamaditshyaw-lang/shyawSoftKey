@@ -78,6 +78,8 @@ export default function TodosPage() {
   const [newItemText, setNewItemText] = useState("");
   const [showPriorities, setShowPriorities] = useState(false);
   const [smartRecommendations, setSmartRecommendations] = useState<any>(null);
+  const [showUndoToast, setShowUndoToast] = useState(false);
+  const [lastArchivedItem, setLastArchivedItem] = useState<{id: number, data: any, type: 'task' | 'list'} | null>(null);
 
   // Fetch todos data
   const { data: todosData, isLoading } = useQuery({
