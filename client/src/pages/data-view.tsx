@@ -104,10 +104,67 @@ export default function DataViewPage() {
     return () => clearInterval(interval);
   }, []);
 
+  // Date filtering functions
+  const isToday = (date: string): boolean => {
+    const today = new Date();
+    const entryDate = new Date(date);
+    return (
+      entryDate.getDate() === today.getDate() &&
+      entryDate.getMonth() === today.getMonth() &&
+      entryDate.getFullYear() === today.getFullYear()
+    );
+  };
+
+  const isThisWeek = (date: string): boolean => {
+    const today = new Date();
+    const entryDate = new Date(date);
+    const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+    const endOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+    return entryDate >= startOfWeek && entryDate <= endOfWeek;
+  };
+
+  const isThisMonth = (date: string): boolean => {
+    const today = new Date();
+    const entryDate = new Date(date);
+    return (
+      entryDate.getMonth() === today.getMonth() &&
+      entryDate.getFullYear() === today.getFullYear()
+    );
+  };
+
+  const isCustomDate = (date: string): boolean => {
+    if (!customDate) return false;
+    const entryDate = new Date(date);
+    const filterDate = new Date(customDate);
+    return (
+      entryDate.getDate() === filterDate.getDate() &&
+      entryDate.getMonth() === filterDate.getMonth() &&
+      entryDate.getFullYear() === filterDate.getFullYear()
+    );
+  };
+
   // Filter data
   const filteredData = (() => {
     let data =
       filter === "all" ? allData : allData.filter((d) => d.type === filter);
+
+    // Apply date filtering
+    if (dateFilter !== "all") {
+      data = data.filter((entry) => {
+        switch (dateFilter) {
+          case "today":
+            return isToday(entry.timestamp);
+          case "week":
+            return isThisWeek(entry.timestamp);
+          case "month":
+            return isThisMonth(entry.timestamp);
+          case "custom":
+            return isCustomDate(entry.timestamp);
+          default:
+            return true;
+        }
+      });
+    }
 
     if (searchTerm) {
       data = data.filter(
@@ -230,7 +287,7 @@ export default function DataViewPage() {
               </div>
 
               {/* Date Filter Controls */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg border">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border">
                 <div className="space-y-2">
                   <Label htmlFor="date-filter" className="text-sm font-medium flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
@@ -276,12 +333,47 @@ export default function DataViewPage() {
                       checked={autoRefresh}
                       onCheckedChange={setAutoRefresh}
                     />
-                    <span className="text-sm text-gray-600">
-                      {autoRefresh ? 'Every 30s' : 'Disabled'}
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {autoRefresh ? 'Every 2s' : 'Disabled'}
                     </span>
                   </div>
                 </div>
               </div>
+
+              {/* Active Filters Display */}
+              {(dateFilter !== "all" || filter !== "all" || searchTerm) && (
+                <div className="flex flex-wrap gap-2 items-center">
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Active filters:</span>
+                  {dateFilter !== "all" && (
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                      Date: {dateFilter === "custom" ? customDate : dateFilter}
+                    </Badge>
+                  )}
+                  {filter !== "all" && (
+                    <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                      Type: {getTypeName(filter)}
+                    </Badge>
+                  )}
+                  {searchTerm && (
+                    <Badge variant="secondary" className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                      Search: "{searchTerm}"
+                    </Badge>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setDateFilter("all");
+                      setFilter("all");
+                      setSearchTerm("");
+                      setCustomDate("");
+                    }}
+                    className="text-xs h-6 px-2"
+                  >
+                    Clear all
+                  </Button>
+                </div>
+              )}
 
               {/* Filter Buttons */}
               <div className="flex flex-wrap justify-center gap-3">
