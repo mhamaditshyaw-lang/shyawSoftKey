@@ -252,7 +252,8 @@ export default function DataViewPage() {
 
   const removeDataEntry = async (entryId: number) => {
     try {
-      await apiRequest("DELETE", `/api/operational-data/${entryId}`);
+      const { authenticatedRequest } = await import("@/lib/auth");
+      await authenticatedRequest("DELETE", `/api/operational-data/${entryId}`);
       await queryClient.invalidateQueries({ queryKey: ["/api/operational-data"] });
 
       toast({
@@ -260,9 +261,10 @@ export default function DataViewPage() {
         description: "Selected data entry has been successfully removed.",
       });
     } catch (error) {
+      console.error("Delete error:", error);
       toast({
         title: "Error",
-        description: "Failed to remove data entry. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to remove data entry. Please try again.",
         variant: "destructive",
       });
     }
@@ -270,7 +272,8 @@ export default function DataViewPage() {
 
   const clearAllData = async () => {
     try {
-      await apiRequest("DELETE", "/api/operational-data");
+      const { authenticatedRequest } = await import("@/lib/auth");
+      await authenticatedRequest("DELETE", "/api/operational-data");
       await queryClient.invalidateQueries({ queryKey: ["/api/operational-data"] });
 
       toast({
@@ -278,9 +281,10 @@ export default function DataViewPage() {
         description: "All operational data has been removed.",
       });
     } catch (error) {
+      console.error("Clear all error:", error);
       toast({
         title: "Error",
-        description: "Failed to clear data. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to clear data. Please try again.",
         variant: "destructive",
       });
     }
@@ -288,6 +292,8 @@ export default function DataViewPage() {
 
   // Check if user is admin
   const isAdmin = user?.role === "admin";
+  
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-6">
