@@ -143,15 +143,35 @@ export default function DataViewPage() {
   };
 
   const isCustomDate = (date: string): boolean => {
-    if (!customDate) return false;
-    const entryDate = new Date(date);
-    const filterDate = new Date(customDate);
+    if (!customDate) {
+      console.log("No custom date selected");
+      return false;
+    }
     
-    // Reset time to compare only dates
-    entryDate.setHours(0, 0, 0, 0);
-    filterDate.setHours(0, 0, 0, 0);
-    
-    return entryDate.getTime() === filterDate.getTime();
+    try {
+      const entryDate = new Date(date);
+      const filterDate = new Date(customDate);
+      
+      console.log("Entry date:", entryDate.toDateString());
+      console.log("Filter date:", filterDate.toDateString());
+      
+      // Get date parts for accurate comparison
+      const entryYear = entryDate.getFullYear();
+      const entryMonth = entryDate.getMonth();
+      const entryDay = entryDate.getDate();
+      
+      const filterYear = filterDate.getFullYear();
+      const filterMonth = filterDate.getMonth();
+      const filterDay = filterDate.getDate();
+      
+      const matches = entryYear === filterYear && entryMonth === filterMonth && entryDay === filterDay;
+      console.log("Custom date match:", matches);
+      
+      return matches;
+    } catch (error) {
+      console.error("Error in custom date comparison:", error);
+      return false;
+    }
   };
 
   // Filter data with debugging
@@ -348,8 +368,12 @@ export default function DataViewPage() {
                       id="custom-date"
                       type="date"
                       value={customDate}
-                      onChange={(e) => setCustomDate(e.target.value)}
+                      onChange={(e) => {
+                        console.log("Custom date changed to:", e.target.value);
+                        setCustomDate(e.target.value);
+                      }}
                       className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      max={new Date().toISOString().split('T')[0]} // Prevent future dates
                     />
                   </div>
                 )}
@@ -378,7 +402,7 @@ export default function DataViewPage() {
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Active filters:</span>
                   {dateFilter !== "all" && (
                     <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                      Date: {dateFilter === "custom" ? customDate : dateFilter}
+                      Date: {dateFilter === "custom" ? (customDate || "Select date") : dateFilter}
                     </Badge>
                   )}
                   {filter !== "all" && (
@@ -395,6 +419,7 @@ export default function DataViewPage() {
                     variant="ghost"
                     size="sm"
                     onClick={() => {
+                      console.log("Clearing all filters");
                       setDateFilter("all");
                       setFilter("all");
                       setSearchTerm("");
@@ -534,6 +559,10 @@ export default function DataViewPage() {
               <div>Filtered entries: {filteredData.length}</div>
               <div>Current date filter: {dateFilter}</div>
               <div>Custom date: {customDate || "None"}</div>
+              <div>Is custom date valid: {customDate ? "Yes" : "No"}</div>
+              {allData.length > 0 && customDate && (
+                <div>Custom date test: {isCustomDate(allData[0]?.timestamp) ? "Match" : "No match"}</div>
+              )}
               <div>Type filter: {filter}</div>
               <div>Search term: {searchTerm || "None"}</div>
               {allData.length > 0 && (
