@@ -88,7 +88,7 @@ export default function Sidebar() {
   );
 
   return (
-    <aside className="w-64 bg-white shadow-sm border-r border-gray-200 md:block hidden">
+    <aside className="w-64 bg-white dark:bg-gray-900 shadow-sm border-r border-gray-200 dark:border-gray-700 md:block hidden">
       <nav className="p-6">
         <div className="space-y-2">
           {filteredNavItems.map((item) => {

@@ -62,7 +62,7 @@ export default function ResponsiveMenuBar() {
   // Desktop horizontal menu bar
   if (!isMobile) {
     return (
-      <div className="hidden md:block bg-white shadow-sm border-b border-gray-200 sticky top-16 z-30">
+      <div className="hidden md:block bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-16 z-30">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center space-x-1 overflow-x-auto py-2">
             {filteredNavItems.map((item) => {
@@ -79,7 +79,7 @@ export default function ResponsiveMenuBar() {
                     "flex items-center space-x-2 whitespace-nowrap px-3 py-2 text-sm font-medium",
                     isActive 
                       ? "bg-primary text-white shadow-sm" 
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
                   )}
                 >
                   <Icon className="w-4 h-4" />
@@ -118,10 +118,10 @@ export default function ResponsiveMenuBar() {
           />
           
           {/* Menu Panel */}
-          <div className="fixed top-0 right-0 h-full w-80 bg-white shadow-xl z-50 md:hidden transform transition-transform duration-300">
-            <div className="p-4 border-b border-gray-200">
+          <div className="fixed top-0 right-0 h-full w-80 bg-white dark:bg-gray-900 shadow-xl z-50 md:hidden transform transition-transform duration-300">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">Navigation</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Navigation</h3>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -149,7 +149,7 @@ export default function ResponsiveMenuBar() {
                         "flex items-center space-x-3 w-full p-3 rounded-lg text-left transition-colors touch-target",
                         isActive 
                           ? "bg-primary text-white shadow-sm" 
-                          : "text-gray-700 hover:bg-gray-100"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                       )}
                     >
                       <Icon className="w-5 h-5" />
@@ -164,7 +164,7 @@ export default function ResponsiveMenuBar() {
       )}
 
       {/* Mobile Bottom Navigation Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-lg z-40">
         <div className="grid grid-cols-4 gap-1 p-2">
           {filteredNavItems.slice(0, 4).map((item) => {
             const Icon = item.icon;
@@ -178,7 +178,7 @@ export default function ResponsiveMenuBar() {
                   "flex flex-col items-center justify-center p-2 rounded-lg touch-target transition-colors",
                   isActive 
                     ? "bg-primary text-white" 
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                    : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
                 )}
               >
                 <Icon className="w-5 h-5 mb-1" />
