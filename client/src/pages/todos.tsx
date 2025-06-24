@@ -904,8 +904,19 @@ export default function TodosPage() {
                             <Button
                               size="sm"
                               variant="ghost"
+                              onClick={() => archiveTodoItem.mutate(item.id)}
+                              disabled={archiveTodoItem.isPending}
+                              className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-1"
+                              title="Archive task"
+                            >
+                              <Archive className="w-3 h-3" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
                               onClick={() => handleRemoveTask(item.id)}
                               className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 hover:bg-red-50 p-1"
+                              title="Delete task"
                             >
                               <X className="w-3 h-3" />
                             </Button>
@@ -985,6 +996,55 @@ export default function TodosPage() {
           })}
         </motion.div>
       )}
+
+      {/* Undo Toast */}
+      <AnimatePresence>
+        {showUndoToast && lastArchivedItem && (
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            className="fixed bottom-6 right-6 z-50"
+          >
+            <Card className="bg-blue-900 text-white border-blue-700 shadow-lg">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <Archive className="w-5 h-5 text-blue-300" />
+                  <div className="flex-1">
+                    <p className="font-medium">
+                      {lastArchivedItem.type === 'list' ? 'List' : 'Task'} archived
+                    </p>
+                    <p className="text-sm text-blue-200">
+                      "{lastArchivedItem.data.title || lastArchivedItem.data.text}"
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => undoArchive.mutate()}
+                    disabled={undoArchive.isPending}
+                    className="bg-blue-800 border-blue-600 text-white hover:bg-blue-700"
+                  >
+                    <Undo2 className="w-4 h-4 mr-1" />
+                    Undo
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      setShowUndoToast(false);
+                      setLastArchivedItem(null);
+                    }}
+                    className="text-blue-300 hover:text-white hover:bg-blue-800 p-1"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
