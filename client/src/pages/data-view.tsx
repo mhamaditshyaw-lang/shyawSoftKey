@@ -58,10 +58,17 @@ export default function DataViewPage() {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  // Fetch operational data from API
+  // Fetch operational data from API using authenticated request
   const { data: operationalDataResponse, refetch } = useQuery({
     queryKey: ["/api/operational-data"],
+    queryFn: async () => {
+      const { authenticatedRequest } = await import("@/lib/auth");
+      const response = await authenticatedRequest("GET", "/api/operational-data");
+      return await response.json();
+    },
     refetchInterval: autoRefresh ? 30000 : false,
+    retry: false,
+    enabled: !!user, // Only fetch when user is authenticated
   });
 
   const allData: DataEntry[] = operationalDataResponse?.entries || [];

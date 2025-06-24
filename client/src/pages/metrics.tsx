@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { LoadingVisualization, useLoadingVisualization } from "@/components/ui/loading-visualization";
+import { authenticatedRequest } from "@/lib/auth";
+import { queryClient } from "@/lib/queryClient";
 
 
 import { 
@@ -128,26 +130,25 @@ export default function MetricsPage() {
     const max = Math.max(...numbers);
     const min = Math.min(...numbers);
 
-    // Save to localStorage for data view
-    const newEntry = {
-      id: Date.now().toString(),
-      timestamp: new Date().toISOString(),
-      type: 'employee' as const,
-      data: {
-        'Total employees today': formData.number1,
-        'Permanent employees': formData.number2,
-        'Non-permanent employees': formData.number3,
-        'Day - Start of work': formData.number4,
-        'Day - Giving up': formData.number5,
-        'Night - Start of work': formData.number6,
-        'Night - Giving up': formData.number7,
-      },
-      stats: { total: sum, average, max, min }
-    };
-    
-    const existingData = JSON.parse(localStorage.getItem('operationsData') || '[]');
-    existingData.push(newEntry);
-    localStorage.setItem('operationsData', JSON.stringify(existingData));
+    // Save to database via API
+    try {
+      await authenticatedRequest("POST", "/api/operational-data", {
+        type: 'employee',
+        data: {
+          'Total employees today': formData.number1,
+          'Permanent employees': formData.number2,
+          'Non-permanent employees': formData.number3,
+          'Day - Start of work': formData.number4,
+          'Day - Giving up': formData.number5,
+          'Night - Start of work': formData.number6,
+          'Night - Giving up': formData.number7,
+        },
+        stats: { total: sum, average, max, min }
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/operational-data"] });
+    } catch (error) {
+      console.error("Error saving employee data:", error);
+    }
 
     stopEmployeeLoading();
 
@@ -185,7 +186,7 @@ export default function MetricsPage() {
 
     // Save to database via API
     try {
-      await apiRequest("POST", "/api/operational-data", {
+      await authenticatedRequest("POST", "/api/operational-data", {
         type: 'operations',
         data: {
           'Day - Ice cream': deviceData.device1,
@@ -197,6 +198,8 @@ export default function MetricsPage() {
         },
         stats: { total: deviceSum, average: deviceAverage, max: deviceMax, min: deviceMin }
       });
+      // Refresh the data view
+      queryClient.invalidateQueries({ queryKey: ["/api/operational-data"] });
     } catch (error) {
       console.error("Error saving operational data:", error);
     }
@@ -236,7 +239,7 @@ export default function MetricsPage() {
 
     // Save to database via API
     try {
-      await apiRequest("POST", "/api/operational-data", {
+      await authenticatedRequest("POST", "/api/operational-data", {
         type: 'staffCount',
         data: {
           'Day - Ice cream': employeeCountData.count1,
@@ -248,6 +251,7 @@ export default function MetricsPage() {
         },
         stats: { total: countSum, average: countAverage, max: countMax, min: countMin }
       });
+      queryClient.invalidateQueries({ queryKey: ["/api/operational-data"] });
     } catch (error) {
       console.error("Error saving staff count data:", error);
     }
@@ -295,31 +299,25 @@ export default function MetricsPage() {
     const prodMax = Math.max(...prodNumbers);
     const prodMin = Math.min(...prodNumbers);
 
-    // Save to localStorage for data view
-    const newEntry = {
-      id: Date.now().toString(),
-      timestamp: new Date().toISOString(),
-      type: 'yesterdayProduction' as const,
-      data: {
-        'Day - Ice cream / Cartoon': yesterdayProductionData.prod1,
-        'Night - Ice cream / Cartoon': yesterdayProductionData.prod2,
-        'Day - Albany / Tons': yesterdayProductionData.prod3,
-        'Night - Albany / Tons': yesterdayProductionData.prod4,
-        'Day - Do / Tons': yesterdayProductionData.prod5,
-        'Night - Do / Tons': yesterdayProductionData.prod6,
-        'Total Ice cream / Cartoon': (parseFloat(yesterdayProductionData.prod1 || '0') + parseFloat(yesterdayProductionData.prod2 || '0')).toString(),
-        'Total Albany / Tons': (parseFloat(yesterdayProductionData.prod3 || '0') + parseFloat(yesterdayProductionData.prod4 || '0')).toString(),
-        'Total Do / Tons': (parseFloat(yesterdayProductionData.prod5 || '0') + parseFloat(yesterdayProductionData.prod6 || '0')).toString(),
-      },
-      stats: { total: prodSum, average: prodAverage, max: prodMax, min: prodMin }
-    };
+    // Already handled above with API call
     
-    console.log('Saving production data:', newEntry);
-    const existingData = JSON.parse(localStorage.getItem('operationsData') || '[]');
-    existingData.push(newEntry);
-    localStorage.setItem('operationsData', JSON.stringify(existingData));
-    console.log('Updated localStorage with', existingData.length, 'entries');
-    console.log('All data after saving:', existingData);
+    try {
+      await authenticatedRequest("POST", "/api/operational-data", {
+        type: 'yesterdayProduction',
+        data: {
+          'Day - Ice cream / Cartoon': yesterdayProductionData.prod1,
+          'Night - Ice cream / Cartoon': yesterdayProductionData.prod2,
+          'Day - Albany / Tons': yesterdayProductionData.prod3,
+          'Night - Albany / Tons': yesterdayProductionData.prod4,
+          'Day - Do / Tons': yesterdayProductionData.prod5,
+          'Night - Do / Tons': yesterdayProductionData.prod6,
+        },
+        stats: { total: prodSum, average: prodAverage, max: prodMax, min: prodMin }
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/operational-data"] });
+    } catch (error) {
+      console.error("Error saving production data:", error);
+    }
 
     stopProductionLoading();
 
@@ -327,12 +325,6 @@ export default function MetricsPage() {
       title: "Yesterday's Production Data Saved Successfully",
       description: `Total: ${prodSum.toFixed(0)} | Average: ${prodAverage.toFixed(1)} | Max: ${prodMax} | Min: ${prodMin}`,
     });
-    
-    // Force page reload to update data view
-    setTimeout(() => {
-      window.dispatchEvent(new CustomEvent('localStorageUpdate'));
-    }, 100);
-
     // Reset yesterday production form
     setYesterdayProductionData({
       prod1: "",
@@ -379,25 +371,21 @@ export default function MetricsPage() {
     const loadMax = Math.max(...loadNumbers);
     const loadMin = Math.min(...loadNumbers);
 
-    // Save to localStorage for data view
-    const newEntry = {
-      id: Date.now().toString(),
-      timestamp: new Date().toISOString(),
-      type: 'yesterdayLoading' as const,
-      data: {
-        'Ice cream / Loading vehicles': yesterdayLoadingData.load1,
-        'Albany / Loading vehicles': yesterdayLoadingData.load2,
-        'Do / Loading vehicles': yesterdayLoadingData.load3,
-      },
-      stats: { total: loadSum, average: loadAverage, max: loadMax, min: loadMin }
-    };
-    
-    console.log('Saving loading data:', newEntry);
-    const existingData = JSON.parse(localStorage.getItem('operationsData') || '[]');
-    existingData.push(newEntry);
-    localStorage.setItem('operationsData', JSON.stringify(existingData));
-    console.log('Updated localStorage with', existingData.length, 'entries');
-    console.log('All data after saving:', existingData);
+    // Already handled above with API call
+    try {
+      await authenticatedRequest("POST", "/api/operational-data", {
+        type: 'yesterdayLoading',
+        data: {
+          'Vehicle 1 (Tons)': yesterdayLoadingData.load1,
+          'Vehicle 2 (Tons)': yesterdayLoadingData.load2,
+          'Vehicle 3 (Tons)': yesterdayLoadingData.load3,
+        },
+        stats: { total: loadSum, average: loadAverage, max: loadMax, min: loadMin }
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/operational-data"] });
+    } catch (error) {
+      console.error("Error saving loading data:", error);
+    }
 
     stopLoadingVehiclesLoading();
 
@@ -405,12 +393,6 @@ export default function MetricsPage() {
       title: "Yesterday's Loading Vehicles Saved Successfully",
       description: `Total: ${loadSum} vehicles | Average: ${loadAverage.toFixed(1)} | Max: ${loadMax} | Min: ${loadMin}`,
     });
-    
-    // Force page reload to update data view
-    setTimeout(() => {
-      window.dispatchEvent(new CustomEvent('localStorageUpdate'));
-    }, 100);
-
     // Reset yesterday loading form
     setYesterdayLoadingData({
       load1: "",

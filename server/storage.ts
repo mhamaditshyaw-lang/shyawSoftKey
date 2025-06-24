@@ -3,6 +3,7 @@ import {
   todoLists, 
   todoItems, 
   interviewRequests,
+  operationalData,
   type User, 
   type InsertUser,
   type TodoList,

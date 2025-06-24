@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, pgEnum, jsonb } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -156,6 +156,31 @@ export type InsertTodoItem = z.infer<typeof insertTodoItemSchema>;
 export type InterviewRequest = typeof interviewRequests.$inferSelect;
 export type InsertInterviewRequest = z.infer<typeof insertInterviewRequestSchema>;
 export type LoginCredentials = z.infer<typeof loginSchema>;
+
+// Operational data table
+export const operationalData = pgTable("operational_data", {
+  id: serial("id").primaryKey(),
+  type: text("type").notNull(),
+  data: jsonb("data").notNull(),
+  stats: jsonb("stats"),
+  createdById: integer("created_by_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const operationalDataRelations = relations(operationalData, ({ one }) => ({
+  createdBy: one(users, {
+    fields: [operationalData.createdById],
+    references: [users.id],
+  }),
+}));
+
+export const insertOperationalDataSchema = createInsertSchema(operationalData).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type OperationalData = typeof operationalData.$inferSelect;
+export type InsertOperationalData = z.infer<typeof insertOperationalDataSchema>;
 
 // Export notification types
 export * from "./notification-schema";
