@@ -160,43 +160,6 @@ export default function InterviewsPage() {
     }
   };
 
-  const handleApprove = (id: number) => {
-    updateRequestMutation.mutate({
-      id,
-      updates: { status: "approved" }
-    });
-  };
-
-  const handleReject = (id: number, reason?: string) => {
-    updateRequestMutation.mutate({
-      id,
-      updates: { 
-        status: "rejected",
-        rejectionReason: reason || "Request rejected"
-      }
-    });
-  };
-
-  const handleViewDetails = (request: any) => {
-    setSelectedRequest(request);
-    setShowDetailsModal(true);
-  };
-
-  const handleModify = (request: any) => {
-    setSelectedRequest(request);
-    setShowModifyModal(true);
-  };
-
-  const handleReschedule = (request: any) => {
-    setSelectedRequest(request);
-    setShowModifyModal(true);
-  };
-
-  const archiveRequest = (request: any) => {
-    setSelectedRequest(request);
-    setShowArchiveModal(true);
-  };
-
   if (isLoading) {
     return (
       <div className="animate-pulse">
@@ -443,65 +406,47 @@ export default function InterviewsPage() {
                   </div>
 
                   {/* Action buttons for managers and admins */}
-                  {(user?.role === "manager" || user?.role === "admin") && request.status === "pending" && (
-                    <div className="flex flex-col space-y-2 ml-6">
-                      <Button
-                        className="bg-green-600 hover:bg-green-700"
-                        onClick={() => handleApprove(request.id)}
-                        disabled={updateRequestMutation.isPending}
-                      >
-                        <Check className="w-4 h-4 mr-2" />
-                        Approve
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        onClick={() => handleReject(request.id)}
-                        disabled={updateRequestMutation.isPending}
-                      >
-                        <X className="w-4 h-4 mr-2" />
-                        Reject
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => handleModify(request)}
-                        disabled={updateRequestMutation.isPending}
-                      >
-                        <Edit className="w-4 h-4 mr-2" />
-                        Modify
-                      </Button>
-                    </div>
-                  )}
-
-                  {/* View details button for approved requests */}
-                  {request.status === "approved" && (
-                    <div className="flex flex-col space-y-2 ml-6">
-                      <Button 
-                        variant="outline"
-                        onClick={() => handleViewDetails(request)}
-                      >
-                        <Calendar className="w-4 h-4 mr-2" />
-                        View Details
-                      </Button>
-                      {(user?.role === "manager" || user?.role === "admin") && (
-                        <>
-                          <Button 
-                            variant="outline"
-                            onClick={() => handleReschedule(request)}
-                          >
-                            <Edit className="w-4 h-4 mr-2" />
-                            Reschedule
-                          </Button>
-                          <Button 
-                            variant="outline"
-                            onClick={() => archiveRequest(request)}
-                          >
-                            <Archive className="w-4 h-4 mr-2" />
-                            Archive
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  )}
+                  <div className="flex flex-col space-y-2 ml-6">
+                    {(user?.role === "manager" || user?.role === "admin") && request.status === "pending" && (
+                      <>
+                        <Button
+                          className="bg-green-600 hover:bg-green-700"
+                          onClick={() => updateRequestMutation.mutate({ 
+                            id: request.id, 
+                            updates: { status: "approved" }
+                          })}
+                          disabled={updateRequestMutation.isPending}
+                        >
+                          <CheckCircle2 className="w-4 h-4 mr-2" />
+                          Approve
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={() => updateRequestMutation.mutate({ 
+                            id: request.id, 
+                            updates: { status: "rejected" }
+                          })}
+                          disabled={updateRequestMutation.isPending}
+                        >
+                          <XCircle className="w-4 h-4 mr-2" />
+                          Reject
+                        </Button>
+                      </>
+                    )}
+                    
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        toast({
+                          title: "Interview Details",
+                          description: `${request.position} - ${request.candidateName} (${request.status})`,
+                        });
+                      }}
+                    >
+                      <Calendar className="w-4 h-4 mr-2" />
+                      View Details
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
