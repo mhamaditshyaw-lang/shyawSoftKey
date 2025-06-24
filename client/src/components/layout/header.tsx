@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 import NotificationBell from "@/components/notifications/notification-bell";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -28,13 +29,14 @@ export default function Header() {
       <div className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center space-x-4">
           <Building className="w-8 h-8 text-primary" />
-          <h1 className="text-2xl font-bold text-gray-900">Employee Affairs Manager</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Employee Affairs Manager</h1>
           <Badge className={getRoleBadgeColor(user.role)}>
             {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
           </Badge>
         </div>
 
         <div className="flex items-center space-x-4">
+          <ThemeToggle />
           <NotificationBell />
 
           <div className="flex items-center space-x-3">
@@ -44,10 +46,10 @@ export default function Header() {
               </AvatarFallback>
             </Avatar>
             <div className="text-right">
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium text-gray-900 dark:text-white">
                 {user.firstName} {user.lastName}
               </p>
-              <p className="text-xs text-gray-600">{user.email}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">{user.email}</p>
             </div>
             <Button variant="ghost" size="icon" onClick={logout}>
               <LogOut className="w-4 h-4" />
