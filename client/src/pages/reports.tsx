@@ -37,14 +37,9 @@ import {
   Activity,
   BarChart3,
   PieChart as PieChartIcon,
-  Download,
-  Filter,
-  RefreshCw,
   Target,
   Award,
   AlertTriangle,
-  FileText,
-  Database,
 } from "lucide-react";
 
 interface ReportsData {
@@ -68,16 +63,10 @@ interface ReportsData {
     requestsByStatus: { status: string; count: number }[];
     requestsTrend: { date: string; requests: number }[];
   };
-  operationalData: {
-    dailyTracking: any[];
-    weeklyTrends: any[];
-    productionMetrics: any[];
-  };
   feedbackStats: {
     totalFeedback: number;
     averageRating: number;
     feedbackByType: { type: string; count: number }[];
-    ratingDistribution: { rating: string; count: number }[];
   };
 }
 
@@ -106,56 +95,39 @@ const PIE_COLORS = [
 export default function Reports() {
   const [dateRange, setDateRange] = useState("30");
   const [selectedTab, setSelectedTab] = useState("overview");
-  const [autoRefresh, setAutoRefresh] = useState(false);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   // Fetch reports data
   const { data: reportsData, isLoading, refetch } = useQuery({
-    queryKey: ["/api/reports", dateRange],
+    queryKey: ["/api/reports", dateRange, startDate, endDate],
     queryFn: async () => {
-      const response = await authenticatedRequest("GET", `/api/reports?days=${dateRange}`);
+      let url = `/api/reports?days=${dateRange}`;
+      if (startDate && endDate) {
+        url += `&startDate=${startDate}&endDate=${endDate}`;
+      }
+      const response = await authenticatedRequest("GET", url);
       return response.json();
     },
-    refetchInterval: autoRefresh ? 30000 : false,
   });
 
-  const exportData = async (format: string) => {
-    try {
-      const response = await authenticatedRequest("GET", `/api/reports/export?format=${format}&days=${dateRange}`);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `reports-${new Date().toISOString().split('T')[0]}.${format}`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-      
-      toast({
-        title: "Success",
-        description: `Report exported as ${format.toUpperCase()}`,
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to export report",
-        variant: "destructive",
-      });
-    }
+  const clearDateFilter = () => {
+    setStartDate("");
+    setEndDate("");
   };
 
   if (isLoading || !reportsData) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <div className="w-8 h-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent mx-auto mb-4" />
           <p className="text-gray-600">Loading reports data...</p>
         </div>
       </div>
     );
   }
 
-  const { userStats, todoStats, interviewStats, operationalData, feedbackStats } = reportsData;
+  const { userStats, todoStats, interviewStats, feedbackStats } = reportsData;
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
@@ -170,37 +142,43 @@ export default function Reports() {
           <p className="text-gray-600">Comprehensive analytics and insights dashboard</p>
         </div>
         
-        <div className="flex items-center gap-3">
-          <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7">Last 7 days</SelectItem>
-              <SelectItem value="30">Last 30 days</SelectItem>
-              <SelectItem value="90">Last 90 days</SelectItem>
-              <SelectItem value="365">Last year</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Select value={dateRange} onValueChange={setDateRange}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7">Last 7 days</SelectItem>
+                <SelectItem value="30">Last 30 days</SelectItem>
+                <SelectItem value="90">Last 90 days</SelectItem>
+                <SelectItem value="365">Last year</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           
-          <Button
-            variant="outline"
-            onClick={() => setAutoRefresh(!autoRefresh)}
-            className={autoRefresh ? "bg-green-50 border-green-200" : ""}
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${autoRefresh ? "animate-spin" : ""}`} />
-            Auto-refresh
-          </Button>
-          
-          <Button onClick={() => refetch()} variant="outline">
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh
-          </Button>
-          
-          <Button onClick={() => exportData("csv")} variant="outline">
-            <Download className="w-4 h-4 mr-2" />
-            Export CSV
-          </Button>
+          <div className="flex items-center gap-2">
+            <Input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="w-36"
+              placeholder="Start date"
+            />
+            <span className="text-gray-500">to</span>
+            <Input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="w-36"
+              placeholder="End date"
+            />
+            {(startDate || endDate) && (
+              <Button variant="outline" size="sm" onClick={clearDateFilter}>
+                Clear
+              </Button>
+            )}
+          </div>
         </div>
       </motion.div>
 
@@ -266,12 +244,11 @@ export default function Reports() {
 
       {/* Charts and Analytics */}
       <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="tasks">Tasks</TabsTrigger>
           <TabsTrigger value="interviews">Interviews</TabsTrigger>
-          <TabsTrigger value="operations">Operations</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -372,23 +349,26 @@ export default function Reports() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Target className="w-5 h-5" />
-                  Feedback Rating Distribution
+                  Feedback Summary
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <RadialBarChart cx="50%" cy="50%" innerRadius="20%" outerRadius="90%" data={feedbackStats.ratingDistribution}>
-                    <RadialBar
-                      minAngle={15}
-                      label={{ position: 'insideStart', fill: '#fff' }}
-                      background
-                      clockWise
-                      dataKey="count"
-                      fill={COLORS.warning}
-                    />
-                    <Tooltip />
-                  </RadialBarChart>
-                </ResponsiveContainer>
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <p className="text-3xl font-bold text-purple-600">{feedbackStats.averageRating?.toFixed(1) || 'N/A'}</p>
+                    <p className="text-sm text-gray-600">Average Rating</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-center">
+                    <div>
+                      <p className="text-2xl font-semibold text-blue-600">{feedbackStats.totalFeedback}</p>
+                      <p className="text-xs text-gray-600">Total Reviews</p>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-semibold text-green-600">{feedbackStats.feedbackByType.length}</p>
+                      <p className="text-xs text-gray-600">Categories</p>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -587,29 +567,7 @@ export default function Reports() {
           </div>
         </TabsContent>
 
-        {/* Operations Tab */}
-        <TabsContent value="operations" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Database className="w-5 h-5" />
-                Operational Data Overview
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-600 mb-2">Operational Analytics</h3>
-                <p className="text-gray-500">
-                  Ice cream production, Albany operations, and staff tracking metrics will be displayed here
-                </p>
-                <p className="text-sm text-gray-400 mt-2">
-                  Charts for daily operations, production volumes, and staff counts across day/night shifts
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+
       </Tabs>
     </div>
   );

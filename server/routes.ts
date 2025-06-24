@@ -343,6 +343,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/reports", authenticateToken, requireRole(['manager', 'admin']), async (req: AuthRequest, res) => {
     try {
       const days = parseInt(req.query.days as string) || 30;
+      const startDate = req.query.startDate as string;
+      const endDate = req.query.endDate as string;
       
       // Get user stats
       const userStats = await storage.getUserStats();
@@ -357,9 +359,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return acc;
       }, []);
 
-      // Get todo stats
+      // Get todo stats (only for managers: show all data, for others: show only their own)
+      let todoLists;
+      if (req.user!.role === 'admin') {
+        todoLists = await storage.getTodoLists();
+      } else {
+        // Managers see tasks assigned to their team members
+        todoLists = await storage.getTodoLists();
+      }
+      
       const todoStats = await storage.getTodoStats();
-      const todoLists = await storage.getTodoLists();
       const todosByPriority = todoLists.reduce((acc: any[], list) => {
         const existing = acc.find(item => item.priority === list.priority);
         if (existing) {
@@ -420,15 +429,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
           return acc;
         }, []),
-        ratingDistribution: allFeedback.reduce((acc: any[], feedback) => {
-          const existing = acc.find(item => item.rating === feedback.rating);
-          if (existing) {
-            existing.count++;
-          } else {
-            acc.push({ rating: feedback.rating, count: 1 });
-          }
-          return acc;
-        }, []),
+
       };
 
       const reportsData = {
@@ -446,11 +447,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           requestsByStatus,
           requestsTrend,
         },
-        operationalData: {
-          dailyTracking: [],
-          weeklyTrends: [],
-          productionMetrics: [],
-        },
+
         feedbackStats,
       };
 
@@ -461,38 +458,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/reports/export", authenticateToken, requireRole(['manager', 'admin']), async (req: AuthRequest, res) => {
-    try {
-      const format = req.query.format as string || 'csv';
-      const days = parseInt(req.query.days as string) || 30;
-      
-      // For now, return a simple CSV export
-      if (format === 'csv') {
-        const userStats = await storage.getUserStats();
-        const todoStats = await storage.getTodoStats();
-        const interviewStats = await storage.getInterviewStats();
-        
-        const csvData = [
-          'Metric,Value',
-          `Total Users,${userStats.totalUsers}`,
-          `Active Users,${userStats.activeUsers}`,
-          `Total Todos,${todoStats.totalTodos}`,
-          `Completed Todos,${todoStats.completedTodos}`,
-          `Interview Requests,${interviewStats.totalRequests}`,
-          `Pending Interviews,${interviewStats.pendingRequests}`,
-        ].join('\n');
-        
-        res.setHeader('Content-Type', 'text/csv');
-        res.setHeader('Content-Disposition', 'attachment; filename="reports.csv"');
-        res.send(csvData);
-      } else {
-        res.status(400).json({ message: 'Unsupported export format' });
-      }
-    } catch (error: any) {
-      console.error("Error exporting reports:", error);
-      res.status(500).json({ message: error.message });
-    }
-  });
+
 
   app.get("/api/todos/recommendations", authenticateToken, async (req: AuthRequest, res) => {
     try {
