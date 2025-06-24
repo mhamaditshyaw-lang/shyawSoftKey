@@ -143,17 +143,11 @@ export default function DataViewPage() {
   };
 
   const isCustomDate = (date: string): boolean => {
-    if (!customDate) {
-      console.log("No custom date selected");
-      return false;
-    }
+    if (!customDate) return false;
     
     try {
       const entryDate = new Date(date);
       const filterDate = new Date(customDate);
-      
-      console.log("Entry date:", entryDate.toDateString());
-      console.log("Filter date:", filterDate.toDateString());
       
       // Get date parts for accurate comparison
       const entryYear = entryDate.getFullYear();
@@ -164,57 +158,33 @@ export default function DataViewPage() {
       const filterMonth = filterDate.getMonth();
       const filterDay = filterDate.getDate();
       
-      const matches = entryYear === filterYear && entryMonth === filterMonth && entryDay === filterDay;
-      console.log("Custom date match:", matches);
-      
-      return matches;
+      return entryYear === filterYear && entryMonth === filterMonth && entryDay === filterDay;
     } catch (error) {
-      console.error("Error in custom date comparison:", error);
       return false;
     }
   };
 
-  // Filter data with debugging
+  // Filter data
   const filteredData = (() => {
     let data =
       filter === "all" ? allData : allData.filter((d) => d.type === filter);
 
-    console.log("All data entries:", allData.length);
-    console.log("After type filter:", data.length);
-    console.log("Date filter:", dateFilter);
-    console.log("Custom date:", customDate);
-
     // Apply date filtering
     if (dateFilter !== "all") {
-      const beforeDateFilter = data.length;
       data = data.filter((entry) => {
-        const entryTimestamp = entry.timestamp;
-        console.log("Checking entry timestamp:", entryTimestamp);
-        
-        let result = false;
         switch (dateFilter) {
           case "today":
-            result = isToday(entryTimestamp);
-            console.log("Today filter result:", result);
-            break;
+            return isToday(entry.timestamp);
           case "week":
-            result = isThisWeek(entryTimestamp);
-            console.log("Week filter result:", result);
-            break;
+            return isThisWeek(entry.timestamp);
           case "month":
-            result = isThisMonth(entryTimestamp);
-            console.log("Month filter result:", result);
-            break;
+            return isThisMonth(entry.timestamp);
           case "custom":
-            result = isCustomDate(entryTimestamp);
-            console.log("Custom date filter result:", result);
-            break;
+            return isCustomDate(entry.timestamp);
           default:
-            result = true;
+            return true;
         }
-        return result;
       });
-      console.log("After date filter:", data.length, "from", beforeDateFilter);
     }
 
     if (searchTerm) {
@@ -230,7 +200,6 @@ export default function DataViewPage() {
       );
     }
 
-    console.log("Final filtered data:", data.length);
     return data;
   })();
 
@@ -319,12 +288,20 @@ export default function DataViewPage() {
   const isAdmin = user?.role === "admin";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Beautiful Header */}
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
+            Data View & Analytics
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300">
+            View, filter, and analyze your operational data
+          </p>
+        </div>
 
         {/* Search and Filters Card */}
-        <Card className="mb-8 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+        <Card className="mb-8 shadow-lg border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
           <CardContent className="p-6">
             <div className="space-y-6">
               {/* Search Bar */}
@@ -334,7 +311,7 @@ export default function DataViewPage() {
                   placeholder="Search across all data entries..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-12 h-12 text-lg border-gray-200 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                  className="pl-12 h-12 text-lg border-gray-200 focus:border-blue-500 focus:ring-blue-500 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
 
@@ -368,10 +345,7 @@ export default function DataViewPage() {
                       id="custom-date"
                       type="date"
                       value={customDate}
-                      onChange={(e) => {
-                        console.log("Custom date changed to:", e.target.value);
-                        setCustomDate(e.target.value);
-                      }}
+                      onChange={(e) => setCustomDate(e.target.value)}
                       className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                       max={new Date().toISOString().split('T')[0]} // Prevent future dates
                     />
@@ -419,7 +393,6 @@ export default function DataViewPage() {
                     variant="ghost"
                     size="sm"
                     onClick={() => {
-                      console.log("Clearing all filters");
                       setDateFilter("all");
                       setFilter("all");
                       setSearchTerm("");
@@ -550,41 +523,21 @@ export default function DataViewPage() {
           </CardContent>
         </Card>
 
-        {/* Debug Info */}
-        <Card className="mb-4 bg-yellow-50 border-yellow-200">
-          <CardContent className="p-4">
-            <div className="text-sm space-y-1">
-              <div><strong>Debug Info:</strong></div>
-              <div>Total entries: {allData.length}</div>
-              <div>Filtered entries: {filteredData.length}</div>
-              <div>Current date filter: {dateFilter}</div>
-              <div>Custom date: {customDate || "None"}</div>
-              <div>Is custom date valid: {customDate ? "Yes" : "No"}</div>
-              {allData.length > 0 && customDate && (
-                <div>Custom date test: {isCustomDate(allData[0]?.timestamp) ? "Match" : "No match"}</div>
-              )}
-              <div>Type filter: {filter}</div>
-              <div>Search term: {searchTerm || "None"}</div>
-              {allData.length > 0 && (
-                <div>Sample timestamp: {allData[0]?.timestamp}</div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+
 
         {/* Data Grid */}
         {filteredData.length === 0 ? (
-          <Card className="text-center py-16 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+          <Card className="text-center py-16 shadow-lg border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
             <CardContent>
               <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full mb-6">
                 <Database className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
                 {allData.length === 0
                   ? "No Data Available"
                   : "No Matching Results"}
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 {allData.length === 0
                   ? "Start adding operational data from the dashboard to see entries here."
                   : "Try adjusting your search terms or filters to find what you're looking for."}
@@ -596,20 +549,20 @@ export default function DataViewPage() {
             {filteredData.map((entry, index) => (
               <Card
                 key={entry.id}
-                className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/90 backdrop-blur-sm hover:bg-white overflow-hidden"
+                className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm hover:bg-white dark:hover:bg-gray-800 overflow-hidden"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <CardHeader className="pb-4 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-100">
+                <CardHeader className="pb-4 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-700 dark:to-gray-600 border-b border-gray-100 dark:border-gray-600">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="p-2 rounded-lg bg-white shadow-sm">
                         {getTypeIcon(entry.type)}
                       </div>
                       <div>
-                        <CardTitle className="text-xl font-bold text-gray-800">
+                        <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
                           {getTypeName(entry.type)}
                         </CardTitle>
-                        <p className="text-sm text-gray-600 mt-1">
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                           {Object.keys(entry.data).length} data fields recorded
                         </p>
                       </div>
