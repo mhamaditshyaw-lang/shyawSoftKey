@@ -31,10 +31,10 @@ export default function ResponsiveMenuBar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Check if screen is mobile size
+  // Check if screen is mobile/tablet size (hide on desktop)
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 1024); // Changed from 768 to 1024 to include tablets
     };
     
     checkMobile();
@@ -59,45 +59,16 @@ export default function ResponsiveMenuBar() {
     user?.role && item.roles.includes(user.role)
   );
 
-  // Desktop horizontal menu bar
+  // Desktop - no menu bar (use sidebar only)
   if (!isMobile) {
-    return (
-      <div className="hidden md:block bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-16 z-30">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center space-x-1 overflow-x-auto py-2">
-            {filteredNavItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location === item.href;
-              
-              return (
-                <Button
-                  key={item.href}
-                  variant={isActive ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setLocation(item.href)}
-                  className={cn(
-                    "flex items-center space-x-2 whitespace-nowrap px-3 py-2 text-sm font-medium",
-                    isActive 
-                      ? "bg-primary text-white shadow-sm" 
-                      : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
-                  )}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{item.title}</span>
-                </Button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
-  // Mobile bottom navigation bar
+  // Mobile/Tablet navigation
   return (
     <>
-      {/* Mobile Menu Toggle */}
-      <div className="md:hidden fixed top-20 right-4 z-50">
+      {/* Mobile/Tablet Menu Toggle */}
+      <div className="lg:hidden fixed top-20 right-4 z-50">
         <Button
           variant="outline"
           size="sm"
@@ -113,12 +84,12 @@ export default function ResponsiveMenuBar() {
         <>
           {/* Overlay */}
           <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
             onClick={() => setIsOpen(false)}
           />
           
           {/* Menu Panel */}
-          <div className="fixed top-0 right-0 h-full w-80 bg-white dark:bg-gray-900 shadow-xl z-50 md:hidden transform transition-transform duration-300">
+          <div className="fixed top-0 right-0 h-full w-80 bg-white dark:bg-gray-900 shadow-xl z-50 lg:hidden transform transition-transform duration-300">
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Navigation</h3>
@@ -163,8 +134,8 @@ export default function ResponsiveMenuBar() {
         </>
       )}
 
-      {/* Mobile Bottom Navigation Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-lg z-40">
+      {/* Mobile/Tablet Bottom Navigation Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-lg z-40">
         <div className="grid grid-cols-4 gap-1 p-2">
           {filteredNavItems.slice(0, 4).map((item) => {
             const Icon = item.icon;
@@ -190,7 +161,7 @@ export default function ResponsiveMenuBar() {
       </div>
 
       {/* Bottom padding for content when bottom nav is visible */}
-      <div className="md:hidden h-20" />
+      <div className="lg:hidden h-20" />
     </>
   );
 }
