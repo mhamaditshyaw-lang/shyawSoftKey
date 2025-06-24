@@ -127,6 +127,7 @@ The deployment uses:
 - June 24, 2025: Implemented One-Click Task Archive with Undo Functionality featuring 10-second undo window, animated toast notifications, and complete restore capability
 - June 24, 2025: Added comprehensive archive functionality including Archive All Tasks button, individual task/list archive buttons, and improved archive API with proper validation
 - June 24, 2025: Implemented selective task archiving with selection mode, checkboxes for individual tasks/lists, bulk selection controls, and visual selection indicators
+- June 24, 2025: Enhanced Employee Reviews & Evaluations page with comprehensive date filtering, auto-refresh every 30 seconds, search functionality by employee/position/reviewer, and advanced filter controls with clear filter options
 
 ## User Preferences
 

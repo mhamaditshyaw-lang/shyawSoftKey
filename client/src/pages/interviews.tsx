@@ -18,6 +18,10 @@ export default function InterviewsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [statusFilter, setStatusFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dateFilter, setDateFilter] = useState("today");
+  const [customDate, setCustomDate] = useState("");
+  const [autoRefresh, setAutoRefresh] = useState(true);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -140,20 +144,133 @@ export default function InterviewsPage() {
                 Schedule Employee Review
               </Button>
             )}
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="All Statuses" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="approved">Approved</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
-              </SelectContent>
-            </Select>
+            <Button
+              onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/interviews"] })}
+              variant="outline"
+              size="sm"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Refresh
+            </Button>
           </div>
         </div>
       </div>
+
+      {/* Enhanced Search and Filter Controls */}
+      <Card className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+        <CardHeader>
+          <CardTitle className="flex items-center text-lg">
+            <Filter className="w-5 h-5 mr-2 text-blue-600" />
+            Search & Filter Options
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Search Input */}
+            <div className="space-y-2">
+              <Label htmlFor="search" className="text-sm font-medium">Search Reviews</Label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  id="search"
+                  placeholder="Employee, position, reviewer..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+
+            {/* Status Filter */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Status Filter</Label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="approved">Approved</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Date Filter */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Date Filter</Label>
+              <Select value={dateFilter} onValueChange={setDateFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Dates" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="today">Today</SelectItem>
+                  <SelectItem value="week">This Week</SelectItem>
+                  <SelectItem value="month">This Month</SelectItem>
+                  <SelectItem value="custom">Custom Date</SelectItem>
+                  <SelectItem value="all">All Dates</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Auto Refresh Toggle */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Auto Refresh</Label>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  checked={autoRefresh}
+                  onCheckedChange={setAutoRefresh}
+                />
+                <span className="text-sm text-gray-600">
+                  {autoRefresh ? "Every 30s" : "Off"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Custom Date Input */}
+          {dateFilter === "custom" && (
+            <div className="mt-4 max-w-xs">
+              <Label htmlFor="customDate" className="text-sm font-medium">Select Date</Label>
+              <Input
+                id="customDate"
+                type="date"
+                value={customDate}
+                onChange={(e) => setCustomDate(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+          )}
+
+          {/* Filter Summary */}
+          <div className="mt-4 pt-4 border-t border-blue-200">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-600">
+                Showing {filteredInterviews.length} of {interviewRequests.length} reviews
+                {dateFilter !== "all" && ` • Filtered by: ${dateFilter === "custom" ? `${customDate}` : dateFilter}`}
+                {searchTerm && ` • Search: "${searchTerm}"`}
+                {statusFilter !== "all" && ` • Status: ${statusFilter}`}
+              </span>
+              {(searchTerm || dateFilter !== "all" || statusFilter !== "all") && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setDateFilter("all");
+                    setStatusFilter("all");
+                    setCustomDate("");
+                  }}
+                  className="text-blue-600 hover:text-blue-800"
+                >
+                  Clear Filters
+                </Button>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Requests Grid */}
       <div className="space-y-6">
