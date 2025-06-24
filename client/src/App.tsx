@@ -19,6 +19,7 @@ import ReportsPage from "@/pages/reports";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
+import PageMenu from "@/components/navigation/page-menu";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -46,6 +47,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
           </div>
         </main>
       </div>
+      
+      {/* Global Page Menu */}
+      <PageMenu />
     </div>
   );
 }
