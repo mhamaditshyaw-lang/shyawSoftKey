@@ -516,6 +516,60 @@ export default function TodosPage() {
     },
   });
 
+  // Archive all tasks mutation
+  const archiveAllTasksMutation = useMutation({
+    mutationFn: async () => {
+      const allTasks: any[] = [];
+      todoLists.forEach(list => {
+        list.items.forEach(item => {
+          allTasks.push({ type: 'task', id: item.id, data: item });
+        });
+        allTasks.push({ type: 'list', id: list.id, data: list });
+      });
+
+      // Archive all items sequentially
+      for (const task of allTasks) {
+        try {
+          await authenticatedRequest("POST", "/api/archive", {
+            body: JSON.stringify({
+              itemType: task.type === 'list' ? 'todo_list' : 'todo_item',
+              itemId: task.id,
+              reason: `Bulk archive operation - ${task.type === 'list' ? 'Todo list' : 'Todo item'} archived`
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+        } catch (error) {
+          console.warn(`Failed to archive ${task.type} ${task.id}:`, error);
+        }
+      }
+      
+      return allTasks.length;
+    },
+    onSuccess: (archivedCount) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
+      toast({
+        title: "Success",
+        description: `${archivedCount} items have been archived`,
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to archive all tasks",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleArchiveAllTasks = () => {
+    const totalItems = todoLists.reduce((acc, list) => acc + list.items.length + 1, 0);
+    if (window.confirm(`Are you sure you want to archive all ${totalItems} items (tasks + lists)? You can restore them from the Archive page.`)) {
+      archiveAllTasksMutation.mutate();
+    }
+  };
+
   const getCompletionPercentage = (items: TodoItem[]) => {
     if (items.length === 0) return 0;
     const completed = items.filter(item => item.isCompleted).length;
@@ -648,6 +702,17 @@ export default function TodosPage() {
                   <Plus className="w-4 h-4 mr-2" />
                   New Daily List
                 </Button>
+                {todoLists.length > 0 && (
+                  <Button
+                    onClick={handleArchiveAllTasks}
+                    disabled={archiveAllTasksMutation.isPending}
+                    variant="outline"
+                    className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                  >
+                    <Archive className="w-4 h-4 mr-2" />
+                    {archiveAllTasksMutation.isPending ? "Archiving..." : "Archive All"}
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -1124,6 +1189,30 @@ export default function TodosPage() {
                       </Button>
                     </div>
                     
+                    {/* List Actions */}
+                    <div className="flex items-center justify-between gap-2 pt-3 border-t">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => archiveTodoList.mutate(list.id)}
+                        disabled={archiveTodoList.isPending}
+                        className="text-blue-600 hover:text-blue-700 border-blue-200 hover:border-blue-300"
+                      >
+                        <Archive className="w-4 h-4 mr-1" />
+                        Archive List
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleRemoveAllTasks(list.id)}
+                        disabled={removeAllTasksMutation.isPending}
+                        className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
+                      >
+                        <Trash2 className="w-4 h-4 mr-1" />
+                        Delete All
+                      </Button>
+                    </div>
+
                     {/* Footer Info */}
                     <div className="text-xs text-gray-500 pt-2 border-t">
                       <div className="flex items-center justify-between">
