@@ -389,7 +389,8 @@ export default function TodosPage() {
   // Archive mutations
   const archiveTodoList = useMutation({
     mutationFn: async (listId: number) => {
-      const response = await authenticatedRequest("POST", "/api/archive", {
+      const response = await apiRequest("/api/archive", {
+        method: "POST",
         body: JSON.stringify({
           itemType: "todo_list",
           itemId: listId,
@@ -399,11 +400,7 @@ export default function TodosPage() {
           "Content-Type": "application/json",
         },
       });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Failed to archive todo list');
-      }
-      return response.json();
+      return response;
     },
     onSuccess: (data, listId) => {
       const listData = todoLists.find(list => list.id === listId);
@@ -432,7 +429,8 @@ export default function TodosPage() {
 
   const archiveTodoItem = useMutation({
     mutationFn: async (itemId: number) => {
-      const response = await authenticatedRequest("POST", "/api/archive", {
+      const response = await apiRequest("/api/archive", {
+        method: "POST",
         body: JSON.stringify({
           itemType: "todo_item",
           itemId: itemId,
@@ -442,11 +440,7 @@ export default function TodosPage() {
           "Content-Type": "application/json",
         },
       });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Failed to archive task');
-      }
-      return response.json();
+      return response;
     },
     onSuccess: (data, itemId) => {
       // Find the item data before it's removed
@@ -534,7 +528,8 @@ export default function TodosPage() {
       // Archive all items sequentially
       for (const task of allTasks) {
         try {
-          await authenticatedRequest("POST", "/api/archive", {
+          await apiRequest("/api/archive", {
+            method: "POST",
             body: JSON.stringify({
               itemType: task.type === 'list' ? 'todo_list' : 'todo_item',
               itemId: task.id,
@@ -598,7 +593,8 @@ export default function TodosPage() {
       // Archive selected items sequentially
       for (const item of selectedItems) {
         try {
-          await authenticatedRequest("POST", "/api/archive", {
+          await apiRequest("/api/archive", {
+            method: "POST",
             body: JSON.stringify({
               itemType: item.type === 'list' ? 'todo_list' : 'todo_item',
               itemId: item.id,
