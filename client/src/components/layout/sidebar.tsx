@@ -73,7 +73,7 @@ const navItems: NavItem[] = [
     title: "Reports & Analytics",
     href: "/reports",
     icon: TrendingUp,
-    roles: ["admin"],
+    roles: ["admin", "manager"],
   },
 ];
 
