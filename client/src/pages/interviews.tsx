@@ -8,7 +8,7 @@ import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Clock, Check, X, Edit, Calendar, Plus, Archive } from "lucide-react";
+import { Clock, Check, X, Edit, Calendar, Plus, Archive, Search, RefreshCw, Filter } from "lucide-react";
 import InterviewRequestModal from "@/components/modals/interview-request-modal";
 import InterviewDetailsModal from "@/components/modals/interview-details-modal";
 import ModifyInterviewModal from "@/components/modals/modify-interview-modal";
@@ -34,6 +34,95 @@ export default function InterviewsPage() {
       const response = await authenticatedRequest("GET", "/api/interviews");
       return await response.json();
     },
+    refetchInterval: autoRefresh ? 30000 : false, // Auto-refresh every 30 seconds
+  });
+
+  const interviewRequests = interviewsData?.requests || [];
+
+  // Auto-refresh effect
+  useEffect(() => {
+    if (autoRefresh) {
+      const interval = setInterval(() => {
+        queryClient.invalidateQueries({ queryKey: ["/api/interviews"] });
+      }, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [autoRefresh]);
+
+  // Date filtering functions
+  const isToday = (date: string): boolean => {
+    const today = new Date();
+    const entryDate = new Date(date);
+    return (
+      entryDate.getDate() === today.getDate() &&
+      entryDate.getMonth() === today.getMonth() &&
+      entryDate.getFullYear() === today.getFullYear()
+    );
+  };
+
+  const isThisWeek = (date: string): boolean => {
+    const today = new Date();
+    const entryDate = new Date(date);
+    const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+    const endOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+    return entryDate >= startOfWeek && entryDate <= endOfWeek;
+  };
+
+  const isThisMonth = (date: string): boolean => {
+    const today = new Date();
+    const entryDate = new Date(date);
+    return (
+      entryDate.getMonth() === today.getMonth() &&
+      entryDate.getFullYear() === today.getFullYear()
+    );
+  };
+
+  const isCustomDate = (date: string): boolean => {
+    if (!customDate) return false;
+    const entryDate = new Date(date);
+    const filterDate = new Date(customDate);
+    return (
+      entryDate.getDate() === filterDate.getDate() &&
+      entryDate.getMonth() === filterDate.getMonth() &&
+      entryDate.getFullYear() === filterDate.getFullYear()
+    );
+  };
+
+  // Filter interviews based on criteria
+  const filteredInterviews = interviewRequests.filter((request: any) => {
+    // Status filter
+    if (statusFilter !== "all" && request.status !== statusFilter) {
+      return false;
+    }
+
+    // Search filter
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      const matchesSearch = 
+        request.position.toLowerCase().includes(searchLower) ||
+        request.candidateName.toLowerCase().includes(searchLower) ||
+        request.requestedBy.firstName.toLowerCase().includes(searchLower) ||
+        request.requestedBy.lastName.toLowerCase().includes(searchLower) ||
+        (request.manager && 
+         `${request.manager.firstName} ${request.manager.lastName}`.toLowerCase().includes(searchLower));
+      
+      if (!matchesSearch) return false;
+    }
+
+    // Date filter
+    switch (dateFilter) {
+      case "today":
+        return isToday(request.createdAt);
+      case "week":
+        return isThisWeek(request.createdAt);
+      case "month":
+        return isThisMonth(request.createdAt);
+      case "custom":
+        return isCustomDate(request.createdAt);
+      case "all":
+      default:
+        return true;
+    }
   });
 
   const updateRequestMutation = useMutation({
