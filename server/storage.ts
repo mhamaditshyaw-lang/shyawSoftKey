@@ -34,6 +34,7 @@ export interface IStorage {
   updateTodoItem(id: number, updates: Partial<TodoItem>): Promise<TodoItem | undefined>;
   deleteTodoItem(id: number): Promise<boolean>;
   deleteAllTodoItems(todoListId: number): Promise<boolean>;
+  getTodoStatsByUser(userId: number): Promise<{ totalTodos: number; completedTodos: number; pendingTodos: number }>;
   
   // Interview request methods
   getInterviewRequests(): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;
@@ -295,6 +296,29 @@ export class DatabaseStorage implements IStorage {
         pendingTodos: sql<number>`count(*) filter (where is_completed = false)`,
       })
       .from(todoItems);
+    
+    return {
+      totalTodos: Number(stats.totalTodos),
+      completedTodos: Number(stats.completedTodos),
+      pendingTodos: Number(stats.pendingTodos),
+    };
+  }
+
+  async getTodoStatsByUser(userId: number): Promise<{ totalTodos: number; completedTodos: number; pendingTodos: number }> {
+    const [stats] = await db
+      .select({
+        totalTodos: sql<number>`count(*)`,
+        completedTodos: sql<number>`count(*) filter (where is_completed = true)`,
+        pendingTodos: sql<number>`count(*) filter (where is_completed = false)`,
+      })
+      .from(todoItems)
+      .innerJoin(todoLists, eq(todoItems.todoListId, todoLists.id))
+      .where(
+        or(
+          eq(todoLists.createdById, userId),
+          eq(todoLists.assignedToId, userId)
+        )
+      );
     
     return {
       totalTodos: Number(stats.totalTodos),

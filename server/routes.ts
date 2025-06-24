@@ -359,16 +359,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return acc;
       }, []);
 
-      // Get todo stats (only for managers: show all data, for others: show only their own)
+      // Get todo stats based on role
       let todoLists;
       if (req.user!.role === 'admin') {
+        // Admins see all tasks
         todoLists = await storage.getTodoLists();
+      } else if (req.user!.role === 'manager') {
+        // Managers only see tasks assigned to them or created by them
+        todoLists = await storage.getTodoListsByUser(req.user!.id);
       } else {
-        // Managers see tasks assigned to their team members
-        todoLists = await storage.getTodoLists();
+        // Others see only their own tasks
+        todoLists = await storage.getTodoListsByUser(req.user!.id);
       }
       
-      const todoStats = await storage.getTodoStats();
+      // Get todo stats based on role
+      let todoStats;
+      if (req.user!.role === 'admin') {
+        todoStats = await storage.getTodoStats();
+      } else {
+        todoStats = await storage.getTodoStatsByUser(req.user!.id);
+      }
       const todosByPriority = todoLists.reduce((acc: any[], list) => {
         const existing = acc.find(item => item.priority === list.priority);
         if (existing) {
@@ -390,9 +400,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
       });
 
-      // Get interview stats
-      const interviewStats = await storage.getInterviewStats();
-      const interviews = await storage.getInterviewRequests();
+      // Get interview stats based on role
+      let interviewStats, interviews;
+      if (req.user!.role === 'admin') {
+        interviewStats = await storage.getInterviewStats();
+        interviews = await storage.getInterviewRequests();
+      } else if (req.user!.role === 'manager') {
+        interviewStats = await storage.getInterviewStats();
+        interviews = await storage.getInterviewRequestsByManager(req.user!.id);
+      } else {
+        interviewStats = await storage.getInterviewStats();
+        interviews = await storage.getInterviewRequestsBySecretary(req.user!.id);
+      }
       const requestsByStatus = interviews.reduce((acc: any[], request) => {
         const existing = acc.find(item => item.status === request.status);
         if (existing) {
