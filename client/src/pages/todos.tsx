@@ -389,18 +389,14 @@ export default function TodosPage() {
   // Archive mutations
   const archiveTodoList = useMutation({
     mutationFn: async (listId: number) => {
-      const response = await apiRequest("/api/archive", {
+      return apiRequest("/api/archive", {
         method: "POST",
-        body: JSON.stringify({
+        body: {
           itemType: "todo_list",
           itemId: listId,
           reason: "Task list completed or no longer needed"
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        }
       });
-      return response;
     },
     onSuccess: (data, listId) => {
       const listData = todoLists.find(list => list.id === listId);
@@ -429,18 +425,14 @@ export default function TodosPage() {
 
   const archiveTodoItem = useMutation({
     mutationFn: async (itemId: number) => {
-      const response = await apiRequest("/api/archive", {
+      return apiRequest("/api/archive", {
         method: "POST",
-        body: JSON.stringify({
+        body: {
           itemType: "todo_item",
           itemId: itemId,
           reason: "Task completed and archived"
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        }
       });
-      return response;
     },
     onSuccess: (data, itemId) => {
       // Find the item data before it's removed
@@ -530,14 +522,11 @@ export default function TodosPage() {
         try {
           await apiRequest("/api/archive", {
             method: "POST",
-            body: JSON.stringify({
+            body: {
               itemType: task.type === 'list' ? 'todo_list' : 'todo_item',
               itemId: task.id,
               reason: `Bulk archive operation - ${task.type === 'list' ? 'Todo list' : 'Todo item'} archived`
-            }),
-            headers: {
-              "Content-Type": "application/json",
-            },
+            }
           });
         } catch (error) {
           console.warn(`Failed to archive ${task.type} ${task.id}:`, error);
@@ -595,14 +584,11 @@ export default function TodosPage() {
         try {
           await apiRequest("/api/archive", {
             method: "POST",
-            body: JSON.stringify({
+            body: {
               itemType: item.type === 'list' ? 'todo_list' : 'todo_item',
               itemId: item.id,
               reason: `Selected archive operation - ${item.type === 'list' ? 'Todo list' : 'Todo item'} archived`
-            }),
-            headers: {
-              "Content-Type": "application/json",
-            },
+            }
           });
         } catch (error) {
           console.warn(`Failed to archive ${item.type} ${item.id}:`, error);
