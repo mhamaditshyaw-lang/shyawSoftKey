@@ -66,6 +66,23 @@
   .mobile-table-cell {
     @apply block text-sm py-1;
   }
+  
+  /* Responsive menu bar utilities */
+  .menu-bar-desktop {
+    @apply hidden md:flex items-center space-x-2 overflow-x-auto;
+  }
+  
+  .menu-bar-mobile {
+    @apply md:hidden fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg;
+  }
+  
+  .menu-item-active {
+    @apply bg-primary text-white shadow-sm;
+  }
+  
+  .menu-item-inactive {
+    @apply text-gray-600 hover:text-gray-900 hover:bg-gray-100;
+  }
 }
 
 :root {

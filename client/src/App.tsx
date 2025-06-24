@@ -20,6 +20,7 @@ import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import PageMenu from "@/components/navigation/page-menu";
+import ResponsiveMenuBar from "@/components/navigation/responsive-menu-bar";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -39,9 +40,10 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+      <ResponsiveMenuBar />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-4 md:p-8">
+        <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8">
           <div className="max-w-full overflow-x-hidden">
             {children}
           </div>
