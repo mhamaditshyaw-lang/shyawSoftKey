@@ -63,7 +63,11 @@ export interface IStorage {
   updateArchivedItem(archiveId: number, updates: any): Promise<any>;
   restoreArchivedItem(archiveId: number, itemType: string): Promise<void>;
   
-
+  // Operational data methods
+  createOperationalData(data: any): Promise<any>;
+  getOperationalData(): Promise<any[]>;
+  deleteOperationalData(id: number): Promise<boolean>;
+  clearAllOperationalData(): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -389,6 +393,38 @@ export class DatabaseStorage implements IStorage {
   }
 
 
+  async createOperationalData(data: any): Promise<any> {
+    const [entry] = await db
+      .insert(operationalData)
+      .values(data)
+      .returning();
+    return entry;
+  }
+
+  async getOperationalData(): Promise<any[]> {
+    const entries = await db
+      .select()
+      .from(operationalData)
+      .leftJoin(users, eq(operationalData.createdById, users.id))
+      .orderBy(desc(operationalData.createdAt));
+
+    return entries.map(entry => ({
+      ...entry.operational_data,
+      createdBy: entry.users!,
+    }));
+  }
+
+  async deleteOperationalData(id: number): Promise<boolean> {
+    const result = await db
+      .delete(operationalData)
+      .where(eq(operationalData.id, id));
+    return result.rowCount > 0;
+  }
+
+  async clearAllOperationalData(): Promise<boolean> {
+    await db.delete(operationalData);
+    return true;
+  }
 }
 
 export const storage = new DatabaseStorage();

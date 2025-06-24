@@ -183,25 +183,23 @@ export default function MetricsPage() {
     const deviceMax = Math.max(...deviceNumbers);
     const deviceMin = Math.min(...deviceNumbers);
 
-    // Save to localStorage for data view
-    const newEntry = {
-      id: Date.now().toString(),
-      timestamp: new Date().toISOString(),
-      type: 'operations' as const,
-      data: {
-        'Day - Ice cream': deviceData.device1,
-        'Night - Ice cream': deviceData.device2,
-        'Day - Albany': deviceData.device3,
-        'Night - Albany': deviceData.device4,
-        'Day - Do': deviceData.device5,
-        'Night - Do': deviceData.device6,
-      },
-      stats: { total: deviceSum, average: deviceAverage, max: deviceMax, min: deviceMin }
-    };
-    
-    const existingData = JSON.parse(localStorage.getItem('operationsData') || '[]');
-    existingData.push(newEntry);
-    localStorage.setItem('operationsData', JSON.stringify(existingData));
+    // Save to database via API
+    try {
+      await apiRequest("POST", "/api/operational-data", {
+        type: 'operations',
+        data: {
+          'Day - Ice cream': deviceData.device1,
+          'Night - Ice cream': deviceData.device2,
+          'Day - Albany': deviceData.device3,
+          'Night - Albany': deviceData.device4,
+          'Day - Do': deviceData.device5,
+          'Night - Do': deviceData.device6,
+        },
+        stats: { total: deviceSum, average: deviceAverage, max: deviceMax, min: deviceMin }
+      });
+    } catch (error) {
+      console.error("Error saving operational data:", error);
+    }
 
     stopOperationsLoading();
 
@@ -236,25 +234,23 @@ export default function MetricsPage() {
     const countMax = Math.max(...countNumbers);
     const countMin = Math.min(...countNumbers);
 
-    // Save to localStorage for data view
-    const newEntry = {
-      id: Date.now().toString(),
-      timestamp: new Date().toISOString(),
-      type: 'staffCount' as const,
-      data: {
-        'Day - Ice cream': employeeCountData.count1,
-        'Night - Ice cream': employeeCountData.count2,
-        'Day - Albany': employeeCountData.count3,
-        'Night - Albany': employeeCountData.count4,
-        'Day - Do': employeeCountData.count5,
-        'Night - Do': employeeCountData.count6,
-      },
-      stats: { total: countSum, average: countAverage, max: countMax, min: countMin }
-    };
-    
-    const existingData = JSON.parse(localStorage.getItem('operationsData') || '[]');
-    existingData.push(newEntry);
-    localStorage.setItem('operationsData', JSON.stringify(existingData));
+    // Save to database via API
+    try {
+      await apiRequest("POST", "/api/operational-data", {
+        type: 'staffCount',
+        data: {
+          'Day - Ice cream': employeeCountData.count1,
+          'Night - Ice cream': employeeCountData.count2,
+          'Day - Albany': employeeCountData.count3,
+          'Night - Albany': employeeCountData.count4,
+          'Day - Do': employeeCountData.count5,
+          'Night - Do': employeeCountData.count6,
+        },
+        stats: { total: countSum, average: countAverage, max: countMax, min: countMin }
+      });
+    } catch (error) {
+      console.error("Error saving staff count data:", error);
+    }
 
     stopStaffCountLoading();
 

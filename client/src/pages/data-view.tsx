@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { DeleteConfirmationModal } from "@/components/modals/delete-confirmation-modal";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import {
   Users,
   BarChart3,
@@ -25,25 +27,26 @@ import {
 } from "lucide-react";
 
 interface DataEntry {
-  id: string;
-  timestamp: string;
+  id: number;
   type: string;
-  data: Record<string, string>;
-  stats: {
+  data: Record<string, any>;
+  stats?: {
     total: number;
     average: number;
     max: number;
     min: number;
   };
+  createdAt: string;
+  createdBy?: {
+    username: string;
+    firstName: string;
+    lastName: string;
+  };
 }
 
 export default function DataViewPage() {
-  const [allData, setAllData] = useState<DataEntry[]>([]);
   const [filter, setFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const [dateSearch, setDateSearch] = useState("");
-  const [dateRangeStart, setDateRangeStart] = useState("");
-  const [dateRangeEnd, setDateRangeEnd] = useState("");
   const [dateFilter, setDateFilter] = useState<string>("today");
   const [customDate, setCustomDate] = useState<string>("");
   const [autoRefresh, setAutoRefresh] = useState<boolean>(true);
@@ -54,6 +57,14 @@ export default function DataViewPage() {
   }>({ isOpen: false });
   const { user } = useAuth();
   const { toast } = useToast();
+
+  // Fetch operational data from API
+  const { data: operationalDataResponse, refetch } = useQuery({
+    queryKey: ["/api/operational-data"],
+    refetchInterval: autoRefresh ? 30000 : false,
+  });
+
+  const allData: DataEntry[] = operationalDataResponse?.entries || [];
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -89,20 +100,7 @@ export default function DataViewPage() {
     }
   };
 
-  // Load data from localStorage
-  useEffect(() => {
-    const loadData = () => {
-      const storedData = localStorage.getItem("operationsData");
-      if (storedData) {
-        const parsedData = JSON.parse(storedData);
-        setAllData(parsedData);
-      }
-    };
 
-    loadData();
-    const interval = setInterval(loadData, 2000);
-    return () => clearInterval(interval);
-  }, []);
 
   // Date filtering functions
   const isToday = (date: string): boolean => {
@@ -174,13 +172,13 @@ export default function DataViewPage() {
       data = data.filter((entry) => {
         switch (dateFilter) {
           case "today":
-            return isToday(entry.timestamp);
+            return isToday(entry.createdAt);
           case "week":
-            return isThisWeek(entry.timestamp);
+            return isThisWeek(entry.createdAt);
           case "month":
-            return isThisMonth(entry.timestamp);
+            return isThisMonth(entry.createdAt);
           case "custom":
-            return isCustomDate(entry.timestamp);
+            return isCustomDate(entry.createdAt);
           default:
             return true;
         }
@@ -196,7 +194,7 @@ export default function DataViewPage() {
           Object.values(entry.data).some((value) =>
             value.toLowerCase().includes(searchTerm.toLowerCase()),
           ) ||
-          new Date(entry.timestamp).toLocaleDateString().includes(searchTerm),
+          new Date(entry.createdAt).toLocaleDateString().includes(searchTerm),
       );
     }
 
@@ -204,11 +202,7 @@ export default function DataViewPage() {
   })();
 
   const refreshData = () => {
-    const storedData = localStorage.getItem("operationsData");
-    if (storedData) {
-      const parsedData = JSON.parse(storedData);
-      setAllData(parsedData);
-    }
+    refetch();
   };
 
   const exportData = () => {
@@ -241,22 +235,15 @@ export default function DataViewPage() {
     }
   };
 
-  const removeDataEntry = (entryId: string) => {
+  const removeDataEntry = async (entryId: number) => {
     try {
-      const storedData = localStorage.getItem("operationsData");
-      if (storedData) {
-        const parsedData = JSON.parse(storedData);
-        const updatedData = parsedData.filter(
-          (entry: DataEntry) => entry.id !== entryId,
-        );
-        localStorage.setItem("operationsData", JSON.stringify(updatedData));
-        setAllData(updatedData);
+      await apiRequest("DELETE", `/api/operational-data/${entryId}`);
+      await queryClient.invalidateQueries({ queryKey: ["/api/operational-data"] });
 
-        toast({
-          title: "Data Removed",
-          description: "Selected data entry has been successfully removed.",
-        });
-      }
+      toast({
+        title: "Data Removed",
+        description: "Selected data entry has been successfully removed.",
+      });
     } catch (error) {
       toast({
         title: "Error",
@@ -266,10 +253,10 @@ export default function DataViewPage() {
     }
   };
 
-  const clearAllData = () => {
+  const clearAllData = async () => {
     try {
-      localStorage.removeItem("operationsData");
-      setAllData([]);
+      await apiRequest("DELETE", "/api/operational-data");
+      await queryClient.invalidateQueries({ queryKey: ["/api/operational-data"] });
 
       toast({
         title: "All Data Cleared",

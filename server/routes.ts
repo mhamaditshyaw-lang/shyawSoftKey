@@ -745,6 +745,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
 
+  // Operational data routes
+  app.get("/api/operational-data", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const entries = await storage.getOperationalData();
+      res.json({ entries });
+    } catch (error) {
+      console.error("Error fetching operational data:", error);
+      res.status(500).json({ message: "Failed to fetch operational data" });
+    }
+  });
+
+  app.post("/api/operational-data", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const operationalDataEntry = {
+        ...req.body,
+        createdById: req.user!.id,
+      };
+
+      const entry = await storage.createOperationalData(operationalDataEntry);
+      res.json(entry);
+    } catch (error) {
+      console.error("Error creating operational data:", error);
+      res.status(500).json({ message: "Failed to create operational data" });
+    }
+  });
+
+  app.delete("/api/operational-data/:id", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+    try {
+      const entryId = parseInt(req.params.id);
+      const success = await storage.deleteOperationalData(entryId);
+      
+      if (success) {
+        res.json({ message: "Operational data deleted successfully" });
+      } else {
+        res.status(404).json({ message: "Operational data not found" });
+      }
+    } catch (error) {
+      console.error("Error deleting operational data:", error);
+      res.status(500).json({ message: "Failed to delete operational data" });
+    }
+  });
+
+  app.delete("/api/operational-data", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+    try {
+      await storage.clearAllOperationalData();
+      res.json({ message: "All operational data cleared successfully" });
+    } catch (error) {
+      console.error("Error clearing operational data:", error);
+      res.status(500).json({ message: "Failed to clear operational data" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
