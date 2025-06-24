@@ -41,6 +41,9 @@ export default function DataViewPage() {
   const [allData, setAllData] = useState<DataEntry[]>([]);
   const [filter, setFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [dateSearch, setDateSearch] = useState("");
+  const [dateRangeStart, setDateRangeStart] = useState("");
+  const [dateRangeEnd, setDateRangeEnd] = useState("");
   const [dateFilter, setDateFilter] = useState<string>("today");
   const [customDate, setCustomDate] = useState<string>("");
   const [autoRefresh, setAutoRefresh] = useState<boolean>(true);

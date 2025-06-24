@@ -14,6 +14,7 @@ import FeedbackPage from "@/pages/feedback";
 import ArchivePage from "@/pages/archive";
 import MetricsPage from "@/pages/metrics";
 import DataViewPage from "@/pages/data-view";
+import AllDataPage from "@/pages/all-data";
 import ReportsPage from "@/pages/reports";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/header";
