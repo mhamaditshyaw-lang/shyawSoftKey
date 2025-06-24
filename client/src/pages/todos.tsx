@@ -350,10 +350,42 @@ export default function TodosPage() {
     }
   };
 
+  // Remove individual task mutation
+  const removeTaskMutation = useMutation({
+    mutationFn: async (itemId: number) => {
+      const response = await authenticatedRequest("DELETE", `/api/todos/items/${itemId}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to remove task');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
+      toast({
+        title: "Success",
+        description: "Task removed successfully!",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to remove task",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleRemoveTask = (itemId: number) => {
+    if (window.confirm("Are you sure you want to delete this task? This action cannot be undone.")) {
+      removeTaskMutation.mutate(itemId);
+    }
+  };
+
   // Archive mutations
   const archiveTodoList = useMutation({
     mutationFn: async (listId: number) => {
-      return authenticatedRequest("POST", "/api/archive", {
+      const response = await authenticatedRequest("POST", "/api/archive", {
         body: JSON.stringify({
           itemType: "todo_list",
           itemId: listId,
@@ -363,6 +395,11 @@ export default function TodosPage() {
           "Content-Type": "application/json",
         },
       });
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to archive todo list');
+      }
+      return response.json();
     },
     onSuccess: (data, listId) => {
       const listData = todoLists.find(list => list.id === listId);
@@ -391,7 +428,7 @@ export default function TodosPage() {
 
   const archiveTodoItem = useMutation({
     mutationFn: async (itemId: number) => {
-      return authenticatedRequest("POST", "/api/archive", {
+      const response = await authenticatedRequest("POST", "/api/archive", {
         body: JSON.stringify({
           itemType: "todo_item",
           itemId: itemId,
@@ -401,6 +438,11 @@ export default function TodosPage() {
           "Content-Type": "application/json",
         },
       });
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to archive task');
+      }
+      return response.json();
     },
     onSuccess: (data, itemId) => {
       // Find the item data before it's removed
