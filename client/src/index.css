@@ -2,6 +2,72 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile-first responsive design customizations */
+@layer base {
+  html {
+    font-size: 16px;
+  }
+  
+  @media (max-width: 640px) {
+    html {
+      font-size: 14px;
+    }
+  }
+}
+
+@layer utilities {
+  /* Mobile-specific utilities */
+  .mobile-card {
+    @apply mx-2 rounded-lg shadow-sm;
+  }
+  
+  .mobile-button {
+    @apply min-h-[44px] text-sm px-3 py-2;
+  }
+  
+  .mobile-input {
+    @apply min-h-[44px] text-base;
+  }
+  
+  .mobile-text {
+    @apply text-sm leading-relaxed;
+  }
+  
+  .mobile-grid {
+    @apply grid-cols-1 gap-3;
+  }
+  
+  .mobile-spacing {
+    @apply space-y-3 p-3;
+  }
+  
+  .mobile-header {
+    @apply text-xl font-semibold;
+  }
+  
+  .mobile-nav {
+    @apply flex-col space-y-1;
+  }
+  
+  /* Touch-friendly interactive elements */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+  
+  /* Responsive table */
+  .mobile-table {
+    @apply block overflow-x-auto whitespace-nowrap;
+  }
+  
+  .mobile-table-row {
+    @apply block border-b border-gray-200 py-3;
+  }
+  
+  .mobile-table-cell {
+    @apply block text-sm py-1;
+  }
+}
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(20, 14.3%, 4.1%);

@@ -179,16 +179,17 @@ export default function InterviewsPage() {
   return (
     <div>
       <div className="mb-8">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Employee Reviews & Evaluations</h2>
-            <p className="text-gray-600">Manage internal employee evaluations, performance reviews, and role change interviews</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Employee Reviews & Evaluations</h2>
+            <p className="text-sm md:text-base text-gray-600">Manage internal employee evaluations, performance reviews, and role change interviews</p>
           </div>
-          <div className="flex space-x-3">
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
             {(user?.role === "secretary" || user?.role === "admin") && (
-              <Button onClick={() => setShowRequestModal(true)}>
+              <Button onClick={() => setShowRequestModal(true)} className="mobile-button touch-target">
                 <Plus className="w-4 h-4 mr-2" />
-                Schedule Employee Review
+                <span className="hidden sm:inline">Schedule Employee Review</span>
+                <span className="sm:hidden">Schedule Review</span>
               </Button>
             )}
             <Button
@@ -212,7 +213,7 @@ export default function InterviewsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search Input */}
             <div className="space-y-2">
               <Label htmlFor="search" className="text-sm font-medium">Search Reviews</Label>

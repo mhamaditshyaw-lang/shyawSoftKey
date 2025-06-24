@@ -77,7 +77,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col justify-center items-center p-12">
+      <div className="hidden md:flex md:w-1/2 bg-primary flex-col justify-center items-center p-8 lg:p-12">
         <div className="text-center text-white">
           <Building className="w-24 h-24 mb-6 mx-auto" />
           <h1 className="text-4xl font-bold mb-4">ManageFlow</h1>
@@ -87,7 +87,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right Panel - Auth Forms */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
+      <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8">
         <div className="w-full max-w-md">
           {isLogin ? (
             <Card>
@@ -121,7 +121,7 @@ export default function LoginPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button type="submit" className="w-full mobile-button touch-target" disabled={isLoading}>
                     {isLoading ? "Signing In..." : "Sign In"}
                   </Button>
                 </form>

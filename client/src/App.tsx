@@ -40,8 +40,10 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-8">
-          {children}
+        <main className="flex-1 p-4 md:p-8">
+          <div className="max-w-full overflow-x-hidden">
+            {children}
+          </div>
         </main>
       </div>
     </div>

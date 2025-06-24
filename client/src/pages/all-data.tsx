@@ -253,11 +253,11 @@ export default function AllDataPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
+      <div className="mb-6 md:mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">All Data Dashboard</h2>
-            <p className="text-gray-600">Comprehensive view of all system data with advanced filtering</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">All Data Dashboard</h2>
+            <p className="text-sm md:text-base text-gray-600">Comprehensive view of all system data with advanced filtering</p>
           </div>
           <div className="flex space-x-3">
             <Button
@@ -279,7 +279,7 @@ export default function AllDataPage() {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 md:gap-4 mb-6">
         <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -362,7 +362,7 @@ export default function AllDataPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Search Input */}
             <div className="space-y-2">
               <Label htmlFor="search" className="text-sm font-medium">Search All Data</Label>
