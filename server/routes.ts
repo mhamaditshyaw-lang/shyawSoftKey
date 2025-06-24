@@ -684,12 +684,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/archive", authenticateToken, requireRole(['admin', 'manager']), async (req: AuthRequest, res) => {
+  app.post("/api/archive", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const { itemType, itemId, itemData, reason } = req.body;
+      const { itemType, itemId, reason } = req.body;
+      
+      console.log("Archive request received:", { itemType, itemId, reason, userId: req.user!.id });
+      
+      if (!itemType || !itemId) {
+        return res.status(400).json({ message: "itemType and itemId are required" });
+      }
+
+      // Get the item data before archiving
+      let itemData = {};
+      if (itemType === 'todo_item') {
+        const todoLists = await storage.getTodoLists();
+        for (const list of todoLists) {
+          const item = list.items.find(i => i.id === itemId);
+          if (item) {
+            itemData = item;
+            break;
+          }
+        }
+      } else if (itemType === 'todo_list') {
+        const todoList = await storage.getTodoList(itemId);
+        if (todoList) {
+          itemData = todoList;
+        }
+      }
+
+      console.log("Item data found:", itemData);
+      
       const archivedItem = await storage.archiveItem(itemType, itemId, itemData, req.user!.id, reason);
       res.status(201).json({ archivedItem });
     } catch (error: any) {
+      console.error("Archive error:", error);
       res.status(400).json({ message: error.message });
     }
   });
