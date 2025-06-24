@@ -126,7 +126,12 @@ export default function LoginPage() {
                   </Button>
                 </form>
 
-                <div className="mt-6 text-center">
+                <div className="mt-6 text-center space-y-3">
+                  <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                    <p className="font-medium mb-1">Demo Credentials:</p>
+                    <p>Username: <span className="font-mono">admin</span></p>
+                    <p>Password: <span className="font-mono">admin123</span></p>
+                  </div>
                   <button
                     onClick={() => setIsLogin(false)}
                     className="text-primary hover:text-primary/80 font-medium"

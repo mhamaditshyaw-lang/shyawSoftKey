@@ -1,18 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Clock, Check, X, Edit, Calendar, Plus, Archive, Search, RefreshCw, Filter } from "lucide-react";
+import { Clock, Check, X, Edit, Calendar, Plus, Archive, Search, RefreshCw, Filter, User, MapPin, CheckCircle2, XCircle } from "lucide-react";
 import InterviewRequestModal from "@/components/modals/interview-request-modal";
-import InterviewDetailsModal from "@/components/modals/interview-details-modal";
-import ModifyInterviewModal from "@/components/modals/modify-interview-modal";
-import ArchiveInterviewModal from "@/components/modals/archive-interview-modal";
+import { getRelativeTime } from "@/lib/utils";
 
 export default function InterviewsPage() {
   const { user } = useAuth();
@@ -357,7 +358,7 @@ export default function InterviewsPage() {
 
       {/* Requests Grid */}
       <div className="space-y-6">
-        {filteredRequests.length === 0 ? (
+        {filteredInterviews.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
               <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -377,7 +378,7 @@ export default function InterviewsPage() {
             </CardContent>
           </Card>
         ) : (
-          filteredRequests.map((request: any) => (
+          filteredInterviews.map((request: any) => (
             <Card key={request.id}>
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
@@ -511,24 +512,6 @@ export default function InterviewsPage() {
       <InterviewRequestModal 
         open={showRequestModal} 
         onOpenChange={setShowRequestModal} 
-      />
-      
-      <InterviewDetailsModal
-        open={showDetailsModal}
-        onOpenChange={setShowDetailsModal}
-        request={selectedRequest}
-      />
-      
-      <ModifyInterviewModal
-        open={showModifyModal}
-        onOpenChange={setShowModifyModal}
-        request={selectedRequest}
-      />
-      
-      <ArchiveInterviewModal
-        open={showArchiveModal}
-        onOpenChange={setShowArchiveModal}
-        interview={selectedRequest}
       />
     </div>
   );
