@@ -1,385 +1,616 @@
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
 import { authenticatedRequest } from "@/lib/auth";
-import { useAuth } from "@/hooks/use-auth";
-import { 
-  BarChart3, 
-  PieChart, 
-  Download, 
-  TrendingUp, 
-  TrendingDown,
-  Minus
+import { motion } from "framer-motion";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+  Area,
+  AreaChart,
+  ResponsiveContainer,
+  RadialBarChart,
+  RadialBar,
+} from "recharts";
+import {
+  Users,
+  CheckCircle,
+  Clock,
+  TrendingUp,
+  Calendar,
+  Activity,
+  BarChart3,
+  PieChart as PieChartIcon,
+  Download,
+  Filter,
+  RefreshCw,
+  Target,
+  Award,
+  AlertTriangle,
+  FileText,
+  Database,
 } from "lucide-react";
-import { useState } from "react";
 
-export default function ReportsPage() {
-  const { user } = useAuth();
-  const [timeRange, setTimeRange] = useState("30");
+interface ReportsData {
+  userStats: {
+    totalUsers: number;
+    activeUsers: number;
+    pendingUsers: number;
+    usersByRole: { role: string; count: number }[];
+  };
+  todoStats: {
+    totalTodos: number;
+    completedTodos: number;
+    pendingTodos: number;
+    todosByPriority: { priority: string; count: number }[];
+    completionTrend: { date: string; completed: number; created: number }[];
+  };
+  interviewStats: {
+    totalRequests: number;
+    pendingRequests: number;
+    approvedRequests: number;
+    requestsByStatus: { status: string; count: number }[];
+    requestsTrend: { date: string; requests: number }[];
+  };
+  operationalData: {
+    dailyTracking: any[];
+    weeklyTrends: any[];
+    productionMetrics: any[];
+  };
+  feedbackStats: {
+    totalFeedback: number;
+    averageRating: number;
+    feedbackByType: { type: string; count: number }[];
+    ratingDistribution: { rating: string; count: number }[];
+  };
+}
 
-  const { data: stats, isLoading } = useQuery({
-    queryKey: ["/api/stats"],
+const COLORS = {
+  primary: "#3B82F6",
+  secondary: "#10B981",
+  warning: "#F59E0B",
+  danger: "#EF4444",
+  purple: "#8B5CF6",
+  indigo: "#6366F1",
+  pink: "#EC4899",
+  teal: "#14B8A6",
+};
+
+const PIE_COLORS = [
+  COLORS.primary,
+  COLORS.secondary,
+  COLORS.warning,
+  COLORS.danger,
+  COLORS.purple,
+  COLORS.indigo,
+  COLORS.pink,
+  COLORS.teal,
+];
+
+export default function Reports() {
+  const [dateRange, setDateRange] = useState("30");
+  const [selectedTab, setSelectedTab] = useState("overview");
+  const [autoRefresh, setAutoRefresh] = useState(false);
+
+  // Fetch reports data
+  const { data: reportsData, isLoading, refetch } = useQuery({
+    queryKey: ["/api/reports", dateRange],
     queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/stats");
-      return await response.json();
+      const response = await authenticatedRequest("GET", `/api/reports?days=${dateRange}`);
+      return response.json();
     },
-    enabled: user?.role === "admin",
+    refetchInterval: autoRefresh ? 30000 : false,
   });
 
-  const { data: todosData } = useQuery({
-    queryKey: ["/api/todos"],
-    queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/todos");
-      return await response.json();
-    },
-  });
+  const exportData = async (format: string) => {
+    try {
+      const response = await authenticatedRequest("GET", `/api/reports/export?format=${format}&days=${dateRange}`);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `reports-${new Date().toISOString().split('T')[0]}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast({
+        title: "Success",
+        description: `Report exported as ${format.toUpperCase()}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to export report",
+        variant: "destructive",
+      });
+    }
+  };
 
-  const { data: interviewsData } = useQuery({
-    queryKey: ["/api/interviews"],
-    queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/interviews");
-      return await response.json();
-    },
-  });
-
-  const { data: usersData } = useQuery({
-    queryKey: ["/api/users"],
-    queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/users");
-      return await response.json();
-    },
-    enabled: user?.role === "admin",
-  });
-
-  if (user?.role !== "admin") {
+  if (isLoading || !reportsData) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Card className="w-full max-w-md">
-          <CardContent className="pt-6 text-center">
-            <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Access Restricted</h3>
-            <p className="text-gray-600">
-              Only administrators can access reports and analytics.
-            </p>
-          </CardContent>
-        </Card>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-gray-600">Loading reports data...</p>
+        </div>
       </div>
     );
   }
 
-  if (isLoading) {
-    return (
-      <div className="animate-pulse">
-        <div className="mb-8">
-          <div className="h-8 bg-gray-200 rounded w-64 mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-96"></div>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <div className="h-80 bg-gray-200 rounded-xl"></div>
-          <div className="h-80 bg-gray-200 rounded-xl"></div>
-        </div>
-        <div className="h-96 bg-gray-200 rounded-xl"></div>
-      </div>
-    );
-  }
-
-  // Calculate metrics from actual data
-  const users = usersData?.users || [];
-  const todoLists = todosData?.todoLists || [];
-  const interviews = interviewsData?.requests || [];
-
-  const totalTasks = todoLists.reduce((sum: number, list: any) => sum + list.items.length, 0);
-  const completedTasks = todoLists.reduce((sum: number, list: any) => 
-    sum + list.items.filter((item: any) => item.isCompleted).length, 0);
-  const taskCompletionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
-  const approvedInterviews = interviews.filter((req: any) => req.status === "approved").length;
-  const interviewApprovalRate = interviews.length > 0 ? Math.round((approvedInterviews / interviews.length) * 100) : 0;
-
-  const activeUsers = users.filter((user: any) => user.status === "active").length;
-
-  // Calculate average response time (mock calculation based on interview data)
-  const avgResponseTime = interviews.length > 0 ? "2.3 hours" : "N/A";
-
-  // Performance metrics for the table
-  const performanceMetrics = [
-    {
-      metric: "Average Response Time",
-      current: avgResponseTime,
-      previous: "3.1 hours",
-      change: "-25.8%",
-      trend: "down",
-    },
-    {
-      metric: "Task Completion Rate",
-      current: `${taskCompletionRate}%`,
-      previous: "82%",
-      change: taskCompletionRate > 82 ? `+${(taskCompletionRate - 82).toFixed(1)}%` : `${(taskCompletionRate - 82).toFixed(1)}%`,
-      trend: taskCompletionRate > 82 ? "up" : taskCompletionRate < 82 ? "down" : "neutral",
-    },
-    {
-      metric: "User Satisfaction",
-      current: "4.6/5",
-      previous: "4.4/5",
-      change: "+4.5%",
-      trend: "up",
-    },
-    {
-      metric: "Interview Approval Rate",
-      current: `${interviewApprovalRate}%`,
-      previous: "71%",
-      change: interviewApprovalRate > 71 ? `+${(interviewApprovalRate - 71).toFixed(1)}%` : `${(interviewApprovalRate - 71).toFixed(1)}%`,
-      trend: interviewApprovalRate > 71 ? "up" : interviewApprovalRate < 71 ? "down" : "neutral",
-    },
-  ];
-
-  const getTrendIcon = (trend: string) => {
-    switch (trend) {
-      case "up":
-        return <TrendingUp className="w-4 h-4 text-green-600" />;
-      case "down":
-        return <TrendingDown className="w-4 h-4 text-red-600" />;
-      default:
-        return <Minus className="w-4 h-4 text-gray-600" />;
-    }
-  };
-
-  const getTrendColor = (trend: string) => {
-    switch (trend) {
-      case "up":
-        return "text-green-600";
-      case "down":
-        return "text-red-600";
-      default:
-        return "text-gray-600";
-    }
-  };
+  const { userStats, todoStats, interviewStats, operationalData, feedbackStats } = reportsData;
 
   return (
-    <div>
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Reports & Analytics</h2>
-            <p className="text-gray-600">Track system performance and user activity</p>
-          </div>
-          <div className="flex space-x-3">
-            <Select value={timeRange} onValueChange={setTimeRange}>
-              <SelectTrigger className="w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">Last 7 days</SelectItem>
-                <SelectItem value="30">Last 30 days</SelectItem>
-                <SelectItem value="90">Last 90 days</SelectItem>
-                <SelectItem value="custom">Custom range</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button>
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </Button>
-          </div>
+    <div className="container mx-auto px-4 py-8 space-y-6">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+      >
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Management Reports</h1>
+          <p className="text-gray-600">Comprehensive analytics and insights dashboard</p>
         </div>
-      </div>
+        
+        <div className="flex items-center gap-3">
+          <Select value={dateRange} onValueChange={setDateRange}>
+            <SelectTrigger className="w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="7">Last 7 days</SelectItem>
+              <SelectItem value="30">Last 30 days</SelectItem>
+              <SelectItem value="90">Last 90 days</SelectItem>
+              <SelectItem value="365">Last year</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          <Button
+            variant="outline"
+            onClick={() => setAutoRefresh(!autoRefresh)}
+            className={autoRefresh ? "bg-green-50 border-green-200" : ""}
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${autoRefresh ? "animate-spin" : ""}`} />
+            Auto-refresh
+          </Button>
+          
+          <Button onClick={() => refetch()} variant="outline">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Refresh
+          </Button>
+          
+          <Button onClick={() => exportData("csv")} variant="outline">
+            <Download className="w-4 h-4 mr-2" />
+            Export CSV
+          </Button>
+        </div>
+      </motion.div>
 
-      {/* Report Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        {/* User Activity Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>User Activity Trends</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
-              <div className="text-center text-gray-500">
-                <BarChart3 className="w-16 h-16 mx-auto mb-4" />
-                <p className="font-medium">User Activity Chart</p>
-                <p className="text-sm mt-2">Shows daily active users over time</p>
-                <div className="mt-4 space-y-2 text-left">
-                  <div className="flex justify-between text-sm">
-                    <span>Total Users:</span>
-                    <span className="font-medium">{users.length}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Active Users:</span>
-                    <span className="font-medium text-green-600">{activeUsers}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Pending Users:</span>
-                    <span className="font-medium text-yellow-600">
-                      {users.filter((user: any) => user.status === "pending").length}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Task Completion Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Task Completion Rate</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
-              <div className="text-center text-gray-500">
-                <PieChart className="w-16 h-16 mx-auto mb-4" />
-                <p className="font-medium">Task Completion Chart</p>
-                <p className="text-sm mt-2">Breakdown by status</p>
-                <div className="mt-4 space-y-2 text-left">
-                  <div className="flex justify-between text-sm">
-                    <span>Total Tasks:</span>
-                    <span className="font-medium">{totalTasks}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Completed:</span>
-                    <span className="font-medium text-green-600">{completedTasks}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Pending:</span>
-                    <span className="font-medium text-yellow-600">{totalTasks - completedTasks}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Completion Rate:</span>
-                    <span className="font-medium text-blue-600">{taskCompletionRate}%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Performance Metrics Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Performance Metrics</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Metric</TableHead>
-                <TableHead>Current</TableHead>
-                <TableHead>Previous</TableHead>
-                <TableHead>Change</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {performanceMetrics.map((metric) => (
-                <TableRow key={metric.metric}>
-                  <TableCell className="font-medium">{metric.metric}</TableCell>
-                  <TableCell>{metric.current}</TableCell>
-                  <TableCell className="text-gray-600">{metric.previous}</TableCell>
-                  <TableCell className={`flex items-center space-x-2 ${getTrendColor(metric.trend)}`}>
-                    {getTrendIcon(metric.trend)}
-                    <span>{metric.change}</span>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* System Overview */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
+      {/* Key Metrics Cards */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+      >
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
           <CardContent className="p-6">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Interview Requests</h3>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Total:</span>
-                  <span className="font-medium">{interviews.length}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Pending:</span>
-                  <span className="font-medium text-yellow-600">
-                    {interviews.filter((req: any) => req.status === "pending").length}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Approved:</span>
-                  <span className="font-medium text-green-600">{approvedInterviews}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Rejected:</span>
-                  <span className="font-medium text-red-600">
-                    {interviews.filter((req: any) => req.status === "rejected").length}
-                  </span>
-                </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-blue-700">Total Users</p>
+                <p className="text-3xl font-bold text-blue-900">{userStats.totalUsers}</p>
+                <p className="text-xs text-blue-600">{userStats.activeUsers} active</p>
               </div>
+              <Users className="w-8 h-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
           <CardContent className="p-6">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Todo Lists</h3>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Total Lists:</span>
-                  <span className="font-medium">{todoLists.length}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Total Tasks:</span>
-                  <span className="font-medium">{totalTasks}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Completed:</span>
-                  <span className="font-medium text-green-600">{completedTasks}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Average per List:</span>
-                  <span className="font-medium">
-                    {todoLists.length > 0 ? Math.round(totalTasks / todoLists.length) : 0}
-                  </span>
-                </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-green-700">Completed Tasks</p>
+                <p className="text-3xl font-bold text-green-900">{todoStats.completedTodos}</p>
+                <p className="text-xs text-green-600">{todoStats.pendingTodos} pending</p>
               </div>
+              <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200">
           <CardContent className="p-6">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">User Distribution</h3>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Admins:</span>
-                  <span className="font-medium text-red-600">
-                    {users.filter((user: any) => user.role === "admin").length}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Managers:</span>
-                  <span className="font-medium text-blue-600">
-                    {users.filter((user: any) => user.role === "manager").length}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Secretaries:</span>
-                  <span className="font-medium text-green-600">
-                    {users.filter((user: any) => user.role === "secretary").length}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Active Rate:</span>
-                  <span className="font-medium">
-                    {users.length > 0 ? Math.round((activeUsers / users.length) * 100) : 0}%
-                  </span>
-                </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-yellow-700">Interview Requests</p>
+                <p className="text-3xl font-bold text-yellow-900">{interviewStats.totalRequests}</p>
+                <p className="text-xs text-yellow-600">{interviewStats.pendingRequests} pending</p>
               </div>
+              <Calendar className="w-8 h-8 text-yellow-600" />
             </div>
           </CardContent>
         </Card>
-      </div>
+
+        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-purple-700">Avg. Feedback</p>
+                <p className="text-3xl font-bold text-purple-900">{feedbackStats.averageRating?.toFixed(1) || 'N/A'}</p>
+                <p className="text-xs text-purple-600">{feedbackStats.totalFeedback} reviews</p>
+              </div>
+              <Award className="w-8 h-8 text-purple-600" />
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Charts and Analytics */}
+      <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="tasks">Tasks</TabsTrigger>
+          <TabsTrigger value="interviews">Interviews</TabsTrigger>
+          <TabsTrigger value="operations">Operations</TabsTrigger>
+        </TabsList>
+
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* User Distribution */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <PieChartIcon className="w-5 h-5" />
+                  User Distribution by Role
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={userStats.usersByRole}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ role, count }) => `${role}: ${count}`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="count"
+                    >
+                      {userStats.usersByRole.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Task Completion Trend */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5" />
+                  Task Completion Trend
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <AreaChart data={todoStats.completionTrend}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Area
+                      type="monotone"
+                      dataKey="completed"
+                      stackId="1"
+                      stroke={COLORS.secondary}
+                      fill={COLORS.secondary}
+                      name="Completed"
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="created"
+                      stackId="1"
+                      stroke={COLORS.primary}
+                      fill={COLORS.primary}
+                      name="Created"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Interview Status & Feedback Ratings */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="w-5 h-5" />
+                  Interview Status Distribution
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={interviewStats.requestsByStatus}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="status" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" fill={COLORS.primary} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="w-5 h-5" />
+                  Feedback Rating Distribution
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <RadialBarChart cx="50%" cy="50%" innerRadius="20%" outerRadius="90%" data={feedbackStats.ratingDistribution}>
+                    <RadialBar
+                      minAngle={15}
+                      label={{ position: 'insideStart', fill: '#fff' }}
+                      background
+                      clockWise
+                      dataKey="count"
+                      fill={COLORS.warning}
+                    />
+                    <Tooltip />
+                  </RadialBarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Users Tab */}
+        <TabsContent value="users" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>User Activity Overview</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Total Users</span>
+                    <Badge variant="secondary">{userStats.totalUsers}</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Active Users</span>
+                    <Badge variant="default">{userStats.activeUsers}</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Pending Users</span>
+                    <Badge variant="outline">{userStats.pendingUsers}</Badge>
+                  </div>
+                </div>
+                
+                <div className="mt-6">
+                  <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={userStats.usersByRole} layout="horizontal">
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis type="number" />
+                      <YAxis dataKey="role" type="category" />
+                      <Tooltip />
+                      <Bar dataKey="count" fill={COLORS.primary} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>User Role Distribution</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={userStats.usersByRole}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="count"
+                      label={({ role, count, percent }) => `${role}: ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {userStats.usersByRole.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Tasks Tab */}
+        <TabsContent value="tasks" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Task Priority Distribution</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={todoStats.todosByPriority}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="priority" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" fill={COLORS.secondary} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Task Completion Timeline</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={todoStats.completionTrend}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="completed" 
+                      stroke={COLORS.secondary} 
+                      strokeWidth={2}
+                      name="Completed Tasks"
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="created" 
+                      stroke={COLORS.primary} 
+                      strokeWidth={2}
+                      name="Created Tasks"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Task Statistics Summary</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-3 gap-6 text-center">
+                <div>
+                  <p className="text-3xl font-bold text-blue-600">{todoStats.totalTodos}</p>
+                  <p className="text-sm text-gray-600">Total Tasks</p>
+                </div>
+                <div>
+                  <p className="text-3xl font-bold text-green-600">{todoStats.completedTodos}</p>
+                  <p className="text-sm text-gray-600">Completed</p>
+                </div>
+                <div>
+                  <p className="text-3xl font-bold text-yellow-600">{todoStats.pendingTodos}</p>
+                  <p className="text-sm text-gray-600">Pending</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Interviews Tab */}
+        <TabsContent value="interviews" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Interview Request Status</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={interviewStats.requestsByStatus}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="count"
+                      label={({ status, count }) => `${status}: ${count}`}
+                    >
+                      {interviewStats.requestsByStatus.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Interview Requests Trend</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <AreaChart data={interviewStats.requestsTrend}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Area
+                      type="monotone"
+                      dataKey="requests"
+                      stroke={COLORS.purple}
+                      fill={COLORS.purple}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Operations Tab */}
+        <TabsContent value="operations" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Database className="w-5 h-5" />
+                Operational Data Overview
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-600 mb-2">Operational Analytics</h3>
+                <p className="text-gray-500">
+                  Ice cream production, Albany operations, and staff tracking metrics will be displayed here
+                </p>
+                <p className="text-sm text-gray-400 mt-2">
+                  Charts for daily operations, production volumes, and staff counts across day/night shifts
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

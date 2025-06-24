@@ -339,6 +339,161 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Reports endpoints (manager/admin only)
+  app.get("/api/reports", authenticateToken, requireRole(['manager', 'admin']), async (req: AuthRequest, res) => {
+    try {
+      const days = parseInt(req.query.days as string) || 30;
+      
+      // Get user stats
+      const userStats = await storage.getUserStats();
+      const allUsers = await storage.getAllUsers();
+      const usersByRole = allUsers.reduce((acc: any[], user) => {
+        const existing = acc.find(item => item.role === user.role);
+        if (existing) {
+          existing.count++;
+        } else {
+          acc.push({ role: user.role, count: 1 });
+        }
+        return acc;
+      }, []);
+
+      // Get todo stats
+      const todoStats = await storage.getTodoStats();
+      const todoLists = await storage.getTodoLists();
+      const todosByPriority = todoLists.reduce((acc: any[], list) => {
+        const existing = acc.find(item => item.priority === list.priority);
+        if (existing) {
+          existing.count++;
+        } else {
+          acc.push({ priority: list.priority, count: 1 });
+        }
+        return acc;
+      }, []);
+
+      // Generate completion trend (mock data for demo)
+      const completionTrend = Array.from({ length: 7 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (6 - i));
+        return {
+          date: date.toLocaleDateString(),
+          completed: Math.floor(Math.random() * 20) + 5,
+          created: Math.floor(Math.random() * 25) + 8,
+        };
+      });
+
+      // Get interview stats
+      const interviewStats = await storage.getInterviewStats();
+      const interviews = await storage.getInterviewRequests();
+      const requestsByStatus = interviews.reduce((acc: any[], request) => {
+        const existing = acc.find(item => item.status === request.status);
+        if (existing) {
+          existing.count++;
+        } else {
+          acc.push({ status: request.status, count: 1 });
+        }
+        return acc;
+      }, []);
+
+      // Generate interview trend (mock data for demo)
+      const requestsTrend = Array.from({ length: 7 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (6 - i));
+        return {
+          date: date.toLocaleDateString(),
+          requests: Math.floor(Math.random() * 10) + 2,
+        };
+      });
+
+      // Get feedback stats
+      const allFeedback = await storage.getAllFeedback();
+      const feedbackStats = {
+        totalFeedback: allFeedback.length,
+        averageRating: allFeedback.length > 0 
+          ? allFeedback.reduce((sum, f) => sum + parseInt(f.rating), 0) / allFeedback.length 
+          : 0,
+        feedbackByType: allFeedback.reduce((acc: any[], feedback) => {
+          const existing = acc.find(item => item.type === feedback.type);
+          if (existing) {
+            existing.count++;
+          } else {
+            acc.push({ type: feedback.type, count: 1 });
+          }
+          return acc;
+        }, []),
+        ratingDistribution: allFeedback.reduce((acc: any[], feedback) => {
+          const existing = acc.find(item => item.rating === feedback.rating);
+          if (existing) {
+            existing.count++;
+          } else {
+            acc.push({ rating: feedback.rating, count: 1 });
+          }
+          return acc;
+        }, []),
+      };
+
+      const reportsData = {
+        userStats: {
+          ...userStats,
+          usersByRole,
+        },
+        todoStats: {
+          ...todoStats,
+          todosByPriority,
+          completionTrend,
+        },
+        interviewStats: {
+          ...interviewStats,
+          requestsByStatus,
+          requestsTrend,
+        },
+        operationalData: {
+          dailyTracking: [],
+          weeklyTrends: [],
+          productionMetrics: [],
+        },
+        feedbackStats,
+      };
+
+      res.json(reportsData);
+    } catch (error: any) {
+      console.error("Error generating reports:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/reports/export", authenticateToken, requireRole(['manager', 'admin']), async (req: AuthRequest, res) => {
+    try {
+      const format = req.query.format as string || 'csv';
+      const days = parseInt(req.query.days as string) || 30;
+      
+      // For now, return a simple CSV export
+      if (format === 'csv') {
+        const userStats = await storage.getUserStats();
+        const todoStats = await storage.getTodoStats();
+        const interviewStats = await storage.getInterviewStats();
+        
+        const csvData = [
+          'Metric,Value',
+          `Total Users,${userStats.totalUsers}`,
+          `Active Users,${userStats.activeUsers}`,
+          `Total Todos,${todoStats.totalTodos}`,
+          `Completed Todos,${todoStats.completedTodos}`,
+          `Interview Requests,${interviewStats.totalRequests}`,
+          `Pending Interviews,${interviewStats.pendingRequests}`,
+        ].join('\n');
+        
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename="reports.csv"');
+        res.send(csvData);
+      } else {
+        res.status(400).json({ message: 'Unsupported export format' });
+      }
+    } catch (error: any) {
+      console.error("Error exporting reports:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.get("/api/todos/recommendations", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const { PrioritizationService } = await import("./prioritization-service");
