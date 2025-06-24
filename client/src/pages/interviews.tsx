@@ -446,6 +446,45 @@ export default function InterviewsPage() {
                       <Calendar className="w-4 h-4 mr-2" />
                       View Details
                     </Button>
+                    
+                    {(user?.role === "admin" || user?.role === "manager") && (
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          // Archive the interview request
+                          const archiveRequest = async () => {
+                            try {
+                              const response = await authenticatedRequest("POST", "/api/archive", {
+                                itemType: "interview_request",
+                                itemId: request.id,
+                                itemData: request,
+                                reason: "Completed interview archived"
+                              });
+                              
+                              if (response.ok) {
+                                queryClient.invalidateQueries({ queryKey: ["/api/interviews"] });
+                                toast({
+                                  title: "Success",
+                                  description: "Interview request archived successfully",
+                                });
+                              }
+                            } catch (error: any) {
+                              toast({
+                                title: "Error",
+                                description: error.message || "Failed to archive interview request",
+                                variant: "destructive",
+                              });
+                            }
+                          };
+                          
+                          archiveRequest();
+                        }}
+                        className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                      >
+                        <Archive className="w-4 h-4 mr-2" />
+                        Archive
+                      </Button>
+                    )}
                   </div>
                 </div>
               </CardContent>
