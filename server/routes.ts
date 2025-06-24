@@ -771,8 +771,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/operational-data/:id", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+  app.delete("/api/operational-data/:id", authenticateToken, async (req: AuthRequest, res) => {
     try {
+      // Check if user is admin
+      if (req.user?.role !== 'admin') {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
       const entryId = parseInt(req.params.id);
       const success = await storage.deleteOperationalData(entryId);
       
@@ -787,8 +792,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/operational-data", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+  app.delete("/api/operational-data", authenticateToken, async (req: AuthRequest, res) => {
     try {
+      // Check if user is admin
+      if (req.user?.role !== 'admin') {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
       await storage.clearAllOperationalData();
       res.json({ message: "All operational data cleared successfully" });
     } catch (error) {
