@@ -346,6 +346,130 @@ export default function TodosPage() {
     }
   };
 
+  // Archive mutations
+  const archiveTodoList = useMutation({
+    mutationFn: async (listId: number) => {
+      return authenticatedRequest("POST", "/api/archive", {
+        body: JSON.stringify({
+          itemType: "todo_list",
+          itemId: listId,
+          reason: "Task list completed or no longer needed"
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    },
+    onSuccess: (data, listId) => {
+      const listData = todoLists.find(list => list.id === listId);
+      if (listData) {
+        setLastArchivedItem({
+          id: listId,
+          data: listData,
+          type: 'list'
+        });
+        setShowUndoToast(true);
+        setTimeout(() => {
+          setShowUndoToast(false);
+          setLastArchivedItem(null);
+        }, 10000); // 10 seconds to undo
+      }
+      queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to archive todo list",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const archiveTodoItem = useMutation({
+    mutationFn: async (itemId: number) => {
+      return authenticatedRequest("POST", "/api/archive", {
+        body: JSON.stringify({
+          itemType: "todo_item",
+          itemId: itemId,
+          reason: "Task completed and archived"
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    },
+    onSuccess: (data, itemId) => {
+      // Find the item data before it's removed
+      let itemData = null;
+      for (const list of todoLists) {
+        const item = list.items.find(item => item.id === itemId);
+        if (item) {
+          itemData = item;
+          break;
+        }
+      }
+      
+      if (itemData) {
+        setLastArchivedItem({
+          id: itemId,
+          data: itemData,
+          type: 'task'
+        });
+        setShowUndoToast(true);
+        setTimeout(() => {
+          setShowUndoToast(false);
+          setLastArchivedItem(null);
+        }, 10000); // 10 seconds to undo
+      }
+      queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to archive task",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const undoArchive = useMutation({
+    mutationFn: async () => {
+      if (!lastArchivedItem) return;
+      
+      // Find the archived item and restore it
+      const response = await authenticatedRequest("GET", "/api/archive");
+      const archiveData = await response.json();
+      
+      // Find the most recent archive entry for this item
+      const archivedEntry = archiveData.archivedItems
+        .filter((item: any) => 
+          item.itemType === (lastArchivedItem.type === 'list' ? 'todo_list' : 'todo_item') &&
+          item.itemId === lastArchivedItem.id
+        )
+        .sort((a: any, b: any) => new Date(b.archivedAt).getTime() - new Date(a.archivedAt).getTime())[0];
+      
+      if (archivedEntry) {
+        return authenticatedRequest("POST", `/api/archive/${archivedEntry.id}/restore`);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
+      setShowUndoToast(false);
+      setLastArchivedItem(null);
+      toast({
+        title: "Restored",
+        description: "Item has been restored successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to restore item",
+        variant: "destructive",
+      });
+    },
+  });
+
   const getCompletionPercentage = (items: TodoItem[]) => {
     if (items.length === 0) return 0;
     const completed = items.filter(item => item.isCompleted).length;
