@@ -71,7 +71,15 @@ export default function DataViewPage() {
     enabled: !!user, // Only fetch when user is authenticated
   });
 
-  const allData: DataEntry[] = operationalDataResponse?.entries || [];
+  const allData: DataEntry[] = (operationalDataResponse?.entries || []).map((entry: any) => ({
+    ...entry,
+    createdAt: entry.createdAt || entry.created_at, // Handle both field names
+    createdBy: entry.createdBy || { 
+      username: 'System', 
+      firstName: 'Auto', 
+      lastName: 'Generated' 
+    }
+  }));
 
   const getTypeIcon = (type: string) => {
     switch (type) {
