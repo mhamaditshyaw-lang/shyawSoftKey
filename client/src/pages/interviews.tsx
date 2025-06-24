@@ -146,12 +146,6 @@ export default function InterviewsPage() {
     },
   });
 
-  const requests = interviewsData?.requests || [];
-
-  const filteredRequests = requests.filter((request: any) => {
-    return statusFilter === "all" || request.status === statusFilter;
-  });
-
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case "pending":
