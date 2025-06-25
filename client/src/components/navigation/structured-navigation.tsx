@@ -39,7 +39,7 @@ type Navigation = NavigationItem[];
 const NAVIGATION: Navigation = [
   {
     kind: 'header',
-    title: 'Main Navigation',
+    title: 'Main Items',
   },
   {
     segment: '',
@@ -105,7 +105,7 @@ const NAVIGATION: Navigation = [
   },
   {
     kind: 'header',
-    title: 'Analytics & Reports',
+    title: 'Analytics',
   },
   {
     segment: 'reports',
@@ -129,19 +129,6 @@ const NAVIGATION: Navigation = [
     segment: 'feedback',
     title: 'Feedback & Reviews',
     icon: <MessageSquare className="w-5 h-5" />,
-    children: [
-      {
-        segment: 'feedback',
-        title: 'Submit Feedback',
-        icon: <BookOpen className="w-4 h-4" />,
-      },
-      {
-        segment: 'archive',
-        title: 'Review Archive',
-        icon: <Shield className="w-4 h-4" />,
-        roles: ['admin', 'manager'],
-      },
-    ],
   },
 ];
 
@@ -203,10 +190,10 @@ export default function StructuredNavigation({ className }: StructuredNavigation
           <button
             onClick={() => item.segment && toggleExpanded(item.segment)}
             className={cn(
-              "w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200",
+              "w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200",
               active
-                ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg shadow-green-200 dark:shadow-green-900/20"
-                : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-green-600 dark:hover:text-green-400"
+                ? "bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/20"
+                : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400"
             )}
           >
             <div className="flex items-center space-x-3">
@@ -228,14 +215,14 @@ export default function StructuredNavigation({ className }: StructuredNavigation
         ) : (
           <Link href={`/${item.segment}`}>
             <div className={cn(
-              "flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer",
+              "flex items-center space-x-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer",
               active
-                ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg shadow-green-200 dark:shadow-green-900/20"
-                : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-green-600 dark:hover:text-green-400"
+                ? "bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/20"
+                : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400"
             )}>
               <div className={cn(
                 "transition-colors duration-200",
-                active ? "text-white" : "text-gray-500 dark:text-gray-400"
+                active ? "text-white" : "text-slate-500 dark:text-slate-400"
               )}>
                 {item.icon}
               </div>
@@ -256,12 +243,12 @@ export default function StructuredNavigation({ className }: StructuredNavigation
                   <div className={cn(
                     "flex items-center space-x-3 px-3 py-2 text-sm rounded-lg transition-all duration-200 cursor-pointer",
                     childActive
-                      ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-l-2 border-green-500"
-                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-green-600 dark:hover:text-green-400"
+                      ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-l-2 border-blue-500"
+                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-blue-600 dark:hover:text-blue-400"
                   )}>
                     <div className={cn(
                       "transition-colors duration-200",
-                      childActive ? "text-green-600 dark:text-green-400" : "text-gray-400 dark:text-gray-500"
+                      childActive ? "text-blue-600 dark:text-blue-400" : "text-slate-400 dark:text-slate-500"
                     )}>
                       {child.icon}
                     </div>
