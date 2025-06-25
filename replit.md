@@ -141,6 +141,9 @@ The deployment uses:
 - June 24, 2025: Created comprehensive cPanel deployment guide and automated deployment script with production optimization, environment configuration, and step-by-step instructions
 - June 24, 2025: Successfully integrated PostgreSQL database for operational data persistence, replacing localStorage with authenticated API endpoints, maintaining all filtering and timestamp functionality
 - June 24, 2025: Enhanced admin-only data removal controls in Data View with clear visual indicators and role-based access restrictions
+- June 25, 2025: Updated login page and dashboard with comprehensive green color scheme and modern design
+- June 25, 2025: Implemented animated sidebar menu with smooth hover effects, click animations, and green gradient theming
+- June 25, 2025: Enhanced Archive page with detailed views, interview report forms, comprehensive date filtering (today, week, month, custom date, date range), removed restore buttons, and added expandable item details with original data display and report management functionality
 
 ## User Preferences
 
@@ -150,6 +153,11 @@ Preferred communication style: Simple, everyday language.
 - Each new description entry should be stored with timestamp and preserved (multiple entries supported)
 - Archive page should support searching by employee name, category/position, and date filters
 - Remove feedback quick action from dashboard (keep only in sidebar navigation)
+- Archive should show detailed views of archived items with expandable sections
+- Archive should have interview report forms for adding performance ratings and detailed descriptions
+- Archive should have comprehensive date filtering (today, week, month, custom date, date range)
+- Remove restore button from archive (archive items should be permanent)
+- Archive page should display original data in readable format and manage multiple reports per item
 - Added animated welcome dashboard with greeting, time-based messages, role badges, and smooth animations
 - Implemented emoji/icon picker for description highlights with categorized selection (Performance, Feedback, Areas)
 - Prefers old/simple design for Data View with search functionality and icons on filter buttons

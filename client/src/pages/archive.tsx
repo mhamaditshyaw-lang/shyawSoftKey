@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Archive, Search, Calendar, User, FileText, RotateCcw, Eye, Edit, Filter, X } from "lucide-react";
+import { Archive, Search, Calendar, User, FileText, Eye, Edit, Filter, X, Plus, Save, ChevronDown, ChevronUp } from "lucide-react";
 import { getRelativeTime } from "@/lib/utils";
 import ArchiveDetailsModal from "@/components/modals/archive-details-modal";
 import EditArchiveModal from "@/components/modals/edit-archive-modal";
@@ -20,10 +22,15 @@ export default function ArchivePage() {
   const [typeFilter, setTypeFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCategory, setSearchCategory] = useState("all");
-  const [dateFilter, setDateFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState("all");
+  const [customDate, setCustomDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
+  const [newReports, setNewReports] = useState<{[key: number]: { description: string, rating: string }}>({});
 
   const { data: archiveData, isLoading } = useQuery({
     queryKey: ["/api/archive"],
@@ -34,22 +41,25 @@ export default function ArchivePage() {
     enabled: user?.role === "admin" || user?.role === "manager",
   });
 
-  const restoreItemMutation = useMutation({
-    mutationFn: async ({ id, itemType }: { id: number; itemType: string }) => {
-      const response = await authenticatedRequest("POST", `/api/archive/${id}/restore`, { itemType });
+  const addReportMutation = useMutation({
+    mutationFn: async ({ id, reportData }: { id: number; reportData: any }) => {
+      const response = await authenticatedRequest("PATCH", `/api/archive/${id}`, {
+        newReport: reportData
+      });
       return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/archive"] });
       toast({
         title: "Success",
-        description: "Item restored successfully",
+        description: "Report added successfully",
       });
+      setNewReports({});
     },
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to restore item",
+        description: error.message || "Failed to add report",
         variant: "destructive",
       });
     },
@@ -63,7 +73,42 @@ export default function ArchivePage() {
     const searchableText = `${itemData.title || itemData.position || itemData.firstName || ''} ${itemData.description || itemData.candidateName || itemData.email || ''}`.toLowerCase();
     const matchesSearch = searchTerm === "" || searchableText.includes(searchTerm.toLowerCase());
     
-    return matchesType && matchesSearch;
+    // Date filtering
+    let matchesDate = true;
+    if (dateFilter !== "all") {
+      const itemDate = new Date(item.createdAt);
+      const today = new Date();
+      
+      switch (dateFilter) {
+        case "today":
+          matchesDate = itemDate.toDateString() === today.toDateString();
+          break;
+        case "week":
+          const oneWeekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+          matchesDate = itemDate >= oneWeekAgo;
+          break;
+        case "month":
+          const oneMonthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+          matchesDate = itemDate >= oneMonthAgo;
+          break;
+        case "custom":
+          if (customDate) {
+            const customDateObj = new Date(customDate);
+            matchesDate = itemDate.toDateString() === customDateObj.toDateString();
+          }
+          break;
+        case "range":
+          if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999); // Include full end date
+            matchesDate = itemDate >= start && itemDate <= end;
+          }
+          break;
+      }
+    }
+    
+    return matchesType && matchesSearch && matchesDate;
   });
 
   const getTypeColor = (type: string) => {
@@ -154,11 +199,14 @@ export default function ArchivePage() {
     }
   };
 
-  const handleRestore = (item: any) => {
-    restoreItemMutation.mutate({
-      id: item.id,
-      itemType: item.itemType
-    });
+  const toggleExpanded = (itemId: number) => {
+    const newExpanded = new Set(expandedItems);
+    if (newExpanded.has(itemId)) {
+      newExpanded.delete(itemId);
+    } else {
+      newExpanded.add(itemId);
+    }
+    setExpandedItems(newExpanded);
   };
 
   const handleViewDetails = (item: any) => {
@@ -169,6 +217,38 @@ export default function ArchivePage() {
   const handleEditInfo = (item: any) => {
     setSelectedItem(item);
     setShowEditModal(true);
+  };
+
+  const handleAddReport = (itemId: number) => {
+    const reportData = newReports[itemId];
+    if (!reportData || !reportData.description.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a description for the report",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    addReportMutation.mutate({
+      id: itemId,
+      reportData: {
+        description: reportData.description,
+        rating: reportData.rating,
+        timestamp: new Date().toISOString(),
+        addedBy: user?.username
+      }
+    });
+  };
+
+  const updateNewReport = (itemId: number, field: string, value: string) => {
+    setNewReports(prev => ({
+      ...prev,
+      [itemId]: {
+        ...prev[itemId],
+        [field]: value
+      }
+    }));
   };
 
   if (user?.role !== "admin" && user?.role !== "manager") {
@@ -206,40 +286,127 @@ export default function ArchivePage() {
   return (
     <div>
       <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Archive</h2>
-            <p className="text-gray-600">Manage archived interviews, todos, and users</p>
-          </div>
-        </div>
+        <h1 className="text-3xl font-bold text-green-900 mb-2">Archive & Reports</h1>
+        <p className="text-green-700">
+          View detailed archives, add interview reports, and manage completed items with comprehensive date filtering.
+        </p>
       </div>
 
-      {/* Filter and Search Bar */}
-      <Card className="mb-6">
-        <CardContent className="pt-6">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex-1 min-w-64">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search archived items..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+      {/* Enhanced Filters */}
+      <Card className="mb-8 border-green-100 bg-gradient-to-r from-green-50 to-emerald-50">
+        <CardContent className="p-6">
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-green-500" />
+                  <Input
+                    placeholder="Search archived items..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 border-green-200 focus:border-green-500"
+                  />
+                </div>
               </div>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-full sm:w-[180px] border-green-200">
+                  <SelectValue placeholder="Filter by type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="interview">Interviews</SelectItem>
+                  <SelectItem value="todo">Tasks</SelectItem>
+                  <SelectItem value="user">Users</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="All Types" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="interview">Interviews</SelectItem>
-                <SelectItem value="todo">Todo Lists</SelectItem>
-                <SelectItem value="user">Users</SelectItem>
-              </SelectContent>
-            </Select>
+
+            {/* Date Filter Controls */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-white/50 rounded-lg border border-green-200">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-green-700 flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  Date Filter
+                </Label>
+                <Select value={dateFilter} onValueChange={setDateFilter}>
+                  <SelectTrigger className="border-green-200">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Dates</SelectItem>
+                    <SelectItem value="today">Today</SelectItem>
+                    <SelectItem value="week">This Week</SelectItem>
+                    <SelectItem value="month">This Month</SelectItem>
+                    <SelectItem value="custom">Custom Date</SelectItem>
+                    <SelectItem value="range">Date Range</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {dateFilter === 'custom' && (
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-green-700">Select Date</Label>
+                  <Input
+                    type="date"
+                    value={customDate}
+                    onChange={(e) => setCustomDate(e.target.value)}
+                    className="border-green-200 focus:border-green-500"
+                  />
+                </div>
+              )}
+
+              {dateFilter === 'range' && (
+                <>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-green-700">Start Date</Label>
+                    <Input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      className="border-green-200 focus:border-green-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-green-700">End Date</Label>
+                    <Input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      className="border-green-200 focus:border-green-500"
+                    />
+                  </div>
+                </>
+              )}
+
+              {(dateFilter === 'custom' || dateFilter === 'range') && (
+                <div className="flex items-end">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setDateFilter("all");
+                      setCustomDate("");
+                      setStartDate("");
+                      setEndDate("");
+                    }}
+                    className="border-green-200 text-green-600 hover:bg-green-50"
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    Clear
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between text-sm text-green-600">
+              <span>Found {filteredItems.length} archived items</span>
+              {dateFilter !== "all" && (
+                <Badge variant="secondary" className="bg-green-100 text-green-700">
+                  Filtered by: {dateFilter === 'custom' ? `Custom (${customDate})` : 
+                              dateFilter === 'range' ? `Range (${startDate} - ${endDate})` : 
+                              dateFilter.charAt(0).toUpperCase() + dateFilter.slice(1)}
+                </Badge>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -352,36 +519,161 @@ export default function ArchivePage() {
                     </div>
                   </div>
                   
-                  <div className="flex space-x-2 ml-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleViewDetails(item)}
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Details
-                    </Button>
-                    {item.itemType === "interview" && (
+                  <div className="flex flex-col space-y-2 ml-4">
+                    <div className="flex space-x-2">
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleEditInfo(item)}
+                        onClick={() => handleViewDetails(item)}
+                        className="border-green-200 text-green-600 hover:bg-green-50"
                       >
-                        <Edit className="w-4 h-4 mr-2" />
-                        Add Description
+                        <Eye className="w-4 h-4 mr-2" />
+                        Details
                       </Button>
-                    )}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleRestore(item)}
-                      disabled={restoreItemMutation.isPending}
-                    >
-                      <RotateCcw className="w-4 h-4 mr-2" />
-                      Restore
-                    </Button>
+                      {item.itemType === "interview" && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditInfo(item)}
+                          className="border-green-200 text-green-600 hover:bg-green-50"
+                        >
+                          <Edit className="w-4 h-4 mr-2" />
+                          Edit Info
+                        </Button>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => toggleExpanded(item.id)}
+                        className="border-green-200 text-green-600 hover:bg-green-50"
+                      >
+                        {expandedItems.has(item.id) ? (
+                          <ChevronUp className="w-4 h-4 mr-2" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4 mr-2" />
+                        )}
+                        {expandedItems.has(item.id) ? 'Collapse' : 'Expand'}
+                      </Button>
+                    </div>
                   </div>
                 </div>
+                
+                {/* Expanded Details Section */}
+                {expandedItems.has(item.id) && (
+                  <div className="mt-6 pt-6 border-t border-green-100">
+                    {/* Full Item Details */}
+                    <div className="mb-6">
+                      <h4 className="text-lg font-semibold text-green-800 mb-3">Archive Details</h4>
+                      <div className="bg-green-50 p-4 rounded-lg">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <Label className="text-sm font-medium text-green-700">Archive Date</Label>
+                            <p className="text-sm text-gray-900">{new Date(item.archivedAt).toLocaleDateString()}</p>
+                          </div>
+                          <div>
+                            <Label className="text-sm font-medium text-green-700">Archived By</Label>
+                            <p className="text-sm text-gray-900">{item.archivedBy.firstName} {item.archivedBy.lastName}</p>
+                          </div>
+                          <div className="md:col-span-2">
+                            <Label className="text-sm font-medium text-green-700">Original Data</Label>
+                            <div className="mt-2 p-3 bg-white rounded border">
+                              <pre className="text-xs text-gray-700 whitespace-pre-wrap">
+                                {JSON.stringify(JSON.parse(item.itemData), null, 2)}
+                              </pre>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Interview Report Form (only for interviews) */}
+                    {item.itemType === "interview" && (
+                      <div className="mb-6">
+                        <h4 className="text-lg font-semibold text-green-800 mb-3 flex items-center gap-2">
+                          <Plus className="w-5 h-5" />
+                          Add Interview Report
+                        </h4>
+                        <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
+                          <div className="space-y-4">
+                            <div>
+                              <Label className="text-sm font-medium text-emerald-700">Report Description</Label>
+                              <Textarea
+                                placeholder="Enter detailed interview report, feedback, or additional notes..."
+                                value={newReports[item.id]?.description || ""}
+                                onChange={(e) => updateNewReport(item.id, "description", e.target.value)}
+                                className="mt-1 border-emerald-200 focus:border-emerald-500"
+                                rows={4}
+                              />
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <Label className="text-sm font-medium text-emerald-700">Performance Rating</Label>
+                                <Select 
+                                  value={newReports[item.id]?.rating || ""} 
+                                  onValueChange={(value) => updateNewReport(item.id, "rating", value)}
+                                >
+                                  <SelectTrigger className="border-emerald-200">
+                                    <SelectValue placeholder="Select rating" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="excellent">Excellent (5/5)</SelectItem>
+                                    <SelectItem value="good">Good (4/5)</SelectItem>
+                                    <SelectItem value="average">Average (3/5)</SelectItem>
+                                    <SelectItem value="below-average">Below Average (2/5)</SelectItem>
+                                    <SelectItem value="poor">Poor (1/5)</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div className="flex items-end">
+                                <Button
+                                  onClick={() => handleAddReport(item.id)}
+                                  disabled={addReportMutation.isPending}
+                                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                                >
+                                  <Save className="w-4 h-4 mr-2" />
+                                  Save Report
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Existing Reports */}
+                    {(() => {
+                      const itemData = JSON.parse(item.itemData);
+                      const reports = itemData.reports || [];
+                      return reports.length > 0 && (
+                        <div>
+                          <h4 className="text-lg font-semibold text-green-800 mb-3">Previous Reports</h4>
+                          <div className="space-y-3">
+                            {reports.map((report: any, index: number) => (
+                              <div key={index} className="bg-gray-50 p-4 rounded-lg border">
+                                <div className="flex items-start justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <Badge variant="secondary" className="bg-gray-200 text-gray-700">
+                                      Report #{index + 1}
+                                    </Badge>
+                                    {report.rating && (
+                                      <Badge className="bg-blue-100 text-blue-800">
+                                        {report.rating}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <div className="text-xs text-gray-500">
+                                    {report.addedBy} - {new Date(report.timestamp).toLocaleString()}
+                                  </div>
+                                </div>
+                                <p className="text-sm text-gray-700">{report.description}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))
