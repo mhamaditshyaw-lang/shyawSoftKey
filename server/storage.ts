@@ -63,6 +63,7 @@ export interface IStorage {
   getArchivedItems(): Promise<any[]>;
   updateArchivedItem(archiveId: number, updates: any): Promise<any>;
   restoreArchivedItem(archiveId: number, itemType: string): Promise<void>;
+  deleteArchivedItem(archiveId: number): Promise<boolean>;
   
   // Operational data methods
   createOperationalData(data: any): Promise<any>;
@@ -425,6 +426,13 @@ export class DatabaseStorage implements IStorage {
   async clearAllOperationalData(): Promise<boolean> {
     await db.delete(operationalData);
     return true;
+  }
+
+  async deleteArchivedItem(archiveId: number): Promise<boolean> {
+    const result = await db
+      .delete(archivedItems)
+      .where(eq(archivedItems.id, archiveId));
+    return result.rowCount > 0;
   }
 }
 

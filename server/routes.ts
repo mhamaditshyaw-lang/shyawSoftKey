@@ -744,6 +744,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/archive/:id", authenticateToken, requireRole(['admin', 'manager']), async (req: AuthRequest, res) => {
+    try {
+      const archiveId = parseInt(req.params.id);
+      
+      const success = await storage.deleteArchivedItem(archiveId);
+      if (!success) {
+        return res.status(404).json({ message: "Archive item not found" });
+      }
+      
+      res.json({ success: true, message: "Archive item deleted successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
 
   // Operational data routes
   app.get("/api/operational-data", authenticateToken, async (req: AuthRequest, res) => {

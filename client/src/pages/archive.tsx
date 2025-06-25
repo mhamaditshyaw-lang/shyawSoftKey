@@ -11,7 +11,7 @@ import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Archive, Search, Calendar, User, FileText, Eye, Edit, Filter, X, Plus, Save, ChevronDown, ChevronUp } from "lucide-react";
+import { Archive, Search, Calendar, User, FileText, Eye, Edit, Filter, X, Plus, Save, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { getRelativeTime } from "@/lib/utils";
 import ArchiveDetailsModal from "@/components/modals/archive-details-modal";
 import EditArchiveModal from "@/components/modals/edit-archive-modal";
@@ -31,6 +31,7 @@ export default function ArchivePage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
   const [newReports, setNewReports] = useState<{[key: number]: { description: string, rating: string }}>({});
+  const [deletingItems, setDeletingItems] = useState<Set<number>>(new Set());
 
   const { data: archiveData, isLoading } = useQuery({
     queryKey: ["/api/archive"],
@@ -60,6 +61,28 @@ export default function ArchivePage() {
       toast({
         title: "Error",
         description: error.message || "Failed to add report",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteArchiveItemMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await authenticatedRequest("DELETE", `/api/archive/${id}`);
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/archive"] });
+      toast({
+        title: "Success",
+        description: "Archive item deleted successfully",
+      });
+      setDeletingItems(new Set());
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete archive item",
         variant: "destructive",
       });
     },
@@ -249,6 +272,28 @@ export default function ArchivePage() {
         [field]: value
       }
     }));
+  };
+
+  const handleDeleteItem = (itemId: number) => {
+    if (deletingItems.has(itemId)) {
+      // Second click - confirm deletion
+      deleteArchiveItemMutation.mutate(itemId);
+    } else {
+      // First click - show confirmation
+      setDeletingItems(new Set([itemId]));
+      toast({
+        title: "Click again to confirm",
+        description: "Click the delete button again to permanently remove this archive item",
+      });
+      // Auto-clear confirmation after 5 seconds
+      setTimeout(() => {
+        setDeletingItems(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(itemId);
+          return newSet;
+        });
+      }, 5000);
+    }
   };
 
   if (user?.role !== "admin" && user?.role !== "manager") {
@@ -553,6 +598,20 @@ export default function ArchivePage() {
                           <ChevronDown className="w-4 h-4 mr-2" />
                         )}
                         {expandedItems.has(item.id) ? 'Collapse' : 'Expand'}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeleteItem(item.id)}
+                        disabled={deleteArchiveItemMutation.isPending}
+                        className={`border-red-200 hover:bg-red-50 ${
+                          deletingItems.has(item.id) 
+                            ? 'text-red-800 bg-red-100 border-red-300' 
+                            : 'text-red-600'
+                        }`}
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        {deletingItems.has(item.id) ? 'Confirm Delete' : 'Delete'}
                       </Button>
                     </div>
                   </div>
