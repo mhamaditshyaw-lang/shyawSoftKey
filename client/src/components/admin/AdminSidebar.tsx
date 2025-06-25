@@ -50,54 +50,85 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
         '& .MuiDrawer-paper': {
           width: drawerWidth,
           boxSizing: 'border-box',
-          background: 'linear-gradient(195deg, #42424a 0%, #191919 100%)',
-          color: 'white',
+          background: 'linear-gradient(195deg, #ffffff 0%, #ffffff 40%, rgba(255,255,255,0.8) 100%)',
+          backdropFilter: 'blur(10px)',
+          border: 'none',
+          boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14), 0 7px 10px -5px rgba(0,0,0,0.1)',
+          color: '#344767',
         },
       }}
     >
-      <Box sx={{ p: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <BusinessIcon sx={{ mr: 1, color: '#4caf50' }} />
-          <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'white' }}>
-            Admin Portal
+      <Box sx={{ p: 3, pt: 4 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+          <Box
+            sx={{
+              width: 40,
+              height: 40,
+              background: 'linear-gradient(195deg, #66bb6a 0%, #43a047 100%)',
+              borderRadius: 2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mr: 2,
+              boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14), 0 7px 10px -5px rgba(76,175,80,0.4)',
+            }}
+          >
+            <BusinessIcon sx={{ color: 'white', fontSize: 24 }} />
+          </Box>
+          <Typography variant="h6" sx={{ fontWeight: 600, color: '#344767' }}>
+            Material Dashboard
           </Typography>
         </Box>
-        <Divider sx={{ borderColor: 'rgba(255,255,255,0.12)' }} />
+        <Divider sx={{ borderColor: 'rgba(52, 71, 103, 0.12)', mb: 2 }} />
       </Box>
 
-      <List sx={{ px: 1 }}>
-        {menuItems.map((item) => (
-          <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
-            <ListItemButton
-              onClick={() => handleNavigation(item.path)}
-              sx={{
-                borderRadius: 2,
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                },
-                ...((location === item.path || (item.path !== '/admin' && location.startsWith(item.path))) && {
-                  backgroundColor: 'rgba(76, 175, 80, 0.2)',
-                  '&:hover': {
-                    backgroundColor: 'rgba(76, 175, 80, 0.3)',
-                  },
-                }),
-              }}
-            >
-              <ListItemIcon sx={{ color: (location === item.path || (item.path !== '/admin' && location.startsWith(item.path))) ? '#4caf50' : 'rgba(255,255,255,0.7)' }}>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText 
-                primary={item.text}
+      <List sx={{ px: 2 }}>
+        {menuItems.map((item) => {
+          const isActive = location === item.path || (item.path !== '/admin' && location.startsWith(item.path));
+          return (
+            <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
+              <ListItemButton
+                onClick={() => handleNavigation(item.path)}
                 sx={{
-                  '& .MuiListItemText-primary': {
-                    fontWeight: (location === item.path || (item.path !== '/admin' && location.startsWith(item.path))) ? 600 : 400,
-                  }
+                  borderRadius: 2,
+                  color: '#344767',
+                  minHeight: 48,
+                  px: 2,
+                  '&:hover': {
+                    backgroundColor: 'rgba(52, 71, 103, 0.1)',
+                  },
+                  ...(isActive && {
+                    background: 'linear-gradient(195deg, #66bb6a 0%, #43a047 100%)',
+                    color: 'white',
+                    boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14), 0 7px 10px -5px rgba(76,175,80,0.4)',
+                    '&:hover': {
+                      background: 'linear-gradient(195deg, #66bb6a 0%, #43a047 100%)',
+                      boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14), 0 7px 10px -5px rgba(76,175,80,0.4)',
+                    },
+                  }),
                 }}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
+              >
+                <ListItemIcon 
+                  sx={{ 
+                    color: isActive ? 'white' : '#344767',
+                    minWidth: 40,
+                  }}
+                >
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={item.text}
+                  sx={{
+                    '& .MuiListItemText-primary': {
+                      fontWeight: isActive ? 600 : 500,
+                      fontSize: '0.875rem',
+                    }
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
     </Drawer>
   );

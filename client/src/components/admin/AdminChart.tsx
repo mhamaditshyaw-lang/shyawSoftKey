@@ -58,14 +58,31 @@ export default function AdminChart({ title, type, data, height = 300 }: AdminCha
         labels: {
           usePointStyle: true,
           padding: 20,
+          color: '#344767',
+          font: {
+            family: '"Roboto", "Helvetica", "Arial", sans-serif',
+            size: 12,
+            weight: 500,
+          },
         },
       },
       tooltip: {
-        backgroundColor: 'rgba(0,0,0,0.8)',
+        backgroundColor: 'rgba(52, 71, 103, 0.9)',
         titleColor: 'white',
         bodyColor: 'white',
         borderColor: 'rgba(255,255,255,0.2)',
         borderWidth: 1,
+        cornerRadius: 8,
+        displayColors: true,
+        titleFont: {
+          size: 13,
+          weight: 600,
+        },
+        bodyFont: {
+          size: 12,
+          weight: 400,
+        },
+        padding: 12,
       },
     },
     scales: {
@@ -74,16 +91,40 @@ export default function AdminChart({ title, type, data, height = 300 }: AdminCha
           display: false,
         },
         ticks: {
-          color: '#6b7280',
+          color: '#67748e',
+          font: {
+            size: 11,
+            weight: 500,
+          },
+        },
+        border: {
+          display: false,
         },
       },
       y: {
         grid: {
-          color: 'rgba(107, 114, 128, 0.1)',
+          color: 'rgba(52, 71, 103, 0.1)',
+          lineWidth: 1,
         },
         ticks: {
-          color: '#6b7280',
+          color: '#67748e',
+          font: {
+            size: 11,
+            weight: 500,
+          },
         },
+        border: {
+          display: false,
+        },
+      },
+    },
+    elements: {
+      line: {
+        tension: 0.4,
+      },
+      point: {
+        radius: 3,
+        hoverRadius: 6,
       },
     },
   };

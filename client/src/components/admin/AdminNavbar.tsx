@@ -42,8 +42,11 @@ export default function AdminNavbar({ onMenuClick }: AdminNavbarProps) {
     <AppBar
       position="fixed"
       sx={{
-        background: 'linear-gradient(195deg, #4caf50 0%, #2e7d32 100%)',
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        background: 'rgba(255, 255, 255, 0.8)',
+        backdropFilter: 'blur(10px)',
+        boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14), 0 7px 10px -5px rgba(0,0,0,0.1)',
+        color: '#344767',
+        border: 'none',
       }}
     >
       <Toolbar>
@@ -57,20 +60,29 @@ export default function AdminNavbar({ onMenuClick }: AdminNavbarProps) {
           <MenuIcon />
         </IconButton>
 
-        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
+        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, fontWeight: 400, color: '#344767' }}>
           Admin Dashboard
         </Typography>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <IconButton color="inherit">
+          <IconButton sx={{ color: '#344767' }}>
             <NotificationsIcon />
           </IconButton>
 
           <IconButton
             onClick={handleMenuOpen}
-            color="inherit"
+            sx={{ color: '#344767' }}
           >
-            <Avatar sx={{ width: 32, height: 32, bgcolor: 'rgba(255,255,255,0.2)' }}>
+            <Avatar 
+              sx={{ 
+                width: 32, 
+                height: 32, 
+                background: 'linear-gradient(195deg, #66bb6a 0%, #43a047 100%)',
+                color: 'white',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+              }}
+            >
               {user?.firstName?.charAt(0) || user?.username?.charAt(0) || 'A'}
             </Avatar>
           </IconButton>
