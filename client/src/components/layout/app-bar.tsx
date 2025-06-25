@@ -135,51 +135,7 @@ export default function AppBar({}: AppBarProps) {
             </div>
           </div>
 
-          {/* Center Section - Quick Menu */}
-          <div className="hidden lg:flex items-center">
-            <DropdownMenu open={showQuickMenu} onOpenChange={setShowQuickMenu}>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  className="flex items-center space-x-2 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 transition-all duration-300 hover:scale-105 px-4 py-2 rounded-xl"
-                >
-                  <BarChart3 className="h-4 w-4 text-green-600" />
-                  <span className="text-sm font-medium">Quick Access</span>
-                  <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${showQuickMenu ? 'rotate-180' : ''}`} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="w-80 p-2">
-                <div className="grid grid-cols-2 gap-2">
-                  {quickMenuItems.map((item, index) => (
-                    <Link key={item.href} href={item.href}>
-                      <div 
-                        className="group p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-md"
-                        style={{
-                          animationDelay: `${index * 50}ms`
-                        }}
-                      >
-                        <div className="flex items-start space-x-3">
-                          <div className={`w-10 h-10 rounded-xl bg-gradient-to-r ${item.color} flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-lg`}>
-                            <item.icon className="h-5 w-5 text-white" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate transition-colors duration-300 group-hover:text-green-600">
-                              {item.title}
-                            </h3>
-                            {item.subtitle && (
-                              <p className="text-xs text-gray-500 dark:text-gray-400 truncate transition-colors duration-300 group-hover:text-green-500">
-                                {item.subtitle}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+
 
         {/* Right Section - Notifications & User Menu */}
         <div className="flex items-center space-x-3">
