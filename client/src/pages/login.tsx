@@ -4,20 +4,30 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Leaf, Users, CheckCircle } from "lucide-react";
 
 export default function LoginPage() {
+  const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, register } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
 
   const [loginForm, setLoginForm] = useState({
     username: "",
     password: "",
+  });
+
+  const [registerForm, setRegisterForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    role: "secretary",
   });
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -42,7 +52,27 @@ export default function LoginPage() {
     }
   };
 
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
 
+    try {
+      await register(registerForm);
+      toast({
+        title: "Registration Successful",
+        description: "Your account has been created and is pending admin approval.",
+      });
+      setIsLogin(true);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Registration failed",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex">
@@ -85,55 +115,166 @@ export default function LoginPage() {
       {/* Right Panel - Auth Forms */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8 bg-gradient-to-br from-green-50 to-emerald-50 md:bg-none">
         <div className="w-full max-w-md">
-          <Card className="border-green-100 shadow-lg">
-            <CardHeader className="text-center">
-              <CardTitle className="text-3xl text-green-800">Welcome Back</CardTitle>
-              <CardDescription className="text-green-600">Sign in to your account</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleLogin} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="username" className="text-green-700">Username</Label>
-                  <Input
-                    id="username"
-                    type="text"
-                    placeholder="Enter your username"
-                    value={loginForm.username}
-                    onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
-                    className="border-green-200 focus:border-green-500 focus:ring-green-500"
-                    required
-                  />
+          {isLogin ? (
+            <Card className="border-green-100 shadow-lg">
+              <CardHeader className="text-center">
+                <CardTitle className="text-3xl text-green-800">Welcome Back</CardTitle>
+                <CardDescription className="text-green-600">Sign in to your account</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleLogin} className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="username" className="text-green-700">Username</Label>
+                    <Input
+                      id="username"
+                      type="text"
+                      placeholder="Enter your username"
+                      value={loginForm.username}
+                      onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
+                      className="border-green-200 focus:border-green-500 focus:ring-green-500"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-green-700">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="Enter your password"
+                      value={loginForm.password}
+                      onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                      className="border-green-200 focus:border-green-500 focus:ring-green-500"
+                      required
+                    />
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    className="w-full mobile-button touch-target bg-green-600 hover:bg-green-700 text-white" 
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Signing In..." : "Sign In"}
+                  </Button>
+                </form>
+
+                <div className="mt-6 text-center">
+                  <button
+                    onClick={() => setIsLogin(false)}
+                    className="text-green-600 hover:text-green-700 font-medium transition-colors"
+                  >
+                    Don't have an account? Register here
+                  </button>
                 </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="border-green-100 shadow-lg">
+              <CardHeader className="text-center">
+                <CardTitle className="text-3xl text-green-800">Create Account</CardTitle>
+                <CardDescription className="text-green-600">Join our management system</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleRegister} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="firstName" className="text-green-700">First Name</Label>
+                      <Input
+                        id="firstName"
+                        type="text"
+                        placeholder="John"
+                        value={registerForm.firstName}
+                        onChange={(e) => setRegisterForm({ ...registerForm, firstName: e.target.value })}
+                        className="border-green-200 focus:border-green-500 focus:ring-green-500"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="lastName" className="text-green-700">Last Name</Label>
+                      <Input
+                        id="lastName"
+                        type="text"
+                        placeholder="Doe"
+                        value={registerForm.lastName}
+                        onChange={(e) => setRegisterForm({ ...registerForm, lastName: e.target.value })}
+                        className="border-green-200 focus:border-green-500 focus:ring-green-500"
+                        required
+                      />
+                    </div>
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-green-700">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Enter your password"
-                    value={loginForm.password}
-                    onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                    className="border-green-200 focus:border-green-500 focus:ring-green-500"
-                    required
-                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="username" className="text-green-700">Username</Label>
+                    <Input
+                      id="username"
+                      type="text"
+                      placeholder="johndoe"
+                      value={registerForm.username}
+                      onChange={(e) => setRegisterForm({ ...registerForm, username: e.target.value })}
+                      className="border-green-200 focus:border-green-500 focus:ring-green-500"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-green-700">Email Address</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="john.doe@company.com"
+                      value={registerForm.email}
+                      onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
+                      className="border-green-200 focus:border-green-500 focus:ring-green-500"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-green-700">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="Create a strong password"
+                      value={registerForm.password}
+                      onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
+                      className="border-green-200 focus:border-green-500 focus:ring-green-500"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="role" className="text-green-700">Requested Role</Label>
+                    <Select value={registerForm.role} onValueChange={(value) => setRegisterForm({ ...registerForm, role: value })}>
+                      <SelectTrigger className="border-green-200 focus:border-green-500 focus:ring-green-500">
+                        <SelectValue placeholder="Select role to request" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="manager">Manager</SelectItem>
+                        <SelectItem value="secretary">Secretary</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-green-600 hover:bg-green-700 text-white" 
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Creating Account..." : "Create Account"}
+                  </Button>
+                </form>
+
+                <div className="mt-6 text-center">
+                  <button
+                    onClick={() => setIsLogin(true)}
+                    className="text-green-600 hover:text-green-700 font-medium transition-colors"
+                  >
+                    Already have an account? Sign in
+                  </button>
                 </div>
-
-                <Button 
-                  type="submit" 
-                  className="w-full mobile-button touch-target bg-green-600 hover:bg-green-700 text-white" 
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Signing In..." : "Sign In"}
-                </Button>
-              </form>
-
-              <div className="mt-6 text-center">
-                <p className="text-sm text-green-600">
-                  Contact your administrator to create a new account
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>

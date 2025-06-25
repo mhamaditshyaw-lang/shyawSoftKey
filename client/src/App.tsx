@@ -17,10 +17,6 @@ import MetricsPage from "@/pages/metrics";
 import DataViewPage from "@/pages/data-view";
 import AllDataPage from "@/pages/all-data";
 import ReportsPage from "@/pages/reports";
-import AdminDashboard from "@/pages/admin";
-import CustomAdminDashboard from "@/pages/custom-admin";
-import AdminUsersPage from "@/pages/admin-users";
-import AdminSettingsPage from "@/pages/admin-settings";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
@@ -110,17 +106,6 @@ function Router() {
           <ReportsPage />
         </ProtectedRoute>
       </Route>
-      <Route path="/admin" component={CustomAdminDashboard} />
-      <Route path="/admin/analytics" component={CustomAdminDashboard} />
-      <Route path="/admin/users" component={AdminUsersPage} />
-      <Route path="/admin/tasks" component={AdminUsersPage} />
-      <Route path="/admin/calendar" component={AdminUsersPage} />
-      <Route path="/admin/reports" component={AdminUsersPage} />
-      <Route path="/admin/feedback" component={AdminUsersPage} />
-      <Route path="/admin/inventory" component={AdminUsersPage} />
-      <Route path="/admin/profile" component={AdminSettingsPage} />
-      <Route path="/admin/notifications" component={AdminSettingsPage} />
-      <Route path="/admin/settings" component={AdminSettingsPage} />
       <Route component={NotFound} />
     </Switch>
   );
