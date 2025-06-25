@@ -17,7 +17,13 @@ import {
   Menu, 
   X,
   Building2,
-  ChevronDown
+  ChevronDown,
+  BarChart3,
+  Users,
+  CheckSquare,
+  MessageSquare,
+  Database,
+  Archive
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
@@ -32,6 +38,7 @@ interface AppBarProps {
 export default function AppBar({ onMenuToggle, showMenuButton = true }: AppBarProps) {
   const { user, logout } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showQuickMenu, setShowQuickMenu] = useState(false);
 
   // Fetch notifications for the bell icon
   const { data: notificationData } = useQuery({
@@ -44,6 +51,52 @@ export default function AppBar({ onMenuToggle, showMenuButton = true }: AppBarPr
   });
 
   const unreadCount = notificationData?.notifications?.filter((n: any) => !n.isRead)?.length || 0;
+
+  // Quick access menu items
+  const quickMenuItems = [
+    { 
+      title: "Dashboard Overview", 
+      subtitle: "Analytics & Reports",
+      icon: BarChart3, 
+      href: "/dashboard",
+      color: "from-green-500 to-green-600"
+    },
+    { 
+      title: "Employee Reviews", 
+      subtitle: "& Evaluations",
+      icon: Users, 
+      href: "/interviews",
+      color: "from-blue-500 to-blue-600"
+    },
+    { 
+      title: "Employee Affairs", 
+      subtitle: "Tasks",
+      icon: CheckSquare, 
+      href: "/todos",
+      color: "from-purple-500 to-purple-600"
+    },
+    { 
+      title: "Feedback", 
+      subtitle: "& Reviews",
+      icon: MessageSquare, 
+      href: "/feedback",
+      color: "from-orange-500 to-orange-600"
+    },
+    { 
+      title: "Employee", 
+      subtitle: "Tracking",
+      icon: Database, 
+      href: "/data-view",
+      color: "from-teal-500 to-teal-600"
+    },
+    { 
+      title: "Archive", 
+      subtitle: "",
+      icon: Archive, 
+      href: "/archive",
+      color: "from-gray-500 to-gray-600"
+    },
+  ];
 
   const getRoleColor = (role: string) => {
     switch (role) {
@@ -65,100 +118,148 @@ export default function AppBar({ onMenuToggle, showMenuButton = true }: AppBarPr
   };
 
   return (
-    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-      <div className="flex items-center justify-between h-16 px-4 lg:px-6">
-        {/* Left Section - Menu & Logo */}
-        <div className="flex items-center space-x-4">
-          {showMenuButton && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onMenuToggle}
-              className="lg:hidden hover:bg-green-50 dark:hover:bg-green-900"
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-          )}
-          
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-lg">
-              <Building2 className="h-6 w-6 text-white" />
-            </div>
-            <div className="hidden sm:block">
-              <h1 className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
-                Office Management
-              </h1>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Internal Employee System</p>
+    <>
+      <header className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200/20 dark:border-gray-700/20 sticky top-0 z-50 transition-all duration-300">
+        <div className="flex items-center justify-between h-16 px-4 lg:px-6">
+          {/* Left Section - Menu & Logo */}
+          <div className="flex items-center space-x-4">
+            {showMenuButton && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onMenuToggle}
+                className="lg:hidden hover:bg-green-50 dark:hover:bg-green-900/50 transition-all duration-200 hover:scale-105"
+              >
+                <Menu className="h-5 w-5 transition-transform duration-200" />
+              </Button>
+            )}
+            
+            <div className="flex items-center space-x-3 group cursor-pointer" onClick={() => window.location.href = '/dashboard'}>
+              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-lg transition-all duration-300 group-hover:shadow-green-200 group-hover:scale-110 group-hover:rotate-3">
+                <Building2 className="h-6 w-6 text-white transition-transform duration-300 group-hover:scale-110" />
+              </div>
+              <div className="hidden sm:block transition-all duration-300 group-hover:translate-x-1">
+                <h1 className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
+                  Office Management
+                </h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300 group-hover:text-green-500">
+                  Internal Employee System
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Center Section - Quick Actions (hidden on mobile) */}
-        <div className="hidden md:flex items-center space-x-2">
-          <Link href="/dashboard">
-            <Button variant="ghost" size="sm" className="text-gray-600 hover:text-green-600 hover:bg-green-50">
-              Dashboard
-            </Button>
-          </Link>
-          <Link href="/todos">
-            <Button variant="ghost" size="sm" className="text-gray-600 hover:text-green-600 hover:bg-green-50">
-              Tasks
-            </Button>
-          </Link>
-          <Link href="/interviews">
-            <Button variant="ghost" size="sm" className="text-gray-600 hover:text-green-600 hover:bg-green-50">
-              Reviews
-            </Button>
-          </Link>
-        </div>
+          {/* Center Section - Quick Menu */}
+          <div className="hidden lg:flex items-center">
+            <DropdownMenu open={showQuickMenu} onOpenChange={setShowQuickMenu}>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  className="flex items-center space-x-2 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 transition-all duration-300 hover:scale-105 px-4 py-2 rounded-xl"
+                >
+                  <BarChart3 className="h-4 w-4 text-green-600" />
+                  <span className="text-sm font-medium">Quick Access</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${showQuickMenu ? 'rotate-180' : ''}`} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="w-80 p-2">
+                <div className="grid grid-cols-2 gap-2">
+                  {quickMenuItems.map((item, index) => (
+                    <Link key={item.href} href={item.href}>
+                      <div 
+                        className="group p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-md"
+                        style={{
+                          animationDelay: `${index * 50}ms`
+                        }}
+                      >
+                        <div className="flex items-start space-x-3">
+                          <div className={`w-10 h-10 rounded-xl bg-gradient-to-r ${item.color} flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-lg`}>
+                            <item.icon className="h-5 w-5 text-white" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate transition-colors duration-300 group-hover:text-green-600">
+                              {item.title}
+                            </h3>
+                            {item.subtitle && (
+                              <p className="text-xs text-gray-500 dark:text-gray-400 truncate transition-colors duration-300 group-hover:text-green-500">
+                                {item.subtitle}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
         {/* Right Section - Notifications & User Menu */}
         <div className="flex items-center space-x-3">
           {/* Notifications */}
           <DropdownMenu open={showNotifications} onOpenChange={setShowNotifications}>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="relative hover:bg-green-50 dark:hover:bg-green-900">
-                <Bell className="h-5 w-5" />
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="relative hover:bg-green-50 dark:hover:bg-green-900/50 transition-all duration-300 hover:scale-110 rounded-xl"
+              >
+                <Bell className={`h-5 w-5 transition-all duration-300 ${unreadCount > 0 ? 'animate-pulse text-green-600' : ''}`} />
                 {unreadCount > 0 && (
                   <Badge 
                     variant="destructive" 
-                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs animate-bounce bg-gradient-to-r from-red-500 to-pink-500 shadow-lg"
                   >
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </Badge>
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80">
-              <div className="p-3 border-b">
-                <h3 className="font-semibold text-sm">Notifications</h3>
-                <p className="text-xs text-gray-500">
-                  {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up!'}
-                </p>
+            <DropdownMenuContent align="end" className="w-80 animate-in slide-in-from-top-2 duration-300">
+              <div className="p-4 border-b bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold text-sm text-gray-900 dark:text-white">Notifications</h3>
+                    <p className="text-xs text-gray-500">
+                      {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up!'}
+                    </p>
+                  </div>
+                  <Bell className="h-5 w-5 text-green-600" />
+                </div>
               </div>
               <div className="max-h-64 overflow-y-auto">
-                {notificationData?.notifications?.slice(0, 5).map((notification: any) => (
-                  <DropdownMenuItem key={notification.id} className="p-3">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">{notification.title}</p>
-                      <p className="text-xs text-gray-500">{notification.message}</p>
-                      <p className="text-xs text-gray-400 mt-1">
-                        {new Date(notification.createdAt).toLocaleDateString()}
-                      </p>
+                {notificationData?.notifications?.slice(0, 5).map((notification: any, index: number) => (
+                  <DropdownMenuItem 
+                    key={notification.id} 
+                    className="p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 cursor-pointer"
+                    style={{
+                      animationDelay: `${index * 100}ms`
+                    }}
+                  >
+                    <div className="flex items-start space-x-3">
+                      <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-2 ${!notification.isRead ? 'bg-blue-500 animate-pulse' : 'bg-gray-300'}`} />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">{notification.title}</p>
+                        <p className="text-xs text-gray-500 mt-1">{notification.message}</p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          {new Date(notification.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
                     </div>
-                    {!notification.isRead && (
-                      <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
-                    )}
                   </DropdownMenuItem>
                 )) || (
-                  <DropdownMenuItem className="p-3 text-center text-gray-500">
-                    No notifications
+                  <DropdownMenuItem className="p-6 text-center text-gray-500">
+                    <div className="flex flex-col items-center space-y-2">
+                      <Bell className="h-8 w-8 text-gray-300" />
+                      <p className="text-sm">No notifications</p>
+                    </div>
                   </DropdownMenuItem>
                 )}
               </div>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="/notifications" className="w-full text-center text-sm">
+                <Link href="/notifications" className="w-full text-center text-sm py-3 font-medium text-green-600 hover:text-green-700 transition-colors duration-200">
                   View all notifications
                 </Link>
               </DropdownMenuItem>
@@ -168,64 +269,84 @@ export default function AppBar({ onMenuToggle, showMenuButton = true }: AppBarPr
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center space-x-2 hover:bg-green-50 dark:hover:bg-green-900">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-green-100 text-green-700 text-sm">
+              <Button 
+                variant="ghost" 
+                className="flex items-center space-x-2 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 dark:hover:bg-green-900/50 transition-all duration-300 hover:scale-105 rounded-xl px-3 py-2"
+              >
+                <Avatar className="h-8 w-8 transition-all duration-300 hover:scale-110">
+                  <AvatarFallback className="bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-bold shadow-lg">
                     {getInitials(user?.firstName, user?.lastName, user?.username)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="hidden sm:block text-left">
-                  <p className="text-sm font-medium">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
                     {user?.firstName && user?.lastName 
                       ? `${user.firstName} ${user.lastName}` 
                       : user?.username}
                   </p>
                   <Badge 
                     variant="secondary" 
-                    className={`text-xs ${getRoleColor(user?.role || '')}`}
+                    className={`text-xs ${getRoleColor(user?.role || '')} transition-all duration-300 hover:scale-105`}
                   >
                     {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
                   </Badge>
                 </div>
-                <ChevronDown className="h-4 w-4 hidden sm:block" />
+                <ChevronDown className="h-4 w-4 hidden sm:block transition-transform duration-300" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <div className="p-3 border-b">
-                <p className="font-medium text-sm">
-                  {user?.firstName && user?.lastName 
-                    ? `${user.firstName} ${user.lastName}` 
-                    : user?.username}
-                </p>
-                <p className="text-xs text-gray-500">{user?.email}</p>
-                <Badge 
-                  variant="secondary" 
-                  className={`text-xs mt-1 ${getRoleColor(user?.role || '')}`}
-                >
-                  {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
-                </Badge>
+            <DropdownMenuContent align="end" className="w-64 animate-in slide-in-from-top-2 duration-300">
+              <div className="p-4 border-b bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20">
+                <div className="flex items-center space-x-3">
+                  <Avatar className="h-12 w-12">
+                    <AvatarFallback className="bg-gradient-to-r from-green-500 to-green-600 text-white text-lg font-bold">
+                      {getInitials(user?.firstName, user?.lastName, user?.username)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm text-gray-900 dark:text-white">
+                      {user?.firstName && user?.lastName 
+                        ? `${user.firstName} ${user.lastName}` 
+                        : user?.username}
+                    </p>
+                    <p className="text-xs text-gray-500 mb-2">{user?.email}</p>
+                    <Badge 
+                      variant="secondary" 
+                      className={`text-xs ${getRoleColor(user?.role || '')}`}
+                    >
+                      {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
+                    </Badge>
+                  </div>
+                </div>
               </div>
-              <DropdownMenuItem asChild>
-                <Link href="/profile" className="flex items-center">
-                  <User className="h-4 w-4 mr-2" />
-                  Profile
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/settings" className="flex items-center">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Settings
-                </Link>
-              </DropdownMenuItem>
+              <div className="p-2">
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200">
+                    <User className="h-4 w-4 mr-3 text-gray-500" />
+                    <span className="text-sm">Profile Settings</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/settings" className="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200">
+                    <Settings className="h-4 w-4 mr-3 text-gray-500" />
+                    <span className="text-sm">Preferences</span>
+                  </Link>
+                </DropdownMenuItem>
+              </div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={logout} className="text-red-600 focus:text-red-600">
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign out
-              </DropdownMenuItem>
+              <div className="p-2">
+                <DropdownMenuItem 
+                  onClick={logout} 
+                  className="flex items-center p-3 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 cursor-pointer"
+                >
+                  <LogOut className="h-4 w-4 mr-3" />
+                  <span className="text-sm font-medium">Sign out</span>
+                </DropdownMenuItem>
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
     </header>
+    </>
   );
 }
