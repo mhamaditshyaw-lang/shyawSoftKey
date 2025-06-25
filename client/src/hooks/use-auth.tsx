@@ -6,7 +6,6 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   login: (username: string, password: string) => Promise<void>;
-  register: (userData: any) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -65,12 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("token", data.token);
   };
 
-  const register = async (userData: any) => {
-    const response = await apiRequest("POST", "/api/auth/register", userData);
-    const data = await response.json();
-    // Registration successful, but user needs admin approval
-    return data;
-  };
+
 
   const logout = () => {
     setUser(null);
@@ -84,7 +78,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         token,
         login,
-        register,
         logout,
         isLoading,
       }}
