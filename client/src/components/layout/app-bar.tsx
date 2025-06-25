@@ -30,12 +30,9 @@ import { useQuery } from "@tanstack/react-query";
 import { authenticatedRequest } from "@/lib/auth";
 import { Link } from "wouter";
 
-interface AppBarProps {
-  onMenuToggle?: () => void;
-  showMenuButton?: boolean;
-}
+interface AppBarProps {}
 
-export default function AppBar({ onMenuToggle, showMenuButton = true }: AppBarProps) {
+export default function AppBar({}: AppBarProps) {
   const { user, logout } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showQuickMenu, setShowQuickMenu] = useState(false);
@@ -121,19 +118,8 @@ export default function AppBar({ onMenuToggle, showMenuButton = true }: AppBarPr
     <>
       <header className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200/20 dark:border-gray-700/20 sticky top-0 z-50 transition-all duration-300">
         <div className="flex items-center justify-between h-16 px-4 lg:px-6">
-          {/* Left Section - Menu & Logo */}
-          <div className="flex items-center space-x-4">
-            {showMenuButton && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onMenuToggle}
-                className="lg:hidden hover:bg-green-50 dark:hover:bg-green-900/50 transition-all duration-200 hover:scale-105"
-              >
-                <Menu className="h-5 w-5 transition-transform duration-200" />
-              </Button>
-            )}
-            
+          {/* Left Section - Logo */}
+          <div className="flex items-center">
             <div className="flex items-center space-x-3 group cursor-pointer" onClick={() => window.location.href = '/dashboard'}>
               <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-lg transition-all duration-300 group-hover:shadow-green-200 group-hover:scale-110 group-hover:rotate-3">
                 <Building2 className="h-6 w-6 text-white transition-transform duration-300 group-hover:scale-110" />
