@@ -110,7 +110,15 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/analytics" component={AdminDashboard} />
       <Route path="/admin/users" component={AdminUsersPage} />
+      <Route path="/admin/tasks" component={AdminUsersPage} />
+      <Route path="/admin/calendar" component={AdminUsersPage} />
+      <Route path="/admin/reports" component={AdminUsersPage} />
+      <Route path="/admin/feedback" component={AdminUsersPage} />
+      <Route path="/admin/inventory" component={AdminUsersPage} />
+      <Route path="/admin/profile" component={AdminSettingsPage} />
+      <Route path="/admin/notifications" component={AdminSettingsPage} />
       <Route path="/admin/settings" component={AdminSettingsPage} />
       <Route component={NotFound} />
     </Switch>
