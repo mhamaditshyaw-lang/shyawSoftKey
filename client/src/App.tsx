@@ -18,6 +18,7 @@ import DataViewPage from "@/pages/data-view";
 import AllDataPage from "@/pages/all-data";
 import ReportsPage from "@/pages/reports";
 import AdminDashboard from "@/pages/admin";
+import CustomAdminDashboard from "@/pages/custom-admin";
 import AdminUsersPage from "@/pages/admin-users";
 import AdminSettingsPage from "@/pages/admin-settings";
 import NotFound from "@/pages/not-found";
@@ -109,8 +110,8 @@ function Router() {
           <ReportsPage />
         </ProtectedRoute>
       </Route>
-      <Route path="/admin" component={AdminDashboard} />
-      <Route path="/admin/analytics" component={AdminDashboard} />
+      <Route path="/admin" component={CustomAdminDashboard} />
+      <Route path="/admin/analytics" component={CustomAdminDashboard} />
       <Route path="/admin/users" component={AdminUsersPage} />
       <Route path="/admin/tasks" component={AdminUsersPage} />
       <Route path="/admin/calendar" component={AdminUsersPage} />
