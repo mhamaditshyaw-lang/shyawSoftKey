@@ -13,6 +13,12 @@ import {
   type InterviewRequest,
   type InsertInterviewRequest
 } from "@shared/schema";
+import { 
+  notifications,
+  feedback,
+  archivedItems,
+} from "@shared/feedback-schema";
+import { operationalData } from "@shared/operational-schema";
 import { db } from "./db";
 import { eq, desc, and, or, sql } from "drizzle-orm";
 

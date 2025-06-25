@@ -620,11 +620,11 @@ export default function ArchivePage() {
                 {/* Expanded Details Section */}
                 {expandedItems.has(item.id) && (
                   <div className="mt-6 pt-6 border-t border-green-100">
-                    {/* Full Item Details */}
+                    {/* Archive Summary */}
                     <div className="mb-6">
-                      <h4 className="text-lg font-semibold text-green-800 mb-3">Archive Details</h4>
+                      <h4 className="text-lg font-semibold text-green-800 mb-3">Archive Summary</h4>
                       <div className="bg-green-50 p-4 rounded-lg">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
                             <Label className="text-sm font-medium text-green-700">Archive Date</Label>
                             <p className="text-sm text-gray-900">{new Date(item.archivedAt).toLocaleDateString()}</p>
@@ -633,14 +633,16 @@ export default function ArchivePage() {
                             <Label className="text-sm font-medium text-green-700">Archived By</Label>
                             <p className="text-sm text-gray-900">{item.archivedBy.firstName} {item.archivedBy.lastName}</p>
                           </div>
-                          <div className="md:col-span-2">
-                            <Label className="text-sm font-medium text-green-700">Original Data</Label>
-                            <div className="mt-2 p-3 bg-white rounded border">
-                              <pre className="text-xs text-gray-700 whitespace-pre-wrap">
-                                {JSON.stringify(JSON.parse(item.itemData), null, 2)}
-                              </pre>
-                            </div>
+                          <div>
+                            <Label className="text-sm font-medium text-green-700">Item Type</Label>
+                            <p className="text-sm text-gray-900 capitalize">{item.itemType}</p>
                           </div>
+                          {item.reason && (
+                            <div className="md:col-span-3">
+                              <Label className="text-sm font-medium text-green-700">Archive Reason</Label>
+                              <p className="text-sm text-gray-900">{item.reason}</p>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
