@@ -18,7 +18,7 @@ import DataViewPage from "@/pages/data-view";
 import AllDataPage from "@/pages/all-data";
 import ReportsPage from "@/pages/reports";
 import NotFound from "@/pages/not-found";
-import Header from "@/components/layout/header";
+import AppBar from "@/components/layout/app-bar";
 import Sidebar from "@/components/layout/sidebar";
 import PageMenu from "@/components/navigation/page-menu";
 import ResponsiveMenuBar from "@/components/navigation/responsive-menu-bar";
@@ -40,8 +40,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header />
-      <ResponsiveMenuBar />
+      <AppBar />
       <div className="flex">
         <Sidebar />
         <main className="flex-1 p-4 md:p-8 pb-24 lg:pb-8">
@@ -50,6 +49,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
           </div>
         </main>
       </div>
+      
+      {/* Mobile/Tablet Menu Bar */}
+      <ResponsiveMenuBar />
       
       {/* Global Page Menu */}
       <PageMenu />
