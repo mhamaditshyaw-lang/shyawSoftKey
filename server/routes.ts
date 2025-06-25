@@ -725,10 +725,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/archive/:id", authenticateToken, requireRole(['admin', 'manager']), async (req: AuthRequest, res) => {
     try {
       const id = parseInt(req.params.id);
-      const { itemData } = req.body;
-      const updatedItem = await storage.updateArchivedItem(id, { itemData });
-      res.json({ success: true, item: updatedItem });
+      const { newReport, itemData } = req.body;
+      
+      if (newReport) {
+        // Adding a new interview report
+        const reportData = {
+          description: newReport.description,
+          rating: newReport.rating,
+          reportedBy: req.user!.id,
+          reportedAt: new Date().toISOString(),
+        };
+        
+        // Get the current archived item to append the new report
+        const currentItem = await storage.getArchivedItems();
+        const targetItem = currentItem.find(item => item.id === id);
+        
+        if (!targetItem) {
+          return res.status(404).json({ message: "Archive item not found" });
+        }
+        
+        // Parse existing item data and add the new report
+        let existingData = JSON.parse(targetItem.itemData);
+        if (!existingData.reports) {
+          existingData.reports = [];
+        }
+        existingData.reports.push(reportData);
+        
+        const updatedItem = await storage.updateArchivedItem(id, { 
+          itemData: JSON.stringify(existingData) 
+        });
+        res.json({ success: true, item: updatedItem });
+      } else if (itemData) {
+        // Updating item data
+        const updatedItem = await storage.updateArchivedItem(id, { itemData });
+        res.json({ success: true, item: updatedItem });
+      } else {
+        res.status(400).json({ message: "No data provided for update" });
+      }
     } catch (error: any) {
+      console.error("Archive update error:", error);
       res.status(400).json({ message: error.message });
     }
   });

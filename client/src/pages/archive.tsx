@@ -268,7 +268,8 @@ export default function ArchivePage() {
     setNewReports(prev => ({
       ...prev,
       [itemId]: {
-        ...prev[itemId],
+        description: prev[itemId]?.description || '',
+        rating: prev[itemId]?.rating || '3',
         [field]: value
       }
     }));
