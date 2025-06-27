@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,8 +20,8 @@ import {
 interface NavigationItem {
   id: string;
   title: string;
-  subtitle?: string;
-  icon: React.ComponentType<any>;
+  subtitle: string;
+  icon: any;
   href: string;
   roles?: string[];
   badge?: string;
@@ -32,48 +32,106 @@ export default function NavigationBar() {
   const { user } = useAuth();
   const [location, setLocation] = useLocation();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const desktopScrollRef = useRef<HTMLDivElement>(null);
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
+
+  // Enhanced wheel scrolling with proper event handling
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const scrollAmount = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+      const element = e.currentTarget as HTMLElement;
+      element.scrollLeft += scrollAmount * 3; // Increased sensitivity
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        const element = e.currentTarget as HTMLElement;
+        const scrollAmount = e.key === 'ArrowLeft' ? -100 : 100;
+        element.scrollTo({
+          left: element.scrollLeft + scrollAmount,
+          behavior: 'smooth'
+        });
+      }
+    };
+
+    const desktopElement = desktopScrollRef.current;
+    const mobileElement = mobileScrollRef.current;
+
+    if (desktopElement) {
+      desktopElement.addEventListener('wheel', handleWheel, { passive: false });
+      desktopElement.addEventListener('keydown', handleKeyDown);
+      desktopElement.setAttribute('tabindex', '0');
+    }
+    if (mobileElement) {
+      mobileElement.addEventListener('wheel', handleWheel, { passive: false });
+      mobileElement.addEventListener('keydown', handleKeyDown);
+      mobileElement.setAttribute('tabindex', '0');
+    }
+
+    return () => {
+      if (desktopElement) {
+        desktopElement.removeEventListener('wheel', handleWheel);
+        desktopElement.removeEventListener('keydown', handleKeyDown);
+      }
+      if (mobileElement) {
+        mobileElement.removeEventListener('wheel', handleWheel);
+        mobileElement.removeEventListener('keydown', handleKeyDown);
+      }
+    };
+  }, []);
 
   const navigationItems: NavigationItem[] = [
     {
       id: "dashboard",
       title: "Dashboard",
-      subtitle: "Overview & Analytics",
+      subtitle: "Overview",
       icon: Home,
       href: "/",
-      color: "from-green-500 to-green-600"
-    },
-    {
-      id: "users",
-      title: "Users",
-      subtitle: "Employee Management",
-      icon: Users,
-      href: "/users",
-      roles: ["admin"],
       color: "from-blue-500 to-blue-600"
     },
     {
       id: "interviews",
       title: "Employee Reviews",
-      subtitle: "& Evaluations",
+      subtitle: "Evaluations",
       icon: Calendar,
       href: "/interviews",
-      color: "from-purple-500 to-purple-600"
+      color: "from-green-500 to-green-600"
     },
     {
       id: "todos",
-      title: "Employee Affairs",
-      subtitle: "Tasks & Management",
+      title: "Daily Tasks",
+      subtitle: "Management",
       icon: CheckSquare,
       href: "/todos",
-      color: "from-orange-500 to-orange-600"
+      color: "from-purple-500 to-purple-600"
     },
     {
       id: "feedback",
       title: "Feedback",
-      subtitle: "& Reviews",
+      subtitle: "Reviews",
       icon: MessageSquare,
       href: "/feedback",
-      color: "from-pink-500 to-pink-600"
+      color: "from-orange-500 to-orange-600"
+    },
+    {
+      id: "metrics",
+      title: "Employee Tracking",
+      subtitle: "Data Entry",
+      icon: BarChart3,
+      href: "/metrics",
+      color: "from-cyan-500 to-cyan-600"
+    },
+    {
+      id: "users",
+      title: "Employee Management",
+      subtitle: "Administration",
+      icon: Users,
+      href: "/users",
+      roles: ["admin"],
+      color: "from-red-500 to-red-600"
     },
     {
       id: "data-view",
@@ -131,89 +189,90 @@ export default function NavigationBar() {
           </div>
 
           {/* Navigation Items */}
-          <div 
-            className="flex items-center space-x-1 overflow-x-auto overflow-y-hidden scrollbar-hide scroll-smooth touch-scroll"
-            style={{
-              WebkitOverflowScrolling: 'touch',
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none'
-            }}
-            onWheel={(e) => {
-              e.currentTarget.scrollLeft += e.deltaY;
-            }}
-          >
-            {filteredItems.map((item) => {
-              const isItemActive = isActive(item.href);
-              const isHovered = hoveredItem === item.id;
-              
-              return (
-                <Button
-                  key={item.id}
-                  variant="ghost"
-                  onClick={() => handleNavigation(item.href)}
-                  onMouseEnter={() => setHoveredItem(item.id)}
-                  onMouseLeave={() => setHoveredItem(null)}
-                  className={`
-                    relative flex items-center space-x-2 px-3 py-2 rounded-xl transition-all duration-300 group
-                    ${isItemActive 
-                      ? `bg-gradient-to-r ${item.color} text-white shadow-lg scale-105` 
-                      : 'hover:bg-gray-50 dark:hover:bg-gray-800 hover:scale-105'
-                    }
-                    ${isHovered ? 'shadow-md' : ''}
-                  `}
-                >
-                  {/* Icon with animation */}
-                  <div className={`
-                    flex items-center justify-center w-6 h-6 rounded-lg transition-all duration-300
-                    ${isItemActive 
-                      ? 'bg-white/20 text-white' 
-                      : `bg-gradient-to-r ${item.color} text-white opacity-80 group-hover:opacity-100`
-                    }
-                    ${isHovered ? 'scale-110 rotate-3' : ''}
-                  `}>
-                    <item.icon className="h-4 w-4" />
-                  </div>
-
-                  {/* Text content */}
-                  <div className="hidden lg:flex flex-col items-start min-w-0">
-                    <span className={`
-                      text-xs font-medium truncate
-                      ${isItemActive ? 'text-white' : 'text-gray-900 dark:text-white'}
+          <div className="relative flex-1">
+            <div 
+              ref={desktopScrollRef}
+              className="flex items-center space-x-1 overflow-x-auto overflow-y-hidden scrollbar-hide scroll-smooth touch-scroll focus:outline-none"
+              style={{
+                WebkitOverflowScrolling: 'touch',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+              }}
+              title="Use mouse wheel or arrow keys to scroll horizontally"
+            >
+              {filteredItems.map((item) => {
+                const isItemActive = isActive(item.href);
+                const isHovered = hoveredItem === item.id;
+                
+                return (
+                  <Button
+                    key={item.id}
+                    variant="ghost"
+                    onClick={() => handleNavigation(item.href)}
+                    onMouseEnter={() => setHoveredItem(item.id)}
+                    onMouseLeave={() => setHoveredItem(null)}
+                    className={`
+                      relative flex items-center space-x-2 px-3 py-2 rounded-xl transition-all duration-300 group
+                      ${isItemActive 
+                        ? `bg-gradient-to-r ${item.color} text-white shadow-lg scale-105` 
+                        : 'hover:bg-gray-50 dark:hover:bg-gray-800 hover:scale-105'
+                      }
+                      ${isHovered ? 'shadow-md' : ''}
+                    `}
+                  >
+                    {/* Icon with animation */}
+                    <div className={`
+                      flex items-center justify-center w-6 h-6 rounded-lg transition-all duration-300
+                      ${isItemActive 
+                        ? 'bg-white/20 text-white' 
+                        : `bg-gradient-to-r ${item.color} text-white opacity-80 group-hover:opacity-100`
+                      }
+                      ${isHovered ? 'scale-110 rotate-3' : ''}
                     `}>
-                      {item.title}
-                    </span>
-                    {item.subtitle && (
+                      <item.icon className="h-4 w-4" />
+                    </div>
+
+                    {/* Text content */}
+                    <div className="hidden lg:flex flex-col items-start min-w-0">
                       <span className={`
-                        text-xs truncate
-                        ${isItemActive ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'}
+                        text-xs font-medium truncate
+                        ${isItemActive ? 'text-white' : 'text-gray-900 dark:text-white'}
                       `}>
-                        {item.subtitle}
+                        {item.title}
                       </span>
+                      {item.subtitle && (
+                        <span className={`
+                          text-xs opacity-70 truncate
+                          ${isItemActive ? 'text-white' : 'text-gray-600 dark:text-gray-400'}
+                        `}>
+                          {item.subtitle}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Badge */}
+                    {item.badge && (
+                      <Badge 
+                        variant="secondary" 
+                        className="ml-2 text-xs bg-white/20 text-white border-white/30"
+                      >
+                        {item.badge}
+                      </Badge>
                     )}
-                  </div>
 
-                  {/* Badge */}
-                  {item.badge && (
-                    <Badge 
-                      variant="secondary" 
-                      className="ml-2 text-xs bg-white/20 text-white border-white/30"
-                    >
-                      {item.badge}
-                    </Badge>
-                  )}
+                    {/* Active indicator */}
+                    {isItemActive && (
+                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full animate-pulse" />
+                    )}
 
-                  {/* Active indicator */}
-                  {isItemActive && (
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full animate-pulse" />
-                  )}
-
-                  {/* Hover arrow */}
-                  {isHovered && !isItemActive && (
-                    <ChevronRight className="h-3 w-3 text-gray-400 transition-all duration-300 animate-pulse" />
-                  )}
-                </Button>
-              );
-            })}
+                    {/* Hover arrow */}
+                    {isHovered && !isItemActive && (
+                      <ChevronRight className="h-3 w-3 text-gray-400 transition-all duration-300 animate-pulse" />
+                    )}
+                  </Button>
+                );
+              })}
+            </div>
           </div>
 
           {/* User role indicator */}
@@ -231,15 +290,14 @@ export default function NavigationBar() {
       {/* Mobile scrollable navigation */}
       <div className="lg:hidden border-t border-gray-200 dark:border-gray-700">
         <div 
-          className="flex items-center space-x-1 p-2 overflow-x-auto overflow-y-hidden scrollbar-hide scroll-smooth touch-scroll"
+          ref={mobileScrollRef}
+          className="flex items-center space-x-1 p-2 overflow-x-auto overflow-y-hidden scrollbar-hide scroll-smooth touch-scroll focus:outline-none"
           style={{
             WebkitOverflowScrolling: 'touch',
             scrollbarWidth: 'none',
             msOverflowStyle: 'none'
           }}
-          onWheel={(e) => {
-            e.currentTarget.scrollLeft += e.deltaY;
-          }}
+          title="Use mouse wheel or swipe to scroll horizontally"
         >
           {filteredItems.map((item) => {
             const isItemActive = isActive(item.href);
