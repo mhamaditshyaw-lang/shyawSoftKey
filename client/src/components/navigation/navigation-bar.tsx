@@ -131,7 +131,17 @@ export default function NavigationBar() {
           </div>
 
           {/* Navigation Items */}
-          <div className="flex items-center space-x-1 overflow-x-auto scrollbar-hide">
+          <div 
+            className="flex items-center space-x-1 overflow-x-auto overflow-y-hidden scrollbar-hide scroll-smooth touch-scroll"
+            style={{
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none'
+            }}
+            onWheel={(e) => {
+              e.currentTarget.scrollLeft += e.deltaY;
+            }}
+          >
             {filteredItems.map((item) => {
               const isItemActive = isActive(item.href);
               const isHovered = hoveredItem === item.id;
@@ -212,7 +222,7 @@ export default function NavigationBar() {
               variant="outline" 
               className="hidden sm:flex text-xs px-2 py-1 bg-gradient-to-r from-green-50 to-blue-50 border-green-200"
             >
-              {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)} View
+              {user?.role ? `${user.role.charAt(0).toUpperCase()}${user.role.slice(1)} View` : 'Guest View'}
             </Badge>
           </div>
         </div>
@@ -220,7 +230,17 @@ export default function NavigationBar() {
 
       {/* Mobile scrollable navigation */}
       <div className="lg:hidden border-t border-gray-200 dark:border-gray-700">
-        <div className="flex items-center space-x-1 p-2 overflow-x-auto scrollbar-hide">
+        <div 
+          className="flex items-center space-x-1 p-2 overflow-x-auto overflow-y-hidden scrollbar-hide scroll-smooth touch-scroll"
+          style={{
+            WebkitOverflowScrolling: 'touch',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
+          }}
+          onWheel={(e) => {
+            e.currentTarget.scrollLeft += e.deltaY;
+          }}
+        >
           {filteredItems.map((item) => {
             const isItemActive = isActive(item.href);
             
