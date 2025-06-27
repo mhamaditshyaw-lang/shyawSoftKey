@@ -153,15 +153,17 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       const element = e.currentTarget as HTMLElement;
-      if (element.scrollHeight > element.clientHeight) {
+      if (element && element.scrollHeight > element.clientHeight) {
         e.preventDefault();
-        element.scrollTop += e.deltaY * 3; // Increased sensitivity
+        e.stopPropagation();
+        element.scrollTop += e.deltaY * 2; // Optimized sensitivity
       }
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'PageUp' || e.key === 'PageDown') {
         e.preventDefault();
+        e.stopPropagation();
         const element = e.currentTarget as HTMLElement;
         const scrollAmount = e.key === 'ArrowUp' ? -40 : e.key === 'ArrowDown' ? 40 : e.key === 'PageUp' ? -200 : 200;
         element.scrollTo({
@@ -171,18 +173,32 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
       }
     };
 
-    // Apply to both mobile and desktop scroll containers
-    const containers = [scrollContainerRef.current, desktopScrollRef.current].filter(Boolean);
-    
-    containers.forEach(scrollElement => {
-      if (scrollElement) {
-        scrollElement.addEventListener('wheel', handleWheel, { passive: false });
-        scrollElement.addEventListener('keydown', handleKeyDown);
-        scrollElement.setAttribute('tabindex', '0');
-      }
-    });
+    // Apply to both mobile and desktop scroll containers with retry logic
+    const setupScrollHandlers = () => {
+      const containers = [scrollContainerRef.current, desktopScrollRef.current].filter(Boolean);
+      
+      containers.forEach(scrollElement => {
+        if (scrollElement) {
+          scrollElement.addEventListener('wheel', handleWheel, { passive: false });
+          scrollElement.addEventListener('keydown', handleKeyDown);
+          scrollElement.setAttribute('tabindex', '0');
+          scrollElement.style.outline = 'none';
+        }
+      });
+
+      return containers;
+    };
+
+    // Initial setup
+    let containers = setupScrollHandlers();
+
+    // Retry setup after a short delay for elements that might load later
+    const retryTimeout = setTimeout(() => {
+      containers = setupScrollHandlers();
+    }, 100);
 
     return () => {
+      clearTimeout(retryTimeout);
       containers.forEach(scrollElement => {
         if (scrollElement) {
           scrollElement.removeEventListener('wheel', handleWheel);
@@ -404,18 +420,32 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
         </div>
       </div>
 
-      {/* Glass Desktop Sidebar (hidden on mobile) */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-hidden glass-card border-r border-black/20 dark:border-white/20 px-6 pb-4 pt-20">
+      {/* Glass Desktop Sidebar (visible on desktop) */}
+      <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex lg:w-72 lg:flex-col">
+        <div className="flex grow flex-col overflow-hidden glass-card border-r border-black/20 dark:border-white/20 shadow-2xl">
+          {/* Desktop Header */}
+          <div className="flex items-center justify-center p-6 border-b border-black/20 dark:border-white/20">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-black dark:bg-white rounded-xl flex items-center justify-center shadow-lg">
+                <Target className="w-5 h-5 text-white dark:text-black" />
+              </div>
+              <h2 className="text-lg font-semibold text-black dark:text-white">
+                Navigation
+              </h2>
+            </div>
+          </div>
+          
+          {/* Desktop Scrollable Navigation */}
           <div 
             ref={desktopScrollRef}
-            className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide scroll-smooth focus:outline-none hover:scrollbar-show"
+            className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide scroll-smooth focus:outline-none hover:scrollbar-show p-6"
             style={{
               WebkitOverflowScrolling: 'touch',
               scrollbarWidth: 'thin',
               scrollbarColor: 'rgba(156, 163, 175, 0.5) transparent'
             }}
             title="Use mouse wheel or arrow keys to scroll"
+            tabIndex={0}
           >
             <nav className="space-y-2">
               {NAVIGATION.map((item, index) => (
@@ -428,6 +458,13 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
                 </div>
               ))}
             </nav>
+          </div>
+          
+          {/* Desktop Footer */}
+          <div className="p-6 border-t border-black/20 dark:border-white/20">
+            <div className="text-xs text-black/70 dark:text-white/70 text-center font-medium">
+              Office Management System
+            </div>
           </div>
         </div>
       </div>

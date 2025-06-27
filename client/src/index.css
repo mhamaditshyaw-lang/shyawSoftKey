@@ -49,6 +49,39 @@
     @apply bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-xl;
   }
 
+  /* Scrollbar Utilities */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .hover\:scrollbar-show:hover {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+  }
+  
+  .hover\:scrollbar-show:hover::-webkit-scrollbar {
+    display: block;
+    width: 6px;
+  }
+  
+  .hover\:scrollbar-show:hover::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .hover\:scrollbar-show:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 3px;
+  }
+  
+  .hover\:scrollbar-show:hover::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.7);
+  }
+
   /* Custom scrollbar styles */
   .scrollbar-hide {
     -ms-overflow-style: none;
