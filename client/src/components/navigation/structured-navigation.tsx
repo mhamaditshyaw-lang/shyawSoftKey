@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
@@ -140,6 +140,44 @@ export default function StructuredNavigation({ className }: StructuredNavigation
   const [location] = useLocation();
   const { user } = useAuth();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Enhanced scrolling with mouse wheel and keyboard support
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      const element = e.currentTarget as HTMLElement;
+      if (element.scrollHeight > element.clientHeight) {
+        e.preventDefault();
+        element.scrollTop += e.deltaY;
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'PageUp' || e.key === 'PageDown') {
+        e.preventDefault();
+        const element = e.currentTarget as HTMLElement;
+        const scrollAmount = e.key === 'ArrowUp' ? -40 : e.key === 'ArrowDown' ? 40 : e.key === 'PageUp' ? -200 : 200;
+        element.scrollTo({
+          top: element.scrollTop + scrollAmount,
+          behavior: 'smooth'
+        });
+      }
+    };
+
+    const scrollElement = scrollContainerRef.current;
+    if (scrollElement) {
+      scrollElement.addEventListener('wheel', handleWheel, { passive: false });
+      scrollElement.addEventListener('keydown', handleKeyDown);
+      scrollElement.setAttribute('tabindex', '0');
+    }
+
+    return () => {
+      if (scrollElement) {
+        scrollElement.removeEventListener('wheel', handleWheel);
+        scrollElement.removeEventListener('keydown', handleKeyDown);
+      }
+    };
+  }, []);
 
   const toggleExpanded = (segment: string) => {
     setExpandedItems(prev => 
@@ -264,8 +302,23 @@ export default function StructuredNavigation({ className }: StructuredNavigation
   };
 
   return (
-    <nav className={cn("space-y-1", className)}>
-      {NAVIGATION.map(renderNavigationItem)}
+    <nav 
+      ref={scrollContainerRef}
+      className={cn(
+        "space-y-1 overflow-y-auto overflow-x-hidden scrollbar-hide scroll-smooth focus:outline-none h-full",
+        "hover:scrollbar-show transition-all duration-300",
+        className
+      )}
+      style={{
+        WebkitOverflowScrolling: 'touch',
+        scrollbarWidth: 'thin',
+        scrollbarColor: 'rgba(156, 163, 175, 0.5) transparent'
+      }}
+      title="Use mouse wheel or arrow keys to scroll"
+    >
+      <div className="pb-4">
+        {NAVIGATION.map(renderNavigationItem)}
+      </div>
     </nav>
   );
 }
