@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
@@ -141,11 +141,56 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const desktopScrollRef = useRef<HTMLDivElement>(null);
 
   // Close menu when location changes
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
+
+  // Enhanced scrolling with mouse wheel and keyboard support
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      const element = e.currentTarget as HTMLElement;
+      if (element.scrollHeight > element.clientHeight) {
+        e.preventDefault();
+        element.scrollTop += e.deltaY * 3; // Increased sensitivity
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'PageUp' || e.key === 'PageDown') {
+        e.preventDefault();
+        const element = e.currentTarget as HTMLElement;
+        const scrollAmount = e.key === 'ArrowUp' ? -40 : e.key === 'ArrowDown' ? 40 : e.key === 'PageUp' ? -200 : 200;
+        element.scrollTo({
+          top: element.scrollTop + scrollAmount,
+          behavior: 'smooth'
+        });
+      }
+    };
+
+    // Apply to both mobile and desktop scroll containers
+    const containers = [scrollContainerRef.current, desktopScrollRef.current].filter(Boolean);
+    
+    containers.forEach(scrollElement => {
+      if (scrollElement) {
+        scrollElement.addEventListener('wheel', handleWheel, { passive: false });
+        scrollElement.addEventListener('keydown', handleKeyDown);
+        scrollElement.setAttribute('tabindex', '0');
+      }
+    });
+
+    return () => {
+      containers.forEach(scrollElement => {
+        if (scrollElement) {
+          scrollElement.removeEventListener('wheel', handleWheel);
+          scrollElement.removeEventListener('keydown', handleKeyDown);
+        }
+      });
+    };
+  }, []);
 
   const toggleExpanded = (segment: string) => {
     setExpandedItems(prev => 
@@ -328,7 +373,16 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
         </div>
 
         {/* Glass Navigation Content */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div 
+          ref={scrollContainerRef}
+          className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide scroll-smooth focus:outline-none p-4 hover:scrollbar-show"
+          style={{
+            WebkitOverflowScrolling: 'touch',
+            scrollbarWidth: 'thin',
+            scrollbarColor: 'rgba(156, 163, 175, 0.5) transparent'
+          }}
+          title="Use mouse wheel or arrow keys to scroll"
+        >
           <nav className="space-y-2">
             {NAVIGATION.map((item, index) => (
               <div 
@@ -352,18 +406,29 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
 
       {/* Glass Desktop Sidebar (hidden on mobile) */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto glass-card border-r border-black/20 dark:border-white/20 px-6 pb-4 pt-20">
-          <nav className="space-y-2">
-            {NAVIGATION.map((item, index) => (
-              <div 
-                key={index} 
-                className="animate-stagger"
-                style={{ animationDelay: `${index * 0.05}s` }}
-              >
-                {renderNavigationItem(item, index)}
-              </div>
-            ))}
-          </nav>
+        <div className="flex grow flex-col gap-y-5 overflow-hidden glass-card border-r border-black/20 dark:border-white/20 px-6 pb-4 pt-20">
+          <div 
+            ref={desktopScrollRef}
+            className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide scroll-smooth focus:outline-none hover:scrollbar-show"
+            style={{
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'thin',
+              scrollbarColor: 'rgba(156, 163, 175, 0.5) transparent'
+            }}
+            title="Use mouse wheel or arrow keys to scroll"
+          >
+            <nav className="space-y-2">
+              {NAVIGATION.map((item, index) => (
+                <div 
+                  key={index} 
+                  className="animate-stagger"
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                >
+                  {renderNavigationItem(item, index)}
+                </div>
+              ))}
+            </nav>
+          </div>
         </div>
       </div>
     </>
