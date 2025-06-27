@@ -19,9 +19,7 @@ import AllDataPage from "@/pages/all-data";
 import ReportsPage from "@/pages/reports";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/header";
-import Sidebar from "@/components/layout/sidebar";
-import PageMenu from "@/components/navigation/page-menu";
-import ResponsiveMenuBar from "@/components/navigation/responsive-menu-bar";
+import AnimatedSliderMenu from "@/components/navigation/animated-slider-menu";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -41,18 +39,14 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
-      <ResponsiveMenuBar />
+      <AnimatedSliderMenu />
       <div className="flex">
-        <Sidebar />
-        <main className="flex-1 p-4 md:p-8 pb-24 lg:pb-8">
+        <main className="flex-1 p-4 md:p-8 lg:ml-72">
           <div className="max-w-full overflow-x-hidden">
             {children}
           </div>
         </main>
       </div>
-      
-      {/* Global Page Menu */}
-      <PageMenu />
     </div>
   );
 }
