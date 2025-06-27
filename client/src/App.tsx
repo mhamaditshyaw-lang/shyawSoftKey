@@ -37,12 +37,12 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-black dark:to-gray-800">
       <Header />
       <AnimatedSliderMenu />
       <div className="flex">
         <main className="flex-1 p-4 md:p-8 lg:ml-72">
-          <div className="max-w-full overflow-x-hidden">
+          <div className="max-w-full overflow-x-hidden animate-fade-in">
             {children}
           </div>
         </main>

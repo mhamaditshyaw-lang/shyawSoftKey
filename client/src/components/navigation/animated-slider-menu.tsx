@@ -168,8 +168,8 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
   const renderNavigationItem = (item: NavigationItem, index: number) => {
     if (item.kind === 'header') {
       return (
-        <div key={index} className="px-3 py-3 mt-6 first:mt-0">
-          <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+        <div className="px-3 py-3 mt-6 first:mt-0">
+          <h3 className="text-xs font-bold text-black/80 dark:text-white/80 uppercase tracking-wider">
             {item.title}
           </h3>
         </div>
@@ -178,8 +178,8 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
 
     if (item.kind === 'divider') {
       return (
-        <div key={index} className="my-4">
-          <div className="border-t border-slate-200 dark:border-slate-700" />
+        <div className="my-4">
+          <div className="border-t border-black/20 dark:border-white/20" />
         </div>
       );
     }
@@ -191,15 +191,15 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
     const active = item.segment && isActive(item.segment);
 
     return (
-      <div key={index} className="transform transition-all duration-200 hover:scale-105">
+      <div className="transform transition-all duration-300 hover:scale-105">
         {hasChildren ? (
           <button
             onClick={() => item.segment && toggleExpanded(item.segment)}
             className={cn(
-              "w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 group",
+              "w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 group glass-button",
               active
-                ? "bg-gradient-to-r from-black to-gray-800 text-white shadow-lg shadow-gray-400/20 dark:shadow-gray-900/40"
-                : "text-slate-700 dark:text-slate-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-700 hover:text-black dark:hover:text-gray-200"
+                ? "bg-black dark:bg-white text-white dark:text-black shadow-2xl"
+                : "text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10"
             )}
           >
             <div className="flex items-center space-x-3">
@@ -213,7 +213,7 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
             </div>
             <div className={cn(
               "transition-all duration-300",
-              isExpanded ? "rotate-90 text-black dark:text-gray-200" : "group-hover:translate-x-1"
+              isExpanded ? "rotate-90 text-black dark:text-white" : "group-hover:translate-x-1"
             )}>
               <ChevronRight className="w-4 h-4" />
             </div>
@@ -221,10 +221,10 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
         ) : (
           <Link href={`/${item.segment}`}>
             <div className={cn(
-              "flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 cursor-pointer group",
+              "flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 cursor-pointer group glass-button",
               active
-                ? "bg-gradient-to-r from-black to-gray-800 text-white shadow-lg shadow-gray-400/20 dark:shadow-gray-900/40"
-                : "text-slate-700 dark:text-slate-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-700 hover:text-black dark:hover:text-gray-200"
+                ? "bg-black dark:bg-white text-white dark:text-black shadow-2xl"
+                : "text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10"
             )}>
               <div className={cn(
                 "transition-all duration-300 group-hover:rotate-12 group-hover:scale-110",
@@ -248,14 +248,14 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
                 return (
                   <Link key={childIndex} href={`/${child.segment}`}>
                     <div className={cn(
-                      "flex items-center space-x-3 px-3 py-2 text-sm rounded-lg transition-all duration-300 cursor-pointer group",
+                      "flex items-center space-x-3 px-3 py-2 text-sm rounded-lg transition-all duration-300 cursor-pointer group glass-button",
                       childActive
-                        ? "bg-gray-100 dark:bg-gray-900/30 text-black dark:text-gray-200 border-l-3 border-black dark:border-gray-300 shadow-md"
-                        : "text-slate-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-black dark:hover:text-gray-200 hover:border-l-3 hover:border-gray-300"
+                        ? "bg-black/10 dark:bg-white/10 text-black dark:text-white border-l-4 border-black dark:border-white shadow-lg"
+                        : "text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white hover:border-l-4 hover:border-black/30 dark:hover:border-white/30"
                     )}>
                       <div className={cn(
                         "transition-all duration-300 group-hover:scale-110",
-                        childActive ? "text-black dark:text-gray-200" : "text-slate-400 dark:text-slate-500 group-hover:text-black dark:group-hover:text-gray-200"
+                        childActive ? "text-black dark:text-white" : "text-black/60 dark:text-white/60 group-hover:text-black dark:group-hover:text-white"
                       )}>
                         {child.icon}
                       </div>
@@ -292,28 +292,28 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
         <Menu className="h-4 w-4 text-slate-600 dark:text-slate-400" />
       </Button>
 
-      {/* Overlay */}
+      {/* Glass Overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-40 lg:hidden transition-all duration-300"
+          className="fixed inset-0 bg-black/30 dark:bg-white/10 backdrop-blur-lg z-40 lg:hidden animate-fade-in"
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      {/* Slider Menu */}
+      {/* Glass Slider Menu */}
       <div className={cn(
-        "fixed top-0 left-0 h-full w-80 bg-white dark:bg-gray-900 shadow-2xl z-50 lg:hidden",
-        "border-r border-slate-200 dark:border-slate-700",
+        "fixed top-0 left-0 h-full w-80 glass-card shadow-2xl z-50 lg:hidden",
+        "border-r border-black/20 dark:border-white/20",
         "transform transition-all duration-500 ease-in-out",
-        isOpen ? "translate-x-0" : "-translate-x-full"
+        isOpen ? "translate-x-0 animate-slide-up" : "-translate-x-full"
       )}>
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700">
+        {/* Glass Header */}
+        <div className="flex items-center justify-between p-6 border-b border-black/20 dark:border-white/20 glass-card">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-black to-gray-800 rounded-lg flex items-center justify-center">
-              <Target className="w-5 h-5 text-white" />
+            <div className="w-8 h-8 bg-black dark:bg-white rounded-xl flex items-center justify-center shadow-lg">
+              <Target className="w-5 h-5 text-white dark:text-black" />
             </div>
-            <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
+            <h2 className="text-lg font-semibold text-black dark:text-white">
               Navigation
             </h2>
           </div>
@@ -321,32 +321,48 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
             variant="ghost"
             size="sm"
             onClick={() => setIsOpen(false)}
-            className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200 hover:scale-110"
+            className="glass-button hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300 hover:scale-110 rounded-xl"
           >
             <X className="h-4 w-4" />
           </Button>
         </div>
 
-        {/* Navigation Content */}
+        {/* Glass Navigation Content */}
         <div className="flex-1 overflow-y-auto p-4">
           <nav className="space-y-2">
-            {NAVIGATION.map(renderNavigationItem)}
+            {NAVIGATION.map((item, index) => (
+              <div 
+                key={index} 
+                className="animate-stagger"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                {renderNavigationItem(item, index)}
+              </div>
+            ))}
           </nav>
         </div>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
-          <div className="text-xs text-slate-500 dark:text-slate-400 text-center">
+        {/* Glass Footer */}
+        <div className="p-4 border-t border-black/20 dark:border-white/20 glass-card">
+          <div className="text-xs text-black/70 dark:text-white/70 text-center font-medium">
             Office Management System
           </div>
         </div>
       </div>
 
-      {/* Desktop Sidebar (hidden on mobile) */}
+      {/* Glass Desktop Sidebar (hidden on mobile) */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 px-6 pb-4 pt-20">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto glass-card border-r border-black/20 dark:border-white/20 px-6 pb-4 pt-20">
           <nav className="space-y-2">
-            {NAVIGATION.map(renderNavigationItem)}
+            {NAVIGATION.map((item, index) => (
+              <div 
+                key={index} 
+                className="animate-stagger"
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                {renderNavigationItem(item, index)}
+              </div>
+            ))}
           </nav>
         </div>
       </div>
