@@ -198,8 +198,8 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
             className={cn(
               "w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 group",
               active
-                ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/20"
-                : "text-slate-700 dark:text-slate-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-slate-800 dark:hover:to-slate-700 hover:text-blue-600 dark:hover:text-blue-400"
+                ? "bg-gradient-to-r from-black to-gray-800 text-white shadow-lg shadow-gray-400/20 dark:shadow-gray-900/40"
+                : "text-slate-700 dark:text-slate-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-700 hover:text-black dark:hover:text-gray-200"
             )}
           >
             <div className="flex items-center space-x-3">
@@ -213,7 +213,7 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
             </div>
             <div className={cn(
               "transition-all duration-300",
-              isExpanded ? "rotate-90 text-blue-500" : "group-hover:translate-x-1"
+              isExpanded ? "rotate-90 text-black dark:text-gray-200" : "group-hover:translate-x-1"
             )}>
               <ChevronRight className="w-4 h-4" />
             </div>
@@ -223,8 +223,8 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
             <div className={cn(
               "flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 cursor-pointer group",
               active
-                ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/20"
-                : "text-slate-700 dark:text-slate-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-slate-800 dark:hover:to-slate-700 hover:text-blue-600 dark:hover:text-blue-400"
+                ? "bg-gradient-to-r from-black to-gray-800 text-white shadow-lg shadow-gray-400/20 dark:shadow-gray-900/40"
+                : "text-slate-700 dark:text-slate-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-700 hover:text-black dark:hover:text-gray-200"
             )}>
               <div className={cn(
                 "transition-all duration-300 group-hover:rotate-12 group-hover:scale-110",
@@ -250,12 +250,12 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
                     <div className={cn(
                       "flex items-center space-x-3 px-3 py-2 text-sm rounded-lg transition-all duration-300 cursor-pointer group",
                       childActive
-                        ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-l-3 border-blue-500 shadow-md"
-                        : "text-slate-600 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-slate-800/50 hover:text-blue-600 dark:hover:text-blue-400 hover:border-l-3 hover:border-blue-300"
+                        ? "bg-gray-100 dark:bg-gray-900/30 text-black dark:text-gray-200 border-l-3 border-black dark:border-gray-300 shadow-md"
+                        : "text-slate-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-black dark:hover:text-gray-200 hover:border-l-3 hover:border-gray-300"
                     )}>
                       <div className={cn(
                         "transition-all duration-300 group-hover:scale-110",
-                        childActive ? "text-blue-600 dark:text-blue-400" : "text-slate-400 dark:text-slate-500 group-hover:text-blue-500"
+                        childActive ? "text-black dark:text-gray-200" : "text-slate-400 dark:text-slate-500 group-hover:text-black dark:group-hover:text-gray-200"
                       )}>
                         {child.icon}
                       </div>
@@ -308,9 +308,9 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700">
+        <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-r from-black to-gray-800 rounded-lg flex items-center justify-center">
               <Target className="w-5 h-5 text-white" />
             </div>
             <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
@@ -335,7 +335,7 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-800 dark:to-gray-800">
+        <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
           <div className="text-xs text-slate-500 dark:text-slate-400 text-center">
             Office Management System
           </div>
