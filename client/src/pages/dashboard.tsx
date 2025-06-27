@@ -1,18 +1,16 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/use-auth";
 import { authenticatedRequest } from "@/lib/auth";
 import { useLocation } from "wouter";
 import { getRelativeTime } from "@/lib/utils";
-import { motion } from "framer-motion";
 import { queryClient } from "@/lib/queryClient";
+import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from "@/components/ui/glass-card";
+import { GlassButton } from "@/components/ui/glass-button";
+import { GlassBadge } from "@/components/ui/glass-badge";
+import { SearchFilter } from "@/components/ui/search-filter";
+import { LoadingSkeleton, CardSkeleton } from "@/components/ui/loading-skeleton";
+import { Link } from "wouter";
 import {
   Users,
   Clock,
@@ -41,17 +39,15 @@ export default function DashboardPage() {
   const [customDate, setCustomDate] = useState("");
   const [autoRefresh, setAutoRefresh] = useState(true);
 
-  const { data: stats, isLoading } = useQuery({
+  const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ["/api/stats"],
     queryFn: async () => {
-      if (user?.role !== "admin") return null;
       const response = await authenticatedRequest("GET", "/api/stats");
       return await response.json();
     },
-    enabled: user?.role === "admin",
   });
 
-  const { data: recentTodos } = useQuery({
+  const { data: recentTodos, isLoading: todosLoading } = useQuery({
     queryKey: ["/api/todos"],
     queryFn: async () => {
       const response = await authenticatedRequest("GET", "/api/todos");
@@ -59,10 +55,18 @@ export default function DashboardPage() {
     },
   });
 
-  const { data: interviewsData } = useQuery({
+  const { data: interviewsData, isLoading: interviewsLoading } = useQuery({
     queryKey: ["/api/interviews"],
     queryFn: async () => {
       const response = await authenticatedRequest("GET", "/api/interviews");
+      return await response.json();
+    },
+  });
+
+  const { data: notifications, isLoading: notificationsLoading } = useQuery({
+    queryKey: ["/api/notifications"],
+    queryFn: async () => {
+      const response = await authenticatedRequest("GET", "/api/notifications");
       return await response.json();
     },
   });
