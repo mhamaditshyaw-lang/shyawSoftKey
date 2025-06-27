@@ -5,11 +5,19 @@ import { authenticatedRequest } from "@/lib/auth";
 import { useLocation } from "wouter";
 import { getRelativeTime } from "@/lib/utils";
 import { queryClient } from "@/lib/queryClient";
+import { motion, AnimatePresence } from "framer-motion";
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from "@/components/ui/glass-card";
 import { GlassButton } from "@/components/ui/glass-button";
 import { GlassBadge } from "@/components/ui/glass-badge";
 import { SearchFilter } from "@/components/ui/search-filter";
 import { LoadingSkeleton, CardSkeleton } from "@/components/ui/loading-skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Link } from "wouter";
 import {
   Users,
@@ -289,6 +297,8 @@ export default function DashboardPage() {
       transition: { duration: 0.5 }
     }
   };
+
+  const isLoading = statsLoading || todosLoading || interviewsLoading || notificationsLoading;
 
   if (isLoading) {
     return (
