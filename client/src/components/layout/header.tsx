@@ -1,11 +1,11 @@
-import { Building, User, LogOut, Search } from "lucide-react";
+import { Building2, User, LogOut, Search } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 import NotificationBell from "@/components/notifications/notification-bell";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { GlassBadge } from "@/components/ui/glass-badge";
-import { GlassButton } from "@/components/ui/glass-button";
-import { GlassInput } from "@/components/ui/glass-input";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
 export default function Header() {
@@ -14,72 +14,81 @@ export default function Header() {
 
   if (!user) return null;
 
-  const getRoleBadgeVariant = (role: string) => {
+  const getRoleBadgeClass = (role: string) => {
     switch (role) {
       case "admin":
-        return "danger";
+        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
       case "manager":
-        return "info";
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
       case "secretary":
-        return "success";
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
       default:
-        return "default";
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
     }
   };
 
   return (
-    <header className="glass-card border-b border-black/20 dark:border-white/20 sticky top-0 z-40 backdrop-blur-lg">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 shadow-sm">
       <div className="w-full max-w-7xl mx-auto px-4 lg:px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4 lg:ml-0 ml-12">
-            <div className="w-10 h-10 bg-black dark:bg-white rounded-xl flex items-center justify-center shadow-lg">
-              <Building className="w-6 h-6 text-white dark:text-black" />
+            <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+              <Building2 className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-black dark:text-white">Office Management</h1>
-              <GlassBadge 
-                variant={getRoleBadgeVariant(user.role) as any}
-                size="sm"
-              >
+              <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                HR Management System
+              </h1>
+              <Badge className={`text-xs ${getRoleBadgeClass(user.role)}`}>
                 {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-              </GlassBadge>
+              </Badge>
             </div>
           </div>
 
           {/* Search Bar */}
           <div className="hidden md:flex flex-1 max-w-md mx-8">
-            <GlassInput
-              placeholder="Search across system..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              icon={<Search className="w-4 h-4" />}
-            />
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search employees, documents..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 bg-background/50 border-border focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              />
+            </div>
           </div>
 
+          {/* Right Section */}
           <div className="flex items-center space-x-4">
-            <ThemeToggle />
+            <div className="hidden lg:flex items-center space-x-2">
+              <ThemeToggle />
+            </div>
+
+            {/* Notifications */}
             <NotificationBell />
 
-            <div className="flex items-center space-x-3 glass-card px-3 py-2 rounded-xl">
-              <Avatar className="w-8 h-8">
-                <AvatarFallback className="bg-black dark:bg-white">
-                  <User className="w-4 h-4 text-white dark:text-black" />
+            {/* User Profile */}
+            <div className="flex items-center space-x-3">
+              <div className="hidden md:flex flex-col items-end">
+                <span className="text-sm font-medium text-foreground">{user.username}</span>
+                <span className="text-xs text-muted-foreground">{user.email}</span>
+              </div>
+              
+              <Avatar className="h-10 w-10 ring-2 ring-indigo-200 dark:ring-indigo-700">
+                <AvatarFallback className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold">
+                  {user.username.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="text-right hidden lg:block">
-                <p className="text-sm font-medium text-black dark:text-white">
-                  {user.firstName} {user.lastName}
-                </p>
-                <p className="text-xs text-black/70 dark:text-white/70">{user.email}</p>
-              </div>
-              <GlassButton
-                variant="default"
+
+              <Button
+                variant="ghost"
                 size="sm"
                 onClick={logout}
-                className="hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400"
+                className="text-muted-foreground hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
               >
                 <LogOut className="w-4 h-4" />
-              </GlassButton>
+              </Button>
             </div>
           </div>
         </div>

@@ -229,20 +229,14 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
   const renderNavigationItem = (item: NavigationItem, index: number) => {
     if (item.kind === 'header') {
       return (
-        <div className="px-3 py-3 mt-6 first:mt-0">
-          <h3 className="text-xs font-bold text-black/80 dark:text-white/80 uppercase tracking-wider">
-            {item.title}
-          </h3>
+        <div className="px-4 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wider border-b border-border/50 mb-2">
+          {item.title}
         </div>
       );
     }
 
     if (item.kind === 'divider') {
-      return (
-        <div className="my-4">
-          <div className="border-t border-black/20 dark:border-white/20" />
-        </div>
-      );
+      return <div className="my-4 h-px bg-border" />;
     }
 
     if (!hasAccess(item)) return null;
@@ -257,43 +251,32 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
           <button
             onClick={() => item.segment && toggleExpanded(item.segment)}
             className={cn(
-              "w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 group glass-button",
-              active
-                ? "bg-black dark:bg-white text-white dark:text-black shadow-2xl"
-                : "text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10"
+              "w-full hr-nav-item",
+              active && "active",
+              isExpanded && "bg-indigo-50 text-indigo-700"
             )}
           >
-            <div className="flex items-center space-x-3">
-              <div className={cn(
-                "transition-all duration-300 group-hover:rotate-12 group-hover:scale-110",
-                active ? "text-white" : "text-slate-500 dark:text-slate-400 group-hover:text-blue-500"
-              )}>
-                {item.icon}
-              </div>
-              <span className="transition-all duration-300 group-hover:translate-x-1">{item.title}</span>
+            <div className="hr-nav-icon">
+              {item.icon}
             </div>
-            <div className={cn(
-              "transition-all duration-300",
-              isExpanded ? "rotate-90 text-black dark:text-white" : "group-hover:translate-x-1"
-            )}>
-              <ChevronRight className="w-4 h-4" />
-            </div>
+            <span className="flex-1 text-left transition-all duration-200 group-hover:translate-x-1">{item.title}</span>
+            <ChevronRight 
+              className={cn(
+                "w-4 h-4 transition-all duration-200",
+                isExpanded ? "rotate-90 text-indigo-600" : "text-muted-foreground"
+              )}
+            />
           </button>
         ) : (
           <Link href={`/${item.segment}`}>
             <div className={cn(
-              "flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 cursor-pointer group glass-button",
-              active
-                ? "bg-black dark:bg-white text-white dark:text-black shadow-2xl"
-                : "text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10"
+              "hr-nav-item",
+              active && "active"
             )}>
-              <div className={cn(
-                "transition-all duration-300 group-hover:rotate-12 group-hover:scale-110",
-                active ? "text-white" : "text-slate-500 dark:text-slate-400 group-hover:text-blue-500"
-              )}>
+              <div className="hr-nav-icon">
                 {item.icon}
               </div>
-              <span className="transition-all duration-300 group-hover:translate-x-1">{item.title}</span>
+              <span className="transition-all duration-200 group-hover:translate-x-1">{item.title}</span>
             </div>
           </Link>
         )}
@@ -420,39 +403,40 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
         </div>
       </div>
 
-      {/* Glass Desktop Sidebar (visible on desktop) */}
+      {/* Modern HR Desktop Sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex lg:w-72 lg:flex-col">
-        <div className="flex grow flex-col overflow-hidden glass-card border-r border-black/20 dark:border-white/20 shadow-2xl">
-          {/* Desktop Header */}
-          <div className="flex items-center justify-center p-6 border-b border-black/20 dark:border-white/20">
+        <div className="flex grow flex-col overflow-hidden hr-sidebar">
+          {/* Modern Header */}
+          <div className="hr-card-header">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-black dark:bg-white rounded-xl flex items-center justify-center shadow-lg">
-                <Target className="w-5 h-5 text-white dark:text-black" />
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                <Target className="w-6 h-6 text-white" />
               </div>
-              <h2 className="text-lg font-semibold text-black dark:text-white">
-                Navigation
-              </h2>
+              <div>
+                <h2 className="text-xl font-bold text-white">HR System</h2>
+                <p className="text-indigo-100 text-sm">Management Portal</p>
+              </div>
             </div>
           </div>
           
-          {/* Desktop Scrollable Navigation */}
+          {/* Navigation Content */}
           <div 
             ref={desktopScrollRef}
-            className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide scroll-smooth focus:outline-none hover:scrollbar-show p-6"
+            className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide scroll-smooth focus:outline-none hover:scrollbar-show p-4"
             style={{
               WebkitOverflowScrolling: 'touch',
               scrollbarWidth: 'thin',
-              scrollbarColor: 'rgba(156, 163, 175, 0.5) transparent'
+              scrollbarColor: 'rgba(99, 102, 241, 0.3) transparent'
             }}
             title="Use mouse wheel or arrow keys to scroll"
             tabIndex={0}
           >
-            <nav className="space-y-2">
+            <nav className="space-y-1">
               {NAVIGATION.map((item, index) => (
                 <div 
                   key={index} 
-                  className="animate-stagger"
-                  style={{ animationDelay: `${index * 0.05}s` }}
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${index * 0.03}s` }}
                 >
                   {renderNavigationItem(item, index)}
                 </div>
@@ -460,10 +444,11 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
             </nav>
           </div>
           
-          {/* Desktop Footer */}
-          <div className="p-6 border-t border-black/20 dark:border-white/20">
-            <div className="text-xs text-black/70 dark:text-white/70 text-center font-medium">
-              Office Management System
+          {/* Modern Footer */}
+          <div className="p-4 border-t border-border">
+            <div className="flex items-center justify-center space-x-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-xs text-muted-foreground font-medium">System Online</span>
             </div>
           </div>
         </div>

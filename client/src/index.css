@@ -4,39 +4,75 @@
 
 @layer base {
   :root {
-    /* Glass Morphism Colors */
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --glass-shadow: rgba(0, 0, 0, 0.1);
+    /* Modern HR System Colors */
+    --primary: 220 38% 97%;
+    --primary-foreground: 220 9% 46%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 9% 46%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 220 9% 46%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 262 83% 58%;
+    --background: 0 0% 100%;
+    --foreground: 224 71% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71% 4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71% 4%;
+
+    /* HR Brand Colors */
+    --hr-primary: #6366f1;
+    --hr-primary-dark: #4f46e5;
+    --hr-primary-light: #a5b4fc;
+    --hr-secondary: #06b6d4;
+    --hr-success: #10b981;
+    --hr-warning: #f59e0b;
+    --hr-error: #ef4444;
     
-    /* Professional Black & White */
-    --primary-black: #000000;
-    --primary-white: #ffffff;
-    --gray-50: #fafafa;
-    --gray-100: #f5f5f5;
-    --gray-200: #e5e5e5;
-    --gray-300: #d4d4d4;
-    --gray-400: #a3a3a3;
-    --gray-500: #737373;
-    --gray-600: #525252;
-    --gray-700: #404040;
-    --gray-800: #262626;
-    --gray-900: #171717;
+    /* Modern Gradients */
+    --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    --gradient-secondary: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+    --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
     
     /* Animation Variables */
     --animation-speed: 300ms;
     --animation-curve: cubic-bezier(0.4, 0, 0.2, 1);
     
-    /* Backdrop Blur */
-    --blur-sm: blur(4px);
-    --blur-md: blur(8px);
-    --blur-lg: blur(16px);
+    /* Border Radius */
+    --radius: 0.75rem;
   }
 
   .dark {
-    --glass-bg: rgba(0, 0, 0, 0.2);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --glass-shadow: rgba(255, 255, 255, 0.05);
+    --background: 224 71% 4%;
+    --foreground: 210 20% 98%;
+    --card: 224 71% 4%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71% 4%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 210 20% 98%;
+    --primary-foreground: 220 9% 46%;
+    --secondary: 215 28% 17%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 28% 17%;
+    --muted-foreground: 217 11% 65%;
+    --accent: 215 28% 17%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --ring: 263 70% 50%;
   }
   
   * {
@@ -45,8 +81,61 @@
 }
 
 @layer components {
-  .glass-card {
-    @apply bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-xl;
+  /* Modern HR Card Components */
+  .hr-card {
+    @apply bg-card text-card-foreground rounded-xl border border-border shadow-md hover:shadow-lg transition-all duration-300;
+  }
+  
+  .hr-card-header {
+    @apply bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-t-xl p-6;
+  }
+  
+  .hr-card-content {
+    @apply p-6;
+  }
+  
+  .hr-sidebar {
+    @apply bg-card border-r border-border shadow-xl;
+  }
+  
+  .hr-nav-item {
+    @apply flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-indigo-50 hover:text-indigo-700;
+  }
+  
+  .hr-nav-item.active {
+    @apply bg-indigo-100 text-indigo-700 shadow-sm;
+  }
+  
+  .hr-nav-item:hover .hr-nav-icon {
+    @apply text-indigo-600 scale-105;
+  }
+  
+  .hr-nav-icon {
+    @apply mr-3 h-5 w-5 text-muted-foreground transition-all duration-200;
+  }
+  
+  .hr-button-primary {
+    @apply bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200;
+  }
+  
+  .hr-button-secondary {
+    @apply bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200;
+  }
+  
+  .hr-stats-card {
+    @apply bg-gradient-to-br from-white to-gray-50 border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300;
+  }
+  
+  .hr-badge-success {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800;
+  }
+  
+  .hr-badge-warning {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800;
+  }
+  
+  .hr-badge-info {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800;
   }
 
   /* Scrollbar Utilities */
@@ -61,12 +150,12 @@
   
   .hover\:scrollbar-show:hover {
     scrollbar-width: thin;
-    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+    scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
   }
   
   .hover\:scrollbar-show:hover::-webkit-scrollbar {
     display: block;
-    width: 6px;
+    width: 4px;
   }
   
   .hover\:scrollbar-show:hover::-webkit-scrollbar-track {
@@ -74,12 +163,12 @@
   }
   
   .hover\:scrollbar-show:hover::-webkit-scrollbar-thumb {
-    background-color: rgba(156, 163, 175, 0.5);
-    border-radius: 3px;
+    background-color: rgba(99, 102, 241, 0.3);
+    border-radius: 2px;
   }
   
   .hover\:scrollbar-show:hover::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(156, 163, 175, 0.7);
+    background-color: rgba(99, 102, 241, 0.5);
   }
 
   /* Custom scrollbar styles */
