@@ -15,6 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import { useTheme } from "@/hooks/use-theme";
 import { Moon, Sun } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { useTranslation } from "react-i18next";
 
 interface DashboardHeaderProps {
   onMenuClick?: () => void;
@@ -25,6 +27,7 @@ export function DashboardHeader({ onMenuClick, notificationCount = 0 }: Dashboar
   const [searchValue, setSearchValue] = useState("");
   const { theme, setTheme, isDark } = useTheme();
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
@@ -102,6 +105,9 @@ export function DashboardHeader({ onMenuClick, notificationCount = 0 }: Dashboar
               </Badge>
             )}
           </Button>
+
+          {/* Language Switcher */}
+          <LanguageSwitcher />
 
           {/* User Menu */}
           <DropdownMenu>

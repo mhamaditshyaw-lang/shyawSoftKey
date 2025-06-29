@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
+import { useTranslation } from "react-i18next";
 
 interface SidebarProps {
   isCollapsed?: boolean;
@@ -30,59 +31,60 @@ interface SidebarProps {
 export function DashboardSidebar({ isCollapsed = false, onToggle, className }: SidebarProps) {
   const [location] = useLocation();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const navigationItems = [
     {
-      title: "Dashboard",
+      title: t("dashboard"),
       href: "/",
       icon: Home,
       badge: null,
       roles: ["admin", "manager", "secretary"]
     },
     {
-      title: "Users",
+      title: t("users"),
       href: "/users",
       icon: Users,
       badge: null,
       roles: ["admin", "manager"]
     },
     {
-      title: "Todo Management",
+      title: t("todos"),
       href: "/todos",
       icon: CheckSquare,
       badge: null,
       roles: ["admin", "manager", "secretary"]
     },
     {
-      title: "Daily Tasks",
+      title: t("dailyTasks"),
       href: "/daily-tasks",
       icon: Zap,
       badge: "New",
       roles: ["admin", "manager", "secretary"]
     },
     {
-      title: "Employee Reviews",
+      title: t("interviews"),
       href: "/interviews",
       icon: UserCheck,
       badge: null,
       roles: ["admin", "manager", "secretary"]
     },
     {
-      title: "Reports",
+      title: t("reports"),
       href: "/reports",
       icon: BarChart3,
       badge: null,
       roles: ["admin", "manager"]
     },
     {
-      title: "Feedback & Reviews",
+      title: t("feedback"),
       href: "/feedback",
       icon: MessageSquare,
       badge: null,
       roles: ["admin", "manager", "secretary"]
     },
     {
-      title: "Archive",
+      title: t("archive"),
       href: "/archive",
       icon: Archive,
       badge: null,

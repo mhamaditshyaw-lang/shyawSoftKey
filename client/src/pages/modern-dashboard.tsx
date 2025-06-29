@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { authenticatedRequest } from "@/lib/auth";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +29,7 @@ import {
 export default function ModernDashboard() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
+  const { t } = useTranslation();
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // Update time every minute
@@ -148,7 +150,7 @@ export default function ModernDashboard() {
                 })}
               </p>
               <p className="text-sm text-dashboard-secondary/60 dark:text-dashboard-text-dark/60">
-                Welcome to your administration dashboard
+                {t("welcomeBack")} {user?.username}
               </p>
             </div>
             <div className="hidden md:flex items-center gap-2">
