@@ -11,6 +11,16 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
+        // Dashboard color palette
+        'dashboard-primary': '#2563EB', // blue-600
+        'dashboard-secondary': '#374151', // gray-700
+        'dashboard-accent': '#10B981', // emerald-500
+        'dashboard-error': '#DC2626', // red-600
+        'dashboard-bg-light': '#F9FAFB', // gray-50
+        'dashboard-bg-dark': '#1F2937', // gray-900
+        'dashboard-text-light': '#111827',
+        'dashboard-text-dark': '#F3F4F6',
+        // Keep existing shadcn variables for compatibility
         background: "var(--background)",
         foreground: "var(--foreground)",
         card: {

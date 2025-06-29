@@ -7,7 +7,7 @@ import { NotificationProvider } from "@/hooks/use-notifications";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { queryClient } from "./lib/queryClient";
 import LoginPage from "@/pages/login";
-import DashboardPage from "@/pages/dashboard";
+import ModernDashboard from "@/pages/modern-dashboard";
 import UsersPage from "@/pages/users";
 import InterviewsPage from "@/pages/interviews";
 import TodosPage from "@/pages/todos";
@@ -26,8 +26,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center bg-dashboard-bg-light dark:bg-dashboard-bg-dark">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-dashboard-primary border-t-transparent"></div>
       </div>
     );
   }
@@ -36,19 +36,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <LoginPage />;
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <SlidingSidebarMenu />
-      <div className="flex">
-        <main className="flex-1 p-4 md:p-8">
-          <div className="max-w-full overflow-x-hidden animate-fade-in">
-            {children}
-          </div>
-        </main>
-      </div>
-    </div>
-  );
+  return <>{children}</>;
 }
 
 function Router() {
@@ -57,7 +45,7 @@ function Router() {
       <Route path="/login" component={LoginPage} />
       <Route path="/">
         <ProtectedRoute>
-          <DashboardPage />
+          <ModernDashboard />
         </ProtectedRoute>
       </Route>
       <Route path="/users">

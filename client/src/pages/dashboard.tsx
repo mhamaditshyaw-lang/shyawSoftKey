@@ -6,11 +6,8 @@ import { useLocation } from "wouter";
 import { getRelativeTime } from "@/lib/utils";
 import { queryClient } from "@/lib/queryClient";
 import { motion, AnimatePresence } from "framer-motion";
-import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from "@/components/ui/glass-card";
-import { GlassButton } from "@/components/ui/glass-button";
-import { GlassBadge } from "@/components/ui/glass-badge";
-import { SearchFilter } from "@/components/ui/search-filter";
-import { LoadingSkeleton, CardSkeleton } from "@/components/ui/loading-skeleton";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { StatsCards } from "@/components/dashboard/stats-cards";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,9 +20,6 @@ import {
   Users,
   Clock,
   CheckCircle,
-  Server,
-  ArrowUp,
-  UserPlus,
   Calendar,
   PlusCircle,
   BarChart3,
@@ -36,6 +30,7 @@ import {
   Search,
   RefreshCw,
   Filter,
+  ArrowRight,
 } from "lucide-react";
 
 export default function DashboardPage() {
