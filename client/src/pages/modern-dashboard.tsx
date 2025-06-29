@@ -80,7 +80,7 @@ export default function ModernDashboard() {
 
   const recentTodosList = recentTodos?.todoLists?.slice(0, 5) || [];
   const recentInterviews = interviewsData?.requests?.slice(0, 3) || [];
-  const unreadNotifications = notifications?.filter((n: any) => !n.isRead) || [];
+  const unreadNotifications = (notifications?.notifications || notifications || []).filter?.((n: any) => !n.isRead) || [];
 
   const quickActions = [
     {
