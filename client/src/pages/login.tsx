@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Leaf, Users, CheckCircle } from "lucide-react";
+import { Shield, Users, CheckCircle, User, Lock } from "lucide-react";
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -77,22 +77,22 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left Panel - Branding */}
-      <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-green-600 via-green-700 to-emerald-800 flex-col justify-center items-center p-8 lg:p-12 relative overflow-hidden">
+      <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-red-600 via-red-700 to-red-800 flex-col justify-center items-center p-8 lg:p-12 relative overflow-hidden animate-slide-in">
         {/* Background decorations */}
-        <div className="absolute inset-0 bg-gradient-to-r from-green-600/20 to-emerald-600/20"></div>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-l from-emerald-400/10 to-transparent rounded-full -translate-y-32 translate-x-32"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-r from-green-400/10 to-transparent rounded-full translate-y-24 -translate-x-24"></div>
-        <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-emerald-300/5 rounded-full"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 to-red-700/20"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-l from-red-400/10 to-transparent rounded-full -translate-y-32 translate-x-32 animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-r from-red-400/10 to-transparent rounded-full translate-y-24 -translate-x-24 animate-bounce"></div>
+        <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-red-300/5 rounded-full animate-pulse"></div>
         
-        <div className="text-center text-white relative z-10">
+        <div className="text-center text-white relative z-10 animate-fade-in">
           <div className="flex justify-center items-center space-x-3 mb-6">
-            <Leaf className="w-16 h-16 text-green-200" />
-            <Users className="w-12 h-12 text-emerald-200" />
-            <CheckCircle className="w-10 h-10 text-green-300" />
+            <Shield className="w-16 h-16 text-red-200 animate-pulse-hover" />
+            <Users className="w-12 h-12 text-red-200 animate-bounce-hover" />
+            <CheckCircle className="w-10 h-10 text-red-300 animate-pulse-hover" />
           </div>
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-green-100 bg-clip-text text-transparent">ManageFlow</h1>
-          <p className="text-xl text-green-100 mb-2">Professional Management System</p>
-          <p className="text-green-200">Streamline your workflow with role-based management</p>
+          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-red-100 bg-clip-text text-transparent">Administration Shyaw System</h1>
+          <p className="text-xl text-red-100 mb-2">Professional Administration Platform</p>
+          <p className="text-red-200">Secure and efficient administrative management</p>
           
           {/* Feature highlights */}
           <div className="mt-8 space-y-3 text-left max-w-sm">
@@ -113,45 +113,56 @@ export default function LoginPage() {
       </div>
 
       {/* Right Panel - Auth Forms */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8 bg-gradient-to-br from-green-50 to-emerald-50 md:bg-none">
-        <div className="w-full max-w-md">
+      <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8 bg-gradient-to-br from-red-50 to-white md:bg-none">
+        <div className="w-full max-w-md animate-fade-in">
           {isLogin ? (
-            <Card className="border-green-100 shadow-lg">
+            <Card className="border-red-100 shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse-hover">
               <CardHeader className="text-center">
-                <CardTitle className="text-3xl text-green-800">Welcome Back</CardTitle>
-                <CardDescription className="text-green-600">Sign in to your account</CardDescription>
+                <div className="flex justify-center mb-4">
+                  <div className="p-3 bg-red-100 rounded-full animate-bounce-hover">
+                    <User className="w-8 h-8 text-red-600" />
+                  </div>
+                </div>
+                <CardTitle className="text-3xl text-red-800">Welcome Back</CardTitle>
+                <CardDescription className="text-red-600">Sign in to Administration Shyaw System</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleLogin} className="space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="username" className="text-green-700">Username</Label>
+                    <Label htmlFor="username" className="text-red-700 flex items-center space-x-2">
+                      <User className="w-4 h-4" />
+                      <span>Username</span>
+                    </Label>
                     <Input
                       id="username"
                       type="text"
                       placeholder="Enter your username"
                       value={loginForm.username}
                       onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
-                      className="border-green-200 focus:border-green-500 focus:ring-green-500"
+                      className="border-red-200 focus:border-red-500 focus:ring-red-500 transition-all duration-300"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-green-700">Password</Label>
+                    <Label htmlFor="password" className="text-red-700 flex items-center space-x-2">
+                      <Lock className="w-4 h-4" />
+                      <span>Password</span>
+                    </Label>
                     <Input
                       id="password"
                       type="password"
                       placeholder="Enter your password"
                       value={loginForm.password}
                       onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                      className="border-green-200 focus:border-green-500 focus:ring-green-500"
+                      className="border-red-200 focus:border-red-500 focus:ring-red-500 transition-all duration-300"
                       required
                     />
                   </div>
 
                   <Button 
                     type="submit" 
-                    className="w-full mobile-button touch-target bg-green-600 hover:bg-green-700 text-white" 
+                    className="w-full mobile-button touch-target bg-red-600 hover:bg-red-700 text-white transition-all duration-300 animate-pulse-hover shadow-lg hover:shadow-xl" 
                     disabled={isLoading}
                   >
                     {isLoading ? "Signing In..." : "Sign In"}
@@ -161,7 +172,7 @@ export default function LoginPage() {
                 <div className="mt-6 text-center">
                   <button
                     onClick={() => setIsLogin(false)}
-                    className="text-green-600 hover:text-green-700 font-medium transition-colors"
+                    className="text-red-600 hover:text-red-700 font-medium transition-colors animate-bounce-hover"
                   >
                     Don't have an account? Register here
                   </button>
@@ -169,10 +180,15 @@ export default function LoginPage() {
               </CardContent>
             </Card>
           ) : (
-            <Card className="border-green-100 shadow-lg">
+            <Card className="border-red-100 shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse-hover">
               <CardHeader className="text-center">
-                <CardTitle className="text-3xl text-green-800">Create Account</CardTitle>
-                <CardDescription className="text-green-600">Join our management system</CardDescription>
+                <div className="flex justify-center mb-4">
+                  <div className="p-3 bg-red-100 rounded-full animate-bounce-hover">
+                    <Users className="w-8 h-8 text-red-600" />
+                  </div>
+                </div>
+                <CardTitle className="text-3xl text-red-800">Create Account</CardTitle>
+                <CardDescription className="text-red-600">Join Administration Shyaw System</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleRegister} className="space-y-4">

@@ -168,6 +168,67 @@
   .menu-icon:hover {
     transform: rotate(180deg) scale(1.1);
   }
+  
+  /* Menu Handle Animations */
+  .menu-handle {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .menu-handle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+  }
+  
+  .menu-handle:hover::before {
+    left: 100%;
+  }
+  
+  .menu-handle:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3);
+  }
+  
+  .menu-handle-grip {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+  
+  .menu-handle-grip .grip-line {
+    width: 3px;
+    height: 12px;
+    background: currentColor;
+    border-radius: 1px;
+    transition: all 0.3s ease;
+  }
+  
+  .menu-handle:hover .menu-handle-grip {
+    opacity: 1;
+  }
+  
+  .menu-handle:hover .grip-line {
+    background: #dc2626;
+    transform: scaleY(1.2);
+  }
+  
+  /* Slide Menu Container Animation */
+  .slide-menu-container {
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .slide-menu-container.is-sliding {
+    transform: translateX(8px);
+  }
 }
 
 @layer components {

@@ -72,18 +72,28 @@ export default function Sidebar() {
           {!isCollapsed && (
             <h2 className="text-lg font-semibold text-red-800 animate-fade-in">Navigation</h2>
           )}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 hover:bg-red-100 animate-bounce-hover"
-          >
-            <Menu className="h-4 w-4 text-red-600 menu-icon" />
-          </Button>
+          <div className="flex items-center space-x-2">
+            {/* Animated Menu Handle */}
+            <div className="menu-handle p-2 rounded-lg bg-red-100 hover:bg-red-200 cursor-pointer">
+              <div className="menu-handle-grip">
+                <div className="grip-line"></div>
+                <div className="grip-line"></div>
+                <div className="grip-line"></div>
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="p-2 hover:bg-red-100 animate-bounce-hover menu-handle"
+            >
+              <Menu className="h-4 w-4 text-red-600 menu-icon" />
+            </Button>
+          </div>
         </div>
 
         {/* Navigation content */}
-        <div className="flex-1 overflow-hidden px-3 pb-4 bg-white">
+        <div className="flex-1 overflow-hidden px-3 pb-4 bg-white slide-menu-container">
           <div className="h-full overflow-y-auto overflow-x-hidden scrollbar-hide hover:scrollbar-show">
             <div className="animate-fade-in">
               <StructuredNavigation className={isCollapsed ? "space-y-1" : ""} />
