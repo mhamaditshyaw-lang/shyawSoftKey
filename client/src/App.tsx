@@ -11,6 +11,7 @@ import ModernDashboard from "@/pages/modern-dashboard";
 import UsersPage from "@/pages/users";
 import InterviewsPage from "@/pages/interviews";
 import TodosPage from "@/pages/todos";
+import DailyTasksPage from "@/pages/daily-tasks";
 import FeedbackPage from "@/pages/feedback";
 import ArchivePage from "@/pages/archive";
 import MetricsPage from "@/pages/metrics";
@@ -61,6 +62,11 @@ function Router() {
       <Route path="/todos">
         <ProtectedRoute>
           <TodosPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/daily-tasks">
+        <ProtectedRoute>
+          <DailyTasksPage />
         </ProtectedRoute>
       </Route>
       <Route path="/feedback">

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -104,25 +105,27 @@ export default function UsersPage() {
 
   if (isLoading) {
     return (
-      <div className="animate-pulse">
-        <div className="mb-8">
-          <div className="h-8 bg-gray-200 rounded w-64 mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-96"></div>
+      <DashboardLayout>
+        <div className="animate-pulse">
+          <div className="mb-8">
+            <div className="h-8 bg-dashboard-secondary/20 rounded w-64 mb-2"></div>
+            <div className="h-4 bg-dashboard-secondary/20 rounded w-96"></div>
+          </div>
+          <div className="h-96 bg-dashboard-secondary/20 rounded-xl"></div>
         </div>
-        <div className="h-96 bg-gray-200 rounded-xl"></div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div>
+    <DashboardLayout>
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Employee Management</h2>
-            <p className="text-gray-600">Manage internal employees and their roles within the company</p>
+            <h2 className="text-3xl font-bold text-dashboard-text-light dark:text-dashboard-text-dark mb-2">Employee Management</h2>
+            <p className="text-dashboard-secondary dark:text-dashboard-text-dark/70">Manage internal employees and their roles within the company</p>
           </div>
-          <Button onClick={() => setShowAddModal(true)}>
+          <Button onClick={() => setShowAddModal(true)} className="bg-dashboard-primary hover:bg-dashboard-primary/90">
             <Plus className="w-4 h-4 mr-2" />
             Add New Employee
           </Button>
@@ -255,6 +258,6 @@ export default function UsersPage() {
       </Card>
 
       <AddUserModal open={showAddModal} onOpenChange={setShowAddModal} />
-    </div>
+    </DashboardLayout>
   );
 }
