@@ -324,15 +324,15 @@ export default function DashboardPage() {
     >
       {/* Modern Dashboard Header */}
       <motion.div 
-        className="mb-8 relative overflow-hidden rounded-3xl bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-8 shadow-lg border border-green-100"
+        className="mb-8 relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-50 via-purple-50 to-teal-50 p-8 shadow-lg border border-indigo-100"
         variants={welcomeVariants}
         initial="hidden"
         animate="visible"
       >
         {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-r from-green-600/5 to-emerald-600/5"></div>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-l from-green-200/20 to-transparent rounded-full -translate-y-32 translate-x-32"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-r from-emerald-200/20 to-transparent rounded-full translate-y-24 -translate-x-24"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/5 to-purple-600/5"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-l from-indigo-200/20 to-transparent rounded-full -translate-y-32 translate-x-32"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-r from-teal-200/20 to-transparent rounded-full translate-y-24 -translate-x-24"></div>
         <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-teal-300/10 rounded-full"></div>
         
         <div className="relative z-10">
@@ -346,10 +346,10 @@ export default function DashboardPage() {
               animate={{ rotate: [0, 10, -10, 0] }}
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
             >
-              <Sparkles className="w-8 h-8 text-green-500" />
+              <Sparkles className="w-8 h-8 text-indigo-500" />
             </motion.div>
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 {getGreeting()}, {user?.firstName || user?.username}!
               </h1>
               <p className="text-lg text-gray-600 mt-1">
@@ -364,7 +364,7 @@ export default function DashboardPage() {
           </motion.div>
           
           <motion.p 
-            className="text-green-700 text-lg mb-6"
+            className="text-indigo-700 text-lg mb-6"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
@@ -396,7 +396,7 @@ export default function DashboardPage() {
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <Filter className="w-4 h-4 text-blue-500" />
+              <Filter className="w-4 h-4 text-teal-500" />
               <span className="text-sm font-medium text-gray-700">
                 {filteredTodos.length} todos, {filteredInterviews.length} interviews
               </span>
@@ -404,12 +404,12 @@ export default function DashboardPage() {
             
             {dateFilter === "today" && (
               <motion.div 
-                className="flex items-center space-x-2 bg-green-100/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm border border-green-200"
+                className="flex items-center space-x-2 bg-indigo-100/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm border border-indigo-200"
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <Calendar className="w-4 h-4 text-green-600" />
-                <span className="text-sm font-medium text-green-700">
+                <Calendar className="w-4 h-4 text-indigo-600" />
+                <span className="text-sm font-medium text-indigo-700">
                   Today's Data Only
                 </span>
               </motion.div>

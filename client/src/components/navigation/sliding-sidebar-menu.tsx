@@ -155,7 +155,7 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
     if (item.kind === 'header') {
       return (
         <div key={index} className="px-4 py-3 mt-6 first:mt-0">
-          <h3 className="text-xs font-bold text-red-600 uppercase tracking-wider animate-fade-in">
+          <h3 className="text-xs font-bold text-indigo-600 uppercase tracking-wider animate-fade-in">
             {item.title}
           </h3>
         </div>
@@ -165,7 +165,7 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
     if (item.kind === 'divider') {
       return (
         <div key={index} className="my-4 mx-4">
-          <div className="border-t border-red-200 animate-fade-in" />
+          <div className="border-t border-gray-200 animate-fade-in" />
         </div>
       );
     }
@@ -184,14 +184,14 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
             className={cn(
               "w-full flex items-center justify-between px-4 py-3 text-left transition-all duration-300 group sidebar-item nav-item",
               active
-                ? "bg-red-600 text-white shadow-lg"
-                : "text-gray-700 hover:bg-red-50 hover:text-red-700"
+                ? "bg-indigo-600 text-white shadow-lg"
+                : "text-gray-700 hover:bg-indigo-50 hover:text-indigo-700"
             )}
           >
             <div className="flex items-center space-x-3">
               <div className={cn(
                 "transition-colors duration-200",
-                active ? "text-white" : "text-red-500"
+                active ? "text-white" : "text-indigo-500"
               )}>
                 {item.icon}
               </div>
@@ -201,7 +201,7 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
               className={cn(
                 "w-4 h-4 transition-transform duration-200",
                 isExpanded ? "rotate-90" : "",
-                active ? "text-white" : "text-red-400"
+                active ? "text-white" : "text-indigo-400"
               )}
             />
           </button>
@@ -210,12 +210,12 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
             <div className={cn(
               "flex items-center space-x-3 px-4 py-3 transition-all duration-300 cursor-pointer group sidebar-item nav-item",
               active
-                ? "bg-red-600 text-white shadow-lg"
-                : "text-gray-700 hover:bg-red-50 hover:text-red-700"
+                ? "bg-indigo-600 text-white shadow-lg"
+                : "text-gray-700 hover:bg-indigo-50 hover:text-indigo-700"
             )}>
               <div className={cn(
                 "transition-colors duration-200",
-                active ? "text-white" : "text-red-500"
+                active ? "text-white" : "text-indigo-500"
               )}>
                 {item.icon}
               </div>
