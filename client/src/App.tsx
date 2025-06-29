@@ -19,7 +19,7 @@ import AllDataPage from "@/pages/all-data";
 import ReportsPage from "@/pages/reports";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/header";
-import AnimatedSliderMenu from "@/components/navigation/animated-slider-menu";
+import SlidingSidebarMenu from "@/components/navigation/sliding-sidebar-menu";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -39,9 +39,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <AnimatedSliderMenu />
+      <SlidingSidebarMenu />
       <div className="flex">
-        <main className="flex-1 p-4 md:p-8 lg:ml-72">
+        <main className="flex-1 p-4 md:p-8">
           <div className="max-w-full overflow-x-hidden animate-fade-in">
             {children}
           </div>

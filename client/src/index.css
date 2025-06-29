@@ -229,6 +229,106 @@
   .slide-menu-container.is-sliding {
     transform: translateX(8px);
   }
+  
+  /* Modern Sliding Sidebar Animations */
+  .sliding-sidebar {
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(220, 38, 38, 0.1);
+  }
+  
+  .sliding-sidebar .nav-item {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .sliding-sidebar .nav-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.1), transparent);
+    transition: left 0.6s ease;
+  }
+  
+  .sliding-sidebar .nav-item:hover::before {
+    left: 100%;
+  }
+  
+  /* Hamburger Animation */
+  .hamburger-btn {
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  
+  .hamburger-btn:hover {
+    transform: scale(1.1) rotate(5deg);
+  }
+  
+  .hamburger-btn.active {
+    transform: scale(0.9) rotate(90deg);
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: white;
+  }
+  
+  /* Overlay Animation */
+  .sidebar-overlay {
+    animation: fadeInOverlay 0.3s ease-out forwards;
+  }
+  
+  @keyframes fadeInOverlay {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /* Sidebar Slide Animation */
+  .sidebar-slide-in {
+    animation: slideInFromLeft 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+  
+  .sidebar-slide-out {
+    animation: slideOutToLeft 0.3s ease-in forwards;
+  }
+  
+  @keyframes slideInFromLeft {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideOutToLeft {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+  }
+  
+  /* Staggered Item Animation */
+  .nav-item-stagger {
+    animation: slideInStagger 0.4s ease-out forwards;
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  
+  @keyframes slideInStagger {
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
 }
 
 @layer components {
