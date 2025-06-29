@@ -4,39 +4,39 @@
 
 @layer base {
   :root {
-    /* Modern HR System Colors */
-    --primary: 220 38% 97%;
-    --primary-foreground: 220 9% 46%;
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 220 9% 46%;
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
-    --accent: 220 14% 96%;
-    --accent-foreground: 220 9% 46%;
+    /* Modern Red & White System Colors */
+    --primary: 0 84% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 84% 60%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 262 83% 58%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 91%;
+    --input: 0 0% 91%;
+    --ring: 0 84% 60%;
     --background: 0 0% 100%;
-    --foreground: 224 71% 4%;
+    --foreground: 0 0% 4%;
     --card: 0 0% 100%;
-    --card-foreground: 224 71% 4%;
+    --card-foreground: 0 0% 4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71% 4%;
+    --popover-foreground: 0 0% 4%;
 
-    /* HR Brand Colors */
-    --hr-primary: #6366f1;
-    --hr-primary-dark: #4f46e5;
-    --hr-primary-light: #a5b4fc;
-    --hr-secondary: #06b6d4;
+    /* Red & White Brand Colors */
+    --hr-primary: #dc2626;
+    --hr-primary-dark: #b91c1c;
+    --hr-primary-light: #fca5a5; 
+    --hr-secondary: #ffffff;
     --hr-success: #10b981;
     --hr-warning: #f59e0b;
-    --hr-error: #ef4444;
+    --hr-error: #dc2626;
     
-    /* Modern Gradients */
-    --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    --gradient-secondary: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+    /* Red & White Gradients */
+    --gradient-primary: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    --gradient-secondary: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
     --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
     
     /* Shadows */
@@ -51,6 +51,16 @@
     
     /* Border Radius */
     --radius: 0.75rem;
+    
+    /* Sidebar Colors - White Background */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 4%;
+    --sidebar-primary: 0 84% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 4%;
+    --sidebar-border: 0 0% 91%;
+    --sidebar-ring: 0 84% 60%;
   }
 
   .dark {
@@ -77,6 +87,86 @@
   
   * {
     transition: all var(--animation-speed) var(--animation-curve);
+  }
+  
+  /* Menu Bar Animations */
+  @keyframes slideIn {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+  
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-10px);
+    }
+    60% {
+      transform: translateY(-5px);
+    }
+  }
+  
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  .animate-pulse-hover:hover {
+    animation: pulse 0.6s ease-in-out;
+  }
+  
+  .animate-bounce-hover:hover {
+    animation: bounce 0.8s ease-in-out;
+  }
+  
+  /* Sidebar specific animations */
+  .sidebar-item {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .sidebar-item:hover {
+    transform: translateX(4px);
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  }
+  
+  .menu-icon {
+    transition: transform 0.3s ease;
+  }
+  
+  .menu-icon:hover {
+    transform: rotate(180deg) scale(1.1);
   }
 }
 

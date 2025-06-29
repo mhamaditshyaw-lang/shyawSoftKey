@@ -31,9 +31,9 @@ export default function Sidebar() {
           variant="ghost"
           size="sm"
           onClick={() => setIsOpen(!isOpen)}
-          className="fixed top-4 left-4 z-50 lg:hidden bg-white dark:bg-gray-900 shadow-md"
+          className="fixed top-4 left-4 z-50 lg:hidden bg-white shadow-lg border border-red-200 hover:bg-red-50 animate-pulse-hover"
         >
-          {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {isOpen ? <X className="h-5 w-5 text-red-600 menu-icon" /> : <Menu className="h-5 w-5 text-red-600 menu-icon" />}
         </Button>
 
         {/* Mobile overlay */}
@@ -46,12 +46,14 @@ export default function Sidebar() {
 
         {/* Mobile sidebar */}
         <div className={`
-          fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700
-          transform transition-transform duration-300 ease-in-out lg:hidden
+          fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-red-200 shadow-2xl
+          transform transition-all duration-300 ease-in-out lg:hidden animate-slide-in
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
           <div className="flex h-full flex-col overflow-y-auto px-6 pb-4 pt-16">
-            <StructuredNavigation />
+            <div className="animate-fade-in">
+              <StructuredNavigation />
+            </div>
           </div>
         </div>
       </>
@@ -61,29 +63,31 @@ export default function Sidebar() {
   // Desktop sidebar
   return (
     <div className={`
-      hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:flex-col transition-all duration-300
+      hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:flex-col transition-all duration-300 animate-slide-in
       ${isCollapsed ? 'lg:w-16' : 'lg:w-72'}
     `}>
-      <div className="flex grow flex-col overflow-hidden bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
+      <div className="flex grow flex-col overflow-hidden bg-white border-r border-red-200 shadow-lg">
         {/* Sidebar header with toggle */}
-        <div className="flex items-center justify-between p-4 pt-20 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between p-4 pt-20 border-b border-red-200 bg-gradient-to-r from-red-50 to-white">
           {!isCollapsed && (
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Navigation</h2>
+            <h2 className="text-lg font-semibold text-red-800 animate-fade-in">Navigation</h2>
           )}
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2"
+            className="p-2 hover:bg-red-100 animate-bounce-hover"
           >
-            <Menu className="h-4 w-4" />
+            <Menu className="h-4 w-4 text-red-600 menu-icon" />
           </Button>
         </div>
 
         {/* Navigation content */}
-        <div className="flex-1 overflow-hidden px-3 pb-4">
+        <div className="flex-1 overflow-hidden px-3 pb-4 bg-white">
           <div className="h-full overflow-y-auto overflow-x-hidden scrollbar-hide hover:scrollbar-show">
-            <StructuredNavigation className={isCollapsed ? "space-y-1" : ""} />
+            <div className="animate-fade-in">
+              <StructuredNavigation className={isCollapsed ? "space-y-1" : ""} />
+            </div>
           </div>
         </div>
       </div>

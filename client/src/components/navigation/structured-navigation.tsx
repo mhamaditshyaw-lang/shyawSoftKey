@@ -200,8 +200,8 @@ export default function StructuredNavigation({ className }: StructuredNavigation
   const renderNavigationItem = (item: NavigationItem, index: number) => {
     if (item.kind === 'header') {
       return (
-        <div key={index} className="px-3 py-2 mt-4 first:mt-0">
-          <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+        <div key={index} className="px-3 py-2 mt-4 first:mt-0 animate-fade-in">
+          <h3 className="text-xs font-semibold text-red-600 uppercase tracking-wider">
             {item.title}
           </h3>
         </div>
@@ -210,8 +210,8 @@ export default function StructuredNavigation({ className }: StructuredNavigation
 
     if (item.kind === 'divider') {
       return (
-        <div key={index} className="my-3">
-          <div className="border-t border-gray-200 dark:border-gray-700" />
+        <div key={index} className="my-3 animate-fade-in">
+          <div className="border-t border-red-200" />
         </div>
       );
     }
@@ -228,23 +228,23 @@ export default function StructuredNavigation({ className }: StructuredNavigation
           <button
             onClick={() => item.segment && toggleExpanded(item.segment)}
             className={cn(
-              "w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200",
+              "w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 sidebar-item animate-pulse-hover",
               active
-                ? "bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/20"
-                : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400"
+                ? "bg-red-600 text-white shadow-lg shadow-red-200"
+                : "text-gray-700 hover:bg-red-50 hover:text-red-700"
             )}
           >
             <div className="flex items-center space-x-3">
               <div className={cn(
                 "transition-colors duration-200",
-                active ? "text-white" : "text-gray-500 dark:text-gray-400"
+                active ? "text-white" : "text-red-500"
               )}>
                 {item.icon}
               </div>
               <span>{item.title}</span>
             </div>
             <div className={cn(
-              "transition-transform duration-200",
+              "transition-transform duration-200 menu-icon",
               isExpanded ? "rotate-90" : ""
             )}>
               <ChevronRight className="w-4 h-4" />
@@ -253,14 +253,14 @@ export default function StructuredNavigation({ className }: StructuredNavigation
         ) : (
           <Link href={`/${item.segment}`}>
             <div className={cn(
-              "flex items-center space-x-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer",
+              "flex items-center space-x-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 cursor-pointer sidebar-item animate-pulse-hover",
               active
-                ? "bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/20"
-                : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400"
+                ? "bg-red-600 text-white shadow-lg shadow-red-200"
+                : "text-gray-700 hover:bg-red-50 hover:text-red-700"
             )}>
               <div className={cn(
                 "transition-colors duration-200",
-                active ? "text-white" : "text-slate-500 dark:text-slate-400"
+                active ? "text-white" : "text-red-500"
               )}>
                 {item.icon}
               </div>
@@ -270,7 +270,7 @@ export default function StructuredNavigation({ className }: StructuredNavigation
         )}
 
         {hasChildren && isExpanded && (
-          <div className="ml-4 mt-2 space-y-1">
+          <div className="ml-4 mt-2 space-y-1 animate-fade-in">
             {item.children?.map((child, childIndex) => {
               if (!hasAccess(child)) return null;
               
@@ -279,14 +279,14 @@ export default function StructuredNavigation({ className }: StructuredNavigation
               return (
                 <Link key={childIndex} href={`/${child.segment}`}>
                   <div className={cn(
-                    "flex items-center space-x-3 px-3 py-2 text-sm rounded-lg transition-all duration-200 cursor-pointer",
+                    "flex items-center space-x-3 px-3 py-2 text-sm rounded-lg transition-all duration-300 cursor-pointer sidebar-item animate-bounce-hover",
                     childActive
-                      ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-l-2 border-blue-500"
-                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-blue-600 dark:hover:text-blue-400"
+                      ? "bg-red-100 text-red-700 border-l-2 border-red-500 shadow-sm"
+                      : "text-gray-600 hover:bg-red-50 hover:text-red-600"
                   )}>
                     <div className={cn(
                       "transition-colors duration-200",
-                      childActive ? "text-blue-600 dark:text-blue-400" : "text-slate-400 dark:text-slate-500"
+                      childActive ? "text-red-600" : "text-red-400"
                     )}>
                       {child.icon}
                     </div>
