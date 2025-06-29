@@ -41,6 +41,7 @@ import {
   Award,
   AlertTriangle,
 } from "lucide-react";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 interface ReportsData {
   userStats: {
@@ -130,7 +131,8 @@ export default function Reports() {
   const { userStats, todoStats, interviewStats, feedbackStats } = reportsData;
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
+    <DashboardLayout>
+      <div className="container mx-auto px-4 py-8 space-y-6">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -570,5 +572,6 @@ export default function Reports() {
 
       </Tabs>
     </div>
+    </DashboardLayout>
   );
 }

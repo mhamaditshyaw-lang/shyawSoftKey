@@ -15,6 +15,7 @@ import { Archive, Search, Calendar, User, FileText, Eye, Edit, Filter, X, Plus, 
 import { getRelativeTime } from "@/lib/utils";
 import ArchiveDetailsModal from "@/components/modals/archive-details-modal";
 import EditArchiveModal from "@/components/modals/edit-archive-modal";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 export default function ArchivePage() {
   const { user } = useAuth();
@@ -330,7 +331,8 @@ export default function ArchivePage() {
   }
 
   return (
-    <div>
+    <DashboardLayout>
+      <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-green-900 mb-2">Archive & Reports</h1>
         <p className="text-green-700">
@@ -754,5 +756,6 @@ export default function ArchivePage() {
         archivedItem={selectedItem}
       />
     </div>
+    </DashboardLayout>
   );
 }

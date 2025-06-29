@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Clock, Check, X, Edit, Calendar, Plus, Archive, Search, RefreshCw, Filter, User, MapPin, CheckCircle2, XCircle } from "lucide-react";
 import InterviewRequestModal from "@/components/modals/interview-request-modal";
 import { getRelativeTime } from "@/lib/utils";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 export default function InterviewsPage() {
   const { user } = useAuth();
@@ -177,7 +178,8 @@ export default function InterviewsPage() {
   }
 
   return (
-    <div>
+    <DashboardLayout>
+      <div>
       <div className="mb-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0">
           <div>
@@ -499,5 +501,6 @@ export default function InterviewsPage() {
         onOpenChange={setShowRequestModal} 
       />
     </div>
+    </DashboardLayout>
   );
 }

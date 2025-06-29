@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { MessageSquare, Plus, Star, Calendar, User, Search, RefreshCw, Filter, TrendingUp } from "lucide-react";
 import FeedbackModal from "@/components/modals/feedback-modal";
 import { getRelativeTime } from "@/lib/utils";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 export default function FeedbackPage() {
   const { user } = useAuth();
@@ -169,7 +170,8 @@ export default function FeedbackPage() {
   }
 
   return (
-    <div>
+    <DashboardLayout>
+      <div>
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
@@ -433,5 +435,6 @@ export default function FeedbackPage() {
         interviews={interviews}
       />
     </div>
+    </DashboardLayout>
   );
 }
