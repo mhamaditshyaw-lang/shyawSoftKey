@@ -9,8 +9,11 @@ import { queryClient } from "./lib/queryClient";
 import LoginPage from "@/pages/login";
 import ModernDashboard from "@/pages/modern-dashboard";
 import UsersPage from "@/pages/users";
+import EmployeeManagementPage from "@/pages/employee-management";
+import AddEmployeePage from "@/pages/add-employee";
 import InterviewsPage from "@/pages/interviews";
 import TodosPage from "@/pages/todos";
+import AddDailyListPage from "@/pages/add-daily-list";
 import DailyTasksPage from "@/pages/daily-tasks";
 import FeedbackPage from "@/pages/feedback";
 import ArchivePage from "@/pages/archive";
@@ -54,6 +57,16 @@ function Router() {
           <UsersPage />
         </ProtectedRoute>
       </Route>
+      <Route path="/employee-management">
+        <ProtectedRoute>
+          <EmployeeManagementPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/add-employee">
+        <ProtectedRoute>
+          <AddEmployeePage />
+        </ProtectedRoute>
+      </Route>
       <Route path="/interviews">
         <ProtectedRoute>
           <InterviewsPage />
@@ -62,6 +75,11 @@ function Router() {
       <Route path="/todos">
         <ProtectedRoute>
           <TodosPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/add-daily-list">
+        <ProtectedRoute>
+          <AddDailyListPage />
         </ProtectedRoute>
       </Route>
       <Route path="/daily-tasks">
@@ -87,6 +105,11 @@ function Router() {
       <Route path="/data-view">
         <ProtectedRoute>
           <DataViewPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/all-data">
+        <ProtectedRoute>
+          <AllDataPage />
         </ProtectedRoute>
       </Route>
       <Route path="/reports">

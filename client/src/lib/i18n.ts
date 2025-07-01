@@ -189,7 +189,23 @@ const resources = {
       
       // All Data Dashboard
       allDataDashboard: "All Data Dashboard",
-      comprehensiveDataView: "Comprehensive data view and system administration"
+      comprehensiveDataView: "Comprehensive data view and system administration",
+      
+      // Employee Management
+      employeeManagement: "Employee Management",
+      addNewEmployee: "Add New Employee",
+      employeeDirectory: "Employee Directory",
+      personalInformation: "Personal Information",
+      accountInformation: "Account Information",
+      employmentInformation: "Employment Information",
+      emergencyContact: "Emergency Contact",
+      additionalInformation: "Additional Information",
+      
+      // Daily List Management
+      newDailyList: "New Daily List",
+      dailyListInformation: "Daily List Information",
+      taskItems: "Task Items",
+      addItem: "Add Item"
     }
   },
   ku: {
@@ -377,7 +393,23 @@ const resources = {
       
       // All Data Dashboard
       allDataDashboard: "داشبۆردی هەموو داتاکان",
-      comprehensiveDataView: "بینینی تەواوی داتا و بەڕێوەبەری سیستەم"
+      comprehensiveDataView: "بینینی تەواوی داتا و بەڕێوەبەری سیستەم",
+      
+      // Employee Management
+      employeeManagement: "بەڕێوەبردنی کارمەندان",
+      addNewEmployee: "زیادکردنی کارمەندی نوێ",
+      employeeDirectory: "فۆڵدەری کارمەندان",
+      personalInformation: "زانیاری کەسی",
+      accountInformation: "زانیاری هەژمار",
+      employmentInformation: "زانیاری کارکردن",
+      emergencyContact: "پەیوەندی لەناکاو",
+      additionalInformation: "زانیاری زیادە",
+      
+      // Daily List Management
+      newDailyList: "لیستی ڕۆژانەی نوێ",
+      dailyListInformation: "زانیاری لیستی ڕۆژانە",
+      taskItems: "بابەتەکانی ئەرک",
+      addItem: "زیادکردنی بابەت"
     }
   }
 };

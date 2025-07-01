@@ -14,7 +14,8 @@ import {
   ChevronRight,
   Zap,
   Shield,
-  UserCheck
+  UserCheck,
+  Plus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -49,10 +50,24 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       roles: ["admin", "manager"]
     },
     {
+      title: t("employeeManagement"),
+      href: "/employee-management",
+      icon: UserCheck,
+      badge: "New",
+      roles: ["admin", "manager"]
+    },
+    {
       title: t("todos"),
       href: "/todos",
       icon: CheckSquare,
       badge: null,
+      roles: ["admin", "manager", "secretary"]
+    },
+    {
+      title: t("newDailyList"),
+      href: "/add-daily-list",
+      icon: Plus,
+      badge: "New",
       roles: ["admin", "manager", "secretary"]
     },
     {
