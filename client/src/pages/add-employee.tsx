@@ -471,11 +471,12 @@ export default function AddEmployeePage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="emergencyContactRelation">Relationship</Label>
-                  <Select value={employeeData.emergencyContactRelation} onValueChange={(value) => handleInputChange("emergencyContactRelation", value)}>
+                  <Select value={employeeData.emergencyContactRelation || "none"} onValueChange={(value) => handleInputChange("emergencyContactRelation", value === "none" ? "" : value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select relationship" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="none">No relationship selected</SelectItem>
                       <SelectItem value="spouse">Spouse</SelectItem>
                       <SelectItem value="parent">Parent</SelectItem>
                       <SelectItem value="sibling">Sibling</SelectItem>

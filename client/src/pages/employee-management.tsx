@@ -119,7 +119,7 @@ export default function EmployeeManagementPage() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Role Filter</label>
-                <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <Select value={roleFilter || "all"} onValueChange={setRoleFilter}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -134,7 +134,7 @@ export default function EmployeeManagementPage() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Status Filter</label>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <Select value={statusFilter || "all"} onValueChange={setStatusFilter}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>

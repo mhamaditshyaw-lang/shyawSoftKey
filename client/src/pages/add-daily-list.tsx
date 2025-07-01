@@ -215,12 +215,12 @@ export default function AddDailyListPage() {
                     <User className="w-4 h-4" />
                     <span>{t("assignedTo")}</span>
                   </Label>
-                  <Select value={listData.assignedToId} onValueChange={(value) => handleListDataChange("assignedToId", value)}>
+                  <Select value={listData.assignedToId || "unassigned"} onValueChange={(value) => handleListDataChange("assignedToId", value === "unassigned" ? "" : value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select user to assign" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Unassigned</SelectItem>
+                      <SelectItem value="unassigned">Unassigned</SelectItem>
                       {usersData?.users?.map((user: any) => (
                         <SelectItem key={user.id} value={user.id.toString()}>
                           {user.firstName} {user.lastName} ({user.username})
