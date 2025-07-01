@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,7 @@ interface NavItem {
 }
 
 export default function PageMenu() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [location, setLocation] = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,84 +26,84 @@ export default function PageMenu() {
 
   const allPages: NavItem[] = [
     { 
-      title: "Dashboard", 
+      title: t("dashboard"), 
       href: "/", 
       icon: Home, 
-      description: "Main dashboard with overview and quick actions", 
+      description: t("addNewTask"), 
       roles: ["admin", "manager", "secretary"],
-      category: "Main"
+      category: t("mainCategory")
     },
     { 
-      title: "Employee Reviews & Evaluations", 
+      title: t("employeeReviews"), 
       href: "/interviews", 
       icon: Calendar, 
-      description: "Manage employee evaluations, performance reviews, and role changes", 
+      description: t("manageEmployeeEvaluations"), 
       roles: ["admin", "manager", "secretary"],
-      category: "HR"
+      category: t("hrCategory")
     },
     { 
-      title: "Daily Task Management", 
+      title: t("dailyTaskManagement"), 
       href: "/todos", 
       icon: CheckSquare, 
-      description: "Organize and track daily tasks with smart prioritization", 
+      description: t("organizeTrackTasks"), 
       roles: ["admin", "manager", "secretary"],
-      category: "Tasks"
+      category: t("tasksCategory")
     },
     { 
-      title: "Feedback & Reviews", 
+      title: t("feedbackReviews"), 
       href: "/feedback", 
       icon: MessageSquare, 
-      description: "System feedback, reviews, and user suggestions", 
+      description: t("systemFeedbackReviews"), 
       roles: ["admin", "manager", "secretary"],
-      category: "Feedback"
+      category: t("feedbackCategory")
     },
     { 
-      title: "Employee Tracking", 
+      title: t("employeeTracking"), 
       href: "/metrics", 
       icon: Users, 
-      description: "Track employee attendance, operations, and performance metrics", 
+      description: t("trackEmployeeAttendance"), 
       roles: ["admin", "manager", "secretary"],
-      category: "Analytics"
+      category: t("analyticsCategory")
     },
     { 
-      title: "Data View", 
+      title: t("dataView"), 
       href: "/data-view", 
       icon: BarChart3, 
-      description: "Operational data visualization and analysis", 
+      description: t("operationalDataView"), 
       roles: ["admin", "manager", "secretary"],
-      category: "Data"
+      category: t("dataCategory")
     },
     { 
-      title: "All Data Dashboard", 
+      title: t("allDataDashboard"), 
       href: "/all-data", 
       icon: Database, 
-      description: "Comprehensive view of all system data with advanced filtering", 
+      description: t("comprehensiveDataView"), 
       roles: ["admin", "manager"],
-      category: "Data"
+      category: t("dataCategory")
     },
     { 
-      title: "Archive", 
+      title: t("archive"), 
       href: "/archive", 
       icon: Archive, 
-      description: "Archived items and completed tasks management", 
+      description: t("manageArchivedItems"), 
       roles: ["admin", "manager"],
-      category: "Management"
+      category: t("reportsCategory")
     },
     { 
-      title: "Reports & Analytics", 
+      title: t("managementReports"), 
       href: "/reports", 
       icon: FileText, 
-      description: "Management reports, analytics, and data visualization", 
+      description: t("comprehensiveAnalytics"), 
       roles: ["admin", "manager"],
-      category: "Analytics"
+      category: t("analyticsCategory")
     },
     { 
-      title: "User Management", 
+      title: t("users"), 
       href: "/users", 
       icon: Users, 
-      description: "System users administration and access control", 
+      description: t("comprehensiveDataView"), 
       roles: ["admin"],
-      category: "Administration"
+      category: t("reportsCategory")
     },
   ];
 
@@ -154,7 +156,7 @@ export default function PageMenu() {
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center text-xl">
                 <Grid3X3 className="w-6 h-6 mr-2 text-primary" />
-                All System Pages
+                {t("allPages")}
               </CardTitle>
               <Button
                 variant="ghost"
@@ -170,7 +172,7 @@ export default function PageMenu() {
             <div className="relative mt-4">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
-                placeholder="Search pages..."
+                placeholder={t("searchPages")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -242,11 +244,11 @@ export default function PageMenu() {
               {filteredPages.length === 0 && (
                 <div className="text-center py-12">
                   <Grid3X3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No pages found</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">{t("noData")}</h3>
                   <p className="text-gray-500">
                     {searchTerm 
-                      ? `No pages match "${searchTerm}"`
-                      : "No pages available for your role"
+                      ? `${t("noPagesMatch")} "${searchTerm}"`
+                      : t("noPages")
                     }
                   </p>
                 </div>

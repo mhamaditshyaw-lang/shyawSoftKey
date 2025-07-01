@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,7 @@ import { getRelativeTime } from "@/lib/utils";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 export default function FeedbackPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
   const [typeFilter, setTypeFilter] = useState("all");
@@ -298,9 +300,9 @@ export default function FeedbackPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-100 text-sm font-medium">Total Feedback</p>
+                <p className="text-blue-100 text-sm font-medium">{t("totalFeedback")}</p>
                 <p className="text-3xl font-bold">{feedbackList.length}</p>
-                <p className="text-blue-200 text-xs">Filtered: {filteredFeedback.length}</p>
+                <p className="text-blue-200 text-xs">{t("filtered")}: {filteredFeedback.length}</p>
               </div>
               <MessageSquare className="w-10 h-10 text-blue-200" />
             </div>
@@ -311,11 +313,11 @@ export default function FeedbackPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-yellow-100 text-sm font-medium">High Rated</p>
+                <p className="text-yellow-100 text-sm font-medium">{t("highRated")}</p>
                 <p className="text-3xl font-bold">
                   {filteredFeedback.filter((f: any) => f.rating && parseInt(f.rating) >= 4).length}
                 </p>
-                <p className="text-yellow-200 text-xs">4+ Stars</p>
+                <p className="text-yellow-200 text-xs">4+ {t("stars")}</p>
               </div>
               <Star className="w-10 h-10 text-yellow-200" />
             </div>

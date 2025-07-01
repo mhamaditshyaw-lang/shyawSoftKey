@@ -91,14 +91,14 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       roles: ["admin", "manager"]
     },
     {
-      title: "Data View",
+      title: t("dataView"),
       href: "/data-view",
       icon: Database,
       badge: null,
       roles: ["admin", "manager", "secretary"]
     },
     {
-      title: "All Data",
+      title: t("allData"),
       href: "/all-data",
       icon: Shield,
       badge: null,

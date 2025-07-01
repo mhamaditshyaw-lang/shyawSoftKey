@@ -16,6 +16,7 @@ const resources = {
       feedback: "Feedback",
       archive: "Archive",
       allData: "All Data",
+      dataView: "Data View",
       
       // Common actions
       add: "Add",
@@ -27,6 +28,14 @@ const resources = {
       filter: "Filter",
       export: "Export",
       refresh: "Refresh",
+      create: "Create",
+      submit: "Submit",
+      update: "Update",
+      view: "View",
+      close: "Close",
+      back: "Back",
+      next: "Next",
+      previous: "Previous",
       
       // User roles
       admin: "Admin",
@@ -59,6 +68,34 @@ const resources = {
       analyticsAndInsights: "Analytics and insights",
       operationalDataView: "Operational data view",
       
+      // Login & Authentication
+      signIn: "Sign In",
+      signOut: "Sign Out",
+      login: "Login",
+      register: "Register",
+      welcomeBackTitle: "Welcome Back",
+      signInToSystem: "Sign in to Administration Shyaw System",
+      createAccount: "Create Account",
+      joinSystem: "Join Administration Shyaw System",
+      firstName: "First Name",
+      lastName: "Last Name",
+      emailAddress: "Email Address",
+      requestedRole: "Requested Role",
+      enterUsername: "Enter your username",
+      enterPassword: "Enter your password",
+      createStrongPassword: "Create a strong password",
+      signingIn: "Signing In...",
+      creatingAccount: "Creating Account...",
+      dontHaveAccount: "Don't have an account? Register here",
+      alreadyHaveAccount: "Already have an account? Sign in",
+      systemTitle: "Administration Shyaw System",
+      professionalPlatform: "Professional Administration Platform",
+      secureManagement: "Secure and efficient administrative management",
+      secureRoleAccess: "Secure Role-Based Access",
+      taskProjectManagement: "Task & Project Management",
+      realtimeNotifications: "Real-time Notifications",
+      selectRoleRequest: "Select role to request",
+      
       // Forms
       username: "Username",
       email: "Email",
@@ -69,6 +106,12 @@ const resources = {
       description: "Description",
       priority: "Priority",
       dueDate: "Due Date",
+      startDate: "Start Date",
+      endDate: "End Date",
+      category: "Category",
+      status: "Status",
+      assignedTo: "Assigned To",
+      createdBy: "Created By",
       
       // Messages
       success: "Success",
@@ -76,18 +119,77 @@ const resources = {
       loading: "Loading...",
       noData: "No data available",
       confirmDelete: "Are you sure you want to delete this item?",
+      loginSuccess: "Logged in successfully",
+      loginFailed: "Login failed",
+      registrationSuccessful: "Registration Successful",
+      accountCreatedPending: "Your account has been created and is pending admin approval.",
+      registrationFailed: "Registration failed",
       
       // Time
       today: "Today",
       yesterday: "Yesterday",
       thisWeek: "This Week",
       thisMonth: "This Month",
+      custom: "Custom",
+      dateRange: "Date Range",
       
       // Settings
       language: "Language",
       theme: "Theme",
       darkMode: "Dark Mode",
-      lightMode: "Light Mode"
+      lightMode: "Light Mode",
+      
+      // Data and Statistics
+      totalFeedback: "Total Feedback",
+      filtered: "Filtered",
+      highRated: "High Rated",
+      stars: "Stars",
+      averageRating: "Average Rating",
+      responseRate: "Response Rate",
+      trendAnalysis: "Trend Analysis",
+      
+      // Page Menu
+      noPages: "No pages available for your role",
+      noPagesMatch: "No pages match",
+      searchPages: "Search pages...",
+      
+      // General UI
+      allPages: "All Pages",
+      mainCategory: "Main",
+      hrCategory: "HR",
+      tasksCategory: "Tasks",
+      feedbackCategory: "Feedback",
+      analyticsCategory: "Analytics",
+      dataCategory: "Data",
+      reportsCategory: "Reports",
+      
+      // Employee Reviews & Evaluations
+      employeeReviews: "Employee Reviews & Evaluations",
+      manageEmployeeEvaluations: "Manage employee evaluations, performance reviews, and role changes",
+      
+      // Daily Task Management
+      dailyTaskManagement: "Daily Task Management",
+      organizeTrackTasks: "Organize and track daily tasks with smart prioritization",
+      
+      // Feedback & Reviews
+      feedbackReviews: "Feedback & Reviews",
+      systemFeedbackReviews: "System feedback, reviews, and user suggestions",
+      
+      // Employee Tracking
+      employeeTracking: "Employee Tracking",
+      trackEmployeeAttendance: "Track employee attendance, operations, and performance metrics",
+      
+      // Management Reports
+      managementReports: "Management Reports",
+      comprehensiveAnalytics: "Comprehensive analytics and performance insights",
+      
+      // Archive Management
+      archiveManagement: "Archive Management",
+      manageArchivedItems: "Manage archived items and historical data",
+      
+      // All Data Dashboard
+      allDataDashboard: "All Data Dashboard",
+      comprehensiveDataView: "Comprehensive data view and system administration"
     }
   },
   ku: {
@@ -102,6 +204,7 @@ const resources = {
       feedback: "فیدباک",
       archive: "ئەرشیف",
       allData: "هەموو داتاکان",
+      dataView: "بینینی داتا",
       
       // Common actions
       add: "زیادکردن",
@@ -113,6 +216,14 @@ const resources = {
       filter: "پاڵاوتن",
       export: "هەناردەکردن",
       refresh: "نوێکردنەوە",
+      create: "دروستکردن",
+      submit: "ناردن",
+      update: "نوێکردنەوە",
+      view: "بینین",
+      close: "داخستن",
+      back: "گەڕانەوە",
+      next: "دواتر",
+      previous: "پێشوو",
       
       // User roles
       admin: "بەڕێوەبەر",
@@ -145,6 +256,34 @@ const resources = {
       analyticsAndInsights: "شیکردنەوە و تێڕوانینەکان",
       operationalDataView: "بینینی داتای کارکردن",
       
+      // Login & Authentication
+      signIn: "چوونە ژوور",
+      signOut: "دەرچوون",
+      login: "چوونەژوور",
+      register: "تۆمارکردن",
+      welcomeBackTitle: "بەخێربێیتەوە",
+      signInToSystem: "چوونە ژوورەوە بۆ سیستەمی بەڕێوەبەری شیاو",
+      createAccount: "دروستکردنی هەژمار",
+      joinSystem: "بەشداری کردن لە سیستەمی بەڕێوەبەری شیاو",
+      firstName: "ناوی یەکەم",
+      lastName: "ناوی دووەم",
+      emailAddress: "ناونیشانی ئیمەیڵ",
+      requestedRole: "ڕۆڵی داواکراو",
+      enterUsername: "ناوی بەکارهێنەر بنووسە",
+      enterPassword: "وشەی نهێنی بنووسە",
+      createStrongPassword: "وشەی نهێنی بەهێز دروست بکە",
+      signingIn: "چوونە ژووردا...",
+      creatingAccount: "دروستکردنی هەژماردا...",
+      dontHaveAccount: "هەژمارت نییە؟ لێرە تۆمار بکە",
+      alreadyHaveAccount: "پێشتر هەژمارت هەیە؟ بچۆرە ژوور",
+      systemTitle: "سیستەمی بەڕێوەبەری شیاو",
+      professionalPlatform: "پلاتفۆرمی بەڕێوەبەری پیشەیی",
+      secureManagement: "بەڕێوەبەری پارێزراو و کارا",
+      secureRoleAccess: "دەستگەیشتنی پارێزراو بە پلە",
+      taskProjectManagement: "بەڕێوەبەری ئەرک و پرۆژە",
+      realtimeNotifications: "ئاگادارکردنەوەی کاتی ڕاستەقینە",
+      selectRoleRequest: "ڕۆڵ هەڵبژێرە بۆ داواکردن",
+      
       // Forms
       username: "ناوی بەکارهێنەر",
       email: "ئیمەیڵ",
@@ -155,6 +294,12 @@ const resources = {
       description: "وەسف",
       priority: "گرنگی",
       dueDate: "بەرواری کۆتا",
+      startDate: "بەرواری دەستپێکردن",
+      endDate: "بەرواری کۆتایی",
+      category: "جۆر",
+      status: "دۆخ",
+      assignedTo: "دەستنیشانکراو بۆ",
+      createdBy: "دروستکراوە لەلایەن",
       
       // Messages
       success: "سەرکەوتوو",
@@ -162,18 +307,77 @@ const resources = {
       loading: "بارکردن...",
       noData: "هیچ داتایەک بەردەست نییە",
       confirmDelete: "دڵنیایت کە دەتەوێت ئەم بابەتە بسڕیتەوە؟",
+      loginSuccess: "بە سەرکەوتوویی چوویتە ژوور",
+      loginFailed: "چوونە ژوور شکستی هێنا",
+      registrationSuccessful: "تۆمارکردن سەرکەوتوو بوو",
+      accountCreatedPending: "هەژمارەکەت دروست کرا و چاوەڕێی پەسەندکردنی بەڕێوەبەرە.",
+      registrationFailed: "تۆمارکردن شکستی هێنا",
       
       // Time
       today: "ئەمڕۆ",
       yesterday: "دوێنێ",
       thisWeek: "ئەم هەفتەیە",
       thisMonth: "ئەم مانگە",
+      custom: "دیاریکراو",
+      dateRange: "مەودای بەروار",
       
       // Settings
       language: "زمان",
       theme: "ڕووکار",
       darkMode: "دۆخی تاریک",
-      lightMode: "دۆخی ڕووناک"
+      lightMode: "دۆخی ڕووناک",
+      
+      // Data and Statistics
+      totalFeedback: "کۆی فیدباک",
+      filtered: "پاڵاوتراو",
+      highRated: "نرخاندنی بەرز",
+      stars: "ئەستێرە",
+      averageRating: "تێکڕای نرخاندن",
+      responseRate: "ڕێژەی وەڵام",
+      trendAnalysis: "شیکردنەوەی ڕەوت",
+      
+      // Page Menu
+      noPages: "هیچ پەڕەیەک بۆ ڕۆڵەکەت بەردەست نییە",
+      noPagesMatch: "هیچ پەڕەیەک نەگونجا لەگەڵ",
+      searchPages: "گەڕان لە پەڕەکان...",
+      
+      // General UI
+      allPages: "هەموو پەڕەکان",
+      mainCategory: "سەرەکی",
+      hrCategory: "سەرچاوە مرۆییەکان",
+      tasksCategory: "ئەرکەکان",
+      feedbackCategory: "فیدباک",
+      analyticsCategory: "شیکردنەوە",
+      dataCategory: "داتا",
+      reportsCategory: "ڕاپۆرتەکان",
+      
+      // Employee Reviews & Evaluations
+      employeeReviews: "هەڵسەنگاندن و لێکۆڵینەوەی کارمەندان",
+      manageEmployeeEvaluations: "بەڕێوەبردنی هەڵسەنگاندنی کارمەندان، لێکۆڵینەوەی کارایی و گۆڕینی ڕۆڵ",
+      
+      // Daily Task Management
+      dailyTaskManagement: "بەڕێوەبردنی ئەرکەکانی ڕۆژانە",
+      organizeTrackTasks: "ڕێکخستن و بەدواداچوونی ئەرکەکانی ڕۆژانە لەگەڵ پێشینەگرتنی زیرەک",
+      
+      // Feedback & Reviews
+      feedbackReviews: "فیدباک و لێکۆڵینەوەکان",
+      systemFeedbackReviews: "فیدباکی سیستەم، لێکۆڵینەوەکان و پێشنیارەکانی بەکارهێنەر",
+      
+      // Employee Tracking
+      employeeTracking: "بەدواداچوونی کارمەند",
+      trackEmployeeAttendance: "بەدواداچوونی ئامادەبوونی کارمەند، کارەکان و پێوەری کارایی",
+      
+      // Management Reports
+      managementReports: "ڕاپۆرتەکانی بەڕێوەبەری",
+      comprehensiveAnalytics: "شیکردنەوەی تەواو و تێڕوانینی کارایی",
+      
+      // Archive Management
+      archiveManagement: "بەڕێوەبردنی ئەرشیف",
+      manageArchivedItems: "بەڕێوەبردنی بابەتە ئەرشیفکراوەکان و داتای مێژوویی",
+      
+      // All Data Dashboard
+      allDataDashboard: "داشبۆردی هەموو داتاکان",
+      comprehensiveDataView: "بینینی تەواوی داتا و بەڕێوەبەری سیستەم"
     }
   }
 };
