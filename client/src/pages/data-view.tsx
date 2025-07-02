@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { DeleteConfirmationModal } from "@/components/modals/delete-confirmation-modal";
+import { OperationsMenuBar } from "@/components/navigation/operations-menu-bar";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import {
   Users,
@@ -296,17 +297,19 @@ export default function DataViewPage() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
-            Data View & Analytics
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            View, filter, and analyze your operational data
-          </p>
-        </div>
+    <div>
+      <OperationsMenuBar />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
+              Data Analytics & Insights
+            </h1>
+            <p className="text-lg text-gray-600 dark:text-gray-300">
+              View, filter, and analyze your operational data
+            </p>
+          </div>
 
         {/* Search and Filters Card */}
         <Card className="mb-8 shadow-lg border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
@@ -669,6 +672,7 @@ export default function DataViewPage() {
         isClearing={deleteModal.isClearing}
         totalEntries={allData.length}
       />
+      </div>
     </div>
   );
 }

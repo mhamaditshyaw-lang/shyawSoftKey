@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { LoadingVisualization, useLoadingVisualization } from "@/components/ui/loading-visualization";
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
+import { OperationsMenuBar } from "@/components/navigation/operations-menu-bar";
 
 
 import { 
@@ -536,16 +537,18 @@ export default function MetricsPage() {
 
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="max-w-4xl mx-auto"
-    >
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Daily Operations Dashboard</h2>
-        <p className="text-gray-600">Track employee attendance, operational activities, shift staffing levels, and production data</p>
-      </div>
+    <div>
+      <OperationsMenuBar />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-4xl mx-auto p-6"
+      >
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Data Entry Forms</h2>
+          <p className="text-gray-600">Enter daily operational data across all business areas</p>
+        </div>
 
       {/* Employee Tracking Section */}
       <div className="mb-12">
@@ -1651,6 +1654,7 @@ export default function MetricsPage() {
           { id: "save", label: "Saving vehicle records", icon: Database, duration: 600, color: "text-orange-500" },
         ]}
       />
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }
