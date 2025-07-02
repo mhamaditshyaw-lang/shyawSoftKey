@@ -25,10 +25,7 @@ export default function AddUserPage() {
     password: "",
     firstName: "",
     lastName: "",
-    role: "secretary",
-    department: "",
-    position: "",
-    notes: ""
+    role: "secretary"
   });
 
   const createUserMutation = useMutation({
@@ -43,7 +40,8 @@ export default function AddUserPage() {
       });
       
       if (!response.ok) {
-        throw new Error("Failed to create user");
+        const error = await response.json();
+        throw new Error(error.message || "Failed to create user");
       }
       
       return response.json();
@@ -198,39 +196,6 @@ export default function AddUserPage() {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="department">Department</Label>
-                  <Input
-                    id="department"
-                    type="text"
-                    placeholder="Enter department"
-                    value={formData.department}
-                    onChange={(e) => handleInputChange("department", e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="position">Position</Label>
-                  <Input
-                    id="position"
-                    type="text"
-                    placeholder="Enter job position"
-                    value={formData.position}
-                    onChange={(e) => handleInputChange("position", e.target.value)}
-                  />
-                </div>
-              </div>
-
-              {/* Notes */}
-              <div className="space-y-2">
-                <Label htmlFor="notes">Additional Notes</Label>
-                <Textarea
-                  id="notes"
-                  placeholder="Any additional information about the user..."
-                  value={formData.notes}
-                  onChange={(e) => handleInputChange("notes", e.target.value)}
-                  rows={4}
-                />
               </div>
 
               {/* Actions */}
