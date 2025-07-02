@@ -131,6 +131,13 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
   const filteredItems = navigationItems.filter(item => 
     item.roles.includes(user?.role || "")
   );
+  
+  // Debug: Check if user role and items are correct
+  console.log("Current user role:", user?.role);
+  console.log("Total navigation items:", navigationItems.length);
+  console.log("Filtered items:", filteredItems.length);
+  console.log("Daily Operations item found:", navigationItems.find(item => item.title === "Daily Operations"));
+  console.log("Data View item found:", navigationItems.find(item => item.title === "Data View"));
 
   const isActive = (href: string) => {
     if (href === "/") {
