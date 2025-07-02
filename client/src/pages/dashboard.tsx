@@ -784,7 +784,7 @@ export default function DashboardPage() {
                       <Calendar className="w-8 h-8" />
                     </motion.div>
                     <span className="font-medium">
-                      {user?.role === "secretary" ? "Schedule Review" : "Employee Reviews"}
+                      {user?.role === "security" ? "Schedule Review" : "Employee Reviews"}
                     </span>
                   </Button>
                 </motion.div>

@@ -21,7 +21,7 @@ export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) 
     password: "",
     firstName: "",
     lastName: "",
-    role: "secretary",
+    role: "security",
   });
   const { toast } = useToast();
 
@@ -43,7 +43,7 @@ export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) 
         password: "",
         firstName: "",
         lastName: "",
-        role: "secretary",
+        role: "security",
       });
     },
     onError: (error: any) => {
@@ -133,7 +133,7 @@ export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) 
               <SelectContent>
                 <SelectItem value="admin">Admin</SelectItem>
                 <SelectItem value="manager">Manager</SelectItem>
-                <SelectItem value="secretary">Secretary</SelectItem>
+                <SelectItem value="security">Secretary</SelectItem>
               </SelectContent>
             </Select>
           </div>

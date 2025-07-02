@@ -160,6 +160,7 @@ The deployment uses:
 - July 01, 2025: Added comprehensive Kurdish and English language support to entire system including enhanced i18n configuration, translated all navigation components, login page with language switcher, sidebar navigation, page menu, and feedback components with complete Kurdish translations for all major system functions
 - July 01, 2025: Created dedicated Employee Management system with comprehensive employee profiles, separate Add Employee form page with personal information, account details, employment information, emergency contacts, and additional notes fields, and New Daily List form page for creating task lists with multiple items, priorities, assignments, and due dates
 - July 02, 2025: Successfully integrated Daily Operations and Data View pages into sidebar navigation system with proper role-based access, removed custom menu bar components, and restored standard navigation flow
+- July 02, 2025: Updated user roles from Admin/Manager/Secretary to Admin/Manager/Security throughout entire system including translations, database schema, authentication, navigation components, and backend routes with proper Kurdish translations for all roles
 
 ## User Preferences
 

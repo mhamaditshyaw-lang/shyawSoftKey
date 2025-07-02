@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
-import { Grid3X3, Search, ChevronRight, Home, Users, Calendar, CheckSquare, MessageSquare, BarChart3, Archive, FileText, Database } from "lucide-react";
+import { Grid3X3, Search, ChevronRight, Home, Users, Calendar, CheckSquare, MessageSquare, BarChart3, Archive, FileText, Database, Globe } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 interface NavItem {
@@ -30,7 +30,7 @@ export default function PageMenu() {
       href: "/", 
       icon: Home, 
       description: t("addNewTask"), 
-      roles: ["admin", "manager", "secretary"],
+      roles: ["admin", "manager", "security"],
       category: t("mainCategory")
     },
     { 
@@ -38,7 +38,7 @@ export default function PageMenu() {
       href: "/interviews", 
       icon: Calendar, 
       description: t("manageEmployeeEvaluations"), 
-      roles: ["admin", "manager", "secretary"],
+      roles: ["admin", "manager", "security"],
       category: t("hrCategory")
     },
     { 
@@ -46,7 +46,7 @@ export default function PageMenu() {
       href: "/todos", 
       icon: CheckSquare, 
       description: t("organizeTrackTasks"), 
-      roles: ["admin", "manager", "secretary"],
+      roles: ["admin", "manager", "security"],
       category: t("tasksCategory")
     },
     { 
@@ -54,7 +54,7 @@ export default function PageMenu() {
       href: "/feedback", 
       icon: MessageSquare, 
       description: t("systemFeedbackReviews"), 
-      roles: ["admin", "manager", "secretary"],
+      roles: ["admin", "manager", "security"],
       category: t("feedbackCategory")
     },
     { 
@@ -62,7 +62,7 @@ export default function PageMenu() {
       href: "/metrics", 
       icon: Users, 
       description: t("trackEmployeeAttendance"), 
-      roles: ["admin", "manager", "secretary"],
+      roles: ["admin", "manager", "security"],
       category: t("analyticsCategory")
     },
     { 
@@ -70,7 +70,7 @@ export default function PageMenu() {
       href: "/data-view", 
       icon: BarChart3, 
       description: t("operationalDataView"), 
-      roles: ["admin", "manager", "secretary"],
+      roles: ["admin", "manager", "security"],
       category: t("dataCategory")
     },
     { 
@@ -126,8 +126,16 @@ export default function PageMenu() {
       href: "/add-daily-list", 
       icon: CheckSquare, 
       description: "Create new daily task lists with multiple items", 
-      roles: ["admin", "manager", "secretary"],
+      roles: ["admin", "manager", "security"],
       category: t("tasksCategory")
+    },
+    { 
+      title: "Multilingual Demo", 
+      href: "/multilingual-demo", 
+      icon: Database, 
+      description: "Demo of multilingual support and role-based access control", 
+      roles: ["admin", "manager", "security"],
+      category: "Demo"
     },
   ];
 

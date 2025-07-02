@@ -513,7 +513,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         requests = allRequests.filter(r => 
           r.managerId === req.user!.id || r.managerId === null
         );
-      } else if (req.user!.role === 'secretary') {
+      } else if (req.user!.role === 'security') {
         requests = await storage.getInterviewRequestsBySecretary(req.user!.id);
       }
       res.json({ requests });

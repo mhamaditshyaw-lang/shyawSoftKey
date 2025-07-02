@@ -187,7 +187,7 @@ export default function InterviewsPage() {
             <p className="text-sm md:text-base text-gray-600">Manage internal employee evaluations, performance reviews, and role change interviews</p>
           </div>
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-            {(user?.role === "secretary" || user?.role === "admin") && (
+            {(user?.role === "security" || user?.role === "admin") && (
               <Button onClick={() => setShowRequestModal(true)} className="mobile-button touch-target">
                 <Plus className="w-4 h-4 mr-2" />
                 <span className="hidden sm:inline">Schedule Employee Review</span>
@@ -335,7 +335,7 @@ export default function InterviewsPage() {
                   : `No ${statusFilter} requests found.`
                 }
               </p>
-              {(user?.role === "secretary" || user?.role === "admin") && (
+              {(user?.role === "security" || user?.role === "admin") && (
                 <Button onClick={() => setShowRequestModal(true)}>
                   <Plus className="w-4 h-4 mr-2" />
                   Schedule First Review

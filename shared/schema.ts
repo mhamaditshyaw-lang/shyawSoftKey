@@ -3,7 +3,7 @@ import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const roleEnum = pgEnum("role", ["admin", "manager", "secretary"]);
+export const roleEnum = pgEnum("role", ["admin", "manager", "security"]);
 export const statusEnum = pgEnum("status", ["active", "inactive", "pending"]);
 export const priorityEnum = pgEnum("priority", ["low", "medium", "high", "urgent"]);
 export const requestStatusEnum = pgEnum("request_status", ["pending", "approved", "rejected"]);
@@ -15,7 +15,7 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
-  role: roleEnum("role").notNull().default("secretary"),
+  role: roleEnum("role").notNull().default("security"),
   status: statusEnum("status").notNull().default("pending"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   lastActiveAt: timestamp("last_active_at"),

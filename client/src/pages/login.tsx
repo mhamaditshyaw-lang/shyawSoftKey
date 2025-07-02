@@ -30,7 +30,7 @@ export default function LoginPage() {
     password: "",
     firstName: "",
     lastName: "",
-    role: "secretary",
+    role: "security",
   });
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -273,7 +273,7 @@ export default function LoginPage() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="manager">{t("manager")}</SelectItem>
-                        <SelectItem value="secretary">{t("secretary")}</SelectItem>
+                        <SelectItem value="security">{t("security")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

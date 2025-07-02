@@ -18,6 +18,7 @@ import DailyTasksPage from "@/pages/daily-tasks";
 import FeedbackPage from "@/pages/feedback";
 import ArchivePage from "@/pages/archive";
 import MetricsPage from "@/pages/metrics";
+import MultilingualDemoPage from "@/pages/multilingual-demo";
 import DataViewPage from "@/pages/data-view";
 import AllDataPage from "@/pages/all-data";
 import ReportsPage from "@/pages/reports";
@@ -115,6 +116,11 @@ function Router() {
       <Route path="/reports">
         <ProtectedRoute>
           <ReportsPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/multilingual-demo">
+        <ProtectedRoute>
+          <MultilingualDemoPage />
         </ProtectedRoute>
       </Route>
       <Route component={NotFound} />

@@ -32,7 +32,7 @@ export default function AddEmployeePage() {
     // Account Information
     username: "",
     password: "",
-    role: "secretary",
+    role: "security",
     
     // Employment Information
     employeeId: "",
@@ -302,7 +302,7 @@ export default function AddEmployeePage() {
                     <SelectContent>
                       <SelectItem value="admin">{t("admin")}</SelectItem>
                       <SelectItem value="manager">{t("manager")}</SelectItem>
-                      <SelectItem value="secretary">{t("secretary")}</SelectItem>
+                      <SelectItem value="security">{t("security")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

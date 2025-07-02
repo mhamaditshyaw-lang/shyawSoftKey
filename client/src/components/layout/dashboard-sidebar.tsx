@@ -40,7 +40,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       href: "/",
       icon: Home,
       badge: null,
-      roles: ["admin", "manager", "secretary"]
+      roles: ["admin", "manager", "security"]
     },
     {
       title: t("users"),
@@ -61,28 +61,28 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       href: "/todos",
       icon: CheckSquare,
       badge: null,
-      roles: ["admin", "manager", "secretary"]
+      roles: ["admin", "manager", "security"]
     },
     {
       title: t("newDailyList"),
       href: "/add-daily-list",
       icon: Plus,
       badge: "New",
-      roles: ["admin", "manager", "secretary"]
+      roles: ["admin", "manager", "security"]
     },
     {
       title: t("dailyTasks"),
       href: "/daily-tasks",
       icon: Zap,
       badge: "New",
-      roles: ["admin", "manager", "secretary"]
+      roles: ["admin", "manager", "security"]
     },
     {
       title: t("interviews"),
       href: "/interviews",
       icon: UserCheck,
       badge: null,
-      roles: ["admin", "manager", "secretary"]
+      roles: ["admin", "manager", "security"]
     },
     {
       title: t("reports"),
@@ -96,7 +96,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       href: "/feedback",
       icon: MessageSquare,
       badge: null,
-      roles: ["admin", "manager", "secretary"]
+      roles: ["admin", "manager", "security"]
     },
     {
       title: t("archive"),
@@ -110,14 +110,14 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       href: "/metrics",
       icon: BarChart3,
       badge: "Data Entry",
-      roles: ["admin", "manager", "secretary"]
+      roles: ["admin", "manager", "security"]
     },
     {
       title: "Data View",
       href: "/data-view",
       icon: Database,
       badge: null,
-      roles: ["admin", "manager", "secretary"]
+      roles: ["admin", "manager", "security"]
     },
     {
       title: t("allData"),

@@ -40,7 +40,7 @@ const resources = {
       // User roles
       admin: "Admin",
       manager: "Manager",
-      secretary: "Secretary",
+      security: "Security",
       employee: "Employee",
       
       // Status
@@ -244,7 +244,7 @@ const resources = {
       // User roles
       admin: "بەڕێوەبەر",
       manager: "مانەجەر",
-      secretary: "سکرتێر",
+      security: "ئاسایش",
       employee: "کارمەند",
       
       // Status

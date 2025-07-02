@@ -43,12 +43,12 @@ export default function ResponsiveMenuBar() {
   }, []);
 
   const allNavItems: NavItem[] = [
-    { title: "Dashboard", href: "/", icon: Home, roles: ["admin", "manager", "secretary"], shortTitle: "Home" },
-    { title: "Employee Reviews", href: "/interviews", icon: Calendar, roles: ["admin", "manager", "secretary"], shortTitle: "Reviews" },
-    { title: "Daily Tasks", href: "/todos", icon: CheckSquare, roles: ["admin", "manager", "secretary"], shortTitle: "Tasks" },
-    { title: "Feedback", href: "/feedback", icon: MessageSquare, roles: ["admin", "manager", "secretary"], shortTitle: "Feedback" },
-    { title: "Employee Tracking", href: "/metrics", icon: Users, roles: ["admin", "manager", "secretary"], shortTitle: "Tracking" },
-    { title: "Data View", href: "/data-view", icon: BarChart3, roles: ["admin", "manager", "secretary"], shortTitle: "Data" },
+    { title: "Dashboard", href: "/", icon: Home, roles: ["admin", "manager", "security"], shortTitle: "Home" },
+    { title: "Employee Reviews", href: "/interviews", icon: Calendar, roles: ["admin", "manager", "security"], shortTitle: "Reviews" },
+    { title: "Daily Tasks", href: "/todos", icon: CheckSquare, roles: ["admin", "manager", "security"], shortTitle: "Tasks" },
+    { title: "Feedback", href: "/feedback", icon: MessageSquare, roles: ["admin", "manager", "security"], shortTitle: "Feedback" },
+    { title: "Employee Tracking", href: "/metrics", icon: Users, roles: ["admin", "manager", "security"], shortTitle: "Tracking" },
+    { title: "Data View", href: "/data-view", icon: BarChart3, roles: ["admin", "manager", "security"], shortTitle: "Data" },
     { title: "All Data", href: "/all-data", icon: Database, roles: ["admin", "manager"], shortTitle: "All Data" },
     { title: "Archive", href: "/archive", icon: Archive, roles: ["admin", "manager"], shortTitle: "Archive" },
     { title: "Reports", href: "/reports", icon: FileText, roles: ["admin", "manager"], shortTitle: "Reports" },
