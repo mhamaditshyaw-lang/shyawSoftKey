@@ -106,6 +106,13 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       roles: ["admin", "manager"]
     },
     {
+      title: "Daily Operations",
+      href: "/metrics",
+      icon: BarChart3,
+      badge: "Data Entry",
+      roles: ["admin", "manager", "secretary"]
+    },
+    {
       title: t("dataView"),
       href: "/data-view",
       icon: Database,
