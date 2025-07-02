@@ -594,7 +594,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Analytics/Stats routes
-  app.get("/api/stats", authenticateToken, requireRole(['admin']), async (req, res) => {
+  app.get("/api/stats", authenticateToken, async (req, res) => {
     try {
       const [userStats, todoStats, interviewStats] = await Promise.all([
         storage.getUserStats(),
