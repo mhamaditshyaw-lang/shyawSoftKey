@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,7 +22,9 @@ import {
   Truck,
   Database,
   Zap,
-  CheckCircle
+  CheckCircle,
+  ArrowLeft,
+  Home
 } from "lucide-react";
 
 export default function MetricsPage() {
@@ -542,6 +545,19 @@ export default function MetricsPage() {
       transition={{ duration: 0.5 }}
       className="max-w-4xl mx-auto p-6"
     >
+      {/* Back to Dashboard Button */}
+      <div className="mb-6">
+        <Link href="/">
+          <Button 
+            variant="outline" 
+            className="flex items-center gap-2 hover:bg-dashboard-primary hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </Button>
+        </Link>
+      </div>
+
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Daily Operations Dashboard</h2>
         <p className="text-gray-600">Track employee attendance, operational activities, shift staffing levels, and production data</p>
