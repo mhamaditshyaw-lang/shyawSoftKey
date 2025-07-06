@@ -1,0 +1,132 @@
+=== cPanel Deployment Instructions for Office Management System ===
+
+📋 STEP-BY-STEP DEPLOYMENT GUIDE
+
+1. PREPARE YOUR cPanel HOSTING:
+   ✓ Ensure Node.js is enabled (version 18 or higher)
+   ✓ Ensure PostgreSQL database support is available
+   ✓ Have cPanel File Manager access
+
+2. UPLOAD PROJECT FILES:
+   ✓ Upload office-management-cpanel.tar.gz to public_html via File Manager
+   ✓ Extract the archive in public_html directory
+   ✓ Rename package-production.json to package.json
+
+3. CREATE DATABASE:
+   ✓ Go to cPanel → MySQL/PostgreSQL Databases
+   ✓ Create new database: office_management_db
+   ✓ Create database user with full privileges
+   ✓ Note: username, password, database name, host
+
+4. CONFIGURE ENVIRONMENT:
+   ✓ Copy .env.production to .env
+   ✓ Update DATABASE_URL with your actual credentials:
+     DATABASE_URL=postgresql://username:password@localhost:5432/database_name
+   ✓ Generate strong JWT_SECRET (32+ characters)
+   ✓ Update other settings as needed
+
+5. INSTALL DEPENDENCIES:
+   ✓ Open Terminal in cPanel (or use SSH)
+   ✓ Navigate to public_html: cd public_html
+   ✓ Run: npm install --production
+
+6. SETUP DATABASE SCHEMA:
+   ✓ Run: npm run db:push
+   ✓ Execute SQL from create_admin_user.sql in your database
+   ✓ This creates admin, manager, and security test users
+
+7. CONFIGURE NODE.JS APPLICATION:
+   ✓ Go to cPanel → Node.js Selector/Apps
+   ✓ Create new application:
+     - App Root: /public_html
+     - App URL: your domain
+     - App Startup File: server-production.js
+     - Node.js Version: 18 or higher
+   ✓ Set Environment Variables in Node.js app:
+     - NODE_ENV: production
+     - DATABASE_URL: your database connection string
+     - JWT_SECRET: your secret key
+
+8. START APPLICATION:
+   ✓ Start the Node.js application from cPanel
+   ✓ Check logs for any errors
+   ✓ Application should be running on your domain
+
+9. CONFIGURE SSL & DOMAIN:
+   ✓ Install SSL certificate (Let's Encrypt recommended)
+   ✓ Force HTTPS redirect
+   ✓ Ensure domain points to your server
+
+10. TEST YOUR APPLICATION:
+    ✓ Visit https://yourdomain.com
+    ✓ Test login with default credentials:
+      - Username: admin / Password: admin123
+      - Username: manager / Password: admin123  
+      - Username: security / Password: admin123
+    ✓ IMPORTANT: Change passwords immediately!
+    ✓ Test multilingual switching (Kurdish/English)
+    ✓ Test role-based access control
+
+🔒 SECURITY CHECKLIST:
+□ Changed all default passwords
+□ Generated strong JWT_SECRET (32+ characters)
+□ SSL certificate installed and HTTPS enforced
+□ Database credentials are secure
+□ Environment variables properly set
+□ Admin user password changed from default
+
+🌟 FEATURES AVAILABLE:
+✓ User Management (Admin, Manager, Security roles)
+✓ Task Management with assignments and priorities
+✓ Employee Review and Evaluation system
+✓ Feedback and Rating system
+✓ Archive system for completed items
+✓ Data tracking and operational reports
+✓ Multilingual support (Kurdish and English)
+✓ Dark/Light theme support
+✓ Mobile-responsive design
+✓ Real-time notifications
+
+🆘 TROUBLESHOOTING:
+
+Database Connection Issues:
+- Verify DATABASE_URL format is correct
+- Check if PostgreSQL is enabled in cPanel
+- Ensure database user has proper permissions
+- Test database connection from terminal
+
+Node.js App Won't Start:
+- Check Node.js version compatibility (18+)
+- Verify all dependencies installed: npm install
+- Check application logs in cPanel
+- Ensure startup file path is correct
+
+404 Errors:
+- Verify client/dist folder exists with built files
+- Check file permissions (755 for directories, 644 for files)
+- Ensure server-production.js is properly configured
+
+Authentication Errors:
+- Verify JWT_SECRET is set and consistent
+- Check if admin user exists in database
+- Ensure password hash is correct
+
+Performance Issues:
+- Enable gzip compression in cPanel
+- Configure caching headers
+- Monitor resource usage
+
+📞 SUPPORT:
+- Check CPANEL_DEPLOYMENT_GUIDE.md for detailed information
+- Review application logs in cPanel
+- Contact your hosting provider for server-related issues
+
+🎉 CONGRATULATIONS!
+Your Office Management System is now deployed and ready for use!
+
+Default Login Credentials (CHANGE IMMEDIATELY):
+- Admin: admin / admin123
+- Manager: manager / admin123
+- Security: security / admin123
+
+Access your system at: https://yourdomain.com
