@@ -13,8 +13,8 @@ import EmployeeManagementPage from "@/pages/employee-management";
 import AddEmployeePage from "@/pages/add-employee";
 import InterviewsPage from "@/pages/interviews";
 import TodosPage from "@/pages/todos";
-import AddDailyListPage from "@/pages/add-daily-list";
-import DailyTasksPage from "@/pages/daily-tasks";
+
+
 import FeedbackPage from "@/pages/feedback";
 import ArchivePage from "@/pages/archive";
 import MetricsPage from "@/pages/metrics";
@@ -78,16 +78,8 @@ function Router() {
           <TodosPage />
         </ProtectedRoute>
       </Route>
-      <Route path="/add-daily-list">
-        <ProtectedRoute>
-          <AddDailyListPage />
-        </ProtectedRoute>
-      </Route>
-      <Route path="/daily-tasks">
-        <ProtectedRoute>
-          <DailyTasksPage />
-        </ProtectedRoute>
-      </Route>
+
+
       <Route path="/feedback">
         <ProtectedRoute>
           <FeedbackPage />

@@ -326,18 +326,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Smart prioritization endpoints
-  app.get("/api/todos/priorities", authenticateToken, async (req: AuthRequest, res) => {
-    try {
-      const { PrioritizationService } = await import("./prioritization-service");
-      // All users only see their own priority analysis
-      const priorities = await PrioritizationService.getPrioritizedTodos(req.user!.id);
-      res.json({ priorities });
-    } catch (error: any) {
-      console.error("Error getting prioritized todos:", error);
-      res.status(500).json({ message: error.message });
-    }
-  });
+
 
   // Reports endpoints (manager/admin only)
   app.get("/api/reports", authenticateToken, requireRole(['manager', 'admin']), async (req: AuthRequest, res) => {
@@ -479,27 +468,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
 
-  app.get("/api/todos/recommendations", authenticateToken, async (req: AuthRequest, res) => {
-    try {
-      const { PrioritizationService } = await import("./prioritization-service");
-      const recommendations = await PrioritizationService.getDailyRecommendations(req.user!.id);
-      res.json({ recommendations });
-    } catch (error: any) {
-      console.error("Error getting recommendations:", error);
-      res.status(500).json({ message: error.message });
-    }
-  });
 
-  app.post("/api/todos/auto-prioritize", authenticateToken, async (req: AuthRequest, res) => {
-    try {
-      const { PrioritizationService } = await import("./prioritization-service");
-      const result = await PrioritizationService.autoPrioritizeTodos(req.user!.id);
-      res.json({ result });
-    } catch (error: any) {
-      console.error("Error auto-prioritizing todos:", error);
-      res.status(500).json({ message: error.message });
-    }
-  });
 
   // Interview request routes
   app.get("/api/interviews", authenticateToken, async (req: AuthRequest, res) => {

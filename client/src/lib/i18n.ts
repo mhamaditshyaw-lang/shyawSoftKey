@@ -9,7 +9,7 @@ const resources = {
       // Navigation
       dashboard: "Dashboard",
       users: "Users",
-      dailyTasks: "Daily Tasks",
+
       todos: "Todos",
       interviews: "Employee Reviews",
       reports: "Reports",

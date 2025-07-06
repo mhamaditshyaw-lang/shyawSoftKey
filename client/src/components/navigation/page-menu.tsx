@@ -121,14 +121,7 @@ export default function PageMenu() {
       roles: ["admin", "manager"],
       category: t("hrCategory")
     },
-    { 
-      title: t("newDailyList"), 
-      href: "/add-daily-list", 
-      icon: CheckSquare, 
-      description: "Create new daily task lists with multiple items", 
-      roles: ["admin", "manager", "security"],
-      category: t("tasksCategory")
-    },
+
     { 
       title: "Multilingual Demo", 
       href: "/multilingual-demo", 

@@ -63,20 +63,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       badge: null,
       roles: ["admin", "manager", "security"]
     },
-    {
-      title: t("newDailyList"),
-      href: "/add-daily-list",
-      icon: Plus,
-      badge: "New",
-      roles: ["admin", "manager", "security"]
-    },
-    {
-      title: t("dailyTasks"),
-      href: "/daily-tasks",
-      icon: Zap,
-      badge: "New",
-      roles: ["admin", "manager", "security"]
-    },
+
     {
       title: t("interviews"),
       href: "/interviews",
