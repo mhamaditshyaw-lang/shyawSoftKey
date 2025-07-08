@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -19,6 +21,8 @@ export default function UsersPage() {
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingUser, setEditingUser] = useState<any>(null);
+  const [userToDelete, setUserToDelete] = useState<any>(null);
   const { toast } = useToast();
 
   const { data: usersData, isLoading } = useQuery({
@@ -36,6 +40,7 @@ export default function UsersPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      setEditingUser(null);
       toast({
         title: "Success",
         description: "User updated successfully",
@@ -45,6 +50,31 @@ export default function UsersPage() {
       toast({
         title: "Error",
         description: error.message || "Failed to update user",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await authenticatedRequest("DELETE", `/api/users/${id}`);
+      if (!response.ok) {
+        throw new Error("Failed to delete user");
+      }
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      setUserToDelete(null);
+      toast({
+        title: "Success",
+        description: "User deleted successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete user",
         variant: "destructive",
       });
     },
@@ -66,26 +96,26 @@ export default function UsersPage() {
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case "admin":
-        return "bg-red-100 text-red-800";
+        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300";
       case "manager":
-        return "bg-blue-100 text-blue-800";
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
       case "security":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
     }
   };
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case "active":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
       case "inactive":
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
     }
   };
 
@@ -101,6 +131,34 @@ export default function UsersPage() {
       id: userId,
       updates: { status: "inactive" }
     });
+  };
+
+  const handleEditUser = (user: any) => {
+    setEditingUser(user);
+  };
+
+  const handleDeleteUser = (user: any) => {
+    setUserToDelete(user);
+  };
+
+  const handleUpdateUser = () => {
+    if (!editingUser) return;
+    
+    updateUserMutation.mutate({
+      id: editingUser.id,
+      updates: {
+        firstName: editingUser.firstName,
+        lastName: editingUser.lastName,
+        email: editingUser.email,
+        role: editingUser.role,
+        status: editingUser.status
+      }
+    });
+  };
+
+  const confirmDeleteUser = () => {
+    if (!userToDelete) return;
+    deleteUserMutation.mutate(userToDelete.id);
   };
 
   if (isLoading) {
@@ -192,11 +250,11 @@ export default function UsersPage() {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-gray-900 dark:text-gray-100">
                         {user.firstName} {user.lastName}
                       </div>
-                      <div className="text-sm text-gray-500">{user.email}</div>
-                      <div className="text-xs text-gray-400">@{user.username}</div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
+                      <div className="text-xs text-gray-400 dark:text-gray-500">@{user.username}</div>
                     </div>
                   </div>
                 </TableCell>
@@ -210,7 +268,7 @@ export default function UsersPage() {
                     {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-sm text-gray-600">
+                <TableCell className="text-sm text-gray-600 dark:text-gray-400">
                   {user.lastActiveAt
                     ? new Date(user.lastActiveAt).toLocaleDateString()
                     : "Never"
@@ -241,10 +299,20 @@ export default function UsersPage() {
                       </>
                     ) : (
                       <>
-                        <Button size="sm" variant="ghost">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleEditUser(user)}
+                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                        >
                           <Edit className="w-4 h-4" />
                         </Button>
-                        <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700">
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          onClick={() => handleDeleteUser(user)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        >
                           <Trash className="w-4 h-4" />
                         </Button>
                       </>
@@ -258,6 +326,148 @@ export default function UsersPage() {
       </Card>
 
       <AddUserModal open={showAddModal} onOpenChange={setShowAddModal} />
+      
+      {/* Edit User Modal */}
+      <Dialog open={!!editingUser} onOpenChange={() => setEditingUser(null)}>
+        <DialogContent className="bg-white dark:bg-gray-800 border dark:border-gray-700">
+          <DialogHeader>
+            <DialogTitle className="text-gray-900 dark:text-gray-100">Edit User</DialogTitle>
+            <DialogDescription className="text-gray-600 dark:text-gray-400">
+              Update user information and settings.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {editingUser && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="firstName" className="text-gray-700 dark:text-gray-300">First Name</Label>
+                  <Input
+                    id="firstName"
+                    value={editingUser.firstName}
+                    onChange={(e) => setEditingUser({...editingUser, firstName: e.target.value})}
+                    className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="lastName" className="text-gray-700 dark:text-gray-300">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    value={editingUser.lastName}
+                    onChange={(e) => setEditingUser({...editingUser, lastName: e.target.value})}
+                    className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={editingUser.email}
+                  onChange={(e) => setEditingUser({...editingUser, email: e.target.value})}
+                  className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="role" className="text-gray-700 dark:text-gray-300">Role</Label>
+                <Select 
+                  value={editingUser.role} 
+                  onValueChange={(value) => setEditingUser({...editingUser, role: value})}
+                >
+                  <SelectTrigger className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white dark:bg-gray-800 border dark:border-gray-700">
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="manager">Manager</SelectItem>
+                    <SelectItem value="security">Security</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label htmlFor="status" className="text-gray-700 dark:text-gray-300">Status</Label>
+                <Select 
+                  value={editingUser.status} 
+                  onValueChange={(value) => setEditingUser({...editingUser, status: value})}
+                >
+                  <SelectTrigger className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white dark:bg-gray-800 border dark:border-gray-700">
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setEditingUser(null)}
+              className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleUpdateUser}
+              disabled={updateUserMutation.isPending}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              {updateUserMutation.isPending ? "Updating..." : "Update User"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete User Modal */}
+      <Dialog open={!!userToDelete} onOpenChange={() => setUserToDelete(null)}>
+        <DialogContent className="bg-white dark:bg-gray-800 border dark:border-gray-700">
+          <DialogHeader>
+            <DialogTitle className="text-red-600 dark:text-red-400">Delete User</DialogTitle>
+            <DialogDescription className="text-gray-600 dark:text-gray-400">
+              Are you sure you want to delete this user? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {userToDelete && (
+            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+              <p className="text-gray-900 dark:text-gray-100 font-medium">
+                {userToDelete.firstName} {userToDelete.lastName}
+              </p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                {userToDelete.email}
+              </p>
+              <p className="text-gray-500 dark:text-gray-500 text-xs">
+                @{userToDelete.username}
+              </p>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setUserToDelete(null)}
+              className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={confirmDeleteUser}
+              disabled={deleteUserMutation.isPending}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {deleteUserMutation.isPending ? "Deleting..." : "Delete User"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

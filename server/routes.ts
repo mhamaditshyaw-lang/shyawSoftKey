@@ -199,6 +199,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/users/:id", authenticateToken, requireRole(['admin']), async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      // Check if user exists
+      const user = await storage.getUser(id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Prevent self-deletion
+      if (id === req.user!.id) {
+        return res.status(400).json({ message: "Cannot delete your own account" });
+      }
+
+      const success = await storage.deleteUser(id);
+      if (!success) {
+        return res.status(500).json({ message: "Failed to delete user" });
+      }
+
+      res.json({ message: "User deleted successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // Todo routes (users only see their own)
   app.get("/api/todos", authenticateToken, async (req: AuthRequest, res) => {
     try {
