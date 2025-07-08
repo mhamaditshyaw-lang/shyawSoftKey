@@ -11,7 +11,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { ChangePasswordModal } from "@/components/modals/change-password-modal";
-import { Users, Plus, Search, Filter, Mail, Phone, MapPin, Calendar, UserCheck, Edit, Lock } from "lucide-react";
+import { DeleteEmployeeModal } from "@/components/modals/delete-employee-modal";
+import { Users, Plus, Search, Filter, Mail, Phone, MapPin, Calendar, UserCheck, Edit, Lock, Trash2 } from "lucide-react";
 
 export default function EmployeeManagementPage() {
   const { t } = useTranslation();
@@ -20,6 +21,11 @@ export default function EmployeeManagementPage() {
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [changePasswordModal, setChangePasswordModal] = useState<{
+    open: boolean;
+    userId: number;
+    username: string;
+  }>({ open: false, userId: 0, username: "" });
+  const [deleteModal, setDeleteModal] = useState<{
     open: boolean;
     userId: number;
     username: string;
@@ -328,6 +334,19 @@ export default function EmployeeManagementPage() {
                           >
                             <Lock className="w-4 h-4" />
                           </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setDeleteModal({
+                              open: true,
+                              userId: employee.id,
+                              username: employee.username
+                            })}
+                            title="Delete Employee"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -345,6 +364,14 @@ export default function EmployeeManagementPage() {
         onOpenChange={(open) => setChangePasswordModal(prev => ({ ...prev, open }))}
         userId={changePasswordModal.userId}
         username={changePasswordModal.username}
+      />
+
+      {/* Delete Employee Modal */}
+      <DeleteEmployeeModal
+        open={deleteModal.open}
+        onOpenChange={(open) => setDeleteModal(prev => ({ ...prev, open }))}
+        userId={deleteModal.userId}
+        username={deleteModal.username}
       />
     </DashboardLayout>
   );
