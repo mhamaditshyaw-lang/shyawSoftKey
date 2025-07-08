@@ -15,10 +15,17 @@ import {
 } from "@shared/schema";
 import { 
   notifications,
+  type Notification,
+  type InsertNotification,
+} from "@shared/notification-schema";
+import {
   feedback,
   archivedItems,
+  type Feedback,
+  type InsertFeedback,
+  type ArchivedItem,
+  type InsertArchivedItem,
 } from "@shared/feedback-schema";
-import { operationalData } from "@shared/operational-schema";
 import { db } from "./db";
 import { eq, desc, and, or, sql } from "drizzle-orm";
 
@@ -114,10 +121,60 @@ export class DatabaseStorage implements IStorage {
 
   async deleteUser(id: number): Promise<boolean> {
     try {
+      // First, update any todo lists created by this user to remove the assignment
+      await db
+        .update(todoLists)
+        .set({ assignedToId: null })
+        .where(eq(todoLists.assignedToId, id));
+
+      // Update any todo lists created by this user to assign to admin (id: 1) or null
+      await db
+        .update(todoLists)
+        .set({ createdById: 1 }) // Assign to admin user
+        .where(eq(todoLists.createdById, id));
+
+      // Update any interview requests to remove manager reference
+      await db
+        .update(interviewRequests)
+        .set({ managerId: null })
+        .where(eq(interviewRequests.managerId, id));
+
+      // Update interview requests requested by this user to assign to admin
+      await db
+        .update(interviewRequests)
+        .set({ requestedById: 1 })
+        .where(eq(interviewRequests.requestedById, id));
+
+      // Update notifications to remove user references
+      await db
+        .update(notifications)
+        .set({ userId: 1 })
+        .where(eq(notifications.userId, id));
+
+      // Update feedback to remove user references
+      await db
+        .update(feedback)
+        .set({ submittedById: 1 })
+        .where(eq(feedback.submittedById, id));
+
+      // Update archived items to remove user references
+      await db
+        .update(archivedItems)
+        .set({ archivedById: 1 })
+        .where(eq(archivedItems.archivedById, id));
+
+      // Update operational data to remove user references
+      await db
+        .update(operationalData)
+        .set({ submittedById: 1 })
+        .where(eq(operationalData.submittedById, id));
+
+      // Finally, delete the user
       const result = await db
         .delete(users)
         .where(eq(users.id, id))
         .returning();
+      
       return result.length > 0;
     } catch (error) {
       console.error("Error deleting user:", error);
