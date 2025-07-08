@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bell, Check, CheckCheck } from "lucide-react";
+import { Bell, Check, CheckCheck, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,13 +10,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useNotifications } from "@/hooks/use-notifications";
+import { useNotifications } from "@/hooks/use-notifications.tsx";
+import { NotificationSettings } from "@/components/notifications/notification-settings";
 import { getRelativeTime } from "@/lib/utils";
 
 export default function NotificationBell() {
   const { notifications, unreadCount, markAsRead, markAllAsRead, isLoading } = useNotifications();
   const [open, setOpen] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -114,7 +117,23 @@ export default function NotificationBell() {
             ))}
           </ScrollArea>
         )}
+        
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => setShowSettings(true)} className="p-3">
+          <Settings className="h-4 w-4 mr-2" />
+          Device Notification Settings
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+
+    {/* Notification Settings Dialog */}
+    <Dialog open={showSettings} onOpenChange={setShowSettings}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Notification Settings</DialogTitle>
+        </DialogHeader>
+        <NotificationSettings />
+      </DialogContent>
+    </Dialog>
   );
 }
