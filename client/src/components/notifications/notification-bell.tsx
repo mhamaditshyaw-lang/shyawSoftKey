@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useNotifications } from "@/hooks/use-notifications.tsx";
+import { useNotifications } from "@/hooks/use-notifications";
 import { NotificationSettings } from "@/components/notifications/notification-settings";
 import { getRelativeTime } from "@/lib/utils";
 
@@ -81,15 +81,15 @@ export default function NotificationBell() {
         <DropdownMenuSeparator />
         
         {isLoading ? (
-          <div className="p-4 text-center text-gray-500">Loading notifications...</div>
+          <div className="p-4 text-center text-gray-500 dark:text-gray-400">Loading notifications...</div>
         ) : notifications.length === 0 ? (
-          <div className="p-4 text-center text-gray-500">No notifications yet</div>
+          <div className="p-4 text-center text-gray-500 dark:text-gray-400">No notifications yet</div>
         ) : (
           <ScrollArea className="h-96">
             {notifications.map((notification: any) => (
               <DropdownMenuItem
                 key={notification.id}
-                className={`p-3 cursor-pointer ${!notification.isRead ? 'bg-blue-50' : ''}`}
+                className={`p-3 cursor-pointer ${!notification.isRead ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                 onClick={() => handleNotificationClick(notification)}
               >
                 <div className="flex items-start space-x-3 w-full">
@@ -98,17 +98,17 @@ export default function NotificationBell() {
                   </span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium text-gray-900 truncate">
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                         {notification.title}
                       </p>
                       {!notification.isRead && (
                         <div className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0 ml-2" />
                       )}
                     </div>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                       {notification.message}
                     </p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                       {getRelativeTime(notification.createdAt)}
                     </p>
                   </div>

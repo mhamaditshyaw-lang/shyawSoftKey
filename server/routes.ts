@@ -199,6 +199,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Change user password
+  app.patch("/api/users/:id/password", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const { currentPassword, newPassword } = req.body;
+
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({ message: "Current password and new password are required" });
+      }
+
+      if (newPassword.length < 6) {
+        return res.status(400).json({ message: "New password must be at least 6 characters long" });
+      }
+
+      // Get the user
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Only allow users to change their own password, or admins to change any password
+      if (req.user!.id !== userId && req.user!.role !== 'admin') {
+        return res.status(403).json({ message: "You can only change your own password" });
+      }
+
+      // If not admin, verify current password
+      if (req.user!.role !== 'admin') {
+        const bcrypt = require('bcrypt');
+        const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+        if (!isCurrentPasswordValid) {
+          return res.status(400).json({ message: "Current password is incorrect" });
+        }
+      }
+
+      // Hash new password
+      const bcrypt = require('bcrypt');
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+      // Update password
+      const updatedUser = await storage.updateUser(userId, { password: hashedNewPassword });
+      if (!updatedUser) {
+        return res.status(500).json({ message: "Failed to update password" });
+      }
+
+      res.json({ message: "Password updated successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.delete("/api/users/:id", authenticateToken, requireRole(['admin']), async (req, res) => {
     try {
       const id = parseInt(req.params.id);

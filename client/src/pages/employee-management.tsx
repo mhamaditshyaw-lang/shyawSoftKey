@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { Users, Plus, Search, Filter, Mail, Phone, MapPin, Calendar, UserCheck, Edit } from "lucide-react";
+import { ChangePasswordModal } from "@/components/modals/change-password-modal";
+import { Users, Plus, Search, Filter, Mail, Phone, MapPin, Calendar, UserCheck, Edit, Lock } from "lucide-react";
 
 export default function EmployeeManagementPage() {
   const { t } = useTranslation();
@@ -18,6 +19,11 @@ export default function EmployeeManagementPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [changePasswordModal, setChangePasswordModal] = useState<{
+    open: boolean;
+    userId: number;
+    username: string;
+  }>({ open: false, userId: 0, username: "" });
 
   // Fetch users/employees
   const { data: usersData, isLoading } = useQuery({
@@ -301,13 +307,28 @@ export default function EmployeeManagementPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setLocation(`/employee/${employee.id}`)}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setLocation(`/employee/${employee.id}`)}
+                            title="Edit Employee"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setChangePasswordModal({
+                              open: true,
+                              userId: employee.id,
+                              username: employee.username
+                            })}
+                            title="Change Password"
+                          >
+                            <Lock className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -317,6 +338,14 @@ export default function EmployeeManagementPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        open={changePasswordModal.open}
+        onOpenChange={(open) => setChangePasswordModal(prev => ({ ...prev, open }))}
+        userId={changePasswordModal.userId}
+        username={changePasswordModal.username}
+      />
     </DashboardLayout>
   );
 }
