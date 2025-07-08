@@ -68,36 +68,40 @@
   }
 
   .dark {
-    /* Dashboard Color System - Dark Mode (Lighter) */
-    --primary: 217 91% 60%; /* #2563EB - blue-600 */
+    /* Midnight Ocean Theme */
+    --primary: 207 100% 50%; /* #0099FF - primary buttons */
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 13% 35%; /* #4B5563 - gray-600 */
-    --secondary-foreground: 210 20% 98%;
-    --accent: 160 84% 39%; /* #10B981 - emerald-500 */
+    --secondary: 26 85% 42%; /* #D96D00 - warning/secondary */
+    --secondary-foreground: 0 0% 100%;
+    --accent: 123 46% 45%; /* #36B24A - success */
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%; /* #DC2626 - red-600 */
+    --destructive: 26 85% 42%; /* #D96D00 - error/warning */
     --destructive-foreground: 0 0% 100%;
-    --muted: 220 13% 18%; /* #1F2937 - gray-800 */
-    --muted-foreground: 220 9% 75%; /* #9CA3AF - gray-400 */
-    --border: 220 13% 25%; /* #374151 - gray-700 */
-    --input: 220 13% 18%; /* #1F2937 - gray-800 */
-    --ring: 217 91% 60%;
-    --background: 224 71% 4%; /* #0F172A - slate-900 */
-    --foreground: 210 20% 98%; /* #F8FAFC - slate-50 */
-    --card: 220 13% 18%; /* #1F2937 - gray-800 */
-    --card-foreground: 210 20% 98%;
-    --popover: 220 13% 18%; /* #1F2937 - gray-800 */
-    --popover-foreground: 210 20% 98%;
+    --muted: 216 46% 10%; /* darker version of background */
+    --muted-foreground: 210 17% 82%; /* lighter version of foreground */
+    --border: 216 46% 12%; /* slightly lighter than background */
+    --input: 216 46% 12%; /* slightly lighter than background */
+    --ring: 207 100% 50%;
+    --background: 216 46% 8%; /* #0E1525 - background */
+    --foreground: 210 17% 96%; /* #F5F9FC - foreground */
+    --card: 216 46% 10%; /* darker version of background */
+    --card-foreground: 210 17% 96%;
+    --popover: 216 46% 10%; /* darker version of background */
+    --popover-foreground: 210 17% 96%;
     
-    /* Material Design Sidebar Colors - Dark Mode */
-    --sidebar-background: 220 13% 18%;
-    --sidebar-foreground: 210 20% 98%;
-    --sidebar-primary: 248 100% 47%;
+    /* Midnight Ocean Sidebar Colors */
+    --sidebar-background: 216 46% 8%; /* #0E1525 - background */
+    --sidebar-foreground: 210 17% 96%; /* #F5F9FC - foreground */
+    --sidebar-primary: 207 100% 50%; /* #0099FF - primary buttons */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 13% 25%;
-    --sidebar-accent-foreground: 210 20% 98%;
-    --sidebar-border: 220 13% 25%;
-    --sidebar-ring: 248 100% 47%;
+    --sidebar-accent: 216 46% 12%; /* slightly lighter than background */
+    --sidebar-accent-foreground: 210 17% 96%;
+    --sidebar-border: 216 46% 12%; /* slightly lighter than background */
+    --sidebar-ring: 207 100% 50%;
+    
+    /* Success and Warning Colors */
+    --success: 123 46% 45%; /* #36B24A - success */
+    --warning: 26 85% 42%; /* #D96D00 - warning */
   }
   
   * {

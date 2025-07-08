@@ -1,4 +1,4 @@
-import { Moon, Sun, Monitor } from "lucide-react";
+import { Moon, Sun, Monitor, Waves } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/hooks/use-theme";
 import {
@@ -34,6 +34,13 @@ export function ThemeToggle() {
         >
           <Moon className="mr-2 h-4 w-4" />
           <span>Dark</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem 
+          onClick={() => setTheme("midnight-ocean")}
+          className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 ${theme === "midnight-ocean" ? "bg-gray-100 dark:bg-gray-800" : ""}`}
+        >
+          <Waves className="mr-2 h-4 w-4" />
+          <span>Midnight Ocean</span>
         </DropdownMenuItem>
         <DropdownMenuItem 
           onClick={() => setTheme("system")}

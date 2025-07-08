@@ -36,14 +36,23 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     supported: false
   });
 
-  // Check notification support on mount
+  // Check notification support on mount and auto-request permission
   useEffect(() => {
     const supported = 'Notification' in window;
+    const currentPermission = supported ? Notification.permission : 'denied';
+    
     setNotificationPermission({
-      permission: supported ? Notification.permission : 'denied',
+      permission: currentPermission,
       supported
     });
-  }, []);
+    
+    // Auto-request permission if user is logged in and permission is default
+    if (user && supported && currentPermission === 'default') {
+      setTimeout(() => {
+        requestPermission();
+      }, 2000); // Request after 2 seconds to avoid being intrusive
+    }
+  }, [user]);
 
   const { data: notificationsData, isLoading } = useQuery({
     queryKey: ["/api/notifications"],
@@ -52,7 +61,10 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       return await response.json();
     },
     enabled: !!user,
-    refetchInterval: 30000, // Poll every 30 seconds
+    refetchInterval: 3000, // Poll every 3 seconds for real-time updates
+    refetchIntervalInBackground: true, // Continue refetching in background
+    refetchOnWindowFocus: true, // Refetch when window regains focus
+    refetchOnReconnect: true, // Refetch when connection is restored
   });
 
   const markAsReadMutation = useMutation({
@@ -80,20 +92,26 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const notifications = notificationsData?.notifications || [];
   const unreadCount = notifications.filter((n: any) => !n.isRead).length;
 
-  // Show toast for new notifications
+  // Show toast and system notifications for new notifications
   useEffect(() => {
     if (notifications.length > 0) {
       const latestNotification = notifications[0];
       if (lastNotificationId && latestNotification.id > lastNotificationId && !latestNotification.isRead) {
+        // Show in-app toast notification
         toast({
           title: latestNotification.title,
           description: latestNotification.message,
-          duration: 5000,
+          duration: 6000,
         });
+        
+        // Send system/device notification if permission granted
+        if (notificationPermission.permission === 'granted') {
+          sendSystemNotification(latestNotification.type, latestNotification.message);
+        }
       }
       setLastNotificationId(latestNotification.id);
     }
-  }, [notifications, lastNotificationId, toast]);
+  }, [notifications, lastNotificationId, toast, notificationPermission.permission]);
 
   const markAsRead = (id: number) => {
     markAsReadMutation.mutate(id);

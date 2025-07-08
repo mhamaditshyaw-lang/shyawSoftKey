@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "light" | "dark" | "system";
+type Theme = "light" | "dark" | "midnight-ocean" | "system";
 
 interface ThemeContextType {
   theme: Theme;
@@ -24,15 +24,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const root = document.documentElement;
     
     // Remove existing theme classes
-    root.classList.remove("light", "dark");
+    root.classList.remove("light", "dark", "midnight-ocean");
     
     if (theme === "system") {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
       root.classList.add(systemTheme);
       setIsDark(systemTheme === "dark");
+    } else if (theme === "midnight-ocean") {
+      root.classList.add("dark"); // Use dark mode styles with midnight ocean colors
+      setIsDark(true);
     } else {
       root.classList.add(theme);
-      setIsDark(theme === "dark");
+      setIsDark(theme === "dark" || theme === "midnight-ocean");
     }
     
     localStorage.setItem("theme", theme);
@@ -45,7 +48,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       
       const handleChange = (e: MediaQueryListEvent) => {
         const root = document.documentElement;
-        root.classList.remove("light", "dark");
+        root.classList.remove("light", "dark", "midnight-ocean");
         root.classList.add(e.matches ? "dark" : "light");
         setIsDark(e.matches);
       };

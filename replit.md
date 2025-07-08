@@ -163,6 +163,7 @@ The deployment uses:
 - July 02, 2025: Updated user roles from Admin/Manager/Secretary to Admin/Manager/Security throughout entire system including translations, database schema, authentication, navigation components, and backend routes with proper Kurdish translations for all roles
 - July 03, 2025: Removed Daily Tasks and Daily Task Management pages and related functionality including prioritization service, daily task routes, and all associated files to streamline the application for production deployment
 - July 03, 2025: Created comprehensive cPanel deployment guide with step-by-step instructions for hosting on Hostinger and similar providers, including database setup, environment configuration, and production optimizations
+- July 08, 2025: Implemented "Midnight Ocean" dark theme with custom color palette (#0E1525 background, #F5F9FC foreground, #0099FF primary buttons, #36B24A success, #D96D00 warning) and enhanced notification system with real-time updates (3-second polling), automatic permission requests, and improved mobile/system notification support
 
 ## User Preferences
 
