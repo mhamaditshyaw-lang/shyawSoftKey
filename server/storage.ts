@@ -121,61 +121,45 @@ export class DatabaseStorage implements IStorage {
 
   async deleteUser(id: number): Promise<boolean> {
     try {
-      // First, update any todo lists created by this user to remove the assignment
-      await db
-        .update(todoLists)
-        .set({ assignedToId: null })
-        .where(eq(todoLists.assignedToId, id));
+      // Start a transaction to ensure all operations succeed or fail together
+      return await db.transaction(async (tx) => {
+        // Update any todo lists assigned to this user to remove the assignment
+        await tx
+          .update(todoLists)
+          .set({ assignedToId: null })
+          .where(eq(todoLists.assignedToId, id));
 
-      // Update any todo lists created by this user to assign to admin (id: 1) or null
-      await db
-        .update(todoLists)
-        .set({ createdById: 1 }) // Assign to admin user
-        .where(eq(todoLists.createdById, id));
+        // Update any todo lists created by this user to assign to admin (id: 1)
+        await tx
+          .update(todoLists)
+          .set({ createdById: 1 })
+          .where(eq(todoLists.createdById, id));
 
-      // Update any interview requests to remove manager reference
-      await db
-        .update(interviewRequests)
-        .set({ managerId: null })
-        .where(eq(interviewRequests.managerId, id));
+        // Update any interview requests where this user is the manager
+        await tx
+          .update(interviewRequests)
+          .set({ managerId: null })
+          .where(eq(interviewRequests.managerId, id));
 
-      // Update interview requests requested by this user to assign to admin
-      await db
-        .update(interviewRequests)
-        .set({ requestedById: 1 })
-        .where(eq(interviewRequests.requestedById, id));
+        // Update interview requests requested by this user to assign to admin
+        await tx
+          .update(interviewRequests)
+          .set({ requestedById: 1 })
+          .where(eq(interviewRequests.requestedById, id));
 
-      // Update notifications to remove user references
-      await db
-        .update(notifications)
-        .set({ userId: 1 })
-        .where(eq(notifications.userId, id));
+        // Delete related data first
+        await tx.delete(notifications).where(eq(notifications.userId, id));
+        await tx.delete(feedback).where(eq(feedback.submittedById, id));
+        await tx.delete(archivedItems).where(eq(archivedItems.archivedById, id));
 
-      // Update feedback to remove user references
-      await db
-        .update(feedback)
-        .set({ submittedById: 1 })
-        .where(eq(feedback.submittedById, id));
-
-      // Update archived items to remove user references
-      await db
-        .update(archivedItems)
-        .set({ archivedById: 1 })
-        .where(eq(archivedItems.archivedById, id));
-
-      // Update operational data to remove user references
-      await db
-        .update(operationalData)
-        .set({ submittedById: 1 })
-        .where(eq(operationalData.submittedById, id));
-
-      // Finally, delete the user
-      const result = await db
-        .delete(users)
-        .where(eq(users.id, id))
-        .returning();
-      
-      return result.length > 0;
+        // Finally, delete the user
+        const result = await tx
+          .delete(users)
+          .where(eq(users.id, id))
+          .returning();
+        
+        return result.length > 0;
+      });
     } catch (error) {
       console.error("Error deleting user:", error);
       return false;
