@@ -107,16 +107,9 @@ const NAVIGATION: NavigationItem[] = [
     roles: ['admin', 'manager'],
   },
   {
-    kind: 'divider',
-  },
-  {
-    kind: 'header',
-    title: 'Development & Testing',
-  },
-  {
     segment: 'notification-test',
     title: 'Notification Test',
-    icon: <TestTube className="w-5 h-5" />,
+    icon: <Bell className="w-5 h-5" />,
     roles: ['admin'],
   },
 ];
