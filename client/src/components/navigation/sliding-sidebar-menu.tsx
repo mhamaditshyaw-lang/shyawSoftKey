@@ -68,13 +68,11 @@ const NAVIGATION: NavigationItem[] = [
     segment: 'notification-test',
     title: 'Notification Test',
     icon: <Bell className="w-5 h-5" />,
-    roles: ['admin'],
   },
   {
     segment: 'notification-management',
     title: 'Notification Management',
     icon: <Settings className="w-5 h-5" />,
-    roles: ['admin', 'manager'],
   },
   {
     kind: 'divider',
