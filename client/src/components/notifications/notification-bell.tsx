@@ -48,20 +48,13 @@ export default function NotificationBell() {
     }
   };
 
-  const handleBellClick = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setOpen(!open);
-  };
-
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
           size="sm" 
-          className="relative hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" 
-          onClick={handleBellClick}
+          className="relative hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         >
           <Bell className="h-5 w-5 text-gray-600 dark:text-gray-300" />
           {unreadCount > 0 && (

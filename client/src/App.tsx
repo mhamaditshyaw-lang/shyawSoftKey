@@ -22,6 +22,7 @@ import MultilingualDemoPage from "@/pages/multilingual-demo";
 import DataViewPage from "@/pages/data-view";
 import AllDataPage from "@/pages/all-data";
 import ReportsPage from "@/pages/reports";
+import NotificationTestPage from "@/pages/notification-test";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/header";
 import SlidingSidebarMenu from "@/components/navigation/sliding-sidebar-menu";
@@ -108,6 +109,11 @@ function Router() {
       <Route path="/reports">
         <ProtectedRoute>
           <ReportsPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/notification-test">
+        <ProtectedRoute>
+          <NotificationTestPage />
         </ProtectedRoute>
       </Route>
       <Route path="/multilingual-demo">

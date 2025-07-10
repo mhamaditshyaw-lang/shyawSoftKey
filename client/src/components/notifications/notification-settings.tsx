@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNotifications } from '@/hooks/use-notifications';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,7 +21,7 @@ export function NotificationSettings() {
   const [soundEnabled, setSoundEnabled] = useState(true);
 
   // Sync state with actual permission status
-  useState(() => {
+  useEffect(() => {
     setBrowserNotifications(isGranted);
   }, [isGranted, notificationPermission.permission]);
 
