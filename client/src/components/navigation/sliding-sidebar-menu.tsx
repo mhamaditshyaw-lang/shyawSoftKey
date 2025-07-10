@@ -65,6 +65,12 @@ const NAVIGATION: NavigationItem[] = [
     icon: <Calendar className="w-5 h-5" />,
   },
   {
+    segment: 'notification-test',
+    title: 'Notification Test',
+    icon: <Bell className="w-5 h-5" />,
+    roles: ['admin'],
+  },
+  {
     kind: 'divider',
   },
   {
@@ -105,12 +111,6 @@ const NAVIGATION: NavigationItem[] = [
     title: 'Archive Management',
     icon: <Archive className="w-5 h-5" />,
     roles: ['admin', 'manager'],
-  },
-  {
-    segment: 'notification-test',
-    title: 'Notification Test',
-    icon: <Bell className="w-5 h-5" />,
-    roles: ['admin'],
   },
 ];
 
