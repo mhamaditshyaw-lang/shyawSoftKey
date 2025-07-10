@@ -1,295 +1,237 @@
-import { useState } from 'react';
-import { useNotifications } from '@/hooks/use-notifications';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Bell, BellOff, Smartphone, Monitor, Check, X, AlertCircle, TestTube, Wifi, WifiOff } from 'lucide-react';
-import { NotificationSettings } from '@/components/notifications/notification-settings';
+import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
+import { Bell, Send, TestTube } from "lucide-react";
 
-export default function NotificationTestPage() {
-  const { 
-    notifications,
-    unreadCount,
-    markAsRead,
-    markAllAsRead,
-    isLoading,
-    isConnected,
-    notificationPermission, 
-    requestPermission, 
-    sendNotification,
-    sendSystemNotification,
-    isSupported, 
-    isGranted 
-  } = useNotifications();
+export default function NotificationTest() {
+  const { user, authenticatedRequest } = useAuth();
+  const { toast } = useToast();
+  const { t } = useTranslation();
+  
+  const [testData, setTestData] = useState({
+    title: "",
+    message: "",
+    type: "system",
+    priority: "medium"
+  });
 
-  const [testResults, setTestResults] = useState<string[]>([]);
+  const sendTestNotification = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await authenticatedRequest("POST", "/api/test-notification", data);
+      if (!response.ok) {
+        throw new Error("Failed to send test notification");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Test notification sent successfully",
+      });
+      setTestData({
+        title: "",
+        message: "",
+        type: "system",
+        priority: "medium"
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send test notification",
+        variant: "destructive",
+      });
+    },
+  });
 
-  const addTestResult = (result: string) => {
-    setTestResults(prev => [...prev, `${new Date().toLocaleTimeString()}: ${result}`]);
+  const sendQuickTests = [
+    {
+      title: "Welcome Message",
+      message: "Welcome to the Employee Affairs Management System!",
+      type: "system",
+      priority: "low"
+    },
+    {
+      title: "Task Reminder",
+      message: "You have pending tasks that require your attention.",
+      type: "task",
+      priority: "medium"
+    },
+    {
+      title: "Meeting Alert",
+      message: "You have a meeting scheduled in 30 minutes.",
+      type: "meeting",
+      priority: "high"
+    },
+    {
+      title: "System Update",
+      message: "System maintenance will begin in 15 minutes.",
+      type: "system",
+      priority: "urgent"
+    }
+  ];
+
+  const handleQuickTest = (testNotification: any) => {
+    sendTestNotification.mutate(testNotification);
   };
 
-  const clearResults = () => {
-    setTestResults([]);
-  };
-
-  const testNotificationPermission = async () => {
-    addTestResult('Testing notification permission...');
-    
-    if (!isSupported) {
-      addTestResult('❌ Browser does not support notifications');
+  const handleCustomTest = () => {
+    if (!testData.title || !testData.message) {
+      toast({
+        title: "Error",
+        description: "Please fill in both title and message fields",
+        variant: "destructive",
+      });
       return;
     }
-
-    addTestResult(`✓ Browser supports notifications`);
-    addTestResult(`Current permission: ${notificationPermission.permission}`);
-
-    if (notificationPermission.permission === 'granted') {
-      addTestResult('✓ Notifications already allowed');
-      return;
-    }
-
-    if (notificationPermission.permission === 'denied') {
-      addTestResult('❌ Notifications blocked in browser settings');
-      return;
-    }
-
-    // Try to request permission
-    const granted = await requestPermission();
-    if (granted) {
-      addTestResult('✅ Permission granted successfully!');
-    } else {
-      addTestResult('❌ Permission denied');
-    }
-  };
-
-  const testDeviceNotification = () => {
-    if (!isGranted) {
-      addTestResult('❌ Cannot send device notification - permission not granted');
-      return;
-    }
-
-    addTestResult('📱 Sending test device notification...');
-    sendNotification('Test Notification', {
-      body: 'This is a test notification from the Employee Management System',
-      icon: '/favicon.ico',
-      tag: 'test-notification'
-    });
-    addTestResult('✅ Device notification sent!');
-  };
-
-  const testSystemNotification = () => {
-    addTestResult('🔔 Sending test system notification...');
-    sendSystemNotification('system_update', 'This is a test system notification');
-    addTestResult('✅ System notification sent!');
-  };
-
-  const testWebSocketConnection = () => {
-    addTestResult('🌐 Testing WebSocket connection...');
-    addTestResult(`Connection status: ${isConnected ? 'Connected (Live)' : 'Disconnected (Polling)'}`);
-    
-    if (isConnected) {
-      addTestResult('✅ WebSocket is working correctly');
-    } else {
-      addTestResult('⚠️ Using polling fallback (WebSocket not connected)');
-    }
-  };
-
-  const getConnectionStatus = () => {
-    if (isConnected) {
-      return <Badge className="bg-green-500"><Wifi className="w-3 h-3 mr-1" />Live</Badge>;
-    } else {
-      return <Badge variant="secondary"><WifiOff className="w-3 h-3 mr-1" />Polling</Badge>;
-    }
-  };
-
-  const getPermissionStatus = () => {
-    if (!isSupported) {
-      return <Badge variant="destructive"><X className="w-3 h-3 mr-1" />Not Supported</Badge>;
-    }
-    
-    switch (notificationPermission.permission) {
-      case 'granted':
-        return <Badge className="bg-green-500"><Check className="w-3 h-3 mr-1" />Enabled</Badge>;
-      case 'denied':
-        return <Badge variant="destructive"><X className="w-3 h-3 mr-1" />Blocked</Badge>;
-      default:
-        return <Badge variant="secondary"><AlertCircle className="w-3 h-3 mr-1" />Not Set</Badge>;
-    }
+    sendTestNotification.mutate(testData);
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-          Notification System Test
+    <div className="container mx-auto p-4 space-y-6">
+      <div className="flex items-center gap-2 mb-6">
+        <TestTube className="h-6 w-6 text-indigo-600" />
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          {t('Notification Test Center')}
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Test and debug the notification system functionality
-        </p>
       </div>
 
-      {/* Status Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Connection Status</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center space-x-2">
-              {getConnectionStatus()}
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {isConnected ? 'Real-time' : 'Every 10s'}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Device Notifications</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center space-x-2">
-              {getPermissionStatus()}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Notifications</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center space-x-2">
-              <Badge variant={unreadCount > 0 ? "default" : "secondary"}>
-                <Bell className="w-3 h-3 mr-1" />
-                {unreadCount} unread
-              </Badge>
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {notifications.length} total
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Test Buttons */}
-      <Card className="mb-8">
+      {/* Quick Test Buttons */}
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center">
-            <TestTube className="w-5 h-5 mr-2" />
-            Quick Tests
+          <CardTitle className="flex items-center gap-2">
+            <Bell className="h-5 w-5" />
+            Quick Test Notifications
           </CardTitle>
           <CardDescription>
-            Run these tests to verify the notification system is working
+            Send predefined test notifications to verify the system is working properly.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Button onClick={testNotificationPermission} className="w-full">
-              <Bell className="w-4 h-4 mr-2" />
-              Test Permission Request
-            </Button>
-            
-            <Button 
-              onClick={testDeviceNotification} 
-              disabled={!isGranted}
-              className="w-full"
-            >
-              <Smartphone className="w-4 h-4 mr-2" />
-              Test Device Notification
-            </Button>
-            
-            <Button onClick={testSystemNotification} className="w-full">
-              <AlertCircle className="w-4 h-4 mr-2" />
-              Test System Notification
-            </Button>
-            
-            <Button onClick={testWebSocketConnection} className="w-full">
-              <Wifi className="w-4 h-4 mr-2" />
-              Test WebSocket Connection
-            </Button>
+            {sendQuickTests.map((test, index) => (
+              <div key={index} className="border rounded-lg p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-sm">{test.title}</h3>
+                  <span className={`px-2 py-1 text-xs rounded-full ${
+                    test.priority === 'urgent' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
+                    test.priority === 'high' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' :
+                    test.priority === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                    'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                  }`}>
+                    {test.priority}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{test.message}</p>
+                <Button 
+                  onClick={() => handleQuickTest(test)}
+                  disabled={sendTestNotification.isPending}
+                  size="sm"
+                  className="w-full"
+                >
+                  <Send className="h-4 w-4 mr-2" />
+                  Send Test
+                </Button>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Custom Test Form */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Custom Test Notification</CardTitle>
+          <CardDescription>
+            Create and send a custom notification with your own content.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                value={testData.title}
+                onChange={(e) => setTestData({...testData, title: e.target.value})}
+                placeholder="Enter notification title"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="type">Type</Label>
+              <Select value={testData.type} onValueChange={(value) => setTestData({...testData, type: value})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select notification type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="system">System</SelectItem>
+                  <SelectItem value="task">Task</SelectItem>
+                  <SelectItem value="meeting">Meeting</SelectItem>
+                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="interview">Interview</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           
-          <div className="flex justify-end mt-4">
-            <Button variant="outline" onClick={clearResults}>
-              Clear Results
-            </Button>
+          <div className="space-y-2">
+            <Label htmlFor="priority">Priority</Label>
+            <Select value={testData.priority} onValueChange={(value) => setTestData({...testData, priority: value})}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Low</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+                <SelectItem value="urgent">Urgent</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="message">Message</Label>
+            <Textarea
+              id="message"
+              value={testData.message}
+              onChange={(e) => setTestData({...testData, message: e.target.value})}
+              placeholder="Enter notification message"
+              rows={4}
+            />
+          </div>
+
+          <Button 
+            onClick={handleCustomTest}
+            disabled={sendTestNotification.isPending}
+            className="w-full"
+          >
+            <Send className="h-4 w-4 mr-2" />
+            {sendTestNotification.isPending ? "Sending..." : "Send Custom Test"}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Current User Info */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Test Information</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2 text-sm">
+            <p><strong>Current User:</strong> {user?.username} ({user?.role})</p>
+            <p><strong>User ID:</strong> {user?.id}</p>
+            <p><strong>Status:</strong> All test notifications will be sent to your account</p>
           </div>
         </CardContent>
       </Card>
-
-      {/* Test Results */}
-      {testResults.length > 0 && (
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Test Results</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 max-h-64 overflow-y-auto">
-              <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
-                {testResults.join('\n')}
-              </pre>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Current Notifications */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            Current Notifications
-            {unreadCount > 0 && (
-              <Button variant="outline" size="sm" onClick={markAllAsRead}>
-                Mark All Read
-              </Button>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {notifications.length === 0 ? (
-            <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-              No notifications yet
-            </p>
-          ) : (
-            <div className="space-y-2">
-              {notifications.slice(0, 10).map((notification: any) => (
-                <div 
-                  key={notification.id}
-                  className={`p-3 rounded-lg border ${!notification.isRead ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'}`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h4 className="font-medium text-gray-900 dark:text-gray-100">
-                        {notification.title}
-                      </h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                        {notification.message}
-                      </p>
-                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                        {new Date(notification.createdAt).toLocaleString()}
-                      </p>
-                    </div>
-                    {!notification.isRead && (
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => markAsRead(notification.id)}
-                      >
-                        Mark Read
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Notification Settings */}
-      <NotificationSettings />
     </div>
   );
 }
