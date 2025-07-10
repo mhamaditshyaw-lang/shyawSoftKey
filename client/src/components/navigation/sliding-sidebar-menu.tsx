@@ -108,7 +108,7 @@ const NAVIGATION: NavigationItem[] = [
   },
   {
     segment: 'notification-test',
-    title: 'Notification Test',
+    title: 'Notification Center',
     icon: <Bell className="w-5 h-5" />,
   },
   {
