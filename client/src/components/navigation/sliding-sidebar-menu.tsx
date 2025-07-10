@@ -24,7 +24,9 @@ import {
   Shield,
   Target,
   Settings,
-  LogOut
+  LogOut,
+  Bell,
+  TestTube
 } from "lucide-react";
 
 interface NavigationItem {
@@ -103,6 +105,19 @@ const NAVIGATION: NavigationItem[] = [
     title: 'Archive Management',
     icon: <Archive className="w-5 h-5" />,
     roles: ['admin', 'manager'],
+  },
+  {
+    kind: 'divider',
+  },
+  {
+    kind: 'header',
+    title: 'Development & Testing',
+  },
+  {
+    segment: 'notification-test',
+    title: 'Notification Test',
+    icon: <TestTube className="w-5 h-5" />,
+    roles: ['admin'],
   },
 ];
 
