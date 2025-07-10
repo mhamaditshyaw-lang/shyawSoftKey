@@ -214,4 +214,13 @@ export class NotificationService {
       .set({ isRead: true })
       .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)));
   }
+
+  static async deleteNotification(notificationId: number, userId: number): Promise<void> {
+    await db
+      .delete(notifications)
+      .where(and(
+        eq(notifications.id, notificationId),
+        eq(notifications.userId, userId)
+      ));
+  }
 }

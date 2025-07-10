@@ -71,6 +71,12 @@ const NAVIGATION: NavigationItem[] = [
     roles: ['admin'],
   },
   {
+    segment: 'notification-management',
+    title: 'Notification Management',
+    icon: <Settings className="w-5 h-5" />,
+    roles: ['admin', 'manager'],
+  },
+  {
     kind: 'divider',
   },
   {
@@ -151,10 +157,6 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
 
   const hasAccess = (item: NavigationItem) => {
     if (!item.roles) return true;
-    // Debug: log access check for notification-test
-    if (item.segment === 'notification-test') {
-      console.log('Checking access for notification-test:', { user: user?.role, roles: item.roles });
-    }
     return user && item.roles.includes(user.role);
   };
 

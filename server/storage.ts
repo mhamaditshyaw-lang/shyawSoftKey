@@ -67,6 +67,7 @@ export interface IStorage {
   getUserNotifications(userId: number): Promise<any[]>;
   markNotificationAsRead(notificationId: number, userId: number): Promise<void>;
   markAllNotificationsAsRead(userId: number): Promise<void>;
+  deleteNotification(notificationId: number, userId: number): Promise<void>;
   
   // Feedback methods
   createFeedback(feedbackData: any): Promise<any>;
@@ -423,6 +424,11 @@ export class DatabaseStorage implements IStorage {
   async markAllNotificationsAsRead(userId: number): Promise<void> {
     const { NotificationService } = await import("./notification-service");
     await NotificationService.markAllAsRead(userId);
+  }
+
+  async deleteNotification(notificationId: number, userId: number): Promise<void> {
+    const { NotificationService } = await import("./notification-service");
+    await NotificationService.deleteNotification(notificationId, userId);
   }
 
   async createFeedback(feedbackData: any): Promise<any> {

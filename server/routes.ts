@@ -717,6 +717,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/notifications/:id", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const notificationId = parseInt(req.params.id);
+      await storage.deleteNotification(notificationId, req.user!.id);
+      res.json({ message: "Notification deleted successfully" });
+    } catch (error: any) {
+      console.error("Error deleting notification:", error);
+      res.status(500).json({ message: "Failed to delete notification" });
+    }
+  });
+
   // Feedback routes
   app.get("/api/feedback", authenticateToken, async (req: AuthRequest, res) => {
     try {
