@@ -20,15 +20,18 @@ export function NotificationSettings() {
   const [browserNotifications, setBrowserNotifications] = useState(isGranted);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
+  // Sync state with actual permission status
+  useState(() => {
+    setBrowserNotifications(isGranted);
+  }, [isGranted, notificationPermission.permission]);
+
   const handleEnableNotifications = async () => {
-    const granted = await requestPermission();
-    if (granted) {
-      setBrowserNotifications(true);
-      // Send a test notification
-      sendNotification('Notifications Enabled!', {
-        body: 'You will now receive device notifications from the Employee Management System',
-        icon: '/favicon.ico'
-      });
+    try {
+      const granted = await requestPermission();
+      setBrowserNotifications(granted);
+    } catch (error) {
+      console.error('Error enabling notifications:', error);
+      setBrowserNotifications(false);
     }
   };
 
@@ -97,18 +100,23 @@ export function NotificationSettings() {
               </p>
             </div>
             <div className="flex items-center space-x-2">
-              {!isGranted && isSupported && (
+              {!isGranted && isSupported && notificationPermission.permission !== 'denied' && (
                 <Button 
                   onClick={handleEnableNotifications}
                   size="sm"
                   className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
-                  Enable
+                  Allow Notifications
                 </Button>
+              )}
+              {notificationPermission.permission === 'denied' && (
+                <div className="text-xs text-red-600 dark:text-red-400">
+                  Blocked in browser
+                </div>
               )}
               <Switch
                 id="browser-notifications"
-                checked={browserNotifications && isGranted}
+                checked={isGranted}
                 onCheckedChange={(checked) => {
                   if (checked && !isGranted) {
                     handleEnableNotifications();
@@ -116,7 +124,7 @@ export function NotificationSettings() {
                     setBrowserNotifications(checked);
                   }
                 }}
-                disabled={!isSupported}
+                disabled={!isSupported || notificationPermission.permission === 'denied'}
               />
             </div>
           </div>

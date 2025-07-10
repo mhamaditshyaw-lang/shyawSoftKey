@@ -40,7 +40,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     supported: false
   });
 
-  // Check notification support on mount and auto-request permission
+  // Check notification support on mount and track permission changes
   useEffect(() => {
     const supported = 'Notification' in window;
     const currentPermission = supported ? Notification.permission : 'denied';
@@ -50,11 +50,20 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       supported
     });
     
-    // Auto-request permission if user is logged in and permission is default
-    if (user && supported && currentPermission === 'default') {
-      setTimeout(() => {
-        requestPermission();
-      }, 2000); // Request after 2 seconds to avoid being intrusive
+    // Listen for permission changes
+    if (supported) {
+      const checkPermission = () => {
+        const newPermission = Notification.permission;
+        setNotificationPermission(prev => ({
+          ...prev,
+          permission: newPermission
+        }));
+      };
+      
+      // Check permission every 1 second to detect changes
+      const permissionInterval = setInterval(checkPermission, 1000);
+      
+      return () => clearInterval(permissionInterval);
     }
   }, [user]);
 
@@ -228,6 +237,8 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
   // Device notification functions
   const requestPermission = async (): Promise<boolean> => {
+    console.log('Requesting notification permission...');
+    
     if (!notificationPermission.supported) {
       toast({
         title: "Not Supported",
@@ -237,30 +248,69 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       return false;
     }
 
-    if (Notification.permission === 'granted') {
+    // Check current permission
+    const currentPermission = Notification.permission;
+    console.log('Current permission:', currentPermission);
+    
+    if (currentPermission === 'granted') {
+      setNotificationPermission(prev => ({ ...prev, permission: 'granted' }));
       return true;
     }
 
+    if (currentPermission === 'denied') {
+      toast({
+        title: "Notifications Blocked",
+        description: "Please enable notifications in your browser settings",
+        variant: "destructive"
+      });
+      return false;
+    }
+
     try {
+      // Request permission
       const permission = await Notification.requestPermission();
+      console.log('Permission result:', permission);
+      
+      // Update state immediately
       setNotificationPermission(prev => ({ ...prev, permission }));
       
       if (permission === 'granted') {
         toast({
-          title: "Notifications Enabled",
+          title: "Notifications Enabled! 🔔",
           description: "You'll now receive device notifications",
         });
+        
+        // Send a test notification to confirm it works
+        setTimeout(() => {
+          sendNotification('Test Notification', {
+            body: 'Device notifications are now working!',
+            icon: '/favicon.ico'
+          });
+        }, 1000);
+        
         return true;
-      } else {
+      } else if (permission === 'denied') {
         toast({
           title: "Notifications Disabled",
-          description: "You won't receive device notifications",
+          description: "You can enable them later in browser settings",
           variant: "destructive"
+        });
+        return false;
+      } else {
+        toast({
+          title: "Notifications Not Set",
+          description: "Permission request was dismissed",
+          variant: "secondary"
         });
         return false;
       }
     } catch (error) {
       console.error('Error requesting notification permission:', error);
+      toast({
+        title: "Permission Error",
+        description: "Failed to request notification permissions",
+        variant: "destructive"
+      });
       return false;
     }
   };
