@@ -112,6 +112,12 @@ const NAVIGATION: NavigationItem[] = [
     icon: <Archive className="w-5 h-5" />,
     roles: ['admin', 'manager'],
   },
+  {
+    segment: 'notification-test',
+    title: 'Notification Test',
+    icon: <Bell className="w-5 h-5" />,
+    roles: ['admin'],
+  },
 ];
 
 interface SlidingSidebarMenuProps {

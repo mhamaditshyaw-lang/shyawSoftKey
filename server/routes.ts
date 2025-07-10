@@ -588,7 +588,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/interviews", authenticateToken, requireRole(['secretary', 'admin']), async (req: AuthRequest, res) => {
+  app.post("/api/interviews", authenticateToken, requireRole(['security', 'admin', 'manager']), async (req: AuthRequest, res) => {
     try {
       // Transform the data before validation
       const transformedData = {
