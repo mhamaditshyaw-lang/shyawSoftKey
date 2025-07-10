@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -54,7 +55,27 @@ function requireRole(roles: string[]) {
   };
 }
 
+// WebSocket connections storage
+const wsConnections = new Map<number, WebSocket[]>();
+
+// Function to broadcast notifications to connected users
+export function broadcastNotification(userId: number, notification: any) {
+  const userConnections = wsConnections.get(userId);
+  if (userConnections) {
+    const message = JSON.stringify({ type: 'notification', data: notification });
+    userConnections.forEach(ws => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(message);
+      }
+    });
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  
+  // Import and setup notification service
+  const { setBroadcastFunction } = await import("./notification-service");
+  setBroadcastFunction(broadcastNotification);
   
   // Auth routes
   app.post("/api/auth/register", async (req, res) => {
@@ -902,6 +923,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test notification endpoint (for testing real-time notifications)
+  app.post("/api/test-notification", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const { NotificationService } = await import("./notification-service");
+      await NotificationService.createUserNotification(
+        req.user!.id,
+        "system_update",
+        "Test Notification",
+        "This is a test notification to verify the real-time notification system is working correctly.",
+        { test: true, timestamp: new Date().toISOString() }
+      );
+      
+      res.json({ message: "Test notification sent successfully" });
+    } catch (error) {
+      console.error("Error sending test notification:", error);
+      res.status(500).json({ message: "Failed to send test notification" });
+    }
+  });
+
   const httpServer = createServer(app);
+  
+  // Setup WebSocket server
+  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  
+  wss.on('connection', (ws, req) => {
+    console.log('WebSocket connection established');
+    
+    // Handle authentication
+    ws.on('message', async (message) => {
+      try {
+        const data = JSON.parse(message.toString());
+        
+        if (data.type === 'auth') {
+          const token = data.token;
+          const decoded = jwt.verify(token, JWT_SECRET) as any;
+          const user = await storage.getUser(decoded.id);
+          
+          if (user) {
+            // Store connection for this user
+            if (!wsConnections.has(user.id)) {
+              wsConnections.set(user.id, []);
+            }
+            wsConnections.get(user.id)!.push(ws);
+            
+            // Send confirmation
+            ws.send(JSON.stringify({ type: 'auth_success', userId: user.id }));
+            
+            // Clean up connection on close
+            ws.on('close', () => {
+              const connections = wsConnections.get(user.id);
+              if (connections) {
+                const index = connections.indexOf(ws);
+                if (index > -1) {
+                  connections.splice(index, 1);
+                  if (connections.length === 0) {
+                    wsConnections.delete(user.id);
+                  }
+                }
+              }
+            });
+          } else {
+            ws.send(JSON.stringify({ type: 'auth_error', message: 'Invalid token' }));
+            ws.close();
+          }
+        }
+      } catch (error) {
+        console.error('WebSocket message error:', error);
+        ws.send(JSON.stringify({ type: 'error', message: 'Invalid message format' }));
+      }
+    });
+    
+    // Send heartbeat every 30 seconds to keep connection alive
+    const heartbeat = setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'heartbeat' }));
+      } else {
+        clearInterval(heartbeat);
+      }
+    }, 30000);
+    
+    ws.on('close', () => {
+      clearInterval(heartbeat);
+    });
+  });
+  
   return httpServer;
 }

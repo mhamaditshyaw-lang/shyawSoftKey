@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bell, Check, CheckCheck, Settings } from "lucide-react";
+import { Bell, Check, CheckCheck, Settings, Wifi, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -17,7 +17,7 @@ import { NotificationSettings } from "@/components/notifications/notification-se
 import { getRelativeTime } from "@/lib/utils";
 
 export default function NotificationBell() {
-  const { notifications, unreadCount, markAsRead, markAllAsRead, isLoading } = useNotifications();
+  const { notifications, unreadCount, markAsRead, markAllAsRead, isLoading, isConnected } = useNotifications();
   const [open, setOpen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
@@ -65,7 +65,19 @@ export default function NotificationBell() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80">
         <DropdownMenuLabel className="flex items-center justify-between">
-          <span>Notifications</span>
+          <div className="flex items-center space-x-2">
+            <span>Notifications</span>
+            <div className="flex items-center space-x-1">
+              {isConnected ? (
+                <Wifi className="h-3 w-3 text-green-500" title="Real-time notifications enabled" />
+              ) : (
+                <WifiOff className="h-3 w-3 text-orange-500" title="Checking for updates every 10s" />
+              )}
+              <span className="text-xs text-gray-500">
+                {isConnected ? "Live" : "Polling"}
+              </span>
+            </div>
+          </div>
           {unreadCount > 0 && (
             <Button
               variant="ghost"

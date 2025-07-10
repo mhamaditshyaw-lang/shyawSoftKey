@@ -16,6 +16,8 @@ interface NotificationContextType {
   markAsRead: (id: number) => void;
   markAllAsRead: () => void;
   isLoading: boolean;
+  // Real-time connection status
+  isConnected: boolean;
   // Device notification functions
   notificationPermission: NotificationPermission;
   requestPermission: () => Promise<boolean>;
@@ -28,9 +30,11 @@ interface NotificationContextType {
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const { toast } = useToast();
   const [lastNotificationId, setLastNotificationId] = useState<number | null>(null);
+  const [wsConnection, setWsConnection] = useState<WebSocket | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>({
     permission: 'default',
     supported: false
@@ -54,6 +58,107 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
+  // WebSocket connection setup
+  useEffect(() => {
+    if (user && token) {
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const wsUrl = `${protocol}//${window.location.host}/ws`;
+      
+      try {
+        const ws = new WebSocket(wsUrl);
+        
+        ws.onopen = () => {
+          console.log('WebSocket connected');
+          // Authenticate the connection
+          ws.send(JSON.stringify({ type: 'auth', token }));
+        };
+        
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            
+            switch (data.type) {
+              case 'auth_success':
+                setIsConnected(true);
+                console.log('WebSocket authenticated for user:', data.userId);
+                break;
+                
+              case 'notification':
+                // Handle real-time notification
+                handleRealtimeNotification(data.data);
+                // Refresh notifications list
+                queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
+                break;
+                
+              case 'heartbeat':
+                // Connection is alive
+                break;
+                
+              case 'auth_error':
+              case 'error':
+                console.error('WebSocket error:', data.message);
+                setIsConnected(false);
+                break;
+            }
+          } catch (error) {
+            console.error('WebSocket message parsing error:', error);
+          }
+        };
+        
+        ws.onclose = () => {
+          console.log('WebSocket disconnected');
+          setIsConnected(false);
+          setWsConnection(null);
+          
+          // Attempt to reconnect after 5 seconds
+          setTimeout(() => {
+            if (user && token) {
+              console.log('Attempting WebSocket reconnection...');
+            }
+          }, 5000);
+        };
+        
+        ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+          setIsConnected(false);
+        };
+        
+        setWsConnection(ws);
+        
+        // Cleanup on unmount
+        return () => {
+          ws.close();
+        };
+      } catch (error) {
+        console.error('Failed to create WebSocket connection:', error);
+      }
+    }
+    
+    return () => {
+      if (wsConnection) {
+        wsConnection.close();
+        setWsConnection(null);
+        setIsConnected(false);
+      }
+    };
+  }, [user, token]);
+
+  // Handle real-time notifications
+  const handleRealtimeNotification = (notification: any) => {
+    // Show toast notification
+    toast({
+      title: notification.title,
+      description: notification.message,
+      duration: 5000,
+    });
+    
+    // Send device notification if permissions are granted
+    if (notificationPermission.permission === 'granted') {
+      sendSystemNotification(notification.type, notification.message, notification.data);
+    }
+  };
+
+  // Optimized query with reduced polling when WebSocket is connected
   const { data: notificationsData, isLoading } = useQuery({
     queryKey: ["/api/notifications"],
     queryFn: async () => {
@@ -61,8 +166,8 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       return await response.json();
     },
     enabled: !!user,
-    refetchInterval: 3000, // Poll every 3 seconds for real-time updates
-    refetchIntervalInBackground: true, // Continue refetching in background
+    refetchInterval: isConnected ? 30000 : 10000, // 30s if WebSocket connected, 10s otherwise
+    refetchIntervalInBackground: false, // Disable background polling when WebSocket is active
     refetchOnWindowFocus: true, // Refetch when window regains focus
     refetchOnReconnect: true, // Refetch when connection is restored
   });
@@ -231,6 +336,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       markAsRead,
       markAllAsRead,
       isLoading,
+      isConnected,
       notificationPermission,
       requestPermission,
       sendNotification,

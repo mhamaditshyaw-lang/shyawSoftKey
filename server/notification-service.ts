@@ -3,10 +3,30 @@ import { notifications, InsertNotification } from "../shared/notification-schema
 import { users } from "../shared/schema";
 import { eq, and } from "drizzle-orm";
 
+// Import broadcast function from routes
+let broadcastNotification: ((userId: number, notification: any) => void) | null = null;
+
+export function setBroadcastFunction(fn: (userId: number, notification: any) => void) {
+  broadcastNotification = fn;
+}
+
 export class NotificationService {
   static async createNotification(notification: InsertNotification): Promise<void> {
     try {
-      await db.insert(notifications).values(notification);
+      const [createdNotification] = await db.insert(notifications).values(notification).returning();
+      
+      // Broadcast real-time notification if WebSocket is available
+      if (broadcastNotification && createdNotification) {
+        broadcastNotification(notification.userId, {
+          id: createdNotification.id,
+          type: notification.type,
+          title: notification.title,
+          message: notification.message,
+          isRead: notification.isRead,
+          createdAt: createdNotification.createdAt,
+          data: notification.data
+        });
+      }
     } catch (error) {
       console.error("Failed to create notification:", error);
     }
