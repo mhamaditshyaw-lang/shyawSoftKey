@@ -97,18 +97,24 @@ export default function NotificationCenter() {
 
   return (
     <>
-      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-        <DropdownMenuTrigger asChild>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className={`relative hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 ${
-              unreadCount > 0 ? 'animate-pulse' : ''
-            }`}
-            onClick={() => {
-              setIsOpen(!isOpen);
-            }}
-          >
+      {/* TEMPORARY DEBUG: Make the notification center extremely visible */}
+      <div className="relative bg-red-100 border-2 border-red-500 rounded p-1">
+        <div className="absolute -top-6 left-0 bg-red-600 text-white px-2 py-1 text-xs rounded z-50 whitespace-nowrap">
+          NOTIFICATIONS: {unreadCount} unread
+        </div>
+        
+        <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className={`relative hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 bg-red-50 border-2 border-red-400 ${
+                unreadCount > 0 ? 'animate-pulse' : ''
+              }`}
+              onClick={() => {
+                setIsOpen(!isOpen);
+              }}
+            >
             <Bell className={`h-7 w-7 ${
               unreadCount > 0 
                 ? 'text-red-500 dark:text-red-400' 
@@ -283,6 +289,7 @@ export default function NotificationCenter() {
           )}
         </DropdownMenuContent>
       </DropdownMenu>
+      </div>
 
       {/* Settings Dialog */}
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
