@@ -2,8 +2,10 @@ import { Building2, User, LogOut, Search } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 import NotificationCenter from "@/components/device-notifications/notification-center";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useDeviceNotifications } from "@/hooks/use-device-notifications";
+import { Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -11,6 +13,7 @@ import { useState } from "react";
 export default function Header() {
   const { user, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const { notifications, unreadCount } = useDeviceNotifications();
 
   if (!user) return null;
 
@@ -66,6 +69,21 @@ export default function Header() {
             </div>
 
             {/* Device Notifications */}
+            <div className="bg-yellow-400 p-2 border-2 border-black">
+              <span className="text-black font-bold">BELL TEST</span>
+            </div>
+            
+            {/* Simple backup notification display */}
+            <div className="bg-green-400 p-2 border-2 border-black relative">
+              <Bell className="h-6 w-6 text-black" />
+              {unreadCount > 0 && (
+                <Badge className="absolute -top-1 -right-1 bg-red-500 text-white h-5 w-5 text-xs flex items-center justify-center">
+                  {unreadCount}
+                </Badge>
+              )}
+              <span className="text-black text-xs ml-2">Count: {unreadCount || 0}</span>
+            </div>
+            
             <NotificationCenter />
 
             {/* User Profile */}
