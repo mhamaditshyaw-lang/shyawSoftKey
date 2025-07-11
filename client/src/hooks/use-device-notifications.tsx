@@ -188,22 +188,37 @@ export function DeviceNotificationProvider({ children }: { children: ReactNode }
 
   // Listen for new notifications and show device notifications
   useEffect(() => {
-    if (notifications.length > 0 && permission.permission === 'granted') {
-      const latestNotification = notifications[0];
-      if (!latestNotification.isRead && !latestNotification.isSentToDevice) {
-        sendDeviceNotification(latestNotification.title, {
-          body: latestNotification.message,
-          icon: latestNotification.icon || '🔔',
-          tag: `notification-${latestNotification.id}`,
-        });
+    if (notifications.length > 0) {
+      const unreadNotifications = notifications.filter(n => !n.isRead);
+      
+      if (unreadNotifications.length > 0) {
+        const latestNotification = unreadNotifications[0];
         
-        // Play notification sound
+        // Show browser notification if permission granted
+        if (permission.permission === 'granted') {
+          sendDeviceNotification(latestNotification.title, {
+            body: latestNotification.message,
+            icon: latestNotification.icon || '🔔',
+            tag: `notification-${latestNotification.id}`,
+          });
+        }
+        
+        // Always play notification sound for unread notifications
         try {
           const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGm9vz0H4yBSl+zPLaizsIGGS57t2QQAoUXrTp66hVFApGm9vz0H4yBSl+zPLaizsIGGS57t2QQAoUXrTp66hVFApGm9vz0H4yBSl+zPLaizsIGGS57t2QQAoUXrTp66hVFApGm9vz0H4yBSl+zPLaizsIGGS57t2QQAoUXrTp66hVFApGm9vz0H4yBSl+zPLaizsIGGS57t2QQAoUXrTp66hVFA==');
           audio.volume = 0.3;
           audio.play().catch(e => console.log('Could not play notification sound:', e));
         } catch (e) {
           console.log('Audio not supported:', e);
+        }
+        
+        // Show toast notification as fallback
+        if (permission.permission !== 'granted') {
+          toast({
+            title: latestNotification.title,
+            description: latestNotification.message,
+            duration: 5000,
+          });
         }
       }
     }

@@ -93,16 +93,22 @@ export default function NotificationCenter() {
           <Button 
             variant="ghost" 
             size="sm" 
-            className="relative hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+            className={`relative hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 ${
+              unreadCount > 0 ? 'animate-pulse' : ''
+            }`}
             onClick={() => {
               setIsOpen(!isOpen);
             }}
           >
-            <Bell className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <Bell className={`h-6 w-6 ${
+              unreadCount > 0 
+                ? 'text-red-500 dark:text-red-400' 
+                : 'text-blue-600 dark:text-blue-400'
+            }`} />
             {unreadCount > 0 && (
               <Badge 
                 variant="destructive" 
-                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs animate-pulse bg-red-500"
+                className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-bounce bg-red-500 text-white font-bold shadow-lg ring-2 ring-white dark:ring-gray-900"
               >
                 {unreadCount > 99 ? "99+" : unreadCount}
               </Badge>
@@ -127,10 +133,15 @@ export default function NotificationCenter() {
                   Enabled
                 </Badge>
               ) : (
-                <Badge variant="secondary">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={requestPermission}
+                  className="text-xs"
+                >
                   <Bell className="w-3 h-3 mr-1" />
-                  Disabled
-                </Badge>
+                  Enable Notifications
+                </Button>
               )}
             </div>
           </DropdownMenuLabel>
