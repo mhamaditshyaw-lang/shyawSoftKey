@@ -1,163 +1,220 @@
-import { useState } from "react";
-import { Bell, Search, Menu, User, Settings, LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ReactNode } from "react";
+import { HelpCircle, Info, AlertCircle, Lightbulb } from "lucide-react";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
-import { useTheme } from "@/hooks/use-theme";
-import { Moon, Sun } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
-import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { useTranslation } from "react-i18next";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
-interface DashboardHeaderProps {
-  onMenuClick?: () => void;
-  notificationCount?: number;
+interface HelpTooltipProps {
+  content: string | ReactNode;
+  children?: ReactNode;
+  type?: "info" | "help" | "warning" | "tip";
+  side?: "top" | "right" | "bottom" | "left";
+  className?: string;
+  triggerClassName?: string;
+  maxWidth?: string;
+  showIcon?: boolean;
 }
 
-export function DashboardHeader({ onMenuClick, notificationCount = 0 }: DashboardHeaderProps) {
-  const [searchValue, setSearchValue] = useState("");
-  const { theme, setTheme, isDark } = useTheme();
-  const { user, logout } = useAuth();
-  const { t } = useTranslation();
+const iconMap = {
+  info: Info,
+  help: HelpCircle,
+  warning: AlertCircle,
+  tip: Lightbulb,
+};
 
-  const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case 'admin': return 'bg-dashboard-error text-white';
-      case 'manager': return 'bg-dashboard-primary text-white';
-      case 'secretary': return 'bg-dashboard-accent text-white';
-      default: return 'bg-dashboard-secondary text-white';
+const colorMap = {
+  info: "text-blue-500 hover:text-blue-600",
+  help: "text-gray-500 hover:text-gray-600",
+  warning: "text-orange-500 hover:text-orange-600",
+  tip: "text-yellow-500 hover:text-yellow-600",
+};
+
+export function HelpTooltip({
+  content,
+  children,
+  type = "help",
+  side = "top",
+  className,
+  triggerClassName,
+  maxWidth = "280px",
+  showIcon = true,
+}: HelpTooltipProps) {
+  const Icon = iconMap[type];
+
+  const trigger = children || (
+    showIcon && (
+      <Icon 
+        className={cn(
+          "h-4 w-4 cursor-help transition-colors",
+          colorMap[type],
+          triggerClassName
+        )}
+      />
+    )
+  );
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="inline-flex items-center">
+            {trigger}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent 
+          side={side} 
+          className={cn(
+            "text-sm p-3 shadow-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100",
+            className
+          )}
+          style={{ maxWidth }}
+        >
+          {typeof content === "string" ? (
+            <div className="space-y-1">
+              {content.split('\n').map((line, index) => (
+                <p key={index} className="text-sm">
+                  {line}
+                </p>
+              ))}
+            </div>
+          ) : (
+            content
+          )}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
+// Specialized tooltip components for different use cases
+export function FeatureTooltip({ feature, description, shortcut, ...props }: {
+  feature: string;
+  description: string;
+  shortcut?: string;
+} & Omit<HelpTooltipProps, 'content'>) {
+  return (
+    <HelpTooltip
+      type="info"
+      content={
+        <div className="space-y-2">
+          <div className="font-semibold text-blue-600 dark:text-blue-400">
+            {feature}
+          </div>
+          <div className="text-sm text-gray-700 dark:text-gray-300">
+            {description}
+          </div>
+          {shortcut && (
+            <div className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono">
+              {shortcut}
+            </div>
+          )}
+        </div>
+      }
+      {...props}
+    />
+  );
+}
+
+export function RoleTooltip({ role, permissions, ...props }: {
+  role: string;
+  permissions: string[];
+} & Omit<HelpTooltipProps, 'content'>) {
+  return (
+    <HelpTooltip
+      type="info"
+      content={
+        <div className="space-y-2">
+          <div className="font-semibold text-indigo-600 dark:text-indigo-400">
+            {role} Role
+          </div>
+          <div className="text-sm text-gray-700 dark:text-gray-300">
+            This role has access to:
+          </div>
+          <ul className="text-xs space-y-1">
+            {permissions.map((permission, index) => (
+              <li key={index} className="flex items-center">
+                <span className="w-1 h-1 bg-green-500 rounded-full mr-2"></span>
+                {permission}
+              </li>
+            ))}
+          </ul>
+        </div>
+      }
+      {...props}
+    />
+  );
+}
+
+export function StatusTooltip({ status, description, nextAction, ...props }: {
+  status: string;
+  description: string;
+  nextAction?: string;
+} & Omit<HelpTooltipProps, 'content'>) {
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'active': return 'text-green-600 dark:text-green-400';
+      case 'pending': return 'text-yellow-600 dark:text-yellow-400';
+      case 'inactive': return 'text-red-600 dark:text-red-400';
+      case 'approved': return 'text-blue-600 dark:text-blue-400';
+      case 'rejected': return 'text-red-600 dark:text-red-400';
+      default: return 'text-gray-600 dark:text-gray-400';
     }
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/80 dark:bg-dashboard-bg-dark/80 backdrop-blur-md transition-all duration-300">
-      <div className="flex h-16 items-center justify-between px-4 lg:px-6">
-        {/* Left Section - Menu & Brand */}
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="lg:hidden hover:bg-dashboard-primary/10"
-            onClick={onMenuClick}
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
-          <div className="hidden lg:flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-dashboard-primary to-dashboard-accent flex items-center justify-center">
-              <span className="text-white font-bold text-sm">AS</span>
-            </div>
-            <div>
-              <h1 className="text-lg font-semibold text-dashboard-text-light dark:text-dashboard-text-dark">
-                Administration System
-              </h1>
-            </div>
+    <HelpTooltip
+      type="info"
+      content={
+        <div className="space-y-2">
+          <div className={cn("font-semibold", getStatusColor(status))}>
+            {status} Status
           </div>
-        </div>
-
-        {/* Center Section - Search */}
-        <div className="flex-1 max-w-md mx-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-dashboard-secondary/50" />
-            <Input
-              placeholder="Search..."
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              className="pl-10 bg-dashboard-bg-light/50 dark:bg-dashboard-secondary/20 border-dashboard-secondary/20 focus:border-dashboard-primary focus:ring-dashboard-primary/20"
-            />
+          <div className="text-sm text-gray-700 dark:text-gray-300">
+            {description}
           </div>
+          {nextAction && (
+            <div className="text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 px-2 py-1 rounded">
+              Next: {nextAction}
+            </div>
+          )}
         </div>
+      }
+      {...props}
+    />
+  );
+}
 
-        {/* Right Section - Actions & User */}
-        <div className="flex items-center gap-3">
-          {/* Theme Toggle */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setTheme(isDark ? "light" : "dark")}
-            className="hover:bg-dashboard-primary/10"
-          >
-            {isDark ? (
-              <Sun className="h-5 w-5 text-dashboard-accent" />
-            ) : (
-              <Moon className="h-5 w-5 text-dashboard-primary" />
-            )}
-          </Button>
-
-          {/* Notifications */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="relative hover:bg-dashboard-primary/10"
-          >
-            <Bell className="h-5 w-5 text-dashboard-secondary dark:text-dashboard-text-dark" />
-            {notificationCount > 0 && (
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs bg-dashboard-error border-0 flex items-center justify-center">
-                {notificationCount > 9 ? "9+" : notificationCount}
-              </Badge>
-            )}
-          </Button>
-
-          {/* Language Switcher */}
-          <LanguageSwitcher />
-
-          {/* User Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="flex items-center gap-2 hover:bg-dashboard-primary/10">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="/placeholder-avatar.jpg" alt={user?.username || "User"} />
-                  <AvatarFallback className="bg-dashboard-primary text-white text-sm">
-                    {user?.username?.charAt(0).toUpperCase() || "U"}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="hidden md:flex flex-col items-start">
-                  <span className="text-sm font-medium text-dashboard-text-light dark:text-dashboard-text-dark">
-                    {user?.username}
-                  </span>
-                  <Badge 
-                    variant="secondary" 
-                    className={`text-xs px-2 py-0 ${getRoleBadgeColor(user?.role || '')}`}
-                  >
-                    {user?.role}
-                  </Badge>
-                </div>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel className="flex flex-col">
-                <span className="font-medium">{user?.username}</span>
-                <span className="text-xs text-muted-foreground capitalize">{user?.role} User</span>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="hover:bg-dashboard-primary/10">
-                <User className="mr-2 h-4 w-4" />
-                Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-dashboard-primary/10">
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                onClick={logout}
-                className="text-dashboard-error hover:bg-dashboard-error/10 hover:text-dashboard-error"
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign Out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+export function ActionTooltip({ action, description, danger, ...props }: {
+  action: string;
+  description: string;
+  danger?: boolean;
+} & Omit<HelpTooltipProps, 'content'>) {
+  return (
+    <HelpTooltip
+      type={danger ? "warning" : "tip"}
+      content={
+        <div className="space-y-2">
+          <div className={cn(
+            "font-semibold",
+            danger ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400"
+          )}>
+            {action}
+          </div>
+          <div className="text-sm text-gray-700 dark:text-gray-300">
+            {description}
+          </div>
+          {danger && (
+            <div className="text-xs bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 px-2 py-1 rounded">
+              ⚠️ This action cannot be undone
+            </div>
+          )}
         </div>
-      </div>
-    </header>
+      }
+      {...props}
+    />
   );
 }
