@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { Search, Settings, User } from "lucide-react";
 import { HelpTooltip, FeatureTooltip, RoleTooltip } from "@/components/ui/help-tooltip";
+import NotificationCenter from "@/components/device-notifications/notification-center";
 
 export function DashboardHeader() {
   const { user } = useAuth();
@@ -18,7 +19,7 @@ export function DashboardHeader() {
           type="info"
         />
       </div>
-      
+
       <div className="flex items-center space-x-4">
         <FeatureTooltip
           feature="Quick Search"
@@ -45,6 +46,8 @@ export function DashboardHeader() {
             {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
           </Badge>
         </RoleTooltip>
+
+        <NotificationCenter />
 
         <HelpTooltip
           content="Access user settings, preferences, and account management options"
