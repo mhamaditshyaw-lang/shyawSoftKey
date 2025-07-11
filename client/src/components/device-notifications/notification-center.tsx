@@ -1,5 +1,21 @@
 import { useState } from "react";
-import { Bell, Smartphone, Check, Trash2, Settings, TestTube } from "lucide-react";
+import { 
+  Bell, 
+  Smartphone, 
+  Check, 
+  Trash2, 
+  Settings, 
+  TestTube,
+  Eye,
+  UserPlus,
+  Calendar,
+  FileText,
+  ArrowRight,
+  MessageSquare,
+  Archive,
+  Star,
+  ExternalLink
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -33,16 +49,7 @@ export default function NotificationCenter() {
     isGranted 
   } = useDeviceNotifications();
   
-  // Enhanced debugging - log notification data
-  console.log('NotificationCenter Debug:', {
-    notifications: notifications?.length || 0,
-    unreadCount,
-    isLoading,
-    isSupported,
-    isGranted,
-    permission: permission?.permission,
-    notificationData: notifications?.slice(0, 2) // Show first 2 notifications
-  });
+  // Production ready - debug logging removed
   
   const [isOpen, setIsOpen] = useState(false);
   
@@ -95,26 +102,197 @@ export default function NotificationCenter() {
     }
   };
 
+  // Get quick action buttons based on notification type and content
+  const getQuickActions = (notification: any) => {
+    const actions: Array<{
+      label: string;
+      icon?: any;
+      onClick: (notification: any) => void;
+      variant?: "default" | "outline" | "secondary" | "ghost" | "link" | "destructive";
+      className?: string;
+    }> = [];
+
+    // Common actions for all notifications
+    if (!notification.isRead) {
+      actions.push({
+        label: "Mark Read",
+        icon: Check,
+        onClick: (notif) => markAsRead(notif.id),
+        variant: "outline",
+        className: "border-blue-300 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+      });
+    }
+
+    // Type-specific actions
+    switch (notification.type) {
+      case 'user_activity':
+        actions.push({
+          label: "View Users",
+          icon: UserPlus,
+          onClick: () => window.location.href = '/users',
+          variant: "outline",
+          className: "border-green-300 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20"
+        });
+        break;
+
+      case 'task_reminder':
+        if (notification.title.toLowerCase().includes('interview')) {
+          actions.push({
+            label: "View Interviews",
+            icon: Calendar,
+            onClick: () => window.location.href = '/interviews',
+            variant: "outline",
+            className: "border-purple-300 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+          });
+        } else {
+          actions.push({
+            label: "View Tasks",
+            icon: FileText,
+            onClick: () => window.location.href = '/todos',
+            variant: "outline",
+            className: "border-orange-300 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20"
+          });
+        }
+        break;
+
+      case 'system_alert':
+      case 'security_alert':
+        actions.push({
+          label: notification.priority === 'urgent' ? "Take Action" : "View Alert",
+          icon: ArrowRight,
+          onClick: () => {
+            if (notification.actionUrl) {
+              window.location.href = notification.actionUrl;
+            } else {
+              window.location.href = '/dashboard';
+            }
+          },
+          variant: notification.priority === 'urgent' ? "default" : "outline",
+          className: notification.priority === 'urgent' 
+            ? "bg-red-500 hover:bg-red-600 text-white"
+            : "border-red-300 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+        });
+        break;
+
+      case 'general':
+        if (notification.title.toLowerCase().includes('feedback')) {
+          actions.push({
+            label: "Give Feedback",
+            icon: MessageSquare,
+            onClick: () => window.location.href = '/feedback',
+            variant: "outline",
+            className: "border-blue-300 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+          });
+        }
+        break;
+
+      case 'achievement':
+        actions.push({
+          label: "View Details",
+          icon: Star,
+          onClick: () => {
+            if (notification.actionUrl) {
+              window.location.href = notification.actionUrl;
+            } else {
+              window.location.href = '/dashboard';
+            }
+          },
+          variant: "outline",
+          className: "border-yellow-300 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20"
+        });
+        break;
+
+      case 'deadline_warning':
+        actions.push({
+          label: "Check Deadline",
+          icon: Calendar,
+          onClick: () => {
+            if (notification.actionUrl) {
+              window.location.href = notification.actionUrl;
+            } else {
+              window.location.href = '/todos';
+            }
+          },
+          variant: "outline",
+          className: "border-orange-300 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20"
+        });
+        break;
+
+      case 'maintenance_notice':
+        actions.push({
+          label: "View Notice",
+          icon: Settings,
+          onClick: () => {
+            if (notification.actionUrl) {
+              window.location.href = notification.actionUrl;
+            } else {
+              window.location.href = '/dashboard';
+            }
+          },
+          variant: "outline",
+          className: "border-gray-300 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-900/20"
+        });
+        break;
+
+      default:
+        // Generic action for unknown types
+        if (notification.actionUrl) {
+          actions.push({
+            label: "View Details",
+            icon: ExternalLink,
+            onClick: () => window.location.href = notification.actionUrl,
+            variant: "outline",
+            className: "border-gray-300 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-900/20"
+          });
+        }
+    }
+
+    // Priority-based actions
+    if (notification.priority === 'urgent' && actions.length === 1) {
+      actions.push({
+        label: "Mark Important",
+        icon: Star,
+        onClick: (notif) => {
+          // Here you could implement a mark as important API call
+          console.log('Marking as important:', notif.id);
+          markAsRead(notif.id);
+        },
+        variant: "outline",
+        className: "border-yellow-300 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20"
+      });
+    }
+
+    // Archive action for old notifications (older than 7 days)
+    const notificationAge = Date.now() - new Date(notification.createdAt).getTime();
+    const sevenDays = 7 * 24 * 60 * 60 * 1000;
+    
+    if (notificationAge > sevenDays) {
+      actions.push({
+        label: "Archive",
+        icon: Archive,
+        onClick: (notif) => deleteNotification(notif.id),
+        variant: "ghost",
+        className: "text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
+      });
+    }
+
+    return actions.slice(0, 3); // Limit to 3 actions to avoid clutter
+  };
+
   return (
     <>
-      {/* TEMPORARY DEBUG: Make the notification center extremely visible */}
-      <div className="relative bg-red-100 border-2 border-red-500 rounded p-1">
-        <div className="absolute -top-6 left-0 bg-red-600 text-white px-2 py-1 text-xs rounded z-50 whitespace-nowrap">
-          NOTIFICATIONS: {unreadCount} unread
-        </div>
-        
-        <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className={`relative hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 bg-red-50 border-2 border-red-400 ${
-                unreadCount > 0 ? 'animate-pulse' : ''
-              }`}
-              onClick={() => {
-                setIsOpen(!isOpen);
-              }}
-            >
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+        <DropdownMenuTrigger asChild>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className={`relative hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 ${
+              unreadCount > 0 ? 'animate-pulse' : ''
+            }`}
+            onClick={() => {
+              setIsOpen(!isOpen);
+            }}
+          >
             <Bell className={`h-7 w-7 ${
               unreadCount > 0 
                 ? 'text-red-500 dark:text-red-400' 
@@ -231,7 +409,7 @@ export default function NotificationCenter() {
                         <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
                           {notification.message}
                         </p>
-                        <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center justify-between mt-3">
                           <span className="text-xs text-gray-500">
                             {getRelativeTime(new Date(notification.createdAt))}
                           </span>
@@ -244,9 +422,10 @@ export default function NotificationCenter() {
                                   e.stopPropagation();
                                   markAsRead(notification.id);
                                 }}
-                                className="h-6 w-6 p-0"
+                                className="h-6 w-6 p-0 hover:bg-blue-100 dark:hover:bg-blue-900"
+                                title="Mark as read"
                               >
-                                <Check className="w-3 h-3" />
+                                <Check className="w-3 h-3 text-blue-600" />
                               </Button>
                             )}
                             <Button
@@ -256,11 +435,31 @@ export default function NotificationCenter() {
                                 e.stopPropagation();
                                 deleteNotification(notification.id);
                               }}
-                              className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                              className="h-6 w-6 p-0 text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900"
+                              title="Delete notification"
                             >
                               <Trash2 className="w-3 h-3" />
                             </Button>
                           </div>
+                        </div>
+                        
+                        {/* Quick Action Buttons */}
+                        <div className="flex flex-wrap gap-2 mt-3 pt-2 border-t border-gray-100 dark:border-gray-700">
+                          {getQuickActions(notification).map((action, index) => (
+                            <Button
+                              key={index}
+                              size="sm"
+                              variant={action.variant || "outline"}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                action.onClick(notification);
+                              }}
+                              className={`text-xs h-7 px-2 ${action.className || ''}`}
+                            >
+                              {action.icon && <action.icon className="w-3 h-3 mr-1" />}
+                              {action.label}
+                            </Button>
+                          ))}
                         </div>
                       </div>
                     </div>
@@ -289,7 +488,6 @@ export default function NotificationCenter() {
           )}
         </DropdownMenuContent>
       </DropdownMenu>
-      </div>
 
       {/* Settings Dialog */}
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
