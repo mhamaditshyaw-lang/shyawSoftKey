@@ -68,8 +68,7 @@ export default function Header() {
               <ThemeToggle />
             </div>
 
-            {/* Device Notifications */}
-            <NotificationCenter />
+
 
             {/* User Profile */}
             <div className="flex items-center space-x-3">
