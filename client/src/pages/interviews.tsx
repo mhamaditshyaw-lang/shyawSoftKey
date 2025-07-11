@@ -107,7 +107,7 @@ export default function InterviewsPage() {
         request.requestedBy.lastName.toLowerCase().includes(searchLower) ||
         (request.manager && 
          `${request.manager.firstName} ${request.manager.lastName}`.toLowerCase().includes(searchLower));
-      
+
       if (!matchesSearch) return false;
     }
 
@@ -187,7 +187,7 @@ export default function InterviewsPage() {
             <p className="text-sm md:text-base text-gray-600">Manage internal employee evaluations, performance reviews, and role change interviews</p>
           </div>
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-            {(user?.role === "security" || user?.role === "admin") && (
+            {(user?.role === "security" || user?.role === "admin" || user?.role === "manager") && (
               <Button onClick={() => setShowRequestModal(true)} className="mobile-button touch-target">
                 <Plus className="w-4 h-4 mr-2" />
                 <span className="hidden sm:inline">Schedule Employee Review</span>
@@ -335,7 +335,7 @@ export default function InterviewsPage() {
                   : `No ${statusFilter} requests found.`
                 }
               </p>
-              {(user?.role === "security" || user?.role === "admin") && (
+              {(user?.role === "security" || user?.role === "admin" || user?.role === "manager") && (
                 <Button onClick={() => setShowRequestModal(true)}>
                   <Plus className="w-4 h-4 mr-2" />
                   Schedule First Review
@@ -355,7 +355,7 @@ export default function InterviewsPage() {
                         {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                       </Badge>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                       <div>
                         <p className="text-sm font-medium text-gray-500">Candidate</p>
@@ -436,7 +436,7 @@ export default function InterviewsPage() {
                         </Button>
                       </>
                     )}
-                    
+
                     <Button 
                       variant="outline"
                       onClick={() => {
@@ -449,7 +449,7 @@ export default function InterviewsPage() {
                       <Calendar className="w-4 h-4 mr-2" />
                       View Details
                     </Button>
-                    
+
                     {(user?.role === "admin" || user?.role === "manager") && (
                       <Button
                         variant="outline"
@@ -463,7 +463,7 @@ export default function InterviewsPage() {
                                 itemData: request,
                                 reason: "Completed interview archived"
                               });
-                              
+
                               if (response.ok) {
                                 queryClient.invalidateQueries({ queryKey: ["/api/interviews"] });
                                 toast({
@@ -479,7 +479,7 @@ export default function InterviewsPage() {
                               });
                             }
                           };
-                          
+
                           archiveRequest();
                         }}
                         className="text-blue-600 border-blue-600 hover:bg-blue-50"

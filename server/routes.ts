@@ -679,7 +679,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/managers", authenticateToken, requireRole(['secretary', 'admin']), async (req, res) => {
+  app.get("/api/managers", authenticateToken, requireRole(['security', 'admin']), async (req, res) => {
     try {
       const managers = await storage.getUsersByRole('manager');
       const managersWithoutPasswords = managers.map(({ password, ...manager }) => manager);

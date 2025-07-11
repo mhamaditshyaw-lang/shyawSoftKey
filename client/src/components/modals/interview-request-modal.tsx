@@ -30,8 +30,17 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
   const { data: managersData } = useQuery({
     queryKey: ["/api/managers"],
     queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/managers");
-      return await response.json();
+      const response = await fetch("/api/managers", {
+        headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+      });
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          // Don't throw error for permission issues, just return empty data
+          return { managers: [] };
+        }
+        throw new Error("Failed to fetch managers");
+      }
+      return response.json();
     },
     enabled: open,
   });
@@ -88,7 +97,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
             Schedule an employee evaluation, performance review, or internal role change interview.
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="position">Review Type / Position</Label>
@@ -100,7 +109,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
               required
             />
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="candidateName">Employee Name</Label>
@@ -140,7 +149,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="proposedDateTime">Proposed Date & Time</Label>
@@ -168,7 +177,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
               </Select>
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="description">Review Details (Optional)</Label>
             <Textarea
@@ -179,7 +188,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
               rows={3}
             />
           </div>
-          
+
           <div className="flex justify-end space-x-3 pt-4">
             <Button
               type="button"
