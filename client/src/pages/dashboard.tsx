@@ -33,6 +33,7 @@ import {
   Filter,
   ArrowRight,
 } from "lucide-react";
+import { HelpTooltip, FeatureTooltip, StatusTooltip } from "@/components/ui/help-tooltip";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -339,9 +340,15 @@ export default function DashboardPage() {
               <Sparkles className="w-8 h-8 text-indigo-500" />
             </motion.div>
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                {getGreeting()}, {user?.firstName || user?.username}!
-              </h1>
+              <div className="flex items-center space-x-3">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  {getGreeting()}, {user?.firstName || user?.username}!
+                </h1>
+                <HelpTooltip
+                  content="Your personalized dashboard shows real-time system statistics, recent activities, and quick access to key functions. Data automatically refreshes to keep you informed of current operations."
+                  type="info"
+                />
+              </div>
               <p className="text-lg text-gray-600 mt-1">
                 {currentTime.toLocaleDateString('en-US', { 
                   weekday: 'long', 
@@ -659,6 +666,11 @@ export default function DashboardPage() {
                   <Clock className="w-5 h-5 text-blue-600" />
                 </motion.div>
                 <span>Recent Activity</span>
+                <FeatureTooltip
+                  feature="Activity Feed"
+                  description="Live view of recent system activities including interview requests, task updates, and employee changes. Updates automatically with real-time data."
+                  shortcut="Auto-refreshes every 30s"
+                />
               </CardTitle>
             </CardHeader>
             <CardContent>

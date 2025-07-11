@@ -15,6 +15,7 @@ import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash, User } from "lucide-react";
 import AddUserModal from "@/components/modals/add-user-modal";
+import { HelpTooltip, FeatureTooltip, RoleTooltip, StatusTooltip, ActionTooltip } from "@/components/ui/help-tooltip";
 
 export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -179,14 +180,26 @@ export default function UsersPage() {
     <DashboardLayout>
       <div className="mb-8">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold text-dashboard-text-light dark:text-dashboard-text-dark mb-2">Employee Management</h2>
-            <p className="text-dashboard-secondary dark:text-dashboard-text-dark/70">Manage internal employees and their roles within the company</p>
+          <div className="flex items-center space-x-3">
+            <div>
+              <h2 className="text-3xl font-bold text-dashboard-text-light dark:text-dashboard-text-dark mb-2">Employee Management</h2>
+              <p className="text-dashboard-secondary dark:text-dashboard-text-dark/70">Manage internal employees and their roles within the company</p>
+            </div>
+            <HelpTooltip
+              content="This page allows you to manage all internal employees. You can view, search, filter, add, edit, and manage employee roles and statuses. Use the filters to find specific employees and the action buttons to perform management tasks."
+              type="info"
+            />
           </div>
-          <Button onClick={() => setShowAddModal(true)} className="bg-dashboard-primary hover:bg-dashboard-primary/90">
-            <Plus className="w-4 h-4 mr-2" />
-            Add New Employee
-          </Button>
+          <FeatureTooltip
+            feature="Add New Employee"
+            description="Create a new employee account with role assignment and access permissions. Required information includes personal details, contact info, and role selection."
+            shortcut="Click to open form"
+          >
+            <Button onClick={() => setShowAddModal(true)} className="bg-dashboard-primary hover:bg-dashboard-primary/90">
+              <Plus className="w-4 h-4 mr-2" />
+              Add New Employee
+            </Button>
+          </FeatureTooltip>
         </div>
       </div>
 
@@ -195,34 +208,51 @@ export default function UsersPage() {
         <CardContent className="pt-6">
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex-1 min-w-64">
-              <Input
-                placeholder="Search employees..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+              <FeatureTooltip
+                feature="Employee Search"
+                description="Search by employee name, email, or username. Results update in real-time as you type."
+                shortcut="Type to search"
+              >
+                <Input
+                  placeholder="Search employees..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </FeatureTooltip>
             </div>
-            <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-32">
-                <SelectValue placeholder="All Roles" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="manager">Manager</SelectItem>
-                <SelectItem value="security">Secretary</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-32">
-                <SelectValue placeholder="All Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-              </SelectContent>
-            </Select>
+            <HelpTooltip
+              content="Filter employees by their assigned role. Each role has different access permissions and responsibilities within the system."
+              type="tip"
+            >
+              <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="All Roles" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="manager">Manager</SelectItem>
+                  <SelectItem value="security">Security</SelectItem>
+                </SelectContent>
+              </Select>
+            </HelpTooltip>
+            <StatusTooltip
+              status="Filter Status"
+              description="Filter employees by their account status"
+              nextAction="Select status to filter"
+            >
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="All Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                </SelectContent>
+              </Select>
+            </StatusTooltip>
           </div>
         </CardContent>
       </Card>
@@ -259,14 +289,39 @@ export default function UsersPage() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge className={getRoleBadgeColor(user.role)}>
-                    {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                  </Badge>
+                  <RoleTooltip
+                    role={user.role}
+                    permissions={
+                      user.role === "admin" 
+                        ? ["Manage all users", "Access all data", "System settings", "Reports"] 
+                        : user.role === "manager"
+                        ? ["Manage employees", "View reports", "Approve interviews", "Data access"]
+                        : ["View assigned tasks", "Submit interviews", "Basic operations"]
+                    }
+                  >
+                    <Badge className={getRoleBadgeColor(user.role)}>
+                      {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                    </Badge>
+                  </RoleTooltip>
                 </TableCell>
                 <TableCell>
-                  <Badge className={getStatusBadgeColor(user.status)}>
-                    {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                  </Badge>
+                  <StatusTooltip
+                    status={user.status}
+                    description={
+                      user.status === "active" ? "Employee has full access to the system" :
+                      user.status === "inactive" ? "Employee account is disabled" :
+                      "Employee registration is awaiting approval"
+                    }
+                    nextAction={
+                      user.status === "pending" ? "Review and approve/reject" :
+                      user.status === "inactive" ? "Can be reactivated if needed" :
+                      undefined
+                    }
+                  >
+                    <Badge className={getStatusBadgeColor(user.status)}>
+                      {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                    </Badge>
+                  </StatusTooltip>
                 </TableCell>
                 <TableCell className="text-sm text-gray-600 dark:text-gray-400">
                   {user.lastActiveAt
@@ -278,43 +333,64 @@ export default function UsersPage() {
                   <div className="flex items-center space-x-2">
                     {user.status === "pending" ? (
                       <>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-green-600 hover:text-green-700"
-                          onClick={() => handleApproveUser(user.id)}
-                          disabled={updateUserMutation.isPending}
+                        <ActionTooltip
+                          action="Approve Employee"
+                          description="Grant access to the system and activate the employee account"
                         >
-                          Approve
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-red-600 hover:text-red-700"
-                          onClick={() => handleRejectUser(user.id)}
-                          disabled={updateUserMutation.isPending}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-green-600 hover:text-green-700"
+                            onClick={() => handleApproveUser(user.id)}
+                            disabled={updateUserMutation.isPending}
+                          >
+                            Approve
+                          </Button>
+                        </ActionTooltip>
+                        <ActionTooltip
+                          action="Reject Employee"
+                          description="Deny access and mark the account as inactive"
                         >
-                          Reject
-                        </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:text-red-700"
+                            onClick={() => handleRejectUser(user.id)}
+                            disabled={updateUserMutation.isPending}
+                          >
+                            Reject
+                          </Button>
+                        </ActionTooltip>
                       </>
                     ) : (
                       <>
-                        <Button 
-                          size="sm" 
-                          variant="ghost"
-                          onClick={() => handleEditUser(user)}
-                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                        <ActionTooltip
+                          action="Edit Employee"
+                          description="Modify employee information, role, and account settings"
                         >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          onClick={() => handleDeleteUser(user)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          <Button 
+                            size="sm" 
+                            variant="ghost"
+                            onClick={() => handleEditUser(user)}
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                        </ActionTooltip>
+                        <ActionTooltip
+                          action="Delete Employee"
+                          description="Permanently remove employee account and all associated data"
+                          danger={true}
                         >
-                          <Trash className="w-4 h-4" />
-                        </Button>
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            onClick={() => handleDeleteUser(user)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          >
+                            <Trash className="w-4 h-4" />
+                          </Button>
+                        </ActionTooltip>
                       </>
                     )}
                   </div>
