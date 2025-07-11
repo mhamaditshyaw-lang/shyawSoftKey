@@ -1,7 +1,7 @@
 import { Building2, User, LogOut, Search } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
-import NotificationBell from "@/components/notifications/notification-bell";
+import NotificationCenter from "@/components/device-notifications/notification-center";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -65,8 +65,8 @@ export default function Header() {
               <ThemeToggle />
             </div>
 
-            {/* Notifications */}
-            <NotificationBell />
+            {/* Device Notifications */}
+            <NotificationCenter />
 
             {/* User Profile */}
             <div className="flex items-center space-x-3">

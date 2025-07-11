@@ -182,8 +182,10 @@ export const insertOperationalDataSchema = createInsertSchema(operationalData).o
 export type OperationalData = typeof operationalData.$inferSelect;
 export type InsertOperationalData = z.infer<typeof insertOperationalDataSchema>;
 
-// Export notification types
-export * from "./notification-schema";
+
 
 // Export feedback and archive types
 export * from "./feedback-schema";
+
+// Export device notification types
+export * from "./device-notification-schema";

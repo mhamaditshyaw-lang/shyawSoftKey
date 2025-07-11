@@ -13,11 +13,7 @@ import {
   type InterviewRequest,
   type InsertInterviewRequest
 } from "@shared/schema";
-import { 
-  notifications,
-  type Notification,
-  type InsertNotification,
-} from "@shared/notification-schema";
+
 import {
   feedback,
   archivedItems,
@@ -63,11 +59,7 @@ export interface IStorage {
   getTodoStats(): Promise<{ totalTodos: number; completedTodos: number; pendingTodos: number }>;
   getInterviewStats(): Promise<{ totalRequests: number; pendingRequests: number; approvedRequests: number }>;
   
-  // Notification methods
-  getUserNotifications(userId: number): Promise<any[]>;
-  markNotificationAsRead(notificationId: number, userId: number): Promise<void>;
-  markAllNotificationsAsRead(userId: number): Promise<void>;
-  deleteNotification(notificationId: number, userId: number): Promise<void>;
+
   
   // Feedback methods
   createFeedback(feedbackData: any): Promise<any>;
@@ -411,25 +403,7 @@ export class DatabaseStorage implements IStorage {
     };
   }
 
-  async getUserNotifications(userId: number): Promise<any[]> {
-    const { NotificationService } = await import("./notification-service");
-    return await NotificationService.getUserNotifications(userId);
-  }
 
-  async markNotificationAsRead(notificationId: number, userId: number): Promise<void> {
-    const { NotificationService } = await import("./notification-service");
-    await NotificationService.markAsRead(notificationId, userId);
-  }
-
-  async markAllNotificationsAsRead(userId: number): Promise<void> {
-    const { NotificationService } = await import("./notification-service");
-    await NotificationService.markAllAsRead(userId);
-  }
-
-  async deleteNotification(notificationId: number, userId: number): Promise<void> {
-    const { NotificationService } = await import("./notification-service");
-    await NotificationService.deleteNotification(notificationId, userId);
-  }
 
   async createFeedback(feedbackData: any): Promise<any> {
     const { FeedbackService } = await import("./feedback-service");

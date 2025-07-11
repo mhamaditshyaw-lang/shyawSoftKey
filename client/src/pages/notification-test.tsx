@@ -1,237 +1,396 @@
 import { useState } from "react";
-import { useAuth } from "@/hooks/use-auth";
+import { Smartphone, TestTube, AlertTriangle, Bell, CheckCircle, Clock, ShieldAlert, Settings, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { useDeviceNotifications } from "@/hooks/use-device-notifications";
 import { useToast } from "@/hooks/use-toast";
-import { useMutation } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
-import { Bell, Send, TestTube } from "lucide-react";
+import { authenticatedRequest } from "@/lib/auth";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
-export default function NotificationTest() {
-  const { user, authenticatedRequest } = useAuth();
+export default function NotificationTestPage() {
   const { toast } = useToast();
-  const { t } = useTranslation();
-  
-  const [testData, setTestData] = useState({
+  const { 
+    permission, 
+    requestPermission, 
+    sendDeviceNotification, 
+    createTestNotification,
+    isSupported,
+    isGranted 
+  } = useDeviceNotifications();
+
+  const [customNotification, setCustomNotification] = useState({
     title: "",
     message: "",
-    type: "system",
-    priority: "medium"
+    type: "general",
+    priority: "normal",
+    icon: "🔔"
   });
 
-  const sendTestNotification = useMutation({
-    mutationFn: async (data: any) => {
-      const response = await authenticatedRequest("POST", "/api/test-notification", data);
-      if (!response.ok) {
-        throw new Error("Failed to send test notification");
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "Success",
-        description: "Test notification sent successfully",
-      });
-      setTestData({
-        title: "",
-        message: "",
-        type: "system",
-        priority: "medium"
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to send test notification",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const sendQuickTests = [
-    {
-      title: "Welcome Message",
-      message: "Welcome to the Employee Affairs Management System!",
-      type: "system",
-      priority: "low"
-    },
-    {
-      title: "Task Reminder",
-      message: "You have pending tasks that require your attention.",
-      type: "task",
-      priority: "medium"
-    },
-    {
-      title: "Meeting Alert",
-      message: "You have a meeting scheduled in 30 minutes.",
-      type: "meeting",
-      priority: "high"
-    },
-    {
-      title: "System Update",
-      message: "System maintenance will begin in 15 minutes.",
-      type: "system",
-      priority: "urgent"
-    }
+  const notificationTypes = [
+    { value: "system_alert", label: "System Alert", icon: "⚠️" },
+    { value: "task_reminder", label: "Task Reminder", icon: "📋" },
+    { value: "user_activity", label: "User Activity", icon: "👤" },
+    { value: "security_alert", label: "Security Alert", icon: "🔒" },
+    { value: "maintenance_notice", label: "Maintenance Notice", icon: "🔧" },
+    { value: "deadline_warning", label: "Deadline Warning", icon: "⏰" },
+    { value: "achievement", label: "Achievement", icon: "🏆" },
+    { value: "general", label: "General", icon: "🔔" }
   ];
 
-  const handleQuickTest = (testNotification: any) => {
-    sendTestNotification.mutate(testNotification);
-  };
+  const priorities = [
+    { value: "low", label: "Low", color: "bg-gray-100 text-gray-800" },
+    { value: "normal", label: "Normal", color: "bg-blue-100 text-blue-800" },
+    { value: "high", label: "High", color: "bg-orange-100 text-orange-800" },
+    { value: "urgent", label: "Urgent", color: "bg-red-100 text-red-800" }
+  ];
 
-  const handleCustomTest = () => {
-    if (!testData.title || !testData.message) {
+  const handleQuickTest = (type: string, title: string, message: string, priority: string = "normal") => {
+    if (!isGranted) {
       toast({
-        title: "Error",
-        description: "Please fill in both title and message fields",
+        title: "Permission Required",
+        description: "Please enable device notifications first.",
         variant: "destructive",
       });
       return;
     }
-    sendTestNotification.mutate(testData);
+
+    sendDeviceNotification(title, {
+      body: message,
+      icon: notificationTypes.find(t => t.value === type)?.icon || "🔔",
+      tag: `test-${type}-${Date.now()}`,
+    });
+
+    toast({
+      title: "Test Sent",
+      description: `${title} notification sent to your device.`,
+    });
+  };
+
+  const handleCustomNotification = async () => {
+    if (!customNotification.title || !customNotification.message) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in both title and message.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const response = await authenticatedRequest("/api/device-notifications/test", {
+        method: "POST",
+        body: JSON.stringify({
+          title: customNotification.title,
+          message: customNotification.message,
+          type: customNotification.type,
+          priority: customNotification.priority,
+          icon: customNotification.icon,
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Custom Notification Sent",
+          description: "Your custom notification has been created and sent.",
+        });
+        
+        // Reset form
+        setCustomNotification({
+          title: "",
+          message: "",
+          type: "general",
+          priority: "normal",
+          icon: "🔔"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send custom notification.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSystemAlert = async () => {
+    try {
+      const response = await authenticatedRequest("/api/device-notifications/system-alert", {
+        method: "POST",
+        body: JSON.stringify({
+          title: "System Alert Test",
+          message: "This is a system-wide alert notification sent to all users.",
+          priority: "high"
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "System Alert Sent",
+          description: "System alert has been sent to all users.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send system alert. Admin access may be required.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <div className="flex items-center gap-2 mb-6">
-        <TestTube className="h-6 w-6 text-indigo-600" />
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          {t('Notification Test Center')}
-        </h1>
-      </div>
-
-      {/* Quick Test Buttons */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            Quick Test Notifications
-          </CardTitle>
-          <CardDescription>
-            Send predefined test notifications to verify the system is working properly.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {sendQuickTests.map((test, index) => (
-              <div key={index} className="border rounded-lg p-4 space-y-2">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-sm">{test.title}</h3>
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    test.priority === 'urgent' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
-                    test.priority === 'high' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' :
-                    test.priority === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-                    'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                  }`}>
-                    {test.priority}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-300">{test.message}</p>
-                <Button 
-                  onClick={() => handleQuickTest(test)}
-                  disabled={sendTestNotification.isPending}
-                  size="sm"
-                  className="w-full"
-                >
-                  <Send className="h-4 w-4 mr-2" />
-                  Send Test
-                </Button>
-              </div>
-            ))}
+    <DashboardLayout>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Device Notification Test Center</h1>
+            <p className="text-muted-foreground">
+              Test and verify the device notification system functionality
+            </p>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Custom Test Form */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Custom Test Notification</CardTitle>
-          <CardDescription>
-            Create and send a custom notification with your own content.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Permission Status */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Smartphone className="w-5 h-5 mr-2" />
+              Notification Permission Status
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex items-center space-x-2">
+                <Label>Browser Support:</Label>
+                <Badge variant={isSupported ? "default" : "destructive"}>
+                  {isSupported ? "Supported" : "Not Supported"}
+                </Badge>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Label>Permission:</Label>
+                <Badge variant={
+                  permission.permission === 'granted' ? 'default' : 
+                  permission.permission === 'denied' ? 'destructive' : 'secondary'
+                }>
+                  {permission.permission === 'granted' ? 'Enabled' : 
+                   permission.permission === 'denied' ? 'Blocked' : 'Not Set'}
+                </Badge>
+              </div>
+              <div>
+                {!isGranted && isSupported && (
+                  <Button onClick={requestPermission}>
+                    <Bell className="w-4 h-4 mr-2" />
+                    Request Permission
+                  </Button>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Test Notifications */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <TestTube className="w-5 h-5 mr-2" />
+              Quick Test Notifications
+            </CardTitle>
+            <CardDescription>
+              Send predefined test notifications to verify different types and priorities
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Button
+                onClick={() => handleQuickTest("system_alert", "System Alert", "This is a test system alert notification", "high")}
+                disabled={!isGranted}
+                className="justify-start h-auto p-4"
+                variant="outline"
+              >
+                <div className="flex items-center space-x-3">
+                  <AlertTriangle className="w-6 h-6 text-orange-500" />
+                  <div className="text-left">
+                    <div className="font-medium">System Alert Test</div>
+                    <div className="text-sm text-muted-foreground">High priority system notification</div>
+                  </div>
+                </div>
+              </Button>
+
+              <Button
+                onClick={() => handleQuickTest("task_reminder", "Task Reminder", "Don't forget to complete your daily tasks", "normal")}
+                disabled={!isGranted}
+                className="justify-start h-auto p-4"
+                variant="outline"
+              >
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-6 h-6 text-blue-500" />
+                  <div className="text-left">
+                    <div className="font-medium">Task Reminder Test</div>
+                    <div className="text-sm text-muted-foreground">Normal priority task notification</div>
+                  </div>
+                </div>
+              </Button>
+
+              <Button
+                onClick={() => handleQuickTest("deadline_warning", "Deadline Warning", "Project deadline is approaching in 2 days", "urgent")}
+                disabled={!isGranted}
+                className="justify-start h-auto p-4"
+                variant="outline"
+              >
+                <div className="flex items-center space-x-3">
+                  <Clock className="w-6 h-6 text-red-500" />
+                  <div className="text-left">
+                    <div className="font-medium">Deadline Warning Test</div>
+                    <div className="text-sm text-muted-foreground">Urgent priority deadline notification</div>
+                  </div>
+                </div>
+              </Button>
+
+              <Button
+                onClick={() => handleQuickTest("achievement", "Achievement Unlocked", "Congratulations! You've completed all your tasks this week", "low")}
+                disabled={!isGranted}
+                className="justify-start h-auto p-4"
+                variant="outline"
+              >
+                <div className="flex items-center space-x-3">
+                  <Trophy className="w-6 h-6 text-green-500" />
+                  <div className="text-left">
+                    <div className="font-medium">Achievement Test</div>
+                    <div className="text-sm text-muted-foreground">Low priority achievement notification</div>
+                  </div>
+                </div>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Custom Notification Builder */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Custom Notification Builder</CardTitle>
+            <CardDescription>
+              Create and send custom notifications with specific content and settings
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Title</Label>
+                <Input
+                  id="title"
+                  value={customNotification.title}
+                  onChange={(e) => setCustomNotification(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Enter notification title"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="icon">Icon/Emoji</Label>
+                <Input
+                  id="icon"
+                  value={customNotification.icon}
+                  onChange={(e) => setCustomNotification(prev => ({ ...prev, icon: e.target.value }))}
+                  placeholder="🔔"
+                  className="w-20"
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                value={testData.title}
-                onChange={(e) => setTestData({...testData, title: e.target.value})}
-                placeholder="Enter notification title"
+              <Label htmlFor="message">Message</Label>
+              <Textarea
+                id="message"
+                value={customNotification.message}
+                onChange={(e) => setCustomNotification(prev => ({ ...prev, message: e.target.value }))}
+                placeholder="Enter notification message"
+                rows={3}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="type">Type</Label>
-              <Select value={testData.type} onValueChange={(value) => setTestData({...testData, type: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select notification type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="system">System</SelectItem>
-                  <SelectItem value="task">Task</SelectItem>
-                  <SelectItem value="meeting">Meeting</SelectItem>
-                  <SelectItem value="user">User</SelectItem>
-                  <SelectItem value="interview">Interview</SelectItem>
-                </SelectContent>
-              </Select>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Type</Label>
+                <Select
+                  value={customNotification.type}
+                  onValueChange={(value) => setCustomNotification(prev => ({ ...prev, type: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {notificationTypes.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        <div className="flex items-center space-x-2">
+                          <span>{type.icon}</span>
+                          <span>{type.label}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Priority</Label>
+                <Select
+                  value={customNotification.priority}
+                  onValueChange={(value) => setCustomNotification(prev => ({ ...prev, priority: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {priorities.map((priority) => (
+                      <SelectItem key={priority.value} value={priority.value}>
+                        <Badge className={priority.color} variant="secondary">
+                          {priority.label}
+                        </Badge>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="priority">Priority</Label>
-            <Select value={testData.priority} onValueChange={(value) => setTestData({...testData, priority: value})}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select priority" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="high">High</SelectItem>
-                <SelectItem value="urgent">Urgent</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="message">Message</Label>
-            <Textarea
-              id="message"
-              value={testData.message}
-              onChange={(e) => setTestData({...testData, message: e.target.value})}
-              placeholder="Enter notification message"
-              rows={4}
-            />
-          </div>
+            <div className="flex space-x-4 pt-4">
+              <Button onClick={handleCustomNotification} disabled={!isGranted}>
+                <TestTube className="w-4 h-4 mr-2" />
+                Send Custom Notification
+              </Button>
+              
+              <Button onClick={createTestNotification} disabled={!isGranted} variant="outline">
+                <Bell className="w-4 h-4 mr-2" />
+                Send Default Test
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
-          <Button 
-            onClick={handleCustomTest}
-            disabled={sendTestNotification.isPending}
-            className="w-full"
-          >
-            <Send className="h-4 w-4 mr-2" />
-            {sendTestNotification.isPending ? "Sending..." : "Send Custom Test"}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Current User Info */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Test Information</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2 text-sm">
-            <p><strong>Current User:</strong> {user?.username} ({user?.role})</p>
-            <p><strong>User ID:</strong> {user?.id}</p>
-            <p><strong>Status:</strong> All test notifications will be sent to your account</p>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+        {/* System Alert */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <ShieldAlert className="w-5 h-5 mr-2" />
+              System Alert (Admin Only)
+            </CardTitle>
+            <CardDescription>
+              Send system-wide alerts to all users (requires admin permissions)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={handleSystemAlert} variant="destructive">
+              <AlertTriangle className="w-4 h-4 mr-2" />
+              Send System Alert to All Users
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </DashboardLayout>
   );
 }
