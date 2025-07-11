@@ -172,9 +172,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status: 'active', // Admin created users are active by default
       });
 
-      // Send notification about new user creation
-      const { NotificationService } = await import("./notification-service");
-      await NotificationService.notifyUserCreated(user.id, req.user!.id);
+      // Send device notification about new user creation
+      const { DeviceNotificationService } = await import("./device-notification-service");
+      await DeviceNotificationService.createUserNotification(
+        req.user!.id,
+        "user_activity",
+        "New User Created",
+        `User ${user.username} has been added to the system`,
+        "normal"
+      );
 
       const { password, ...userWithoutPassword } = user;
       res.status(201).json({ user: userWithoutPassword });
@@ -303,8 +309,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Send notification if todo is assigned to someone
       if (todoData.assignedToId && todoData.assignedToId !== req.user!.id) {
-        const { NotificationService } = await import("./notification-service");
-        await NotificationService.notifyTodoAssigned(todoList.id, todoData.assignedToId, req.user!.id);
+        const { DeviceNotificationService } = await import("./device-notification-service");
+        await DeviceNotificationService.createUserNotification(
+          todoData.assignedToId,
+          "task_reminder",
+          "New Task Assigned",
+          `You have been assigned a new task: ${todoData.title}`,
+          "normal"
+        );
       }
       
       res.status(201).json({ todoList: fullTodoList });
@@ -590,13 +602,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const requestData = insertInterviewRequestSchema.parse(transformedData);
       const request = await storage.createInterviewRequest(requestData);
       
-      // Send notification about new interview request
-      const { NotificationService } = await import("./notification-service");
-      await NotificationService.notifyInterviewRequest(
-        request.id, 
-        req.user!.id, 
-        requestData.managerId || undefined
-      );
+      // Send device notification about new interview request
+      const { DeviceNotificationService } = await import("./device-notification-service");
+      if (requestData.managerId) {
+        await DeviceNotificationService.createUserNotification(
+          requestData.managerId,
+          "security_alert",
+          "New Interview Request",
+          `New interview request for ${requestData.candidateName} - ${requestData.position}`,
+          "high"
+        );
+      }
       
       res.status(201).json({ request });
     } catch (error: any) {
@@ -626,14 +642,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Interview request not found" });
       }
 
-      // Send notification if status changed
+      // Send device notification if status changed
       if (updates.status && original && (updates.status === 'approved' || updates.status === 'rejected')) {
-        const { NotificationService } = await import("./notification-service");
-        await NotificationService.notifyInterviewStatus(
-          id, 
-          updates.status, 
-          original.requestedBy.id, 
-          req.user!.id
+        const { DeviceNotificationService } = await import("./device-notification-service");
+        await DeviceNotificationService.createUserNotification(
+          original.requestedBy.id,
+          "security_alert",
+          "Interview Status Update",
+          `Your interview request has been ${updates.status}`,
+          updates.status === 'approved' ? 'normal' : 'high'
         );
       }
 

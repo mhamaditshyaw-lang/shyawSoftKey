@@ -6,6 +6,8 @@ import { eq, and, desc } from "drizzle-orm";
 export class DeviceNotificationService {
   static async createNotification(notification: InsertDeviceNotification): Promise<any> {
     try {
+
+      
       const [createdNotification] = await db.insert(deviceNotifications).values(notification).returning();
       
       // Send device notification if supported
@@ -46,15 +48,16 @@ export class DeviceNotificationService {
   static async createUserNotification(
     userId: number,
     type: string,
-    priority: string,
     title: string,
     message: string,
+    priority: string = "normal",
     options?: {
       icon?: string;
       actionUrl?: string;
       expiresAt?: Date;
     }
   ): Promise<any> {
+
     return await this.createNotification({
       userId,
       type: type as any,
@@ -82,9 +85,9 @@ export class DeviceNotificationService {
       this.createUserNotification(
         user.id,
         "system_alert",
-        priority,
         title,
         message,
+        priority,
         { icon: "⚠️" }
       )
     );
