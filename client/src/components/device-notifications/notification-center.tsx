@@ -95,11 +95,10 @@ export default function NotificationCenter() {
             size="sm" 
             className="relative hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
             onClick={() => {
-              console.log('Notification button clicked!');
               setIsOpen(!isOpen);
             }}
           >
-            <Smartphone className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <Bell className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             {unreadCount > 0 && (
               <Badge 
                 variant="destructive" 
@@ -113,8 +112,13 @@ export default function NotificationCenter() {
         <DropdownMenuContent align="end" className="w-96 max-h-[500px]">
           <DropdownMenuLabel className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Smartphone className="h-4 w-4" />
-              <span>Device Notifications</span>
+              <Bell className="h-4 w-4" />
+              <span>Notifications</span>
+              {unreadCount > 0 && (
+                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                  {unreadCount} new
+                </Badge>
+              )}
             </div>
             <div className="flex items-center space-x-2">
               {isGranted ? (
@@ -134,15 +138,17 @@ export default function NotificationCenter() {
           <DropdownMenuSeparator />
           
           <div className="p-2 flex space-x-2">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setShowSettings(true)}
-              className="flex-1"
-            >
-              <Settings className="w-3 h-3 mr-1" />
-              Settings
-            </Button>
+            {unreadCount > 0 && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={markAllAsRead}
+                className="flex-1"
+              >
+                <Check className="w-3 h-3 mr-1" />
+                Mark All Read
+              </Button>
+            )}
             <Button
               size="sm"
               variant="outline"
@@ -151,6 +157,15 @@ export default function NotificationCenter() {
             >
               <TestTube className="w-3 h-3 mr-1" />
               Test
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setShowSettings(true)}
+              className="flex-1"
+            >
+              <Settings className="w-3 h-3 mr-1" />
+              Settings
             </Button>
           </div>
           

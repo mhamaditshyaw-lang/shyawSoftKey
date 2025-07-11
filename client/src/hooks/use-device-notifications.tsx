@@ -55,7 +55,7 @@ export function DeviceNotificationProvider({ children }: { children: ReactNode }
       return response.json();
     },
     enabled: !!user,
-    refetchInterval: 10000, // Poll every 10 seconds
+    refetchInterval: 3000, // Poll every 3 seconds for real-time updates
     refetchIntervalInBackground: true,
   });
 
@@ -196,6 +196,15 @@ export function DeviceNotificationProvider({ children }: { children: ReactNode }
           icon: latestNotification.icon || '🔔',
           tag: `notification-${latestNotification.id}`,
         });
+        
+        // Play notification sound
+        try {
+          const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGm9vz0H4yBSl+zPLaizsIGGS57t2QQAoUXrTp66hVFApGm9vz0H4yBSl+zPLaizsIGGS57t2QQAoUXrTp66hVFApGm9vz0H4yBSl+zPLaizsIGGS57t2QQAoUXrTp66hVFApGm9vz0H4yBSl+zPLaizsIGGS57t2QQAoUXrTp66hVFApGm9vz0H4yBSl+zPLaizsIGGS57t2QQAoUXrTp66hVFA==');
+          audio.volume = 0.3;
+          audio.play().catch(e => console.log('Could not play notification sound:', e));
+        } catch (e) {
+          console.log('Audio not supported:', e);
+        }
       }
     }
   }, [notifications, permission.permission]);

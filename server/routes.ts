@@ -947,9 +947,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await DeviceNotificationService.createUserNotification(
         req.user!.id,
         "general",
-        "normal",
         "Test Notification",
         "This is a test device notification to verify the system is working correctly.",
+        "normal",
         { 
           icon: "🧪",
           actionUrl: "/dashboard"
