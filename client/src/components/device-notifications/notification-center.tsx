@@ -112,6 +112,15 @@ export default function NotificationCenter() {
       className?: string;
     }> = [];
 
+    // Debug logging - temporary
+    console.log('Getting actions for notification:', {
+      id: notification.id,
+      type: notification.type,
+      priority: notification.priority,
+      title: notification.title,
+      isRead: notification.isRead
+    });
+
     // Common actions for all notifications
     if (!notification.isRead) {
       actions.push({
@@ -276,7 +285,9 @@ export default function NotificationCenter() {
       });
     }
 
-    return actions.slice(0, 3); // Limit to 3 actions to avoid clutter
+    const finalActions = actions.slice(0, 3); // Limit to 3 actions to avoid clutter
+    console.log('Final actions for notification ' + notification.id + ':', finalActions);
+    return finalActions;
   };
 
   return (
@@ -444,22 +455,28 @@ export default function NotificationCenter() {
                         </div>
                         
                         {/* Quick Action Buttons */}
-                        <div className="flex flex-wrap gap-2 mt-3 pt-2 border-t border-gray-100 dark:border-gray-700">
-                          {getQuickActions(notification).map((action, index) => (
-                            <Button
-                              key={index}
-                              size="sm"
-                              variant={action.variant || "outline"}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                action.onClick(notification);
-                              }}
-                              className={`text-xs h-7 px-2 ${action.className || ''}`}
-                            >
-                              {action.icon && <action.icon className="w-3 h-3 mr-1" />}
-                              {action.label}
-                            </Button>
-                          ))}
+                        <div className="flex flex-wrap gap-2 mt-3 pt-2 border-t-2 border-blue-200 dark:border-blue-700 bg-gray-50 dark:bg-gray-800 p-2 rounded">
+                          {getQuickActions(notification).length > 0 ? (
+                            getQuickActions(notification).map((action, index) => (
+                              <Button
+                                key={index}
+                                size="sm"
+                                variant={action.variant || "outline"}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  action.onClick(notification);
+                                }}
+                                className={`text-xs h-8 px-3 font-medium ${action.className || ''}`}
+                              >
+                                {action.icon && <action.icon className="w-3 h-3 mr-1" />}
+                                {action.label}
+                              </Button>
+                            ))
+                          ) : (
+                            <div className="text-xs text-gray-500">
+                              No quick actions available for {notification.type}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
