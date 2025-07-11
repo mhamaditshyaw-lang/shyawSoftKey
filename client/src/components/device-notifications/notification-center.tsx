@@ -33,6 +33,10 @@ export default function NotificationCenter() {
     isGranted 
   } = useDeviceNotifications();
   
+  // Remove debug logging for production
+  
+  const [isOpen, setIsOpen] = useState(false);
+  
   const [showSettings, setShowSettings] = useState(false);
 
   const getNotificationIcon = (type: string) => {
@@ -84,12 +88,16 @@ export default function NotificationCenter() {
 
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenuTrigger asChild>
           <Button 
             variant="ghost" 
             size="sm" 
             className="relative hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+            onClick={() => {
+              console.log('Notification button clicked!');
+              setIsOpen(!isOpen);
+            }}
           >
             <Smartphone className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             {unreadCount > 0 && (

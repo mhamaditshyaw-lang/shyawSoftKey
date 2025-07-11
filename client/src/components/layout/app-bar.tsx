@@ -37,17 +37,8 @@ export default function AppBar({}: AppBarProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showQuickMenu, setShowQuickMenu] = useState(false);
 
-  // Fetch notifications for the bell icon
-  const { data: notificationData } = useQuery({
-    queryKey: ["/api/notifications"],
-    queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/notifications");
-      return await response.json();
-    },
-    refetchInterval: 30000, // Refetch every 30 seconds
-  });
-
-  const unreadCount = notificationData?.notifications?.filter((n: any) => !n.isRead)?.length || 0;
+  // Use device notifications instead
+  const unreadCount = 0; // Will be handled by the device notification center
 
   // Quick access menu items
   const quickMenuItems = [

@@ -65,13 +65,7 @@ export default function ModernDashboard() {
     },
   });
 
-  const { data: notifications } = useQuery({
-    queryKey: ["/api/notifications"],
-    queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/notifications");
-      return await response.json();
-    },
-  });
+  // Remove old notifications query - using device notifications now
 
   const getGreeting = () => {
     const hour = currentTime.getHours();
@@ -82,7 +76,7 @@ export default function ModernDashboard() {
 
   const recentTodosList = recentTodos?.todoLists?.slice(0, 5) || [];
   const recentInterviews = interviewsData?.requests?.slice(0, 3) || [];
-  const unreadNotifications = (notifications?.notifications || notifications || []).filter?.((n: any) => !n.isRead) || [];
+  const unreadNotifications = []; // Remove notifications from modern dashboard
 
   const quickActions = [
     {

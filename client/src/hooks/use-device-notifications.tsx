@@ -51,7 +51,7 @@ export function DeviceNotificationProvider({ children }: { children: ReactNode }
   const { data: notificationsData, isLoading } = useQuery({
     queryKey: ["/api/device-notifications"],
     queryFn: async () => {
-      const response = await authenticatedRequest("/api/device-notifications");
+      const response = await authenticatedRequest("GET", "/api/device-notifications");
       return response.json();
     },
     enabled: !!user,
@@ -135,9 +135,7 @@ export function DeviceNotificationProvider({ children }: { children: ReactNode }
   // Create test notification
   const createTestNotification = async () => {
     try {
-      await authenticatedRequest("/api/device-notifications/test", {
-        method: "POST",
-      });
+      await authenticatedRequest("POST", "/api/device-notifications/test");
       
       toast({
         title: "Test Sent",
@@ -158,10 +156,7 @@ export function DeviceNotificationProvider({ children }: { children: ReactNode }
   // Mark as read mutation
   const markAsReadMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await authenticatedRequest(`/api/device-notifications/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify({ isRead: true }),
-      });
+      const response = await authenticatedRequest("PATCH", `/api/device-notifications/${id}`, { isRead: true });
       return response.json();
     },
     onSuccess: () => {
@@ -172,9 +167,7 @@ export function DeviceNotificationProvider({ children }: { children: ReactNode }
   // Mark all as read mutation
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
-      const response = await authenticatedRequest("/api/device-notifications/mark-all-read", {
-        method: "PATCH",
-      });
+      const response = await authenticatedRequest("PATCH", "/api/device-notifications/mark-all-read");
       return response.json();
     },
     onSuccess: () => {
@@ -185,9 +178,7 @@ export function DeviceNotificationProvider({ children }: { children: ReactNode }
   // Delete notification mutation
   const deleteNotificationMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await authenticatedRequest(`/api/device-notifications/${id}`, {
-        method: "DELETE",
-      });
+      const response = await authenticatedRequest("DELETE", `/api/device-notifications/${id}`);
       return response.json();
     },
     onSuccess: () => {

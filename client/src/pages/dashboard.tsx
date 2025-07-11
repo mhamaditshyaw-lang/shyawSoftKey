@@ -67,13 +67,7 @@ export default function DashboardPage() {
     },
   });
 
-  const { data: notifications, isLoading: notificationsLoading } = useQuery({
-    queryKey: ["/api/notifications"],
-    queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/notifications");
-      return await response.json();
-    },
-  });
+  // Remove old notifications query - now handled by device notifications
 
   // Date filtering functions
   const isToday = (date: string): boolean => {
@@ -294,7 +288,7 @@ export default function DashboardPage() {
     }
   };
 
-  const isLoading = statsLoading || todosLoading || interviewsLoading || notificationsLoading;
+  const isLoading = statsLoading || todosLoading || interviewsLoading;
 
   if (isLoading) {
     return (

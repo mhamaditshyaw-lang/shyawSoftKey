@@ -88,18 +88,18 @@ export default function NotificationManagement() {
   const [filterStatus, setFilterStatus] = useState("all");
 
   const { data: notifications = [], isLoading, refetch } = useQuery({
-    queryKey: ['/api/notifications'],
+    queryKey: ['/api/device-notifications'],
     refetchInterval: 5000, // Refetch every 5 seconds
   });
 
   const markAsReadMutation = useMutation({
     mutationFn: (notificationId: number) => 
-      apiRequest(`/api/notifications/${notificationId}`, {
+      apiRequest(`/api/device-notifications/${notificationId}`, {
         method: 'PATCH',
         body: { isRead: true }
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/device-notifications'] });
       toast({
         title: "Success",
         description: "Notification marked as read",
@@ -116,11 +116,11 @@ export default function NotificationManagement() {
 
   const markAllAsReadMutation = useMutation({
     mutationFn: () => 
-      apiRequest('/api/notifications/mark-all-read', {
+      apiRequest('/api/device-notifications/mark-all-read', {
         method: 'PATCH'
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/device-notifications'] });
       toast({
         title: "Success",
         description: "All notifications marked as read",
@@ -137,11 +137,11 @@ export default function NotificationManagement() {
 
   const deleteNotificationMutation = useMutation({
     mutationFn: (notificationId: number) => 
-      apiRequest(`/api/notifications/${notificationId}`, {
+      apiRequest(`/api/device-notifications/${notificationId}`, {
         method: 'DELETE'
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/device-notifications'] });
       toast({
         title: "Success",
         description: "Notification deleted",
