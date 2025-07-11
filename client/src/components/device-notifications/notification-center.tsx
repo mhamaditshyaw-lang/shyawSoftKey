@@ -33,7 +33,16 @@ export default function NotificationCenter() {
     isGranted 
   } = useDeviceNotifications();
   
-  // Remove debug logging for production
+  // Enhanced debugging - log notification data
+  console.log('NotificationCenter Debug:', {
+    notifications: notifications?.length || 0,
+    unreadCount,
+    isLoading,
+    isSupported,
+    isGranted,
+    permission: permission?.permission,
+    notificationData: notifications?.slice(0, 2) // Show first 2 notifications
+  });
   
   const [isOpen, setIsOpen] = useState(false);
   
@@ -100,7 +109,7 @@ export default function NotificationCenter() {
               setIsOpen(!isOpen);
             }}
           >
-            <Bell className={`h-6 w-6 ${
+            <Bell className={`h-7 w-7 ${
               unreadCount > 0 
                 ? 'text-red-500 dark:text-red-400' 
                 : 'text-blue-600 dark:text-blue-400'
