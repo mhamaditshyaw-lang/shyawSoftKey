@@ -88,10 +88,12 @@ export default function LoginPage() {
         <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-teal-300/5 rounded-full animate-pulse"></div>
         
         <div className="text-center text-white relative z-10 animate-fade-in">
-          <div className="flex justify-center items-center space-x-3 mb-6">
-            <Shield className="w-16 h-16 text-indigo-200 animate-pulse-hover" />
-            <Users className="w-12 h-12 text-teal-200 animate-bounce-hover" />
-            <CheckCircle className="w-10 h-10 text-indigo-300 animate-pulse-hover" />
+          <div className="flex justify-center items-center mb-6">
+            <img
+              src="/shyaw-logo.png"
+              alt="Shyaw Logo"
+              className="h-20 w-auto"
+            />
           </div>
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-indigo-100 bg-clip-text text-transparent">{t("systemTitle")}</h1>
           <p className="text-xl text-indigo-100 mb-2">{t("professionalPlatform")}</p>

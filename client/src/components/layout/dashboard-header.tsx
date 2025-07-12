@@ -32,21 +32,10 @@ export function DashboardHeader() {
             {/* Logo and Dashboard Title */}
             <div className="flex items-center space-x-3">
               <img
-                src="/shyaw-logo.png" // Path to your logo
+                src="/shyaw-logo.png"
                 alt="Shyaw Logo"
-                className="h-10 w-auto" // Adjust size as needed
+                className="h-16 w-auto"
               />
-              <div className="flex items-center space-x-3">
-                <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg">
-                  <Activity className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                    Dashboard
-                  </h1>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Management System</p>
-                </div>
-              </div>
             </div>
           </div>
           <HelpTooltip
