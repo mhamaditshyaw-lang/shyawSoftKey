@@ -13,9 +13,9 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
-      return (localStorage.getItem("theme") as Theme) || "system";
+      return (localStorage.getItem("theme") as Theme) || "light";
     }
-    return "system";
+    return "light";
   });
 
   const [isDark, setIsDark] = useState(false);
@@ -31,11 +31,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       root.classList.add(systemTheme);
       setIsDark(systemTheme === "dark");
     } else if (theme === "midnight-ocean") {
-      root.classList.add("dark"); // Use dark mode styles with midnight ocean colors
+      root.classList.add("dark", "midnight-ocean");
       setIsDark(true);
     } else {
       root.classList.add(theme);
       setIsDark(theme === "dark" || theme === "midnight-ocean");
+    }
+    
+    // Set default body background for better light mode
+    if (theme === "light" || (theme === "system" && !window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+      document.body.style.backgroundColor = "#ffffff";
+    } else {
+      document.body.style.backgroundColor = "#1f2937";
     }
     
     localStorage.setItem("theme", theme);

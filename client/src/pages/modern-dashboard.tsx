@@ -117,12 +117,12 @@ export default function ModernDashboard() {
   return (
     <DashboardLayout notificationCount={unreadNotifications.length}>
       <div className="space-y-6">
-        {/* Welcome Section */}
+        {/* Welcome Section with Shyaw Branding */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative overflow-hidden rounded-xl bg-gradient-to-br from-dashboard-primary/5 via-dashboard-accent/5 to-dashboard-primary/10 p-8 border border-dashboard-primary/10"
+          className="relative overflow-hidden rounded-xl bg-gradient-to-br from-dashboard-primary/5 via-dashboard-accent/5 to-dashboard-primary/10 p-8 border border-dashboard-primary/10 dark:from-dashboard-primary/10 dark:via-dashboard-accent/10 dark:to-dashboard-primary/20 dark:border-dashboard-primary/20"
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-dashboard-primary/5 rounded-full -translate-y-16 translate-x-16"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-dashboard-accent/5 rounded-full translate-y-12 -translate-x-12"></div>
