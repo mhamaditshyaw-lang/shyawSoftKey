@@ -30,13 +30,7 @@ export function DashboardHeader() {
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-3">
             {/* Logo and Dashboard Title */}
-            <div className="flex items-center space-x-3">
-              <img
-                src="/shyaw-logo.png"
-                alt="Shyaw Logo"
-                className="h-14 w-auto max-w-[180px] object-contain drop-shadow-md"
-              />
-            </div>
+            {/* Logo removed */}
           </div>
           <HelpTooltip
             content="Welcome to your dashboard! Here you can view system statistics, manage employees, and access all major features."

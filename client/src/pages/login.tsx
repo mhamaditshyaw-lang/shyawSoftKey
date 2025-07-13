@@ -88,13 +88,7 @@ export default function LoginPage() {
         <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-teal-300/5 rounded-full animate-pulse"></div>
         
         <div className="text-center text-white relative z-10 animate-fade-in">
-          <div className="flex justify-center items-center mb-6">
-            <img
-              src="/shyaw-logo.png"
-              alt="Shyaw Logo"
-              className="h-24 w-auto max-w-[250px] object-contain drop-shadow-lg"
-            />
-          </div>
+          {/* Logo removed */}
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-indigo-100 bg-clip-text text-transparent">{t("systemTitle")}</h1>
           <p className="text-xl text-indigo-100 mb-2">{t("professionalPlatform")}</p>
           <p className="text-indigo-200">{t("secureManagement")}</p>
