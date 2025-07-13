@@ -92,16 +92,7 @@ export default function LoginPage() {
             <img
               src="/shyaw-logo.png"
               alt="Shyaw Logo"
-              className="h-20 w-auto max-w-[200px] object-contain"
-              onError={(e) => {
-                console.error('Logo failed to load on login page');
-                // Show fallback text
-                const fallback = document.createElement('div');
-                fallback.className = 'h-20 flex items-center px-6 bg-gradient-to-r from-white/20 to-indigo-100/20 text-white font-bold text-2xl rounded-lg backdrop-blur-sm border border-white/20';
-                fallback.textContent = 'SHYAW';
-                e.currentTarget.parentNode?.replaceChild(fallback, e.currentTarget);
-              }}
-              onLoad={() => console.log('Shyaw logo loaded on login page')}
+              className="h-24 w-auto max-w-[250px] object-contain drop-shadow-lg"
             />
           </div>
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-indigo-100 bg-clip-text text-transparent">{t("systemTitle")}</h1>

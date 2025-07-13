@@ -34,16 +34,7 @@ export function DashboardHeader() {
               <img
                 src="/shyaw-logo.png"
                 alt="Shyaw Logo"
-                className="h-12 w-auto max-w-[150px] object-contain"
-                onError={(e) => {
-                  console.error('Logo failed to load from /shyaw-logo.png');
-                  // Show fallback text
-                  const fallback = document.createElement('div');
-                  fallback.className = 'h-12 flex items-center px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-lg rounded-lg';
-                  fallback.textContent = 'SHYAW';
-                  e.currentTarget.parentNode?.replaceChild(fallback, e.currentTarget);
-                }}
-                onLoad={() => console.log('Shyaw logo loaded successfully')}
+                className="h-14 w-auto max-w-[180px] object-contain drop-shadow-md"
               />
             </div>
           </div>
