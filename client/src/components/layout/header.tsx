@@ -65,9 +65,11 @@ export default function Header() {
 
           {/* Right Section */}
           <div className="flex items-center space-x-4">
-            <div className="hidden lg:flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
               <LanguageSwitcher />
-              <ThemeToggle />
+              <div className="hidden lg:flex">
+                <ThemeToggle />
+              </div>
             </div>
 
 
