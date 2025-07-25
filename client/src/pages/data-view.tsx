@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,7 @@ interface DataEntry {
 }
 
 export default function DataViewPage() {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState<string>("today");
@@ -308,7 +310,7 @@ export default function DataViewPage() {
               className="flex items-center gap-2 hover:bg-dashboard-primary hover:text-white transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to Dashboard
+{t("backToDashboard")}
             </Button>
           </Link>
         </div>
@@ -316,10 +318,10 @@ export default function DataViewPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
-            Data View & Analytics
+{t("dataViewAnalytics")}
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-            View, filter, and analyze your operational data
+{t("viewFilterAnalyzeData")}
           </p>
         </div>
 
@@ -331,7 +333,7 @@ export default function DataViewPage() {
               <div className="relative max-w-lg mx-auto">
                 <Search className="absolute left-4 top-4 h-5 w-5 text-gray-400" />
                 <Input
-                  placeholder="Search across all data entries..."
+                  placeholder={t("searchPlaceholder")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-12 h-12 text-lg border-gray-200 focus:border-blue-500 focus:ring-blue-500 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
@@ -343,18 +345,18 @@ export default function DataViewPage() {
                 <div className="space-y-2">
                   <Label htmlFor="date-filter" className="text-sm font-medium flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
-                    Date Filter
+{t("filterByDate")}
                   </Label>
                   <Select value={dateFilter} onValueChange={setDateFilter}>
                     <SelectTrigger id="date-filter">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="today">Today Only</SelectItem>
-                      <SelectItem value="week">This Week</SelectItem>
-                      <SelectItem value="month">This Month</SelectItem>
-                      <SelectItem value="custom">Custom Date</SelectItem>
-                      <SelectItem value="all">All Dates</SelectItem>
+                      <SelectItem value="today">{t("today")}</SelectItem>
+                      <SelectItem value="week">{t("thisWeek")}</SelectItem>
+                      <SelectItem value="month">{t("thisMonth")}</SelectItem>
+                      <SelectItem value="custom">{t("customDate")}</SelectItem>
+                      <SelectItem value="all">{t("allDates")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -378,7 +380,7 @@ export default function DataViewPage() {
                 <div className="space-y-2">
                   <Label htmlFor="auto-refresh" className="text-sm font-medium flex items-center gap-2">
                     <RefreshCw className={`w-4 h-4 ${autoRefresh ? 'animate-spin text-green-600' : 'text-gray-400'}`} />
-                    Auto Refresh
+{t("autoRefresh")}
                   </Label>
                   <div className="flex items-center space-x-2">
                     <Switch
@@ -387,7 +389,7 @@ export default function DataViewPage() {
                       onCheckedChange={setAutoRefresh}
                     />
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {autoRefresh ? 'Every 2s' : 'Disabled'}
+{autoRefresh ? t("refreshEvery30Seconds") : t("disabled")}
                     </span>
                   </div>
                 </div>
@@ -396,7 +398,7 @@ export default function DataViewPage() {
               {/* Active Filters Display */}
               {(dateFilter !== "all" || filter !== "all" || searchTerm) && (
                 <div className="flex flex-wrap gap-2 items-center">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Active filters:</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("activeFilters")}:</span>
                   {dateFilter !== "all" && (
                     <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                       Date: {dateFilter === "custom" ? (customDate || "Select date") : dateFilter}
@@ -423,7 +425,7 @@ export default function DataViewPage() {
                     }}
                     className="text-xs h-6 px-2"
                   >
-                    Clear all
+{t("clearAll")}
                   </Button>
                 </div>
               )}
@@ -440,7 +442,7 @@ export default function DataViewPage() {
                       : "hover:bg-blue-50 hover:border-blue-300"
                   } transition-all duration-200`}
                 >
-                  All Data
+{t("allData")}
                 </Button>
                 <Button
                   variant={filter === "employee" ? "default" : "outline"}
@@ -453,7 +455,7 @@ export default function DataViewPage() {
                   } transition-all duration-200`}
                 >
                   <Users className="w-4 h-4 mr-2" />
-                  Employee
+{t("employee")}
                 </Button>
                 <Button
                   variant={filter === "operations" ? "default" : "outline"}
@@ -466,7 +468,7 @@ export default function DataViewPage() {
                   } transition-all duration-200`}
                 >
                   <BarChart3 className="w-4 h-4 mr-2" />
-                  Operations
+{t("operations")}
                 </Button>
                 <Button
                   variant={filter === "staffCount" ? "default" : "outline"}
@@ -479,7 +481,7 @@ export default function DataViewPage() {
                   } transition-all duration-200`}
                 >
                   <TrendingUp className="w-4 h-4 mr-2" />
-                  Staff Count
+{t("staffCount")}
                 </Button>
                 <Button
                   variant={
@@ -494,7 +496,7 @@ export default function DataViewPage() {
                   } transition-all duration-200`}
                 >
                   <Clock className="w-4 h-4 mr-2" />
-                  Production
+{t("production")}
                 </Button>
                 <Button
                   variant={
@@ -509,7 +511,7 @@ export default function DataViewPage() {
                   } transition-all duration-200`}
                 >
                   <Truck className="w-4 h-4 mr-2" />
-                  Loading
+{t("loading")}
                 </Button>
               </div>
 
@@ -521,7 +523,7 @@ export default function DataViewPage() {
                   className="bg-white hover:bg-gray-50 border-gray-200 shadow-sm"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
-                  Refresh Data
+{t("refreshData")}
                 </Button>
                 <Button
                   variant="outline"
@@ -529,7 +531,7 @@ export default function DataViewPage() {
                   className="bg-white hover:bg-gray-50 border-gray-200 shadow-sm"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  Export Data
+{t("exportData")}
                 </Button>
                 {isAdmin && allData.length > 0 && (
                   <Button
@@ -538,7 +540,7 @@ export default function DataViewPage() {
                     className="bg-red-50 hover:bg-red-100 border-red-200 text-red-700 hover:text-red-800 shadow-sm"
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
-                    Admin: Clear All Data
+{t("adminClearAllData")}
                   </Button>
                 )}
               </div>
