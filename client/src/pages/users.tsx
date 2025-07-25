@@ -184,8 +184,8 @@ export default function UsersPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div>
-              <h2 className="text-3xl font-bold text-dashboard-text-light dark:text-dashboard-text-dark mb-2">Employee Management</h2>
-              <p className="text-dashboard-secondary dark:text-dashboard-text-dark/70">Manage internal employees and their roles within the company</p>
+              <h2 className="text-3xl font-bold text-dashboard-text-light dark:text-dashboard-text-dark mb-2">{t("employeeManagement")}</h2>
+              <p className="text-dashboard-secondary dark:text-dashboard-text-dark/70">{t("manageEmployeeAccountsDesc")}</p>
             </div>
             <HelpTooltip
               content="This page allows you to manage all internal employees. You can view, search, filter, add, edit, and manage employee roles and statuses. Use the filters to find specific employees and the action buttons to perform management tasks."
@@ -199,7 +199,7 @@ export default function UsersPage() {
           >
             <Button onClick={() => setShowAddModal(true)} className="bg-dashboard-primary hover:bg-dashboard-primary/90">
               <Plus className="w-4 h-4 mr-2" />
-              Add New Employee
+{t("addEmployee")}
             </Button>
           </FeatureTooltip>
         </div>

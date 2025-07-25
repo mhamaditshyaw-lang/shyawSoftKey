@@ -779,41 +779,7 @@ export default function TodosPage() {
         animate="visible"
         className="space-y-8"
       >
-      {/* Header */}
-      <div className="text-center">
-        <motion.h1 
-          className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          {t("dailyTaskManagement")}
-        </motion.h1>
-        <motion.p 
-          className="text-lg text-gray-600 mb-6"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-        >
-          {t("organizeTrackTasks")}
-        </motion.p>
-        
-        <div className="flex items-center justify-center space-x-4">
-          <Badge variant="outline" className="flex items-center gap-2">
-            <ListTodo className="w-4 h-4" />
-            {filteredTodoLists.length} {t("todoLists")}
-          </Badge>
-          <Badge variant="outline" className="flex items-center gap-2">
-            <Target className="w-4 h-4" />
-            {filteredTodoLists.reduce((acc, list) => acc + list.items.length, 0)} {t("allTasks")}
-          </Badge>
-          {dateFilter === "today" && (
-            <Badge className="bg-green-100 text-green-800 border-green-200">
-              {t("tasksCompletedToday")}
-            </Badge>
-          )}
-        </div>
-      </div>
+
 
       {/* Search and Filter Controls */}
       <Card>

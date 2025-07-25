@@ -16,8 +16,10 @@ import { getRelativeTime } from "@/lib/utils";
 import ArchiveDetailsModal from "@/components/modals/archive-details-modal";
 import EditArchiveModal from "@/components/modals/edit-archive-modal";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useTranslation } from "react-i18next";
 
 export default function ArchivePage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
   const [typeFilter, setTypeFilter] = useState("all");

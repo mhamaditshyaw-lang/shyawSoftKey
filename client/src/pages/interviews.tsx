@@ -15,8 +15,10 @@ import { Clock, Check, X, Edit, Calendar, Plus, Archive, Search, RefreshCw, Filt
 import InterviewRequestModal from "@/components/modals/interview-request-modal";
 import { getRelativeTime } from "@/lib/utils";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useTranslation } from "react-i18next";
 
 export default function InterviewsPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
   const [statusFilter, setStatusFilter] = useState("all");

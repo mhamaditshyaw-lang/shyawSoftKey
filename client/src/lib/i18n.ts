@@ -572,6 +572,83 @@ const resources = {
       tasksCompletedToday: "ئەرکی تەواوکراو ئەمڕۆ",
       tasksCreatedToday: "ئەرکی دروستکراو ئەمڕۆ",
       
+      // Employee Reviews & Evaluations
+      employeeReviewsEvaluations: "کۆبوونەوە و هەڵسەنگاندنی کارمەندان",
+      manageEmployeeEvaluationsDesc: "بەڕێوەبردنی کۆبوونەوەی کارمەندان، لێکۆڵینەوەی کارایی و گۆڕینی ڕۆڵ",
+      position: "پێگە",
+      candidateName: "ناوی بەربژێر",
+      proposedDateTime: "کات و بەرواری پێشنیارکراو",
+      duration: "ماوە",
+      requestedBy: "داواکراوە لەلایەن",
+      managerAssigned: "مانەجەری دیاریکراو",
+      scheduleInterview: "دانانی کۆبوونەوە",
+      interviewRequests: "داواکاری کۆبوونەوەکان",
+      noInterviewRequests: "هیچ داواکاری کۆبوونەوەیەک نییە",
+      
+      // Reports Page
+      managementReports: "ڕاپۆرتەکانی بەڕێوەبەری",
+      systemAnalytics: "شیکردنەوەی سیستەم",
+      userStatistics: "ئامارەکانی بەکارهێنەر",
+      taskOverview: "سەیری گشتی ئەرکەکان",
+      performanceMetrics: "پێوەرەکانی کارایی",
+      dataExports: "هەناردەکردنی داتا",
+      chartAnalysis: "شیکردنەوەی چارت",
+      trends: "ڕووداوەکان",
+      insights: "تێگەیشتنەکان",
+      
+      // Feedback & Reviews Page  
+      feedbackAndReviews: "فیدباک و لێکۆڵینەوەکان",
+      systemFeedback: "فیدباکی سیستەم",
+      userReviews: "پێداچوونەوەی بەکارهێنەر",
+      rating: "نرخاندن",
+      comment: "تێبینی",
+      submitFeedback: "ناردنی فیدباک",
+      feedbackType: "جۆری فیدباک",
+      generalFeedback: "فیدباکی گشتی",
+      bugReport: "ڕاپۆرتی هەڵە",
+      featureRequest: "داواکردنی تایبەتمەندی",
+      
+      // Archive Page
+      archivePage: "پەڕەی ئەرشیف",
+      archivedItems: "بابەتە ئەرشیفکراوەکان",
+      archiveManagement: "بەڕێوەبردنی ئەرشیف",
+      archiveDate: "بەرواری ئەرشیفکردن",
+      archivedBy: "ئەرشیفکراوە لەلایەن",
+      archiveReason: "هۆکاری ئەرشیفکردن",
+      restoreItem: "گەڕاندنەوەی بابەت",
+      permanentDelete: "سڕینەوەی هەمیشەیی",
+      
+      // Data Operations & Data View
+      dataOperations: "کارەکانی داتا",
+      dataView: "بینینی داتا",
+      dataManagement: "بەڕێوەبردنی داتا",
+      operationalData: "داتای کارکردن",
+      dataAnalysis: "شیکردنەوەی داتا",
+      dataFiltering: "پاڵاوتنی داتا",
+      dataExport: "هەناردەکردنی داتا",
+      dataImport: "هێنانی داتا",
+      allDataDashboard: "داشبۆردی هەموو داتاکان",
+      dataEntries: "تۆمارەکانی داتا",
+      dataRecords: "ڕیکۆردەکانی داتا",
+      entryType: "جۆری تۆمار",
+      entryDate: "بەرواری تۆمار",
+      
+      // Common Data Terms
+      createdDate: "بەرواری دروستکردن",
+      lastModified: "دواین گۆڕانکاری",
+      dataSource: "سەرچاوەی داتا",
+      recordCount: "ژمارەی ڕیکۆرد",
+      totalRecords: "کۆی ڕیکۆردەکان",
+      
+      // Additional page translations needed
+      employeeManagement: "بەڕێوەبردنی کارمەندان",
+      manageEmployeeAccountsDesc: "بەڕێوەبردنی کارمەندانی ناوخۆیی و ڕۆڵەکانیان لە کۆمپانیا",
+      addEmployee: "زیادکردنی کارمەندی نوێ",
+      items: "بابەت",
+      total: "کۆ",
+      filtered: "پاڵاوتنکراو",
+      todayOnly: "تەنها ئەمڕۆ",
+      
       // Data and Statistics
       totalFeedback: "کۆی فیدباک",
       filtered: "پاڵاوتراو",

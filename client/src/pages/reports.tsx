@@ -42,6 +42,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useTranslation } from "react-i18next";
 
 interface ReportsData {
   userStats: {
@@ -94,6 +95,7 @@ const PIE_COLORS = [
 ];
 
 export default function Reports() {
+  const { t } = useTranslation();
   const [dateRange, setDateRange] = useState("30");
   const [selectedTab, setSelectedTab] = useState("overview");
   const [startDate, setStartDate] = useState("");
@@ -140,8 +142,8 @@ export default function Reports() {
         className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
       >
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Management Reports</h1>
-          <p className="text-gray-600">Comprehensive analytics and insights dashboard</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t("managementReports")}</h1>
+          <p className="text-gray-600">{t("systemAnalytics")}</p>
         </div>
         
         <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
