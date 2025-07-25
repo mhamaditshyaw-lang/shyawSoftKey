@@ -215,7 +215,7 @@ const resources = {
       users: "بەکارهێنەران",
       dailyTasks: "ئەرکەکانی ڕۆژانە",
       todos: "کارەکان",
-      interviews: "هەڵسەنگاندنی کارمەندان",
+      interviews: "کۆبوونەوە",
       reports: "ڕاپۆرتەکان",
       feedback: "فیدباک",
       archive: "ئەرشیف",
@@ -368,8 +368,8 @@ const resources = {
       reportsCategory: "ڕاپۆرتەکان",
       
       // Employee Reviews & Evaluations
-      employeeReviews: "هەڵسەنگاندن و لێکۆڵینەوەی کارمەندان",
-      manageEmployeeEvaluations: "بەڕێوەبردنی هەڵسەنگاندنی کارمەندان، لێکۆڵینەوەی کارایی و گۆڕینی ڕۆڵ",
+      employeeReviews: "کۆبوونەوەی کارمەندان",
+      manageEmployeeEvaluations: "بەڕێوەبردنی کۆبوونەوەی کارمەندان، لێکۆڵینەوەی کارایی و گۆڕینی ڕۆڵ",
       
       // Daily Task Management
       dailyTaskManagement: "بەڕێوەبردنی ئەرکەکانی ڕۆژانە",
