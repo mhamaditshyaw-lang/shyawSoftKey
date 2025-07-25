@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Lock, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { authenticatedRequest } from "@/lib/auth";
+import { useTranslation } from "react-i18next";
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, "Current password is required"),
@@ -46,6 +47,7 @@ export function ChangePasswordModal({ open, onOpenChange, userId, username }: Ch
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { t } = useTranslation();
 
   const form = useForm<ChangePasswordFormData>({
     resolver: zodResolver(changePasswordSchema),
@@ -62,12 +64,12 @@ export function ChangePasswordModal({ open, onOpenChange, userId, username }: Ch
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Failed to change password");
       }
-      
+
       return response.json();
     },
     onSuccess: () => {

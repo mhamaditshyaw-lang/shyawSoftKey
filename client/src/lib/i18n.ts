@@ -335,7 +335,19 @@ const resources = {
       viewPermission: "View Permission",
       editPermission: "Edit Permission",
       deletePermission: "Delete Permission",
-      createPermission: "Create Permission"
+      createPermission: "Create Permission",
+      
+      // Change Password Modal
+      changePassword: "Change Password",
+      currentPassword: "Current Password",
+      newPassword: "New Password",
+      confirmNewPassword: "Confirm New Password",
+      enterCurrentPassword: "Enter your current password",
+      enterNewPassword: "Enter your new password",
+      confirmPassword: "Confirm your new password",
+      passwordsDoNotMatch: "Passwords do not match",
+      passwordChangedSuccessfully: "Password changed successfully",
+      passwordChangeError: "Error changing password"
     }
   },
   ku: {
@@ -669,7 +681,19 @@ const resources = {
       viewPermission: "مۆڵەتی بینین",
       editPermission: "مۆڵەتی دەستکاری",
       deletePermission: "مۆڵەتی سڕینەوە",
-      createPermission: "مۆڵەتی دروستکردن"
+      createPermission: "مۆڵەتی دروستکردن",
+      
+      // Change Password Modal
+      changePassword: "گۆڕینی وشەی تێپەڕ",
+      currentPassword: "وشەی تێپەڕی ئێستا",
+      newPassword: "وشەی تێپەڕی نوێ",
+      confirmNewPassword: "دووپاتکردنەوەی وشەی تێپەڕی نوێ",
+      enterCurrentPassword: "وشەی تێپەڕی ئێستات بنووسە",
+      enterNewPassword: "وشەی تێپەڕی نوێت بنووسە",
+      confirmPassword: "وشەی تێپەڕی نوێت دووپات بکەرەوە",
+      passwordsDoNotMatch: "وشەی تێپەڕەکان یەکناگرنەوە",
+      passwordChangedSuccessfully: "وشەی تێپەڕ بە سەرکەوتوویی گۆڕدرا",
+      passwordChangeError: "هەڵە لە گۆڕینی وشەی تێپەڕ"
     }
   }
 };
