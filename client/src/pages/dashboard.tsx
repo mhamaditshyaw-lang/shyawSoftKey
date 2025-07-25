@@ -32,8 +32,11 @@ import {
   RefreshCw,
   Filter,
   ArrowRight,
+  Server
 } from "lucide-react";
 import { HelpTooltip, FeatureTooltip, StatusTooltip } from "@/components/ui/help-tooltip";
+import { useTranslation } from "react-i18next";
+import { UserPlus } from "lucide-react";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -43,6 +46,7 @@ export default function DashboardPage() {
   const [dateFilter, setDateFilter] = useState("today");
   const [customDate, setCustomDate] = useState("");
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const { t } = useTranslation();
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ["/api/stats"],
@@ -325,7 +329,7 @@ export default function DashboardPage() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-l from-indigo-200/20 to-transparent rounded-full -translate-y-32 translate-x-32"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-r from-teal-200/20 to-transparent rounded-full translate-y-24 -translate-x-24"></div>
         <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-teal-300/10 rounded-full"></div>
-        
+
         <div className="relative z-10">
           <motion.div
             initial={{ x: -20, opacity: 0 }}
@@ -359,7 +363,7 @@ export default function DashboardPage() {
               </p>
             </div>
           </motion.div>
-          
+
           <motion.p 
             className="text-indigo-700 text-lg mb-6"
             initial={{ y: 20, opacity: 0 }}
@@ -387,7 +391,7 @@ export default function DashboardPage() {
                  user?.role === 'manager' ? 'Manager' : 'Secretary'}
               </span>
             </motion.div>
-            
+
             <motion.div 
               className="flex items-center space-x-2 bg-white/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm"
               whileHover={{ scale: 1.05 }}
@@ -398,7 +402,7 @@ export default function DashboardPage() {
                 {filteredTodos.length} todos, {filteredInterviews.length} interviews
               </span>
             </motion.div>
-            
+
             {dateFilter === "today" && (
               <motion.div 
                 className="flex items-center space-x-2 bg-indigo-100/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm border border-indigo-200"
@@ -411,7 +415,7 @@ export default function DashboardPage() {
                 </span>
               </motion.div>
             )}
-            
+
             <motion.div 
               className="flex items-center space-x-2 bg-white/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm"
               whileHover={{ scale: 1.05 }}
@@ -420,7 +424,7 @@ export default function DashboardPage() {
               <TrendingUp className="w-4 h-4 text-green-500" />
               <span className="text-sm font-medium text-gray-700">Active Status</span>
             </motion.div>
-            
+
             <motion.div 
               className="flex items-center space-x-2 bg-white/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm"
               whileHover={{ scale: 1.05 }}
@@ -665,7 +669,7 @@ export default function DashboardPage() {
                 >
                   <Clock className="w-5 h-5 text-blue-600" />
                 </motion.div>
-                <span>Recent Activity</span>
+                <span>{t("recentActivity")}</span>
                 <FeatureTooltip
                   feature="Activity Feed"
                   description="Live view of recent system activities including interview requests, task updates, and employee changes. Updates automatically with real-time data."
@@ -747,7 +751,7 @@ export default function DashboardPage() {
                 >
                   <Sparkles className="w-5 h-5 text-green-600" />
                 </motion.div>
-                <span>Quick Actions</span>
+                <span>{t("quickActions")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -764,12 +768,13 @@ export default function DashboardPage() {
                     <Button
                       variant="outline"
                       className="p-6 h-auto flex-col space-y-2 w-full border-2 border-green-200 hover:border-green-400 hover:bg-green-100 bg-white/80 text-green-700 hover:text-green-800 transition-all duration-300 shadow-sm hover:shadow-md"
-                      onClick={() => setLocation("/users")}
+                      onClick={() => setLocation```text
+("/users")}
                     >
                       <motion.div variants={iconVariants}>
                         <UserPlus className="w-8 h-8" />
                       </motion.div>
-                      <span className="font-medium">Add Employee</span>
+                      <span className="font-medium">{t("addEmployee")}</span>
                     </Button>
                   </motion.div>
                 )}
@@ -791,7 +796,7 @@ export default function DashboardPage() {
                       <Calendar className="w-8 h-8" />
                     </motion.div>
                     <span className="font-medium">
-                      {user?.role === "security" ? "Schedule Review" : "Employee Reviews"}
+                      {user?.role === "security" ? t("scheduleReview") : t("employeeReviews")}
                     </span>
                   </Button>
                 </motion.div>
@@ -812,7 +817,7 @@ export default function DashboardPage() {
                     <motion.div variants={iconVariants}>
                       <PlusCircle className="w-8 h-8" />
                     </motion.div>
-                    <span className="font-medium">Create Task</span>
+                    <span className="font-medium">{t("createTask")}</span>
                   </Button>
                 </motion.div>
 
@@ -833,7 +838,7 @@ export default function DashboardPage() {
                       <motion.div variants={iconVariants}>
                         <BarChart3 className="w-8 h-8" />
                       </motion.div>
-                      <span className="font-medium">View Reports</span>
+                      <span className="font-medium">{t("viewReports")}</span>
                     </Button>
                   </motion.div>
                 )}

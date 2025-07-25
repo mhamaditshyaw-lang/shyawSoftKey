@@ -247,7 +247,95 @@ const resources = {
       videos: "Videos",
       audio: "Audio",
       downloads: "Downloads",
-      uploads: "Uploads"
+      uploads: "Uploads",
+      
+      // Page titles and navigation
+      employeeManagementTitle: "Employee Management",
+      addEmployeePage: "Add New Employee",
+      userManagementPage: "User Management",
+      todoManagementPage: "Task Management",
+      interviewsPage: "Meetings",
+      reportsPage: "Reports",
+      feedbackPage: "Feedback",
+      archivePage: "Archive",
+      dataViewPage: "Data View",
+      allDataPage: "All Data",
+      
+      // Form labels and placeholders
+      enterFirstName: "Enter first name",
+      enterLastName: "Enter last name",
+      enterEmail: "Enter email address",
+      selectRole: "Select role",
+      phoneNumber: "Phone Number",
+      address: "Address",
+      department: "Department",
+      position: "Position",
+      hireDate: "Hire Date",
+      salary: "Salary",
+      
+      // Table headers
+      fullName: "Full Name",
+      createdAt: "Created At",
+      lastLogin: "Last Login",
+      
+      // Status and actions
+      enabled: "Enabled",
+      disabled: "Disabled",
+      verify: "Verify",
+      suspend: "Suspend",
+      
+      // Messages and notifications
+      userAddedSuccessfully: "User added successfully",
+      userUpdatedSuccessfully: "User updated successfully",
+      userDeletedSuccessfully: "User deleted successfully",
+      confirmDeleteUser: "Are you sure you want to delete this user?",
+      
+      // Dashboard stats
+      totalEmployees: "Total Employees",
+      totalProjects: "Total Projects",
+      totalDepartments: "Total Departments",
+      
+      // Interview/Meeting management
+      scheduleInterview: "Schedule Meeting",
+      interviewDate: "Meeting Date",
+      interviewTime: "Meeting Time",
+      interviewer: "Interviewer",
+      interviewee: "Interviewee",
+      interviewNotes: "Meeting Notes",
+      
+      // Daily tasks
+      taskName: "Task Name",
+      taskDescription: "Task Description",
+      taskPriority: "Task Priority",
+      taskAssignee: "Assignee",
+      taskDeadline: "Deadline",
+      high: "High",
+      medium: "Medium",
+      low: "Low",
+      
+      // Common UI elements
+      searchPlaceholder: "Search...",
+      noResultsFound: "No results found",
+      loadingData: "Loading data...",
+      selectAll: "Select All",
+      clearSelection: "Clear Selection",
+      
+      // Time and dates
+      morning: "Morning",
+      afternoon: "Afternoon",
+      evening: "Evening",
+      night: "Night",
+      
+      // File operations
+      uploadFile: "Upload File",
+      downloadFile: "Download File",
+      deleteFile: "Delete File",
+      
+      // Permissions
+      viewPermission: "View Permission",
+      editPermission: "Edit Permission",
+      deletePermission: "Delete Permission",
+      createPermission: "Create Permission"
     }
   },
   ku: {
@@ -493,7 +581,95 @@ const resources = {
       videos: "ڤیدیۆکان",
       audio: "دەنگ",
       downloads: "داگرتنەکان",
-      uploads: "بارکردنەکان"
+      uploads: "بارکردنەکان",
+      
+      // Page titles and navigation
+      employeeManagementTitle: "بەڕێوەبردنی کارمەندان",
+      addEmployeePage: "زیادکردنی کارمەندی نوێ",
+      userManagementPage: "بەڕێوەبردنی بەکارهێنەران",
+      todoManagementPage: "بەڕێوەبردنی کارەکان",
+      interviewsPage: "کۆبوونەوەکان",
+      reportsPage: "ڕاپۆرتەکان",
+      feedbackPage: "فیدباک",
+      archivePage: "ئەرشیف",
+      dataViewPage: "بینینی داتا",
+      allDataPage: "هەموو داتاکان",
+      
+      // Form labels and placeholders
+      enterFirstName: "ناوی یەکەم بنووسە",
+      enterLastName: "ناوی دووەم بنووسە",
+      enterEmail: "ئیمەیڵ بنووسە",
+      selectRole: "ڕۆڵ هەڵبژێرە",
+      phoneNumber: "ژمارەی تەلەفۆن",
+      address: "ناونیشان",
+      department: "بەش",
+      position: "پۆست",
+      hireDate: "بەرواری دامەزراندن",
+      salary: "مووچە",
+      
+      // Table headers
+      fullName: "ناوی تەواو",
+      createdAt: "دروستکراوە لە",
+      lastLogin: "کۆتا چوونەژوور",
+      
+      // Status and actions
+      enabled: "چالاککراو",
+      disabled: "ناچالاککراو",
+      verify: "دڵنیاکردنەوە",
+      suspend: "ڕاگرتن",
+      
+      // Messages and notifications
+      userAddedSuccessfully: "بەکارهێنەر بە سەرکەوتوویی زیادکرا",
+      userUpdatedSuccessfully: "بەکارهێنەر بە سەرکەوتوویی نوێکرایەوە",
+      userDeletedSuccessfully: "بەکارهێنەر بە سەرکەوتوویی سڕایەوە",
+      confirmDeleteUser: "دڵنیایت کە دەتەوێت ئەم بەکارهێنەرە بسڕیتەوە؟",
+      
+      // Dashboard stats
+      totalEmployees: "کۆی کارمەندان",
+      totalProjects: "کۆی پرۆژەکان",
+      totalDepartments: "کۆی بەشەکان",
+      
+      // Interview/Meeting management
+      scheduleInterview: "دانانی کۆبوونەوە",
+      interviewDate: "بەرواری کۆبوونەوە",
+      interviewTime: "کاتی کۆبوونەوە",
+      interviewer: "کۆبوونەوەکار",
+      interviewee: "کۆبوونەوەلێکراو",
+      interviewNotes: "تێبینییەکانی کۆبوونەوە",
+      
+      // Daily tasks
+      taskName: "ناوی ئەرک",
+      taskDescription: "وەسفی ئەرک",
+      taskPriority: "گرنگی ئەرک",
+      taskAssignee: "ئەرکدار",
+      taskDeadline: "کۆتای ئەرک",
+      high: "بەرز",
+      medium: "ناوەند",
+      low: "نزم",
+      
+      // Common UI elements
+      searchPlaceholder: "گەڕان...",
+      noResultsFound: "هیچ ئەنجامێک نەدۆزرایەوە",
+      loadingData: "بارکردنی داتا...",
+      selectAll: "هەموو هەڵبژێرە",
+      clearSelection: "پاکردنەوەی هەڵبژاردە",
+      
+      // Time and dates
+      morning: "بەیانی",
+      afternoon: "دوای نیوەڕۆ",
+      evening: "ئێوارە",
+      night: "شەو",
+      
+      // File operations
+      uploadFile: "بارکردنی فایل",
+      downloadFile: "داگرتنی فایل",
+      deleteFile: "سڕینەوەی فایل",
+      
+      // Permissions
+      viewPermission: "مۆڵەتی بینین",
+      editPermission: "مۆڵەتی دەستکاری",
+      deletePermission: "مۆڵەتی سڕینەوە",
+      createPermission: "مۆڵەتی دروستکردن"
     }
   }
 };

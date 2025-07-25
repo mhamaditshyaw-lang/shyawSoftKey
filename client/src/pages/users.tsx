@@ -16,8 +16,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash, User } from "lucide-react";
 import AddUserModal from "@/components/modals/add-user-modal";
 import { HelpTooltip, FeatureTooltip, RoleTooltip, StatusTooltip, ActionTooltip } from "@/components/ui/help-tooltip";
+import { useTranslation } from "react-i18next";
 
 export default function UsersPage() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -90,7 +92,7 @@ export default function UsersPage() {
                          user.username.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = roleFilter === "all" || user.role === roleFilter;
     const matchesStatus = statusFilter === "all" || user.status === statusFilter;
-    
+
     return matchesSearch && matchesRole && matchesStatus;
   });
 
@@ -144,7 +146,7 @@ export default function UsersPage() {
 
   const handleUpdateUser = () => {
     if (!editingUser) return;
-    
+
     updateUserMutation.mutate({
       id: editingUser.id,
       updates: {
@@ -402,7 +404,7 @@ export default function UsersPage() {
       </Card>
 
       <AddUserModal open={showAddModal} onOpenChange={setShowAddModal} />
-      
+
       {/* Edit User Modal */}
       <Dialog open={!!editingUser} onOpenChange={() => setEditingUser(null)}>
         <DialogContent className="bg-white dark:bg-gray-800 border dark:border-gray-700">
@@ -412,7 +414,7 @@ export default function UsersPage() {
               Update user information and settings.
             </DialogDescription>
           </DialogHeader>
-          
+
           {editingUser && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -435,7 +437,7 @@ export default function UsersPage() {
                   />
                 </div>
               </div>
-              
+
               <div>
                 <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">Email</Label>
                 <Input
@@ -446,7 +448,7 @@ export default function UsersPage() {
                   className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="role" className="text-gray-700 dark:text-gray-300">Role</Label>
                 <Select 
@@ -463,7 +465,7 @@ export default function UsersPage() {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div>
                 <Label htmlFor="status" className="text-gray-700 dark:text-gray-300">Status</Label>
                 <Select 
@@ -482,7 +484,7 @@ export default function UsersPage() {
               </div>
             </div>
           )}
-          
+
           <DialogFooter>
             <Button 
               variant="outline" 
@@ -511,7 +513,7 @@ export default function UsersPage() {
               Are you sure you want to delete this user? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          
+
           {userToDelete && (
             <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
               <p className="text-gray-900 dark:text-gray-100 font-medium">
@@ -525,7 +527,7 @@ export default function UsersPage() {
               </p>
             </div>
           )}
-          
+
           <DialogFooter>
             <Button 
               variant="outline" 
