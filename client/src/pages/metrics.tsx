@@ -26,8 +26,10 @@ import {
   ArrowLeft,
   Home
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function MetricsPage() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { isLoading: isEmployeeLoading, startLoading: startEmployeeLoading, stopLoading: stopEmployeeLoading } = useLoadingVisualization();
   const { isLoading: isOperationsLoading, startLoading: startOperationsLoading, stopLoading: stopOperationsLoading } = useLoadingVisualization();
@@ -553,19 +555,19 @@ export default function MetricsPage() {
             className="flex items-center gap-2 hover:bg-dashboard-primary hover:text-white transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
+{t("backToDashboard")}
           </Button>
         </Link>
       </div>
 
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Daily Operations Dashboard</h2>
-        <p className="text-gray-600">Track employee attendance, operational activities, shift staffing levels, and production data</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">{t("dailyOperationsDashboard")}</h2>
+        <p className="text-gray-600">{t("trackEmployeeAttendance")}</p>
       </div>
 
       {/* Employee Tracking Section */}
       <div className="mb-12">
-        <h3 className="text-2xl font-bold text-gray-800 mb-6">Employee Tracking</h3>
+        <h3 className="text-2xl font-bold text-gray-800 mb-6">{t("employeeAttendance")}</h3>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Input Form */}
         <div className="lg:col-span-2">
@@ -573,10 +575,10 @@ export default function MetricsPage() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Calculator className="w-5 h-5 text-blue-600" />
-                <span>Employee Data Entry</span>
+                <span>{t("enterEmployeeAttendance")}</span>
               </CardTitle>
               <CardDescription>
-                Enter daily employee attendance and shift information
+{t("enterDailyAttendanceData")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -623,7 +625,7 @@ export default function MetricsPage() {
                     disabled={Object.values(formData).every(val => val === "") || isEmployeeLoading}
                   >
                     <Save className="w-4 h-4" />
-                    <span>{isEmployeeLoading ? 'Processing...' : 'Save Employee Data'}</span>
+                    <span>{isEmployeeLoading ? t("processing") : t("saveData")}</span>
                   </Button>
                   <Button 
                     type="button" 
@@ -631,7 +633,7 @@ export default function MetricsPage() {
                     onClick={clearForm}
                     disabled={Object.values(formData).every(val => val === "")}
                   >
-                    Clear All
+                    {t("clearForm")}
                   </Button>
                 </div>
               </form>
@@ -645,7 +647,7 @@ export default function MetricsPage() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <BarChart3 className="w-5 h-5 text-green-600" />
-                <span>Statistics</span>
+                <span>{t("statistics")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -783,7 +785,7 @@ export default function MetricsPage() {
 
       {/* Device Operations Section */}
       <div className="mb-8">
-        <h3 className="text-2xl font-bold text-gray-800 mb-6">Operations Tracking</h3>
+        <h3 className="text-2xl font-bold text-gray-800 mb-6">{t("operationsTracking")}</h3>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Device Input Form */}
           <div className="lg:col-span-2">
@@ -791,10 +793,10 @@ export default function MetricsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <BarChart3 className="w-5 h-5 text-green-600" />
-                  <span>Operations Data Entry</span>
+                  <span>{t("operationsDataEntry")}</span>
                 </CardTitle>
                 <CardDescription>
-                  Enter ice cream production, Albany operations, and Do activities by shift
+{t("enterIceCreamProduction")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -992,7 +994,7 @@ export default function MetricsPage() {
 
       {/* Employee Count Section */}
       <div className="mb-8">
-        <h3 className="text-2xl font-bold text-gray-800 mb-6">Staff Count Tracking</h3>
+        <h3 className="text-2xl font-bold text-gray-800 mb-6">{t("staffCountTracking")}</h3>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Employee Count Input Form */}
           <div className="lg:col-span-2">
@@ -1201,7 +1203,7 @@ export default function MetricsPage() {
 
       {/* Yesterday's Production Section */}
       <div className="mb-8">
-        <h3 className="text-2xl font-bold text-gray-800 mb-6">Yesterday's Production Tracking</h3>
+        <h3 className="text-2xl font-bold text-gray-800 mb-6">{t("yesterdayProduction")}</h3>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Yesterday's Production Input Form */}
           <div className="lg:col-span-2">
@@ -1389,7 +1391,7 @@ export default function MetricsPage() {
 
       {/* Yesterday's Loading Section */}
       <div className="mb-8">
-        <h3 className="text-2xl font-bold text-gray-800 mb-6">Yesterday's Loading Vehicles</h3>
+        <h3 className="text-2xl font-bold text-gray-800 mb-6">{t("yesterdayLoadingVehicles")}</h3>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Yesterday's Loading Input Form */}
           <div className="lg:col-span-2">

@@ -185,15 +185,14 @@ export default function InterviewsPage() {
       <div className="mb-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Employee Reviews & Evaluations</h2>
-            <p className="text-sm md:text-base text-gray-600">Manage internal employee evaluations, performance reviews, and role change interviews</p>
+
           </div>
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
             {(user?.role === "security" || user?.role === "admin" || user?.role === "manager") && (
               <Button onClick={() => setShowRequestModal(true)} className="mobile-button touch-target">
                 <Plus className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">Schedule Employee Review</span>
-                <span className="sm:hidden">Schedule Review</span>
+                <span className="hidden sm:inline">{t("scheduleInterview")}</span>
+                <span className="sm:hidden">{t("scheduleInterview")}</span>
               </Button>
             )}
             <Button
@@ -202,7 +201,7 @@ export default function InterviewsPage() {
               size="sm"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
-              Refresh
+{t("refresh")}
             </Button>
           </div>
         </div>
@@ -213,14 +212,14 @@ export default function InterviewsPage() {
         <CardHeader>
           <CardTitle className="flex items-center text-lg">
             <Filter className="w-5 h-5 mr-2 text-blue-600" />
-            Search & Filter Options
+{t("searchAndFilter")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search Input */}
             <div className="space-y-2">
-              <Label htmlFor="search" className="text-sm font-medium">Search Reviews</Label>
+              <Label htmlFor="search" className="text-sm font-medium">{t("search")}</Label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
