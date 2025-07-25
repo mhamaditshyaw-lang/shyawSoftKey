@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -68,6 +69,7 @@ interface TodoList {
 export default function TodosPage() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState("today");
   const [customDate, setCustomDate] = useState("");
@@ -785,7 +787,7 @@ export default function TodosPage() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          Daily Work & Task Management
+          {t("dailyTaskManagement")}
         </motion.h1>
         <motion.p 
           className="text-lg text-gray-600 mb-6"
@@ -793,21 +795,21 @@ export default function TodosPage() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.6 }}
         >
-          Organize your daily tasks and track progress with animated completions
+          {t("organizeTrackTasks")}
         </motion.p>
         
         <div className="flex items-center justify-center space-x-4">
           <Badge variant="outline" className="flex items-center gap-2">
             <ListTodo className="w-4 h-4" />
-            {filteredTodoLists.length} lists
+            {filteredTodoLists.length} {t("todoLists")}
           </Badge>
           <Badge variant="outline" className="flex items-center gap-2">
             <Target className="w-4 h-4" />
-            {filteredTodoLists.reduce((acc, list) => acc + list.items.length, 0)} tasks
+            {filteredTodoLists.reduce((acc, list) => acc + list.items.length, 0)} {t("allTasks")}
           </Badge>
           {dateFilter === "today" && (
             <Badge className="bg-green-100 text-green-800 border-green-200">
-              Today's Tasks Only
+              {t("tasksCompletedToday")}
             </Badge>
           )}
         </div>
@@ -823,7 +825,7 @@ export default function TodosPage() {
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
-                    placeholder="Search task lists, descriptions, or assignees..."
+                    placeholder={t("searchPlaceholder")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -837,14 +839,14 @@ export default function TodosPage() {
                   className={showPriorities ? "bg-gradient-to-r from-purple-600 to-indigo-600" : ""}
                 >
                   <Brain className="w-4 h-4 mr-2" />
-                  Smart Priority
+                  {t("smartRecommendations")}
                 </Button>
                 <Button
                   onClick={() => setShowCreateForm(true)}
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  New Daily List
+                  {t("createNewList")}
                 </Button>
                 {todoLists.length > 0 && (
                   <>
@@ -854,7 +856,7 @@ export default function TodosPage() {
                       className={selectionMode ? "bg-blue-50 border-blue-300 text-blue-700" : "border-gray-200 text-gray-600 hover:bg-gray-50"}
                     >
                       <CheckSquare className="w-4 h-4 mr-2" />
-                      {selectionMode ? "Exit Selection" : "Select Tasks"}
+                      {selectionMode ? t("cancel") : t("selectAllTasks")}
                     </Button>
                     {selectionMode && (
                       <>
@@ -905,18 +907,18 @@ export default function TodosPage() {
               <div className="space-y-2">
                 <Label htmlFor="date-filter" className="text-sm font-medium flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
-                  Date Filter
+                  {t("filter")} {t("today")}
                 </Label>
                 <Select value={dateFilter} onValueChange={setDateFilter}>
                   <SelectTrigger id="date-filter">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="today">Today Only</SelectItem>
-                    <SelectItem value="week">This Week</SelectItem>
-                    <SelectItem value="month">This Month</SelectItem>
-                    <SelectItem value="custom">Custom Date</SelectItem>
-                    <SelectItem value="all">All Dates</SelectItem>
+                    <SelectItem value="today">{t("today")}</SelectItem>
+                    <SelectItem value="week">{t("thisWeek")}</SelectItem>
+                    <SelectItem value="month">{t("thisMonth")}</SelectItem>
+                    <SelectItem value="custom">{t("custom")}</SelectItem>
+                    <SelectItem value="all">{t("allTasks")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -938,17 +940,17 @@ export default function TodosPage() {
               <div className="space-y-2">
                 <Label className="text-sm font-medium flex items-center gap-2">
                   <Star className="w-4 h-4" />
-                  Priority
+                  {t("priority")}
                 </Label>
                 <Select value={priorityFilter} onValueChange={setPriorityFilter}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Priorities</SelectItem>
-                    <SelectItem value="high">High Priority</SelectItem>
-                    <SelectItem value="medium">Medium Priority</SelectItem>
-                    <SelectItem value="low">Low Priority</SelectItem>
+                    <SelectItem value="all">{t("priority")}</SelectItem>
+                    <SelectItem value="high">{t("highPriority")}</SelectItem>
+                    <SelectItem value="medium">{t("mediumPriority")}</SelectItem>
+                    <SelectItem value="low">{t("lowPriority")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -956,16 +958,16 @@ export default function TodosPage() {
               <div className="space-y-2">
                 <Label className="text-sm font-medium flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4" />
-                  Status
+                  {t("status")}
                 </Label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="pending">In Progress</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="all">{t("status")}</SelectItem>
+                    <SelectItem value="pending">{t("pending")}</SelectItem>
+                    <SelectItem value="completed">{t("completed")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
