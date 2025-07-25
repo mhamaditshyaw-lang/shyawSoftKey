@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { Search, Settings, User, LogOut, Lock, Shield, Activity } from "lucide-react";
 import { HelpTooltip, FeatureTooltip, RoleTooltip } from "@/components/ui/help-tooltip";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import NotificationCenter from "@/components/device-notifications/notification-center";
 import {
   DropdownMenu,
@@ -39,6 +40,8 @@ export function DashboardHeader() {
         </div>
 
         <div className="flex items-center space-x-4">
+          <LanguageSwitcher />
+          
           <FeatureTooltip
             feature="Quick Search"
             description="Search through employees, tasks, interviews, and other data across the system"
