@@ -10,6 +10,7 @@ import {
   Minus
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface StatsCardProps {
   title: string;
@@ -143,6 +144,8 @@ interface StatsCardsProps {
 }
 
 export function StatsCards({ stats, isLoading }: StatsCardsProps) {
+  const { t } = useTranslation();
+
   if (isLoading) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -160,7 +163,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <StatsCard
-        title="Total Users"
+        title={t("totalUsers")}
         value={stats?.totalUsers || 0}
         icon={Users}
         description="Active employees"
@@ -171,7 +174,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
         }}
       />
       <StatsCard
-        title="Active Tasks"
+        title={t("activeTasks")}
         value={stats?.pendingTodos || 0}
         icon={CheckSquare}
         description="Tasks in progress"
@@ -182,7 +185,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
         }}
       />
       <StatsCard
-        title="Completion Rate"
+        title={t("completionRate")}
         value={`${completionRate}%`}
         icon={TrendingUp}
         description="Task completion rate"
@@ -193,7 +196,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
         }}
       />
       <StatsCard
-        title="Pending Reviews"
+        title={t("pendingReviews")}
         value={stats?.pendingRequests || 0}
         icon={Calendar}
         description="Employee evaluations"

@@ -15,9 +15,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChangePasswordModal } from "@/components/modals/change-password-modal";
 
-export function DashboardHeader() {
+export default function DashboardHeader() {
   const { user, logout } = useAuth();
-  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+  const { t } = useTranslation();
 
   if (!user) return null;
 
@@ -41,11 +41,10 @@ export function DashboardHeader() {
 
         <div className="flex items-center space-x-4">
           <LanguageSwitcher />
-          
+
           <FeatureTooltip
-            feature="Quick Search"
-            description="Search through employees, tasks, interviews, and other data across the system"
-            shortcut="Ctrl + K"
+            feature={t("settings")}
+            description={t("manageEmployeeEvaluations")}
           >
             <Button variant="outline" size="sm" className="shadow-sm">
               <Search className="w-4 h-4 mr-2" />

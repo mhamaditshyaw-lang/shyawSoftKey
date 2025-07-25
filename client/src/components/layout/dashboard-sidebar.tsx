@@ -163,7 +163,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
         {filteredItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);
-          
+
           return (
             <Link key={item.href} href={item.href}>
               <Button
