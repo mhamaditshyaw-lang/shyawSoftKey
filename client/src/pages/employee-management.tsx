@@ -89,17 +89,17 @@ export default function EmployeeManagementPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Employee Management
+              {t("employeeManagement")}
             </h1>
-            <p className="text-lg text-gray-600">Manage employee accounts, roles, and information</p>
+            <p className="text-lg text-gray-600">{t("manageEmployeeAccounts")}</p>
             <div className="flex items-center gap-6 mt-3">
               <Badge variant="outline" className="flex items-center gap-2">
                 <Users className="w-4 h-4" />
-                Total: {employees.length} employees
+                {t("total")}: {employees.length} {t("employees")}
               </Badge>
               <Badge variant="outline" className="flex items-center gap-2">
                 <Filter className="w-4 h-4" />
-                Filtered: {filteredEmployees.length} employees
+                {t("filtered")}: {filteredEmployees.length} {t("employees")}
               </Badge>
             </div>
           </div>
@@ -108,7 +108,7 @@ export default function EmployeeManagementPage() {
             className="flex items-center space-x-2"
           >
             <Plus className="w-4 h-4" />
-            <span>Add New Employee</span>
+            <span>{t("addNewEmployee")}</span>
           </Button>
         </div>
 
@@ -117,11 +117,11 @@ export default function EmployeeManagementPage() {
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Search Employees</label>
+                <label className="text-sm font-medium">{t("searchEmployees")}</label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
-                    placeholder="Search by name, username, or email..."
+                    placeholder={t("searchByNameUsernameEmail")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -130,13 +130,13 @@ export default function EmployeeManagementPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Role Filter</label>
+                <label className="text-sm font-medium">{t("roleFilter")}</label>
                 <Select value={roleFilter || "all"} onValueChange={setRoleFilter}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Roles</SelectItem>
+                    <SelectItem value="all">{t("allRoles")}</SelectItem>
                     <SelectItem value="admin">{t("admin")}</SelectItem>
                     <SelectItem value="manager">{t("manager")}</SelectItem>
                     <SelectItem value="security">{t("security")}</SelectItem>
@@ -145,13 +145,13 @@ export default function EmployeeManagementPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Status Filter</label>
+                <label className="text-sm font-medium">{t("statusFilter")}</label>
                 <Select value={statusFilter || "all"} onValueChange={setStatusFilter}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="all">{t("allStatus")}</SelectItem>
                     <SelectItem value="active">{t("active")}</SelectItem>
                     <SelectItem value="inactive">{t("inactive")}</SelectItem>
                     <SelectItem value="pending">{t("pending")}</SelectItem>
@@ -160,7 +160,7 @@ export default function EmployeeManagementPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Quick Actions</label>
+                <label className="text-sm font-medium">{t("quickActions")}</label>
                 <Button 
                   variant="outline" 
                   onClick={() => {
@@ -170,7 +170,7 @@ export default function EmployeeManagementPage() {
                   }}
                   className="w-full"
                 >
-                  Clear Filters
+                  {t("clearFilters")}
                 </Button>
               </div>
             </div>
@@ -183,7 +183,7 @@ export default function EmployeeManagementPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm font-medium">Total Employees</p>
+                  <p className="text-blue-100 text-sm font-medium">{t("totalEmployees")}</p>
                   <p className="text-3xl font-bold">{employees.length}</p>
                 </div>
                 <Users className="w-10 h-10 text-blue-200" />
@@ -195,7 +195,7 @@ export default function EmployeeManagementPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-100 text-sm font-medium">Active</p>
+                  <p className="text-green-100 text-sm font-medium">{t("active")}</p>
                   <p className="text-3xl font-bold">
                     {employees.filter((emp: any) => emp.status === 'active').length}
                   </p>
@@ -209,7 +209,7 @@ export default function EmployeeManagementPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-yellow-100 text-sm font-medium">Pending</p>
+                  <p className="text-yellow-100 text-sm font-medium">{t("pending")}</p>
                   <p className="text-3xl font-bold">
                     {employees.filter((emp: any) => emp.status === 'pending').length}
                   </p>
@@ -223,7 +223,7 @@ export default function EmployeeManagementPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-100 text-sm font-medium">Managers</p>
+                  <p className="text-purple-100 text-sm font-medium">{t("managers")}</p>
                   <p className="text-3xl font-bold">
                     {employees.filter((emp: any) => emp.role === 'manager').length}
                   </p>
@@ -239,7 +239,7 @@ export default function EmployeeManagementPage() {
           <CardHeader>
             <CardTitle className="flex items-center text-xl">
               <Users className="w-6 h-6 mr-3 text-primary" />
-              Employee Directory ({filteredEmployees.length})
+              {t("employeeDirectory")} ({filteredEmployees.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -250,25 +250,25 @@ export default function EmployeeManagementPage() {
             ) : filteredEmployees.length === 0 ? (
               <div className="text-center py-8">
                 <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No employees found</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">{t("noEmployeesFound")}</h3>
                 <p className="text-gray-600 mb-4">
-                  {searchTerm ? `No employees match "${searchTerm}"` : "No employees available"}
+                  {searchTerm ? `${t("noEmployeesMatch")} "${searchTerm}"` : t("noEmployeesAvailable")}
                 </p>
                 <Button onClick={() => setLocation("/add-employee")}>
                   <Plus className="w-4 h-4 mr-2" />
-                  Add First Employee
+                  {t("addFirstEmployee")}
                 </Button>
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Employee</TableHead>
-                    <TableHead>Contact</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Join Date</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>{t("employee")}</TableHead>
+                    <TableHead>{t("contact")}</TableHead>
+                    <TableHead>{t("role")}</TableHead>
+                    <TableHead>{t("status")}</TableHead>
+                    <TableHead>{t("joinDate")}</TableHead>
+                    <TableHead>{t("actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

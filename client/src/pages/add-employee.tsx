@@ -145,14 +145,14 @@ export default function AddEmployeePage() {
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Add New Employee</h1>
-                <p className="text-gray-600 mt-1">Create a comprehensive employee profile with all necessary information</p>
+                <h1 className="text-3xl font-bold text-gray-900">{t("addNewEmployee")}</h1>
+                <p className="text-gray-600 mt-1">{t("createComprehensiveEmployeeProfile")}</p>
               </div>
             </div>
           </div>
           <Badge variant="outline" className="text-sm">
             <UserCheck className="w-4 h-4 mr-2" />
-            New Employee Registration
+            {t("newEmployeeRegistration")}
           </Badge>
         </div>
 
@@ -162,7 +162,7 @@ export default function AddEmployeePage() {
             <CardHeader>
               <CardTitle className="flex items-center text-xl">
                 <User className="w-6 h-6 mr-3 text-primary" />
-                Personal Information
+                {t("personalInformation")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -212,7 +212,7 @@ export default function AddEmployeePage() {
                 <div className="space-y-2">
                   <Label htmlFor="phone" className="flex items-center space-x-2">
                     <Phone className="w-4 h-4" />
-                    <span>Phone Number</span>
+                    <span>{t("phoneNumber")}</span>
                   </Label>
                   <Input
                     id="phone"
@@ -226,7 +226,7 @@ export default function AddEmployeePage() {
                 <div className="space-y-2">
                   <Label htmlFor="dateOfBirth" className="flex items-center space-x-2">
                     <Calendar className="w-4 h-4" />
-                    <span>Date of Birth</span>
+                    <span>{t("dateOfBirth")}</span>
                   </Label>
                   <Input
                     id="dateOfBirth"
@@ -239,7 +239,7 @@ export default function AddEmployeePage() {
                 <div className="space-y-2">
                   <Label htmlFor="address" className="flex items-center space-x-2">
                     <MapPin className="w-4 h-4" />
-                    <span>Address</span>
+                    <span>{t("address")}</span>
                   </Label>
                   <Input
                     id="address"
@@ -258,7 +258,7 @@ export default function AddEmployeePage() {
             <CardHeader>
               <CardTitle className="flex items-center text-xl">
                 <Lock className="w-6 h-6 mr-3 text-primary" />
-                Account Information
+                {t("accountInformation")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -308,7 +308,7 @@ export default function AddEmployeePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="status">Account Status</Label>
+                  <Label htmlFor="status">{t("accountStatus")}</Label>
                   <Select value={employeeData.status} onValueChange={(value) => handleInputChange("status", value)}>
                     <SelectTrigger>
                       <SelectValue />
@@ -329,7 +329,7 @@ export default function AddEmployeePage() {
             <CardHeader>
               <CardTitle className="flex items-center text-xl">
                 <Briefcase className="w-6 h-6 mr-3 text-primary" />
-                Employment Information
+                {t("employmentInformation")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -442,7 +442,7 @@ export default function AddEmployeePage() {
             <CardHeader>
               <CardTitle className="flex items-center text-xl">
                 <Phone className="w-6 h-6 mr-3 text-primary" />
-                Emergency Contact
+                {t("emergencyContact")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -495,7 +495,7 @@ export default function AddEmployeePage() {
             <CardHeader>
               <CardTitle className="flex items-center text-xl">
                 <UserCheck className="w-6 h-6 mr-3 text-primary" />
-                Additional Information
+                {t("additionalInformation")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -538,7 +538,7 @@ export default function AddEmployeePage() {
               className="flex items-center space-x-2"
             >
               <Save className="w-4 h-4" />
-              <span>{createEmployeeMutation.isPending ? t("loading") : "Create Employee"}</span>
+              <span>{createEmployeeMutation.isPending ? t("loading") : t("createEmployee")}</span>
             </Button>
           </div>
         </form>
