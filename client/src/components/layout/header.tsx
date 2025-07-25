@@ -6,6 +6,7 @@ import { useDeviceNotifications } from "@/hooks/use-device-notifications";
 import { Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -65,6 +66,7 @@ export default function Header() {
           {/* Right Section */}
           <div className="flex items-center space-x-4">
             <div className="hidden lg:flex items-center space-x-2">
+              <LanguageSwitcher />
               <ThemeToggle />
             </div>
 
