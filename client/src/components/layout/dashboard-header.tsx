@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -15,9 +16,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChangePasswordModal } from "@/components/modals/change-password-modal";
 
-export default function DashboardHeader() {
+export function DashboardHeader() {
   const { user, logout } = useAuth();
   const { t } = useTranslation();
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   if (!user) return null;
 
