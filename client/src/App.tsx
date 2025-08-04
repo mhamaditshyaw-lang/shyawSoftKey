@@ -12,7 +12,9 @@ import ModernDashboard from "@/pages/modern-dashboard";
 
 import InterviewsPage from "@/pages/interviews";
 import TodosPage from "@/pages/todos";
-
+import UsersPage from "@/pages/users";
+import EmployeeManagementPage from "@/pages/employee-management";
+import AddEmployeePage from "@/pages/add-employee";
 
 import FeedbackPage from "@/pages/feedback";
 import ArchivePage from "@/pages/archive";
@@ -65,7 +67,21 @@ function Router() {
           <TodosPage />
         </ProtectedRoute>
       </Route>
-
+      <Route path="/users">
+        <ProtectedRoute>
+          <UsersPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/employee-management">
+        <ProtectedRoute>
+          <EmployeeManagementPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/add-employee">
+        <ProtectedRoute>
+          <AddEmployeePage />
+        </ProtectedRoute>
+      </Route>
 
       <Route path="/feedback">
         <ProtectedRoute>

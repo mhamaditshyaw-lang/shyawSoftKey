@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { Menu, Settings, User, LogOut, Lock, Shield, Activity } from "lucide-react";
+import { Menu, Settings, User, LogOut, Lock, Shield, Activity, Search } from "lucide-react";
 import { HelpTooltip, FeatureTooltip, RoleTooltip } from "@/components/ui/help-tooltip";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import NotificationCenter from "@/components/device-notifications/notification-center";

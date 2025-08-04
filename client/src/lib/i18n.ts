@@ -387,7 +387,7 @@ const resources = {
       admin: "بەڕێوەبەر",
       manager: "مانەجەر",
       security: "ئاسایش",
-      employee: "کارمەند",
+
       
       // Status
       active: "چالاک",
@@ -474,8 +474,7 @@ const resources = {
       // Time
       today: "ئەمڕۆ",
       yesterday: "دوێنێ",
-      thisWeek: "ئەم هەفتەیە",
-      thisMonth: "ئەم مانگە",
+
       custom: "دیاریکراو",
       dateRange: "مەودای بەروار",
       
@@ -596,7 +595,7 @@ const resources = {
       
       // Data Operations & Data View
       dataOperations: "کارەکانی داتا",
-      dataView: "بینینی داتا",
+      dataViewSection: "بینینی داتا",
       dataManagement: "بەڕێوەبردنی داتا",
       operationalData: "داتای کارکردن",
       dataAnalysis: "شیکردنەوەی داتا",
@@ -665,37 +664,31 @@ const resources = {
       // Data View & Analytics page translations
       dataViewAnalytics: "بینینی داتا و شیکاری",
       viewFilterAnalyzeData: "بینین، پاڵاوتن، و شیکردنەوەی داتای چالاکیەکانت",
-      dataFiltering: "پاڵاوتنی داتا",
       filterByCategory: "پاڵاوتن بەپێی پۆل",
       filterByDate: "پاڵاوتن بەپێی بەروار",
-      today: "ئەمڕۆ",
-      thisWeek: "ئەم هەفتەیە",
-      thisMonth: "ئەم مانگە",
+      currentWeek: "ئەم هەفتەیە",
+      currentMonth: "ئەم مانگە",
       customDate: "بەرواری تایبەت",
       allDates: "هەموو بەروارەکان",
       autoRefresh: "نوێکردنەوەی خۆکار",
       refreshEvery30Seconds: "نوێکردنەوە هەر ٣٠ چرکە",
       allCategories: "هەموو پۆلەکان",
-      employee: "کارمەند",
+      employeeCategory: "کارمەند",
       operations: "چالاکیەکان",
       staffCount: "ژمارەی کارمەندان",
       production: "بەرهەمهێنان",
-      loading: "بارکردن",
+      loadingVehicles: "بارکردن",
       searchData: "گەڕانی داتا",
-      searchPlaceholder: "گەڕان بەناو، پۆل، یان ناوەڕۆکدا...",
-      dataEntries: "تۆمارەکانی داتا",
+      searchPlaceholderData: "گەڕان بەناو، پۆل، یان ناوەڕۆکدا...",
       showingEntries: "{count} تۆمار دەنیشاندرێت",
       noDataFound: "هیچ داتایەک نەدۆزرایەوە",
       tryAdjustingFilters: "هەوڵ بدە پاڵاوتنەکان بگۆڕیت",
       clearAllData: "پاککردنەوەی هەموو داتاکان",
       deleteEntry: "سڕینەوەی تۆمار",
-      confirmDelete: "دڵنیایی لە سڕینەوە",
       deleteEntryConfirm: "دڵنیایت لەوەی دەتەوێت ئەم تۆمارە بسڕیتەوە؟",
       deleteAllDataConfirm: "دڵنیایت لەوەی دەتەوێت هەموو داتاکان بسڕیتەوە؟",
       typeDelete: "DELETE تایپ بکە بۆ دڵنیایی",
       entryDetails: "وردەکاریەکانی تۆمار",
-      createdBy: "دروستکراوە لەلایەن",
-      createdAt: "دروستکراوە لە",
       dataType: "جۆری داتا",
       totalValue: "نرخی گشتی",
       averageValue: "نرخی ناوەند",
@@ -704,14 +697,13 @@ const resources = {
       exportData: "هەناردەکردنی داتا",
       disabled: "ناچالاک",
       activeFilters: "پاڵاوتنە چالاکەکان",
-      clearAll: "پاککردنەوەی هەمووی",
-      allData: "هەموو داتاکان",
+      allDataFilter: "هەموو داتاکان",
       refreshData: "نوێکردنەوەی داتا",
       adminClearAllData: "بەڕێوەبەر: پاککردنەوەی هەموو داتاکان",
       
       // Data and Statistics
       totalFeedback: "کۆی فیدباک",
-      filtered: "پاڵاوتراو",
+      filteredData: "پاڵاوتراو",
       highRated: "نرخاندنی بەرز",
       stars: "ئەستێرە",
       averageRating: "تێکڕای نرخاندن",
@@ -747,18 +739,18 @@ const resources = {
       
       // Employee Tracking
       employeeTracking: "بەدواداچوونی کارمەند",
-      trackEmployeeAttendance: "بەدواداچوونی ئامادەبوونی کارمەند، کارەکان و پێوەری کارایی",
+      trackEmployeePerformance: "بەدواداچوونی ئامادەبوونی کارمەند، کارەکان و پێوەری کارایی",
       
       // Management Reports
-      managementReports: "ڕاپۆرتەکانی بەڕێوەبەری",
+      managementReportsSection: "ڕاپۆرتەکانی بەڕێوەبەری",
       comprehensiveAnalytics: "شیکردنەوەی تەواو و تێڕوانینی کارایی",
       
       // Archive Management
-      archiveManagement: "بەڕێوەبردنی ئەرشیف",
+      archiveManagementSection: "بەڕێوەبردنی ئەرشیف",
       manageArchivedItems: "بەڕێوەبردنی بابەتە ئەرشیفکراوەکان و داتای مێژوویی",
       
       // All Data Dashboard
-      allDataDashboard: "داشبۆردی هەموو داتاکان",
+      allDataDashboardSection: "داشبۆردی هەموو داتاکان",
       comprehensiveDataView: "بینینی تەواوی داتا و بەڕێوەبەری سیستەم",
       
 
@@ -819,7 +811,7 @@ const resources = {
       interviewsPage: "کۆبوونەوەکان",
       reportsPage: "ڕاپۆرتەکان",
       feedbackPage: "فیدباک",
-      archivePage: "ئەرشیف",
+      archivePageTitle: "ئەرشیف",
       dataViewPage: "بینینی داتا",
       allDataPage: "هەموو داتاکان",
       
@@ -831,7 +823,7 @@ const resources = {
       phoneNumber: "ژمارەی تەلەفۆن",
       address: "ناونیشان",
       department: "بەش",
-      position: "پۆست",
+      jobPosition: "پۆست",
       hireDate: "بەرواری دامەزراندن",
       salary: "مووچە",
       
@@ -842,7 +834,7 @@ const resources = {
       
       // Status and actions
       enabled: "چالاککراو",
-      disabled: "ناچالاککراو",
+      accountDisabled: "ناچالاککراو",
       verify: "دڵنیاکردنەوە",
       suspend: "ڕاگرتن",
       
@@ -858,7 +850,7 @@ const resources = {
       totalDepartments: "کۆی بەشەکان",
       
       // Interview/Meeting management
-      scheduleInterview: "دانانی کۆبوونەوە",
+      scheduleInterviewMeeting: "دانانی کۆبوونەوە",
       interviewDate: "بەرواری کۆبوونەوە",
       interviewTime: "کاتی کۆبوونەوە",
       interviewer: "کۆبوونەوەکار",
