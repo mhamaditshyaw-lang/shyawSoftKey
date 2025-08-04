@@ -10,6 +10,7 @@ import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, Users, CheckCircle, User, Lock } from "lucide-react";
+import shyawLogo from "@assets/shyaw_1754298603480.jpg";
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -91,12 +92,9 @@ export default function LoginPage() {
           {/* Shyaw Logo */}
           <div className="flex justify-center mb-6">
             <img 
-              src="/shyaw-logo.png" 
+              src={shyawLogo} 
               alt="Shyaw Logo" 
-              className="h-24 w-auto animate-pulse hover:scale-105 transition-transform duration-300"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
+              className="h-24 w-auto animate-pulse hover:scale-105 transition-transform duration-300 rounded-lg"
             />
           </div>
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-indigo-100 bg-clip-text text-transparent">{t("systemTitle")}</h1>
@@ -134,9 +132,9 @@ export default function LoginPage() {
                 <div className="flex justify-center mb-4">
                   <div className="p-2 bg-white rounded-full shadow-lg animate-bounce-hover">
                     <img 
-                      src="/shyaw-logo.png" 
+                      src={shyawLogo} 
                       alt="Shyaw Logo" 
-                      className="w-12 h-12 object-contain"
+                      className="w-12 h-12 object-contain rounded-lg"
                     />
                   </div>
                 </div>
