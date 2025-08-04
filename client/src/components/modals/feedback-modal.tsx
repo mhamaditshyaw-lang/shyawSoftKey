@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Star } from "lucide-react";
+import { Star, Plus } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface FeedbackModalProps {
   open: boolean;
@@ -26,7 +27,10 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
     relatedInterviewId: "none",
   });
   const [selectedRating, setSelectedRating] = useState(0);
+  const [showAddTypeModal, setShowAddTypeModal] = useState(false);
+  const [newTypeName, setNewTypeName] = useState("");
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const createFeedbackMutation = useMutation({
     mutationFn: async (feedbackData: any) => {
@@ -96,7 +100,18 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="type">Feedback Type</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="type">Feedback Type</Label>
+              <Button 
+                type="button"
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowAddTypeModal(true)}
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Add Type
+              </Button>
+            </div>
             <Select 
               value={formData.type} 
               onValueChange={(value) => {
@@ -203,6 +218,47 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
           </div>
         </form>
       </DialogContent>
+
+      {/* Add New Type Modal */}
+      <Dialog open={showAddTypeModal} onOpenChange={setShowAddTypeModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("addNewFeedbackType")}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="type-name">{t("typeName")}</Label>
+              <Input
+                id="type-name"
+                placeholder={t("enterTypeName")}
+                value={newTypeName}
+                onChange={(e) => setNewTypeName(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end space-x-3 pt-4">
+            <Button variant="outline" onClick={() => {
+              setShowAddTypeModal(false);
+              setNewTypeName("");
+            }}>
+              {t("cancel")}
+            </Button>
+            <Button onClick={() => {
+              // Here you would handle adding the new type
+              if (newTypeName.trim()) {
+                toast({
+                  title: t("success"),
+                  description: `${t("feedbackType")} "${newTypeName}" ${t("addedSuccessfully")}`,
+                });
+                setNewTypeName("");
+                setShowAddTypeModal(false);
+              }
+            }}>
+              {t("addType")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }
