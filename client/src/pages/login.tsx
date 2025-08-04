@@ -132,8 +132,12 @@ export default function LoginPage() {
             <Card className="border-indigo-100 shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse-hover">
               <CardHeader className="text-center">
                 <div className="flex justify-center mb-4">
-                  <div className="p-3 bg-indigo-100 rounded-full animate-bounce-hover">
-                    <User className="w-8 h-8 text-indigo-600" />
+                  <div className="p-2 bg-white rounded-full shadow-lg animate-bounce-hover">
+                    <img 
+                      src="/shyaw-logo.png" 
+                      alt="Shyaw Logo" 
+                      className="w-12 h-12 object-contain"
+                    />
                   </div>
                 </div>
                 <CardTitle className="text-3xl text-indigo-800">{t("welcomeBackTitle")}</CardTitle>
