@@ -46,12 +46,7 @@ const NAVIGATION: Navigation = [
     title: 'Dashboard',
     icon: <Home className="w-5 h-5" />,
   },
-  {
-    segment: 'users',
-    title: 'Employee Management',
-    icon: <Users className="w-5 h-5" />,
-    roles: ['admin', 'manager'],
-  },
+
   {
     segment: 'todos',
     title: 'Task Management',

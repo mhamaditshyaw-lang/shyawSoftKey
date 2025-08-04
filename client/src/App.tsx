@@ -9,9 +9,7 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import { queryClient } from "./lib/queryClient";
 import LoginPage from "@/pages/login";
 import ModernDashboard from "@/pages/modern-dashboard";
-import UsersPage from "@/pages/users";
-import EmployeeManagementPage from "@/pages/employee-management";
-import AddEmployeePage from "@/pages/add-employee";
+
 import InterviewsPage from "@/pages/interviews";
 import TodosPage from "@/pages/todos";
 
@@ -56,21 +54,7 @@ function Router() {
           <ModernDashboard />
         </ProtectedRoute>
       </Route>
-      <Route path="/users">
-        <ProtectedRoute>
-          <UsersPage />
-        </ProtectedRoute>
-      </Route>
-      <Route path="/employee-management">
-        <ProtectedRoute>
-          <EmployeeManagementPage />
-        </ProtectedRoute>
-      </Route>
-      <Route path="/add-employee">
-        <ProtectedRoute>
-          <AddEmployeePage />
-        </ProtectedRoute>
-      </Route>
+
       <Route path="/interviews">
         <ProtectedRoute>
           <InterviewsPage />

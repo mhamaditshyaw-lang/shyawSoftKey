@@ -33,13 +33,7 @@ import {
   ListTodo,
   Sparkles,
   Award,
-  Brain,
-  Zap,
-  AlertTriangle,
-  CheckCircle,
-  TrendingDown,
-  BarChart,
-  Lightbulb,
+
   X,
   Archive,
   Undo2,
@@ -82,8 +76,7 @@ export default function TodosPage() {
   const [newListDescription, setNewListDescription] = useState("");
   const [newListPriority, setNewListPriority] = useState<"low" | "medium" | "high">("medium");
   const [newItemText, setNewItemText] = useState("");
-  const [showPriorities, setShowPriorities] = useState(false);
-  const [smartRecommendations, setSmartRecommendations] = useState<any>(null);
+
   const [showUndoToast, setShowUndoToast] = useState(false);
   const [lastArchivedItem, setLastArchivedItem] = useState<{id: number, data: any, type: 'task' | 'list'} | null>(null);
   const [selectedTasks, setSelectedTasks] = useState<Set<number>>(new Set());
@@ -99,25 +92,7 @@ export default function TodosPage() {
     },
   });
 
-  // Fetch smart priorities
-  const { data: prioritiesData, isLoading: prioritiesLoading } = useQuery({
-    queryKey: ["/api/todos/priorities"],
-    queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/todos/priorities");
-      return response.json();
-    },
-    enabled: showPriorities,
-  });
 
-  // Fetch recommendations
-  const { data: recommendationsData, isLoading: recommendationsLoading } = useQuery({
-    queryKey: ["/api/todos/recommendations"],
-    queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/todos/recommendations");
-      return response.json();
-    },
-    enabled: showPriorities,
-  });
 
   // Date filtering functions
   const isToday = (date: string): boolean => {
@@ -799,14 +774,7 @@ export default function TodosPage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button
-                  onClick={() => setShowPriorities(!showPriorities)}
-                  variant={showPriorities ? "default" : "outline"}
-                  className={showPriorities ? "bg-gradient-to-r from-purple-600 to-indigo-600" : ""}
-                >
-                  <Brain className="w-4 h-4 mr-2" />
-                  {t("smartRecommendations")}
-                </Button>
+
                 <Button
                   onClick={() => setShowCreateForm(true)}
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
@@ -959,131 +927,7 @@ export default function TodosPage() {
         </CardContent>
       </Card>
 
-      {/* Smart Prioritization Panel */}
-      <AnimatePresence>
-        {showPriorities && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Card className="mb-6 bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-purple-800">
-                  <Brain className="w-5 h-5" />
-                  Smart Prioritization Analysis
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {prioritiesLoading || recommendationsLoading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <RefreshCw className="w-6 h-6 animate-spin text-purple-600" />
-                    <span className="ml-2 text-purple-700">Analyzing your tasks...</span>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {/* Daily Recommendations */}
-                    {recommendationsData?.recommendations && (
-                      <div className="space-y-4">
-                        <h4 className="font-semibold text-purple-800 flex items-center gap-2">
-                          <Lightbulb className="w-4 h-4" />
-                          Today's Recommendations
-                        </h4>
-                        
-                        <div className="grid md:grid-cols-3 gap-4">
-                          {/* Top Priority */}
-                          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                            <h5 className="font-medium text-red-800 flex items-center gap-2 mb-2">
-                              <AlertTriangle className="w-4 h-4" />
-                              Critical Focus ({recommendationsData.recommendations.topPriority.length})
-                            </h5>
-                            {recommendationsData.recommendations.topPriority.slice(0, 2).map((item: any) => (
-                              <div key={item.listId} className="text-sm text-red-700 mb-1">
-                                • Score: {item.score} - {item.recommendation}
-                              </div>
-                            ))}
-                          </div>
 
-                          {/* Quick Wins */}
-                          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                            <h5 className="font-medium text-green-800 flex items-center gap-2 mb-2">
-                              <CheckCircle className="w-4 h-4" />
-                              Quick Wins ({recommendationsData.recommendations.quickWins.length})
-                            </h5>
-                            {recommendationsData.recommendations.quickWins.slice(0, 2).map((item: any) => (
-                              <div key={item.listId} className="text-sm text-green-700 mb-1">
-                                • Score: {item.score} - Nearly complete
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Overdue */}
-                          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                            <h5 className="font-medium text-orange-800 flex items-center gap-2 mb-2">
-                              <TrendingDown className="w-4 h-4" />
-                              Overdue ({recommendationsData.recommendations.overdue.length})
-                            </h5>
-                            {recommendationsData.recommendations.overdue.slice(0, 2).map((item: any) => (
-                              <div key={item.listId} className="text-sm text-orange-700 mb-1">
-                                • Score: {item.score} - Needs immediate attention
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Suggestions */}
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                          <h5 className="font-medium text-blue-800 flex items-center gap-2 mb-2">
-                            <Zap className="w-4 h-4" />
-                            Smart Suggestions
-                          </h5>
-                          <div className="space-y-1">
-                            {recommendationsData.recommendations.suggestions.map((suggestion: string, index: number) => (
-                              <div key={index} className="text-sm text-blue-700">
-                                {suggestion}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Priority Scores */}
-                    {prioritiesData?.priorities && (
-                      <div>
-                        <h4 className="font-semibold text-purple-800 flex items-center gap-2 mb-3">
-                          <BarChart className="w-4 h-4" />
-                          Priority Scores (Top 5)
-                        </h4>
-                        <div className="space-y-2">
-                          {prioritiesData.priorities.slice(0, 5).map((priority: any) => {
-                            const list = filteredTodoLists.find(l => l.id === priority.listId);
-                            if (!list) return null;
-                            
-                            return (
-                              <div key={priority.listId} className="flex items-center justify-between bg-white rounded-lg p-3 border">
-                                <div className="flex-1">
-                                  <div className="font-medium">{list.title}</div>
-                                  <div className="text-sm text-gray-600">{priority.recommendation}</div>
-                                </div>
-                                <div className="text-right">
-                                  <div className="font-bold text-lg">{priority.score}</div>
-                                  <div className="text-xs text-gray-500">Priority Score</div>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Create New Todo List Modal */}
       <AnimatePresence>
@@ -1294,7 +1138,7 @@ export default function TodosPage() {
                           <span className={`flex-1 text-sm font-medium ${
                             item.isCompleted ? 'text-green-700 line-through' : 'text-gray-900'
                           }`}>
-                            {item.title || item.text}
+                            {item.text}
                           </span>
                           <div className="flex items-center gap-2">
                             {item.isCompleted && (
@@ -1402,27 +1246,7 @@ export default function TodosPage() {
                         </span>
                       </div>
                       
-                      {/* Smart Priority Score */}
-                      {showPriorities && prioritiesData?.priorities && (
-                        <div className="mt-2 pt-2 border-t">
-                          {(() => {
-                            const priority = prioritiesData.priorities.find((p: any) => p.listId === list.id);
-                            if (!priority) return null;
-                            
-                            return (
-                              <div className="flex items-center justify-between">
-                                <span className="flex items-center gap-1">
-                                  <Brain className="w-3 h-3 text-purple-600" />
-                                  <span className="text-purple-600 font-medium">Smart Score: {priority.score}</span>
-                                </span>
-                                <Badge variant="outline" className="text-xs">
-                                  {priority.score >= 75 ? 'High' : priority.score >= 50 ? 'Medium' : 'Low'}
-                                </Badge>
-                              </div>
-                            );
-                          })()}
-                        </div>
-                      )}
+
                     </div>
                   </CardContent>
                 </Card>

@@ -250,8 +250,6 @@ const resources = {
       uploads: "Uploads",
       
       // Page titles and navigation
-      employeeManagementTitle: "Employee Management",
-      addEmployeePage: "Add New Employee",
       userManagementPage: "User Management",
       todoManagementPage: "Task Management",
       interviewsPage: "Meetings",
@@ -349,29 +347,7 @@ const resources = {
       passwordChangedSuccessfully: "Password changed successfully",
       passwordChangeError: "Error changing password",
       
-      // Employee Management additional translations
-      manageEmployeeAccounts: "Manage employee accounts, roles, and information",
-      total: "Total",
-      employees: "Employees",
-      searchEmployees: "Search Employees",
-      searchByNameUsernameEmail: "Search by name, username, or email...",
-      roleFilter: "Role Filter",
-      statusFilter: "Status Filter",
-      allRoles: "All Roles",
-      allStatus: "All Status",
-      clearFilters: "Clear Filters",
-      managers: "Managers",
-      contact: "Contact",
-      joinDate: "Join Date",
-      noEmployeesFound: "No employees found",
-      noEmployeesMatch: "No employees match",
-      noEmployeesAvailable: "No employees available",
-      addFirstEmployee: "Add First Employee",
-      createComprehensiveEmployeeProfile: "Create a comprehensive employee profile with all necessary information",
-      newEmployeeRegistration: "New Employee Registration",
-      dateOfBirth: "Date of Birth",
-      accountStatus: "Account Status",
-      createEmployee: "Create Employee"
+
     }
   },
   ku: {
@@ -785,15 +761,7 @@ const resources = {
       allDataDashboard: "داشبۆردی هەموو داتاکان",
       comprehensiveDataView: "بینینی تەواوی داتا و بەڕێوەبەری سیستەم",
       
-      // Employee Management
-      employeeManagement: "بەڕێوەبردنی کارمەندان",
-      addNewEmployee: "زیادکردنی کارمەندی نوێ",
-      employeeDirectory: "فۆڵدەری کارمەندان",
-      personalInformation: "زانیاری کەسی",
-      accountInformation: "زانیاری هەژمار",
-      employmentInformation: "زانیاری کارکردن",
-      emergencyContact: "پەیوەندی لەناکاو",
-      additionalInformation: "زانیاری زیادە",
+
       
       // Daily List Management
       newDailyList: "لیستی ڕۆژانەی نوێ",
@@ -943,29 +911,7 @@ const resources = {
       passwordChangedSuccessfully: "وشەی تێپەڕ بە سەرکەوتوویی گۆڕدرا",
       passwordChangeError: "هەڵە لە گۆڕینی وشەی تێپەڕ",
       
-      // Employee Management additional translations
-      manageEmployeeAccounts: "بەڕێوەبردنی هەژمارەکانی کارمەندان، ڕۆڵەکان و زانیارییەکان",
-      total: "کۆی گشتی",
-      employees: "کارمەندان",
-      searchEmployees: "گەڕانی کارمەندان",
-      searchByNameUsernameEmail: "گەڕان بە ناو، ناوی بەکارهێنەر یان ئیمەیڵ...",
-      roleFilter: "پاڵاوتنی ڕۆڵ",
-      statusFilter: "پاڵاوتنی دۆخ",
-      allRoles: "هەموو ڕۆڵەکان",
-      allStatus: "هەموو دۆخەکان",
-      clearFilters: "پاکردنەوەی پاڵاوتنەکان",
-      managers: "بەڕێوەبەران",
-      contact: "پەیوەندی",
-      joinDate: "بەرواری پەیوەندی",
-      noEmployeesFound: "هیچ کارمەندێک نەدۆزرایەوە",
-      noEmployeesMatch: "هیچ کارمەندێک نەگونجا لەگەڵ",
-      noEmployeesAvailable: "هیچ کارمەندێک بەردەست نییە",
-      addFirstEmployee: "یەکەم کارمەند زیادبکە",
-      createComprehensiveEmployeeProfile: "پڕۆفایلی تەواوی کارمەند دروست بکە لەگەڵ هەموو زانیارییە پێویستەکان",
-      newEmployeeRegistration: "تۆمارکردنی کارمەندی نوێ",
-      dateOfBirth: "بەرواری لەدایکبوون",
-      accountStatus: "دۆخی هەژمار",
-      createEmployee: "دروستکردنی کارمەند"
+
     }
   }
 };
