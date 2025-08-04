@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
@@ -27,6 +28,8 @@ export default function FeedbackPage() {
   const [customDate, setCustomDate] = useState("");
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [showAddTypeModal, setShowAddTypeModal] = useState(false);
+  const [newTypeName, setNewTypeName] = useState("");
 
   const { data: feedbackData, isLoading } = useQuery({
     queryKey: ["/api/feedback"],
@@ -202,9 +205,9 @@ export default function FeedbackPage() {
               <Plus className="w-4 h-4 mr-2" />
               {t("submitFeedback")}
             </Button>
-            <Button variant="outline" onClick={() => setShowFeedbackModal(true)}>
+            <Button variant="outline" onClick={() => setShowAddTypeModal(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              {t("addFeedbackType")}
+              {t("addNewType")}
             </Button>
           </div>
         </div>
@@ -440,6 +443,47 @@ export default function FeedbackPage() {
         onOpenChange={setShowFeedbackModal} 
         interviews={interviews}
       />
+
+      {/* Add New Type Modal */}
+      <Dialog open={showAddTypeModal} onOpenChange={setShowAddTypeModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("addNewFeedbackType")}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="type-name">{t("typeName")}</Label>
+              <Input
+                id="type-name"
+                placeholder={t("enterTypeName")}
+                value={newTypeName}
+                onChange={(e) => setNewTypeName(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setShowAddTypeModal(false);
+              setNewTypeName("");
+            }}>
+              {t("cancel")}
+            </Button>
+            <Button onClick={() => {
+              // Here you would handle adding the new type
+              if (newTypeName.trim()) {
+                toast({
+                  title: t("success"),
+                  description: `${t("feedbackType")} "${newTypeName}" ${t("addedSuccessfully")}`,
+                });
+                setNewTypeName("");
+                setShowAddTypeModal(false);
+              }
+            }}>
+              {t("addType")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
     </DashboardLayout>
   );

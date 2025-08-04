@@ -174,7 +174,13 @@ const resources = {
       // Feedback & Reviews
       feedbackReviews: "Feedback & Reviews",
       systemFeedbackReviews: "System feedback, reviews, and user suggestions",
-      addFeedbackType: "Add Feedback Type",
+      addNewType: "Add New Type",
+      addNewFeedbackType: "Add New Feedback Type",
+      typeName: "Type Name",
+      enterTypeName: "Enter type name",
+      feedbackType: "Feedback type",
+      addedSuccessfully: "added successfully",
+      addType: "Add Type",
       
       // Employee Tracking
       employeeTracking: "Employee Tracking",
