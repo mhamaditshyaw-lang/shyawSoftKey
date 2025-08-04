@@ -271,34 +271,6 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
 
   return (
     <>
-      {/* Hamburger Menu Button */}
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.3 }}
-      >
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setIsOpen(!isOpen)}
-          className={cn(
-            "mobile-button fixed top-4 left-4 z-50 p-3 bg-white/95 backdrop-blur-md border border-indigo-200 shadow-lg hover:bg-indigo-50 transition-all duration-300",
-            isOpen ? "rotate-90 bg-indigo-50" : "",
-            className
-          )}
-        >
-          <motion.div
-            animate={{ rotate: isOpen ? 180 : 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {isOpen ? (
-              <X className="w-5 h-5 text-indigo-600" />
-            ) : (
-              <Menu className="w-5 h-5 text-indigo-600" />
-            )}
-          </motion.div>
-        </Button>
-      </motion.div>
 
       {/* Animated Overlay */}
       <AnimatePresence>

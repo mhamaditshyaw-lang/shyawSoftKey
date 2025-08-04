@@ -36,7 +36,7 @@ export default function Header() {
       <div className="w-full px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           {/* Mobile Logo and Title */}
-          <div className="flex items-center space-x-2 sm:space-x-4 lg:ml-0 ml-12">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
               <Building2 className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
             </div>
