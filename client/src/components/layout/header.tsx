@@ -32,16 +32,18 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 shadow-sm">
-      <div className="w-full max-w-7xl mx-auto px-4 lg:px-6 py-4">
+    <header className="mobile-header sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 shadow-sm">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4 lg:ml-0 ml-12">
-            <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
-              <Building2 className="w-6 h-6 text-white" />
+          {/* Mobile Logo and Title */}
+          <div className="flex items-center space-x-2 sm:space-x-4 lg:ml-0 ml-12">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+              <Building2 className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                HR Management System
+              <h1 className="text-base sm:text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="sm:hidden">Shyaw</span>
+                <span className="hidden sm:inline">HR Management System</span>
               </h1>
               <Badge className={`text-xs ${getRoleBadgeClass(user.role)}`}>
                 {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
@@ -49,8 +51,8 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Search Bar */}
-          <div className="hidden md:flex flex-1 max-w-md mx-8">
+          {/* Search Bar - Desktop only */}
+          <div className="hidden lg:flex flex-1 max-w-md mx-8">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -64,25 +66,34 @@ export default function Header() {
           </div>
 
           {/* Right Section */}
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            {/* Controls */}
+            <div className="flex items-center space-x-1 sm:space-x-2">
               <LanguageSwitcher />
-              <div className="hidden lg:flex">
+              <div className="hidden md:flex">
                 <ThemeToggle />
+              </div>
+              
+              {/* Notifications */}
+              <div className="relative">
+                <NotificationCenter />
+                {unreadCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-red-500 text-white text-xs">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </Badge>
+                )}
               </div>
             </div>
 
-
-
             {/* User Profile */}
-            <div className="flex items-center space-x-3">
-              <div className="hidden md:flex flex-col items-end">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="hidden lg:flex flex-col items-end">
                 <span className="text-sm font-medium text-foreground">{user.username}</span>
                 <span className="text-xs text-muted-foreground">{user.email}</span>
               </div>
               
-              <Avatar className="h-10 w-10 ring-2 ring-indigo-200 dark:ring-indigo-700">
-                <AvatarFallback className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold">
+              <Avatar className="h-8 w-8 sm:h-10 sm:w-10 ring-2 ring-indigo-200 dark:ring-indigo-700 touch-target">
+                <AvatarFallback className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold text-sm">
                   {user.username.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
@@ -91,7 +102,7 @@ export default function Header() {
                 variant="ghost"
                 size="sm"
                 onClick={logout}
-                className="text-muted-foreground hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                className="text-muted-foreground hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 touch-target p-2"
               >
                 <LogOut className="w-4 h-4" />
               </Button>

@@ -2,173 +2,7 @@
 
 ## Overview
 
-This is a full-stack web application built for internal employee management with role-based access control. The system manages internal employees, todo lists, and internal interview/evaluation requests with three user roles: admin, manager, and secretary. The application is designed for managing existing company employees' affairs, performance reviews, internal role changes, and administrative tasks. It uses a modern React frontend with shadcn/ui components and an Express.js backend with PostgreSQL database.
-
-## System Architecture
-
-The application follows a client-server architecture with clear separation of concerns:
-
-- **Frontend**: React with TypeScript, using Vite for build tooling
-- **Backend**: Express.js server with TypeScript
-- **Database**: PostgreSQL with Drizzle ORM
-- **Authentication**: JWT-based authentication with role-based access control
-- **UI Framework**: shadcn/ui components built on Radix UI primitives
-- **Styling**: Tailwind CSS with custom design tokens
-
-## Key Components
-
-### Frontend Architecture
-
-The React frontend is organized with:
-
-- **Pages**: Main application views (dashboard, users, todos, interviews, reports, login)
-- **Components**: Reusable UI components built with shadcn/ui
-- **Hooks**: Custom hooks for authentication (`use-auth`) and other shared logic
-- **State Management**: React Query for server state management
-- **Routing**: Wouter for client-side routing
-- **Authentication**: Context-based auth system with JWT token storage
-
-### Backend Architecture
-
-The Express.js backend implements:
-
-- **Route Layer**: API endpoints organized in `routes.ts`
-- **Storage Layer**: Database abstraction through `storage.ts` interface
-- **Database Layer**: Drizzle ORM with PostgreSQL connection
-- **Authentication Middleware**: JWT verification and role-based access control
-- **Development Server**: Vite integration for development mode
-
-### Database Schema
-
-The PostgreSQL schema includes:
-
-- **Users Table**: Internal employee accounts with roles (admin, manager, secretary) and status tracking
-- **Todo Lists Table**: Internal task lists with assignment and priority management for employee affairs
-- **Todo Items Table**: Individual administrative tasks within lists with completion tracking
-- **Interview Requests Table**: Internal employee evaluation/review scheduling and internal role change interviews
-
-Key relationships:
-- Users can create and be assigned todo lists
-- Todo lists contain multiple todo items
-- Interview requests reference requesting users and assigned managers
-
-## Data Flow
-
-1. **Authentication Flow**: Login → JWT token generation → Token storage → Authenticated requests
-2. **Authorization Flow**: Token verification → Role checking → Route access control
-3. **Data Operations**: Frontend requests → Backend validation → Database operations → Response
-4. **Real-time Updates**: React Query for automatic data refetching and cache management
-
-## External Dependencies
-
-### Frontend Dependencies
-- **React Ecosystem**: React, React DOM, React Query for state management
-- **UI Components**: Radix UI primitives, shadcn/ui component library
-- **Styling**: Tailwind CSS, class-variance-authority for component variants
-- **Forms**: React Hook Form with Zod validation
-- **Utilities**: date-fns for date handling, clsx for conditional classes
-
-### Backend Dependencies
-- **Server Framework**: Express.js with TypeScript support
-- **Database**: Neon PostgreSQL with connection pooling
-- **ORM**: Drizzle ORM with Zod schema validation
-- **Authentication**: JWT for tokens, bcrypt for password hashing
-- **Development**: tsx for TypeScript execution, Vite integration
-
-### Build Tools
-- **Bundling**: Vite for frontend, esbuild for backend
-- **TypeScript**: Full TypeScript support across frontend and backend
-- **Development**: Hot reload, error overlays, and debugging tools
-
-## Deployment Strategy
-
-The application is configured for Replit deployment with:
-
-- **Build Process**: Frontend built with Vite, backend bundled with esbuild
-- **Production Mode**: NODE_ENV-based configuration switching
-- **Port Configuration**: Configured for port 5000 with external mapping to port 80
-- **Database**: Environment-based DATABASE_URL configuration
-- **Static Assets**: Frontend build output served by Express in production
-
-The deployment uses:
-- Development: `npm run dev` - runs TypeScript server directly with hot reload
-- Production: `npm run build && npm run start` - builds and runs bundled JavaScript
-- Database: Drizzle migrations with `npm run db:push`
-
-## Changelog
-
-- June 21, 2025: Initial setup of office management system
-- June 21, 2025: Completed full-stack implementation with authentication, role-based access control, user management, interview request system, todo management, and reports dashboard
-- June 21, 2025: Created admin user (username: admin, password: admin123) and set up database schema
-- June 22, 2025: Fixed SelectItem errors in modals and added proper accessibility features
-- June 22, 2025: Added comprehensive notification system with real-time updates, notification bell, and automatic notifications for user creation, interview requests, status changes, and todo assignments
-- June 22, 2025: Created feedback system with rating capabilities and archive functionality for managing completed interviews, todos, and users
-- June 22, 2025: Updated system terminology and branding to reflect internal employee management focus rather than external hiring
-- June 22, 2025: Enhanced operations tracking with dual-form dashboard for employee attendance (7 fields) and operational activities (6 fields)
-- June 22, 2025: Updated operations fields to track ice cream production, Albany operations, and Do activities across day/night shifts
-- June 23, 2025: Added third tracking component for staff count with 6 fields matching operational categories (Day/Night Ice cream, Albany, Do)
-- June 23, 2025: Unified dashboard terminology across all three sections to consistently reflect ice cream and Albany business operations
-- June 23, 2025: Created comprehensive Data View page with complete operational data visibility, filtering, and export capabilities
-- June 23, 2025: Added advanced date search functionality with specific date search, date range filtering, and active filter management
-- June 23, 2025: Added fourth tracking component "Yesterday's Production" with 6 fields for production data in cartons and tons
-- June 23, 2025: Completed comprehensive 4-section dashboard: Employee (7), Operations (6), Staff Count (6), Yesterday's Production (6) with unique themes
-- June 23, 2025: Added fifth tracking component "Yesterday's Loading Vehicles" with 3 fields for vehicle tracking
-- June 23, 2025: Implemented Playful Time-Stamped Loading Visualization with animated progress, real-time timestamps, and contextual loading steps for all form submissions and data operations
-- June 23, 2025: Implemented comprehensive User Preference Saving system for Data View with customizable filters, sorting, pagination, view modes, and auto-refresh settings
-- June 23, 2025: Added Contextual Confirmation Modal for Data Deletion with entry preview, bulk deletion confirmation, and enhanced security
-- June 23, 2025: Implemented comprehensive date filtering system with today-focused data view, auto-refresh functionality, and custom date selection
-- June 23, 2025: Enhanced Feedback & Reviews system with analytics dashboard, rating distribution, trend analysis, and comprehensive reporting
-- June 23, 2025: Added date filtering, auto-refresh, and today-focused view to Feedback & Reviews system with comprehensive search capabilities
-- June 23, 2025: Implemented comprehensive date filtering, auto-refresh, and today-focused view for Dashboard/Todo Management with real-time statistics
-- June 23, 2025: Created enhanced Daily Task Management page with completion animations, comprehensive filtering, daily work lists, and real-time progress tracking
-- June 23, 2025: Implemented Smart Prioritization Algorithm for Daily Tasks with intelligent scoring based on urgency, priority, workload, completion rate, age, and user patterns
-- June 23, 2025: Created comprehensive Management Reports page with interactive charts, data visualization, user privacy controls, and CSV export functionality for managers and admins
-- June 24, 2025: Added archive button to todo lists with proper styling and role-based access control
-- June 24, 2025: Implemented One-Click Task Archive with Undo Functionality featuring 10-second undo window, animated toast notifications, and complete restore capability
-- June 24, 2025: Added comprehensive archive functionality including Archive All Tasks button, individual task/list archive buttons, and improved archive API with proper validation
-- June 24, 2025: Implemented selective task archiving with selection mode, checkboxes for individual tasks/lists, bulk selection controls, and visual selection indicators
-- June 24, 2025: Enhanced Employee Reviews & Evaluations page with comprehensive date filtering, auto-refresh every 30 seconds, search functionality by employee/position/reviewer, and advanced filter controls with clear filter options
-- June 24, 2025: Added archive button to Employee Reviews & Evaluations page with role-based access control for admins and managers
-- June 24, 2025: Enhanced Data View page with date search functionality including specific date search and date range filtering
-- June 24, 2025: Created comprehensive All Data Dashboard page aggregating data from all system components with advanced filtering, search, export capabilities, and unified data view
-- June 24, 2025: Implemented comprehensive mobile responsiveness and phone size customization across entire system including touch-friendly navigation, responsive grids, mobile-optimized buttons, and adaptive layouts
-- June 24, 2025: Added comprehensive navigation menu system with "All Pages" dropdown in header and floating page menu modal, featuring categorized page organization, search functionality, role-based filtering, and enhanced navigation experience
-- June 24, 2025: Implemented responsive menu bar system with desktop horizontal navigation, mobile bottom navigation bar, and slide-out menu panel, providing optimal navigation experience across all device sizes
-- June 24, 2025: Added comprehensive dark mode implementation with theme toggle, system preference detection, localStorage persistence, and complete dark styling across all components
-- June 24, 2025: Modified responsive menu bar to only show on mobile and tablet devices (hidden on desktop/PC), using sidebar navigation for desktop users
-- June 24, 2025: Fixed date filtering functionality in Data View page with improved custom date filtering, debug information, and proper date comparison logic
-- June 24, 2025: Removed debug information and cleaned up Data View page for production, enhanced dark mode support throughout the interface
-- June 24, 2025: Created comprehensive cPanel deployment guide and automated deployment script with production optimization, environment configuration, and step-by-step instructions
-- June 24, 2025: Successfully integrated PostgreSQL database for operational data persistence, replacing localStorage with authenticated API endpoints, maintaining all filtering and timestamp functionality
-- June 24, 2025: Enhanced admin-only data removal controls in Data View with clear visual indicators and role-based access restrictions
-- June 25, 2025: Updated login page and dashboard with comprehensive green color scheme and modern design
-- June 25, 2025: Implemented animated sidebar menu with smooth hover effects, click animations, and green gradient theming
-- June 25, 2025: Enhanced Archive page with detailed views, interview report forms, comprehensive date filtering (today, week, month, custom date, date range), removed restore buttons, and added expandable item details with original data display and report management functionality
-- June 25, 2025: Added comprehensive App Bar with system branding, user menu, notifications dropdown, quick navigation links, role badges, and mobile-responsive design
-- June 25, 2025: Restored original navigation system with Header, Sidebar, ResponsiveMenuBar, and PageMenu components
-- June 25, 2025: Created modern Navigation Bar with animated page navigation, role-based filtering, gradient icons, hover effects, active states, and mobile-optimized scrollable design
-- June 25, 2025: Implemented structured navigation system with headers, dividers, and nested children following the specified format with expandable/collapsible menu sections
-- June 25, 2025: Updated navigation design with professional blue color scheme, improved typography, and cleaner visual hierarchy
-- June 27, 2025: Created comprehensive animated slider menu system with smooth slide animations, expandable sections, professional gradients, and mobile-responsive design that works across all pages
-- June 27, 2025: Updated color scheme from blue to black/gray for sleek professional appearance with black gradients, hover effects, and improved contrast
-- June 27, 2025: Implemented comprehensive glass morphism design system with backdrop blur effects, professional black/white color scheme, 300ms smooth animations, staggered menu animations, accessible interaction patterns, and mobile-first responsive layout across all components
-- June 27, 2025: Created complete UI component library including GlassCard, GlassButton, GlassInput, GlassTable, GlassBadge, GlassModal, GlassToast, SearchFilter, LoadingSkeleton components with professional glass morphism effects, hover animations, and responsive design patterns
-- June 28, 2025: Transformed system to modern HR Management design with indigo/purple gradient branding, professional color scheme, updated navigation with HR-specific styling, enhanced header with search functionality, and comprehensive HR component library
-- June 29, 2025: Updated entire color scheme from green to red and white theme, changed sidebar background to white with red accents, added comprehensive menu animations (slide-in, fade-in, pulse, bounce effects), enhanced navigation with animated hover effects and smooth transitions, created admin user (username: admin, password: admin123) to resolve 401 authentication errors, redesigned login page with red gradients and animations, changed system branding to "Administration Shyaw System", implemented animated menu handles with grip lines and sliding effects for enhanced user interaction
-- June 29, 2025: Implemented comprehensive Material Design color scheme transformation with Indigo Primary (#6200EE) and Teal Secondary (#03DAC6) colors throughout the entire application including login page, sliding sidebar navigation, dashboard header, role badges, and interactive elements with proper gradients and hover states
-- June 29, 2025: Built modern sleek dashboard UI with requested color palette (Primary: #2563EB blue-600, Secondary: #374151 gray-700, Accent: #10B981 emerald-500, Error: #DC2626 red-600, Background Light: #F9FAFB gray-50, Background Dark: #1F2937 gray-900), implemented responsive dashboard layout with collapsible sidebar, modern header with search/notifications/theme toggle, stats cards with hover effects and gradients, quick action buttons, activity feed for recent tasks/reviews, and complete role-based navigation system with smooth animations and professional styling
-- July 01, 2025: Added comprehensive Kurdish and English language support to entire system including enhanced i18n configuration, translated all navigation components, login page with language switcher, sidebar navigation, page menu, and feedback components with complete Kurdish translations for all major system functions
-- July 01, 2025: Created dedicated Employee Management system with comprehensive employee profiles, separate Add Employee form page with personal information, account details, employment information, emergency contacts, and additional notes fields, and New Daily List form page for creating task lists with multiple items, priorities, assignments, and due dates
-- July 02, 2025: Successfully integrated Daily Operations and Data View pages into sidebar navigation system with proper role-based access, removed custom menu bar components, and restored standard navigation flow
-- July 02, 2025: Updated user roles from Admin/Manager/Secretary to Admin/Manager/Security throughout entire system including translations, database schema, authentication, navigation components, and backend routes with proper Kurdish translations for all roles
-- July 03, 2025: Removed Daily Tasks and Daily Task Management pages and related functionality including prioritization service, daily task routes, and all associated files to streamline the application for production deployment
-- July 03, 2025: Created comprehensive cPanel deployment guide with step-by-step instructions for hosting on Hostinger and similar providers, including database setup, environment configuration, and production optimizations
-- July 08, 2025: Implemented "Midnight Ocean" dark theme with custom color palette (#0E1525 background, #F5F9FC foreground, #0099FF primary buttons, #36B24A success, #D96D00 warning) and enhanced notification system with real-time updates (3-second polling), automatic permission requests, and improved mobile/system notification support
-- July 10, 2025: Added comprehensive Notification Test Center page with quick test notifications, custom notification builder, and testing functionality for developers to verify notification system functionality
-- July 10, 2025: Created complete database export functionality with Node.js script that generates single SQL file containing all tables, data, indexes, constraints, and sequences with proper PostgreSQL formatting
-- July 10, 2025: Implemented comprehensive notification management system with dedicated notification management page featuring real-time filtering, search, mark as read/unread, delete functionality, statistics dashboard, and notification bell icon in header with dropdown menu. Added notification menu items to sidebar navigation in System Management section with role-based access control (Notification Center for admin only, Notification Management for admin and manager roles)
-- July 11, 2025: Successfully debugged and fixed frontend notification system display issues, implemented quick action buttons within notifications with type-specific actions (Mark Read, View Users, View Interviews, View Tasks, Give Feedback, Take Action for urgent alerts), color-coded buttons with hover effects, smart action selection based on notification type and priority, and clean production-ready notification center with proper bell icon and badge display. Later removed notification bell icon from header per user request while keeping notification management functionality in sidebar navigation
-- July 11, 2025: Implemented comprehensive contextual help tooltips system throughout the interface with specialized tooltip components (HelpTooltip, FeatureTooltip, RoleTooltip, StatusTooltip, ActionTooltip) featuring multiple tooltip types (info, help, warning, tip), role-based permission explanations, status descriptions with next actions, feature explanations with keyboard shortcuts, and action confirmations with danger warnings. Added tooltips to employee management page including search functionality, role filters, status badges, and action buttons, plus dashboard activity feed and header elements to improve user experience and reduce learning curve
+This is a full-stack web application for internal employee management with role-based access control (admin, manager, security). It manages employees, todo lists, and internal interview/evaluation requests, focusing on employee affairs, performance reviews, internal role changes, and administrative tasks. The project's business vision is to streamline internal HR and operational processes, enhance employee management efficiency, and provide comprehensive reporting tools.
 
 ## User Preferences
 
@@ -183,19 +17,66 @@ Preferred communication style: Simple, everyday language.
 - Archive should have comprehensive date filtering (today, week, month, custom date, date range)
 - Remove restore button from archive (archive items should be permanent)
 - Archive page should display original data in readable format and manage multiple reports per item
-- Added animated welcome dashboard with greeting, time-based messages, role badges, and smooth animations
-- Implemented emoji/icon picker for description highlights with categorized selection (Performance, Feedback, Areas)
 - Prefers old/simple design for Data View with search functionality and icons on filter buttons
-- Updated Data View to clean, minimal design with better spacing and modern card layout
-- Enhanced Data View with beautiful gradient backgrounds, improved typography, and modern glass-morphism effects
 - Removed all test fields and debug sections from dashboard for clean production interface
-- Added admin-only data removal functionality in Data View with individual entry deletion and clear all data options
-- Implemented contextual confirmation modal for secure data deletion with entry previews and typed confirmation for bulk operations
-- Added comprehensive date filtering with today-first approach, auto-refresh every 30 seconds, and real-time data counters
-- Enhanced Feedback & Reviews with analytics dashboard, search/filter capabilities, rating trends, and actionable insights
-- Implemented date filtering and auto-refresh for Feedback & Reviews with today-first approach and real-time data updates
-- Added comprehensive date filtering and auto-refresh system to Dashboard/Todo Management with today-focused view and filtered statistics
-- Created dedicated Daily Task Management page with animated task completion, daily work lists, comprehensive filtering (date, priority, status), auto-refresh functionality, and real-time progress tracking with visual completion animations
-- Implemented Smart Prioritization Algorithm with weighted scoring system analyzing urgency (due dates), priority levels, workload, completion momentum, task age, and user behavior patterns to provide intelligent task recommendations and daily productivity suggestions
-- Created comprehensive Management Reports page with interactive charts and data visualization using Recharts library, featuring user statistics, task analytics, interview metrics, feedback analysis, and operational data with role-based access control and CSV export functionality
-- Implemented One-Click Task Archive with Undo Functionality providing quick task archiving with blue archive buttons, 10-second undo window, animated toast notifications, complete item restoration, and enhanced user experience for task management
+- Removed notification bell icon from header per user request while keeping notification management functionality in sidebar navigation
+
+## System Architecture
+
+The application follows a client-server architecture.
+
+**UI/UX Decisions:**
+- Uses a modern React frontend with shadcn/ui components, built on Radix UI primitives, styled with Tailwind CSS.
+- Implements a modern sleek dashboard UI with a specific color palette (Primary: #2563EB, Secondary: #374151, Accent: #10B981, Error: #DC2626, Background Light: #F9FAFB, Background Dark: #1F2937).
+- Features a responsive dashboard layout with collapsible sidebar, header with search/notifications/theme toggle, stats cards with hover effects, quick action buttons, and an activity feed.
+- Comprehensive navigation system with "All Pages" dropdown, floating page menu modal, categorized organization, search functionality, and role-based filtering.
+- Responsive menu bar system with desktop horizontal navigation, mobile bottom navigation bar, and slide-out menu panel.
+- Dark mode implementation with theme toggle, system preference detection, and localStorage persistence.
+- Glass morphism design system with backdrop blur effects, professional black/white color scheme, and smooth animations, including a UI component library (GlassCard, GlassButton, etc.).
+- Material Design color scheme transformation with Indigo Primary (#6200EE) and Teal Secondary (#03DAC6) colors.
+- Animated welcome dashboard with greeting, time-based messages, role badges, and smooth animations.
+- Implemented emoji/icon picker for description highlights.
+- Comprehensive contextual help tooltips system (HelpTooltip, FeatureTooltip, RoleTooltip, StatusTooltip, ActionTooltip) for improved user experience.
+
+**Technical Implementations:**
+- **Frontend**: React with TypeScript, Vite for build tooling, React Query for server state management, Wouter for routing, Context-based auth system.
+- **Backend**: Express.js server with TypeScript, organized API endpoints, database abstraction through `storage.ts`, Drizzle ORM.
+- **Authentication**: JWT-based authentication with role-based access control (Admin, Manager, Security).
+- **Database Schema**: PostgreSQL with tables for Users, Todo Lists, Todo Items, and Interview Requests.
+- **Data Flow**: Authentication, authorization, data operations, and real-time updates via React Query.
+- **Notifications**: Enhanced notification system with real-time updates (3-second polling), automatic permission requests, quick action buttons, and a dedicated notification management page with filtering and search.
+- **Archiving**: One-Click Task Archive with Undo Functionality (10-second undo window, animated toast notifications), selective task archiving, and archive functionality for employee reviews/evaluations.
+- **Data View**: Clean, minimal design with gradient backgrounds, improved typography, and glass-morphism effects. Features comprehensive date filtering (today-first, auto-refresh), real-time data counters, and admin-only data removal controls with confirmation modals.
+- **Reports**: Comprehensive Management Reports page with interactive charts using Recharts, user statistics, task analytics, interview metrics, feedback analysis, and operational data with CSV export.
+- **Internationalization**: Comprehensive Kurdish and English language support, including i18n configuration and translated components.
+- **Development & Deployment**: Configured for Replit deployment, using Vite for frontend build, esbuild for backend bundling. Production mode uses `NODE_ENV`-based configuration and external port mapping. Includes a cPanel deployment guide for Hostinger and similar providers.
+
+**Feature Specifications:**
+- Internal employee management with roles (admin, manager, security).
+- Todo list management with assignment and priority.
+- Internal interview/evaluation request scheduling.
+- Comprehensive dashboard with sections for Employee, Operations, Staff Count, Yesterday's Production, and Yesterday's Loading Vehicles.
+- Employee Management system with employee profiles, Add Employee form, and New Daily List form.
+- Feedback & Reviews system with analytics dashboard, rating distribution, and trend analysis.
+- Smart Prioritization Algorithm for daily tasks based on urgency, priority, workload, completion rate, and user patterns.
+
+## External Dependencies
+
+**Frontend:**
+- **React Ecosystem**: React, React DOM, React Query
+- **UI Components**: Radix UI primitives, shadcn/ui, class-variance-authority
+- **Styling**: Tailwind CSS
+- **Forms**: React Hook Form, Zod
+- **Utilities**: date-fns, clsx
+- **Charting**: Recharts
+
+**Backend:**
+- **Server Framework**: Express.js
+- **Database**: Neon PostgreSQL
+- **ORM**: Drizzle ORM
+- **Authentication**: JWT, bcrypt
+- **Development**: tsx
+
+**Build Tools:**
+- **Bundling**: Vite (frontend), esbuild (backend)
+- **TypeScript**: Full TypeScript support

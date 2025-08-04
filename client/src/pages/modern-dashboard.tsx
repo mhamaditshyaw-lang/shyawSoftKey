@@ -116,26 +116,26 @@ export default function ModernDashboard() {
 
   return (
     <DashboardLayout notificationCount={unreadNotifications.length}>
-      <div className="space-y-6">
+      <div className="mobile-container space-y-4 sm:space-y-6">
         {/* Welcome Section with Shyaw Branding */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative overflow-hidden rounded-xl bg-gradient-to-br from-dashboard-primary/5 via-dashboard-accent/5 to-dashboard-primary/10 p-8 border border-dashboard-primary/10 dark:from-dashboard-primary/10 dark:via-dashboard-accent/10 dark:to-dashboard-primary/20 dark:border-dashboard-primary/20"
+          className="mobile-card relative overflow-hidden rounded-xl bg-gradient-to-br from-dashboard-primary/5 via-dashboard-accent/5 to-dashboard-primary/10 p-4 sm:p-8 border border-dashboard-primary/10 dark:from-dashboard-primary/10 dark:via-dashboard-accent/10 dark:to-dashboard-primary/20 dark:border-dashboard-primary/20"
         >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-dashboard-primary/5 rounded-full -translate-y-16 translate-x-16"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-dashboard-accent/5 rounded-full translate-y-12 -translate-x-12"></div>
+          <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-dashboard-primary/5 rounded-full -translate-y-12 sm:-translate-y-16 translate-x-12 sm:translate-x-16"></div>
+          <div className="absolute bottom-0 left-0 w-16 h-16 sm:w-24 sm:h-24 bg-dashboard-accent/5 rounded-full translate-y-8 sm:translate-y-12 -translate-x-8 sm:-translate-x-12"></div>
           
-          <div className="relative z-10 flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <Sparkles className="w-6 h-6 text-dashboard-primary" />
-                <h1 className="text-2xl font-bold text-dashboard-text-light dark:text-dashboard-text-dark">
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-dashboard-primary" />
+                <h1 className="text-lg sm:text-2xl font-bold text-dashboard-text-light dark:text-dashboard-text-dark">
                   {getGreeting()}, {user?.username}!
                 </h1>
               </div>
-              <p className="text-dashboard-secondary dark:text-dashboard-text-dark/70 mb-1">
+              <p className="text-sm sm:text-base text-dashboard-secondary dark:text-dashboard-text-dark/70 mb-1">
                 {currentTime.toLocaleDateString('en-US', {
                   weekday: 'long',
                   year: 'numeric',
@@ -143,11 +143,19 @@ export default function ModernDashboard() {
                   day: 'numeric'
                 })}
               </p>
-              <p className="text-sm text-dashboard-secondary/60 dark:text-dashboard-text-dark/60">
+              <p className="text-xs sm:text-sm text-dashboard-secondary/60 dark:text-dashboard-text-dark/60">
                 {t("welcomeBack")} {user?.username}
               </p>
             </div>
-            <div className="hidden md:flex items-center gap-2">
+            <div className="flex sm:hidden items-center gap-2">
+              <Badge variant="secondary" className="bg-dashboard-primary/10 text-dashboard-primary text-xs">
+                {user?.role}
+              </Badge>
+              <Badge variant="secondary" className="bg-dashboard-accent/10 text-dashboard-accent text-xs">
+                Active
+              </Badge>
+            </div>
+            <div className="hidden sm:flex items-center gap-2">
               <Badge variant="secondary" className="bg-dashboard-primary/10 text-dashboard-primary">
                 {user?.role}
               </Badge>
@@ -181,7 +189,7 @@ export default function ModernDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="mobile-grid grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 {filteredActions.map((action, index) => {
                   const Icon = action.icon;
                   return (
@@ -196,14 +204,14 @@ export default function ModernDashboard() {
                       <Link href={action.href}>
                         <Button
                           variant="outline"
-                          className="w-full h-24 flex-col gap-2 p-4 border-dashboard-secondary/20 hover:border-dashboard-primary/50 hover:bg-dashboard-primary/5 transition-all duration-200"
+                          className="mobile-button w-full h-20 sm:h-24 flex-col gap-1 sm:gap-2 p-3 sm:p-4 border-dashboard-secondary/20 hover:border-dashboard-primary/50 hover:bg-dashboard-primary/5 transition-all duration-200 touch-target"
                         >
-                          <div className={`p-2 rounded-md ${action.color}`}>
-                            <Icon className="w-5 h-5" />
+                          <div className={`p-1.5 sm:p-2 rounded-md ${action.color}`}>
+                            <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                           </div>
                           <div className="text-center">
-                            <div className="font-medium text-sm">{action.title}</div>
-                            <div className="text-xs text-dashboard-secondary/60 dark:text-dashboard-text-dark/60">
+                            <div className="font-medium text-xs sm:text-sm">{action.title}</div>
+                            <div className="text-xs text-dashboard-secondary/60 dark:text-dashboard-text-dark/60 hidden sm:block">
                               {action.description}
                             </div>
                           </div>
@@ -218,7 +226,7 @@ export default function ModernDashboard() {
         </motion.div>
 
         {/* Recent Activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Recent Tasks */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}

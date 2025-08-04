@@ -135,8 +135,8 @@ export default function ResponsiveMenuBar() {
       )}
 
       {/* Mobile/Tablet Bottom Navigation Bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-lg z-40">
-        <div className="grid grid-cols-4 gap-1 p-2">
+      <div className="mobile-nav lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-700 shadow-lg z-40">
+        <div className="grid grid-cols-4 gap-1 p-3 safe-area-padding">
           {filteredNavItems.slice(0, 4).map((item) => {
             const Icon = item.icon;
             const isActive = location === item.href;
@@ -146,9 +146,9 @@ export default function ResponsiveMenuBar() {
                 key={item.href}
                 onClick={() => setLocation(item.href)}
                 className={cn(
-                  "flex flex-col items-center justify-center p-2 rounded-lg touch-target transition-colors",
+                  "mobile-button flex flex-col items-center justify-center p-3 rounded-lg touch-target transition-colors",
                   isActive 
-                    ? "bg-primary text-white" 
+                    ? "bg-indigo-600 text-white shadow-sm" 
                     : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
                 )}
               >
@@ -161,7 +161,7 @@ export default function ResponsiveMenuBar() {
       </div>
 
       {/* Bottom padding for content when bottom nav is visible */}
-      <div className="lg:hidden h-20" />
+      <div className="mobile-nav-spacer lg:hidden h-24" />
     </>
   );
 }
