@@ -51,19 +51,7 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Search Bar - Desktop only */}
-          <div className="hidden lg:flex flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search employees, documents..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 bg-background/50 border-border focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              />
-            </div>
-          </div>
+
 
           {/* Right Section */}
           <div className="flex items-center space-x-2 sm:space-x-4">

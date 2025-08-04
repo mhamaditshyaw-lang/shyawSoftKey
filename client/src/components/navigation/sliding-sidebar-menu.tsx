@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Home,
   Users,
@@ -271,95 +272,168 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
   return (
     <>
       {/* Hamburger Menu Button */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "fixed top-4 left-4 z-50 p-2 bg-white border border-red-200 shadow-lg hover:bg-red-50 hamburger-btn",
-          isOpen ? "active" : "",
-          className
-        )}
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.3 }}
       >
-        {isOpen ? (
-          <X className="w-5 h-5 text-red-600 menu-icon" />
-        ) : (
-          <Menu className="w-5 h-5 text-red-600 menu-icon" />
-        )}
-      </Button>
-
-      {/* Dark Overlay */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 sidebar-overlay"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-
-      {/* Sliding Sidebar */}
-      <div className={cn(
-        "fixed inset-y-0 left-0 z-50 w-80 bg-white shadow-2xl sliding-sidebar",
-        isOpen ? "translate-x-0 sidebar-slide-in" : "-translate-x-full sidebar-slide-out"
-      )}>
-        {/* Header */}
-        <div className="bg-gradient-to-r from-red-600 to-red-700 text-white p-6 pt-16">
-          <div className="flex items-center space-x-3 animate-fade-in">
-            <Shield className="w-8 h-8 animate-pulse-hover" />
-            <div>
-              <h2 className="text-xl font-bold">Administration Shyaw System</h2>
-              <p className="text-red-100 text-sm">Professional Platform</p>
-            </div>
-          </div>
-          
-          {user && (
-            <div className="mt-4 p-3 bg-white/10 rounded-lg backdrop-blur-sm animate-fade-in">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-bold">{user.username.charAt(0).toUpperCase()}</span>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">{user.username}</p>
-                  <p className="text-xs text-red-100 capitalize">{user.role}</p>
-                </div>
-              </div>
-            </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsOpen(!isOpen)}
+          className={cn(
+            "mobile-button fixed top-4 left-4 z-50 p-3 bg-white/95 backdrop-blur-md border border-indigo-200 shadow-lg hover:bg-indigo-50 transition-all duration-300",
+            isOpen ? "rotate-90 bg-indigo-50" : "",
+            className
           )}
-        </div>
+        >
+          <motion.div
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {isOpen ? (
+              <X className="w-5 h-5 text-indigo-600" />
+            ) : (
+              <Menu className="w-5 h-5 text-indigo-600" />
+            )}
+          </motion.div>
+        </Button>
+      </motion.div>
 
-        {/* Navigation Content */}
-        <div className="flex-1 overflow-y-auto py-4 slide-menu-container">
-          <nav className="space-y-1">
-            {NAVIGATION.map(renderNavigationItem)}
-          </nav>
-        </div>
+      {/* Animated Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 bg-black/50 z-40"
+            onClick={() => setIsOpen(false)}
+          />
+        )}
+      </AnimatePresence>
 
-        {/* Footer */}
-        <div className="border-t border-red-200 p-4">
-          <div className="space-y-2">
-            <Link href="/settings">
-              <div className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-300 cursor-pointer sidebar-item">
-                <Settings className="w-4 h-4 text-red-500" />
-                <span className="text-sm">Settings</span>
-              </div>
-            </Link>
-            
-            <button
-              onClick={logout}
-              className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-300 sidebar-item"
+      {/* Animated Sliding Sidebar */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ x: "-100%", opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: "-100%", opacity: 0 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 300,
+              damping: 30
+            }}
+            className="fixed inset-y-0 left-0 z-50 w-80 bg-white/95 backdrop-blur-md shadow-2xl border-r border-indigo-100"
+          >
+            {/* Header */}
+            <motion.div 
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1, duration: 0.4 }}
+              className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-700 text-white p-6 pt-16"
             >
-              <LogOut className="w-4 h-4 text-red-500" />
-              <span className="text-sm">Sign Out</span>
-            </button>
-          </div>
-          
-          <div className="mt-4 pt-4 border-t border-red-200">
-            <div className="flex items-center justify-center space-x-2">
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-              <span className="text-xs text-gray-500 font-medium">System Online</span>
+              <div className="flex items-center space-x-3">
+                <motion.div
+                  animate={{ 
+                    scale: [1, 1.1, 1],
+                    rotate: [0, 5, -5, 0]
+                  }}
+                  transition={{ 
+                    duration: 2,
+                    repeat: Infinity,
+                    repeatType: "reverse"
+                  }}
+                >
+                  <Shield className="w-8 h-8" />
+                </motion.div>
+                <div>
+                  <h2 className="text-xl font-bold">Shyaw System</h2>
+                  <p className="text-indigo-100 text-sm">Mobile Admin Panel</p>
+                </div>
+              </div>
+              
+              {user && (
+                <motion.div 
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.4 }}
+                  className="mt-4 p-3 bg-white/10 rounded-lg backdrop-blur-sm"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-bold">{user.username.charAt(0).toUpperCase()}</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{user.username}</p>
+                      <p className="text-xs text-indigo-100 capitalize">{user.role}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
+
+            {/* Navigation Content */}
+            <div className="flex-1 overflow-y-auto py-4">
+              <nav className="space-y-1">
+                {NAVIGATION.map((item, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ 
+                      delay: 0.1 + (index * 0.05),
+                      duration: 0.3
+                    }}
+                  >
+                    {renderNavigationItem(item, index)}
+                  </motion.div>
+                ))}
+              </nav>
             </div>
-          </div>
-        </div>
-      </div>
+
+            {/* Footer */}
+            <motion.div 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.4 }}
+              className="border-t border-indigo-200 p-4"
+            >
+              <div className="space-y-2">
+                <motion.button
+                  whileHover={{ scale: 1.02, x: 4 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={logout}
+                  className="mobile-button w-full flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all duration-300"
+                >
+                  <LogOut className="w-4 h-4 text-indigo-500" />
+                  <span className="text-sm font-medium">Sign Out</span>
+                </motion.button>
+              </div>
+              
+              <div className="mt-4 pt-4 border-t border-indigo-200">
+                <div className="flex items-center justify-center space-x-2">
+                  <motion.div 
+                    animate={{ 
+                      scale: [1, 1.2, 1],
+                      opacity: [1, 0.7, 1]
+                    }}
+                    transition={{ 
+                      duration: 2,
+                      repeat: Infinity,
+                      repeatType: "reverse"
+                    }}
+                    className="w-2 h-2 bg-green-500 rounded-full"
+                  />
+                  <span className="text-xs text-gray-500 font-medium">System Online</span>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

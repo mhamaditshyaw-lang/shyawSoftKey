@@ -175,55 +175,7 @@ export default function ModernDashboard() {
           <StatsCards stats={stats} isLoading={statsLoading} />
         </motion.div>
 
-        {/* Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-dashboard-text-light dark:text-dashboard-text-dark">
-                <Zap className="w-5 h-5 text-dashboard-primary" />
-                Quick Actions
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="mobile-grid grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                {filteredActions.map((action, index) => {
-                  const Icon = action.icon;
-                  return (
-                    <motion.div
-                      key={action.title}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3, delay: index * 0.1 }}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <Link href={action.href}>
-                        <Button
-                          variant="outline"
-                          className="mobile-button w-full h-20 sm:h-24 flex-col gap-1 sm:gap-2 p-3 sm:p-4 border-dashboard-secondary/20 hover:border-dashboard-primary/50 hover:bg-dashboard-primary/5 transition-all duration-200 touch-target"
-                        >
-                          <div className={`p-1.5 sm:p-2 rounded-md ${action.color}`}>
-                            <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
-                          </div>
-                          <div className="text-center">
-                            <div className="font-medium text-xs sm:text-sm">{action.title}</div>
-                            <div className="text-xs text-dashboard-secondary/60 dark:text-dashboard-text-dark/60 hidden sm:block">
-                              {action.description}
-                            </div>
-                          </div>
-                        </Button>
-                      </Link>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+
 
         {/* Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
