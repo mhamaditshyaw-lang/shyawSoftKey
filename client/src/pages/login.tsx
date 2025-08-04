@@ -94,6 +94,9 @@ export default function LoginPage() {
               src="/shyaw-logo.png" 
               alt="Shyaw Logo" 
               className="h-24 w-auto animate-pulse hover:scale-105 transition-transform duration-300"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
             />
           </div>
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-indigo-100 bg-clip-text text-transparent">{t("systemTitle")}</h1>
