@@ -1,4 +1,4 @@
-import { Building2, User, LogOut, Search } from "lucide-react";
+import { Building2, User, LogOut, Menu } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 import NotificationCenter from "@/components/device-notifications/notification-center";
@@ -8,12 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useState } from "react";
 
-export default function Header() {
+interface HeaderProps {
+  onMenuClick?: () => void;
+}
+
+export default function Header({ onMenuClick }: HeaderProps) {
   const { user, logout } = useAuth();
-  const [searchQuery, setSearchQuery] = useState("");
   const { notifications, unreadCount } = useDeviceNotifications();
 
   if (!user) return null;
@@ -35,9 +36,19 @@ export default function Header() {
     <header className="mobile-header sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 shadow-sm">
       <div className="w-full px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
         <div className="flex items-center justify-between">
-          {/* Mobile Logo and Title */}
+          {/* Mobile Menu Button and Logo */}
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <div className="logo w-7 h-7 sm:w-10 sm:h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-md sm:ml-0 ml-12">
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onMenuClick}
+              className="sm:hidden mr-2"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            
+            <div className="logo w-7 h-7 sm:w-10 sm:h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-md">
               <Building2 className="w-3 h-3 sm:w-6 sm:h-6 text-white" />
             </div>
             <div>

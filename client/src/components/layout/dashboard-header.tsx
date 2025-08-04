@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { Search, Settings, User, LogOut, Lock, Shield, Activity } from "lucide-react";
+import { Menu, Settings, User, LogOut, Lock, Shield, Activity } from "lucide-react";
 import { HelpTooltip, FeatureTooltip, RoleTooltip } from "@/components/ui/help-tooltip";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import NotificationCenter from "@/components/device-notifications/notification-center";
@@ -16,7 +16,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChangePasswordModal } from "@/components/modals/change-password-modal";
 
-export function DashboardHeader() {
+interface DashboardHeaderProps {
+  onMenuClick?: () => void;
+  notificationCount?: number;
+}
+
+export function DashboardHeader({ onMenuClick, notificationCount = 0 }: DashboardHeaderProps) {
   const { user, logout } = useAuth();
   const { t } = useTranslation();
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
@@ -31,6 +36,16 @@ export function DashboardHeader() {
     <>
       <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-800">
         <div className="flex items-center space-x-4">
+          {/* Mobile Menu Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onMenuClick}
+            className="lg:hidden"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+          
           <div className="flex items-center space-x-3">
             {/* Logo and Dashboard Title */}
             {/* Logo removed */}
@@ -43,16 +58,6 @@ export function DashboardHeader() {
 
         <div className="flex items-center space-x-4">
           <LanguageSwitcher />
-
-          <FeatureTooltip
-            feature={t("settings")}
-            description={t("manageEmployeeEvaluations")}
-          >
-            <Button variant="outline" size="sm" className="shadow-sm">
-              <Search className="w-4 h-4 mr-2" />
-              Search
-            </Button>
-          </FeatureTooltip>
 
           <RoleTooltip
             role={user.role}
