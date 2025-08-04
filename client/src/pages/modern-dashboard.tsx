@@ -117,51 +117,69 @@ export default function ModernDashboard() {
   return (
     <DashboardLayout notificationCount={unreadNotifications.length}>
       <div className="mobile-container space-y-4 sm:space-y-6">
-        {/* Welcome Section with Shyaw Branding */}
+        {/* Welcome Section with Shyaw Branding - Mobile Optimized */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mobile-card relative overflow-hidden rounded-xl bg-gradient-to-br from-dashboard-primary/5 via-dashboard-accent/5 to-dashboard-primary/10 p-4 sm:p-8 border border-dashboard-primary/10 dark:from-dashboard-primary/10 dark:via-dashboard-accent/10 dark:to-dashboard-primary/20 dark:border-dashboard-primary/20"
+          className="mobile-card relative overflow-hidden rounded-lg sm:rounded-xl bg-gradient-to-br from-dashboard-primary/5 via-dashboard-accent/5 to-dashboard-primary/10 p-3 sm:p-8 border border-dashboard-primary/10 dark:from-dashboard-primary/10 dark:via-dashboard-accent/10 dark:to-dashboard-primary/20 dark:border-dashboard-primary/20"
         >
-          <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-dashboard-primary/5 rounded-full -translate-y-12 sm:-translate-y-16 translate-x-12 sm:translate-x-16"></div>
-          <div className="absolute bottom-0 left-0 w-16 h-16 sm:w-24 sm:h-24 bg-dashboard-accent/5 rounded-full translate-y-8 sm:translate-y-12 -translate-x-8 sm:-translate-x-12"></div>
+          {/* Background decorations - smaller on mobile */}
+          <div className="absolute top-0 right-0 w-16 h-16 sm:w-32 sm:h-32 bg-dashboard-primary/5 rounded-full -translate-y-8 sm:-translate-y-16 translate-x-8 sm:translate-x-16"></div>
+          <div className="absolute bottom-0 left-0 w-12 h-12 sm:w-24 sm:h-24 bg-dashboard-accent/5 rounded-full translate-y-6 sm:translate-y-12 -translate-x-6 sm:-translate-x-12"></div>
           
-          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-dashboard-primary" />
-                <h1 className="text-lg sm:text-2xl font-bold text-dashboard-text-light dark:text-dashboard-text-dark">
-                  {getGreeting()}, {user?.username}!
+          <div className="relative z-10">
+            {/* Mobile-first layout */}
+            <div className="flex items-start justify-between mb-2 sm:mb-0">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <Sparkles className="w-4 h-4 sm:w-6 sm:h-6 text-dashboard-primary" />
+                <h1 className="text-base sm:text-2xl font-bold text-dashboard-text-light dark:text-dashboard-text-dark">
+                  <span className="sm:hidden">{getGreeting()}!</span>
+                  <span className="hidden sm:inline">{getGreeting()}, {user?.username}!</span>
                 </h1>
               </div>
-              <p className="text-sm sm:text-base text-dashboard-secondary dark:text-dashboard-text-dark/70 mb-1">
-                {currentTime.toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </p>
-              <p className="text-xs sm:text-sm text-dashboard-secondary/60 dark:text-dashboard-text-dark/60">
-                {t("welcomeBack")} {user?.username}
-              </p>
-            </div>
-            <div className="flex sm:hidden items-center gap-2">
-              <Badge variant="secondary" className="bg-dashboard-primary/10 text-dashboard-primary text-xs">
+              
+              {/* Mobile: Role badge in top right */}
+              <Badge variant="secondary" className="sm:hidden bg-dashboard-primary/10 text-dashboard-primary text-xs px-2 py-1">
                 {user?.role}
               </Badge>
-              <Badge variant="secondary" className="bg-dashboard-accent/10 text-dashboard-accent text-xs">
-                Active
-              </Badge>
             </div>
-            <div className="hidden sm:flex items-center gap-2">
-              <Badge variant="secondary" className="bg-dashboard-primary/10 text-dashboard-primary">
-                {user?.role}
-              </Badge>
-              <Badge variant="secondary" className="bg-dashboard-accent/10 text-dashboard-accent">
-                Active
-              </Badge>
+            
+            {/* Mobile: Simplified date and welcome text */}
+            <div className="sm:flex sm:items-center sm:justify-between">
+              <div className="flex-1">
+                <p className="text-xs sm:text-base text-dashboard-secondary dark:text-dashboard-text-dark/70 mb-1">
+                  <span className="sm:hidden">
+                    {currentTime.toLocaleDateString('en-US', { 
+                      weekday: 'short', 
+                      month: 'short', 
+                      day: 'numeric' 
+                    })}
+                  </span>
+                  <span className="hidden sm:inline">
+                    {currentTime.toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </span>
+                </p>
+                <p className="text-xs sm:text-sm text-dashboard-secondary/60 dark:text-dashboard-text-dark/60">
+                  <span className="sm:hidden">Welcome, {user?.username}</span>
+                  <span className="hidden sm:inline">{t("welcomeBack")} {user?.username}</span>
+                </p>
+              </div>
+              
+              {/* Desktop: Role badges */}
+              <div className="hidden sm:flex items-center gap-2">
+                <Badge variant="secondary" className="bg-dashboard-primary/10 text-dashboard-primary">
+                  {user?.role}
+                </Badge>
+                <Badge variant="secondary" className="bg-dashboard-accent/10 text-dashboard-accent">
+                  Active
+                </Badge>
+              </div>
             </div>
           </div>
         </motion.div>

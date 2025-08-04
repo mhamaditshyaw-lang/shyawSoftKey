@@ -37,15 +37,15 @@ export default function Header() {
         <div className="flex items-center justify-between">
           {/* Mobile Logo and Title */}
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
-              <Building2 className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
+            <div className="logo w-7 h-7 sm:w-10 sm:h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-md">
+              <Building2 className="w-3 h-3 sm:w-6 sm:h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-base sm:text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-sm sm:text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 <span className="sm:hidden">Shyaw</span>
                 <span className="hidden sm:inline">HR Management System</span>
               </h1>
-              <Badge className={`text-xs ${getRoleBadgeClass(user.role)}`}>
+              <Badge className={`hidden sm:flex text-xs ${getRoleBadgeClass(user.role)}`}>
                 {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
               </Badge>
             </div>
@@ -54,43 +54,51 @@ export default function Header() {
 
 
           {/* Right Section */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
-            {/* Controls */}
+          <div className="flex items-center space-x-1 sm:space-x-3">
+            {/* Mobile: Only essential items */}
             <div className="flex items-center space-x-1 sm:space-x-2">
-              <LanguageSwitcher />
-              <div className="hidden md:flex">
+              {/* Mobile: Hide language switcher */}
+              <div className="hidden sm:flex">
+                <LanguageSwitcher />
+              </div>
+              
+              {/* Mobile: Hide theme toggle */}
+              <div className="hidden lg:flex">
                 <ThemeToggle />
               </div>
               
-              {/* Notifications */}
-              <div className="relative">
+              {/* Mobile: Simplified notifications */}
+              <div className="relative sm:block">
                 <NotificationCenter />
                 {unreadCount > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-red-500 text-white text-xs">
+                  <Badge className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 p-0 flex items-center justify-center bg-red-500 text-white text-xs">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </Badge>
                 )}
               </div>
             </div>
 
-            {/* User Profile */}
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              <div className="hidden lg:flex flex-col items-end">
+            {/* User Profile - Simplified for mobile */}
+            <div className="flex items-center space-x-1 sm:space-x-3">
+              {/* Mobile: Hide user details text */}
+              <div className="hidden xl:flex flex-col items-end">
                 <span className="text-sm font-medium text-foreground">{user.username}</span>
                 <span className="text-xs text-muted-foreground">{user.email}</span>
               </div>
               
-              <Avatar className="h-8 w-8 sm:h-10 sm:w-10 ring-2 ring-indigo-200 dark:ring-indigo-700 touch-target">
-                <AvatarFallback className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold text-sm">
+              {/* Mobile: Smaller avatar */}
+              <Avatar className="h-7 w-7 sm:h-10 sm:w-10 ring-1 sm:ring-2 ring-indigo-200 dark:ring-indigo-700 touch-target">
+                <AvatarFallback className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold text-xs sm:text-sm">
                   {user.username.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
 
+              {/* Mobile: Hide logout button, only show on hover or desktop */}
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={logout}
-                className="text-muted-foreground hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 touch-target p-2"
+                className="hidden sm:flex text-muted-foreground hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 touch-target p-2"
               >
                 <LogOut className="w-4 h-4" />
               </Button>

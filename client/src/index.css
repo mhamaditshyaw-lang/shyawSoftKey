@@ -126,6 +126,56 @@
   .mobile-header {
     @apply sticky top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b z-40 safe-area-padding;
   }
+  
+  /* Mobile optimizations */
+  .mobile-container {
+    @apply px-2 sm:px-6 lg:px-8;
+  }
+
+  .mobile-card {
+    @apply border border-gray-200/50;
+  }
+
+  .mobile-grid {
+    @apply gap-2 sm:gap-4;
+  }
+
+  .mobile-button {
+    @apply touch-target min-h-[44px] px-3 sm:px-4 py-2;
+  }
+
+  /* Mobile-specific header adjustments */
+  @media (max-width: 640px) {
+    .mobile-header {
+      padding: 0.5rem !important;
+      min-height: 60px;
+    }
+    
+    .mobile-header h1 {
+      font-size: 0.875rem !important;
+      font-weight: 600;
+    }
+    
+    .mobile-header .logo {
+      width: 32px !important;
+      height: 32px !important;
+    }
+    
+    .mobile-welcome-card {
+      padding: 12px !important;
+      margin: 8px 4px;
+    }
+    
+    .mobile-stats-grid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 8px !important;
+    }
+    
+    .mobile-stat-card {
+      padding: 12px !important;
+      min-height: 80px;
+    }
+  }
 }
 
 @layer base {
