@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { ChangePasswordModal } from "@/components/modals/change-password-modal";
 import { DeleteEmployeeModal } from "@/components/modals/delete-employee-modal";
@@ -30,6 +32,10 @@ export default function EmployeeManagementPage() {
     userId: number;
     username: string;
   }>({ open: false, userId: 0, username: "" });
+  const [editModal, setEditModal] = useState<{
+    open: boolean;
+    employee: any;
+  }>({ open: false, employee: null });
 
   // Fetch users/employees
   const { data: usersData, isLoading } = useQuery({
@@ -80,6 +86,10 @@ export default function EmployeeManagementPage() {
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase();
+  };
+
+  const handleEditEmployee = (employee: any) => {
+    setEditModal({ open: true, employee });
   };
 
   return (
@@ -317,7 +327,7 @@ export default function EmployeeManagementPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => setLocation(`/employee/${employee.id}`)}
+                            onClick={() => handleEditEmployee(employee)}
                             title="Edit Employee"
                           >
                             <Edit className="w-4 h-4" />
@@ -365,6 +375,65 @@ export default function EmployeeManagementPage() {
         userId={changePasswordModal.userId}
         username={changePasswordModal.username}
       />
+
+      {/* Edit Employee Modal */}
+      {editModal.open && (
+        <Dialog open={editModal.open} onOpenChange={(open) => setEditModal({ ...editModal, open })}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t("editEmployee")}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="edit-firstName">{t("firstName")}</Label>
+                <Input
+                  id="edit-firstName"
+                  defaultValue={editModal.employee?.firstName}
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-lastName">{t("lastName")}</Label>
+                <Input
+                  id="edit-lastName"
+                  defaultValue={editModal.employee?.lastName}
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-email">{t("email")}</Label>
+                <Input
+                  id="edit-email"
+                  type="email"
+                  defaultValue={editModal.employee?.email}
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-role">{t("role")}</Label>
+                <Select defaultValue={editModal.employee?.role}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">{t("admin")}</SelectItem>
+                    <SelectItem value="manager">{t("manager")}</SelectItem>
+                    <SelectItem value="security">{t("security")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setEditModal({ open: false, employee: null })}>
+                {t("cancel")}
+              </Button>
+              <Button onClick={() => {
+                // Handle update logic here
+                setEditModal({ open: false, employee: null });
+              }}>
+                {t("save")}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Delete Employee Modal */}
       <DeleteEmployeeModal

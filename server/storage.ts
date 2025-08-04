@@ -149,7 +149,6 @@ export class DatabaseStorage implements IStorage {
           .where(eq(interviewRequests.requestedById, id));
 
         // Delete related data first
-        await tx.delete(notifications).where(eq(notifications.userId, id));
         await tx.delete(feedback).where(eq(feedback.submittedById, id));
         await tx.delete(archivedItems).where(eq(archivedItems.archivedById, id));
 

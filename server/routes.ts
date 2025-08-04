@@ -271,7 +271,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Prevent self-deletion
-      if (id === req.user!.id) {
+      if (id === req.user?.id) {
         return res.status(400).json({ message: "Cannot delete your own account" });
       }
 
@@ -290,7 +290,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/todos", authenticateToken, async (req: AuthRequest, res) => {
     try {
       // All users (including managers and admins) only see their own todos
-      const todoLists = await storage.getTodoListsByUser(req.user!.id);
+      const todoLists = await storage.getTodoListsByUser(req.user?.id || 0);
       res.json({ todoLists });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -301,14 +301,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const todoData = insertTodoListSchema.parse({
         ...req.body,
-        createdById: req.user!.id,
+        createdById: req.user?.id || 0,
       });
       
       const todoList = await storage.createTodoList(todoData);
       const fullTodoList = await storage.getTodoList(todoList.id);
       
       // Send notification if todo is assigned to someone
-      if (todoData.assignedToId && todoData.assignedToId !== req.user!.id) {
+      if (todoData.assignedToId && todoData.assignedToId !== req.user?.id) {
         const { DeviceNotificationService } = await import("./device-notification-service");
         await DeviceNotificationService.createUserNotification(
           todoData.assignedToId,
@@ -705,7 +705,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const feedbackData = {
         ...req.body,
-        submittedById: req.user!.id,
+        submittedById: req.user?.id || 0,
       };
       const feedback = await storage.createFeedback(feedbackData);
       res.status(201).json({ feedback });

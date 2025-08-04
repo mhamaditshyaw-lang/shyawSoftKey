@@ -200,7 +200,11 @@ export default function FeedbackPage() {
           <div className="flex space-x-3">
             <Button onClick={() => setShowFeedbackModal(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              Submit Feedback
+              {t("submitFeedback")}
+            </Button>
+            <Button variant="outline" onClick={() => setShowFeedbackModal(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              {t("addFeedbackType")}
             </Button>
           </div>
         </div>

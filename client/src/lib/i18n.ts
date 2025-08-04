@@ -174,6 +174,7 @@ const resources = {
       // Feedback & Reviews
       feedbackReviews: "Feedback & Reviews",
       systemFeedbackReviews: "System feedback, reviews, and user suggestions",
+      addFeedbackType: "Add Feedback Type",
       
       // Employee Tracking
       employeeTracking: "Employee Tracking",
