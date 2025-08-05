@@ -39,6 +39,7 @@ export default function AppBar({}: AppBarProps) {
 
   // Use device notifications instead
   const unreadCount = 0; // Will be handled by the device notification center
+  const notifications: any[] = []; // Empty array for now, will be handled by device notification center
 
   // Quick access menu items
   const quickMenuItems = [
@@ -112,15 +113,19 @@ export default function AppBar({}: AppBarProps) {
           {/* Left Section - Logo */}
           <div className="flex items-center">
             <div className="flex items-center space-x-3 group cursor-pointer" onClick={() => window.location.href = '/dashboard'}>
-              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-lg transition-all duration-300 group-hover:shadow-green-200 group-hover:scale-110 group-hover:rotate-3">
-                <Building2 className="h-6 w-6 text-white transition-transform duration-300 group-hover:scale-110" />
+              <div className="flex items-center justify-center w-12 h-12 bg-white rounded-xl shadow-lg transition-all duration-300 group-hover:shadow-red-200 group-hover:scale-110 border-2 border-red-200">
+                <img 
+                  src="/attached_assets/shyaw_1754394841900.jpg" 
+                  alt="Shyaw Logo" 
+                  className="w-10 h-10 object-contain transition-transform duration-300 group-hover:scale-110" 
+                />
               </div>
               <div className="hidden sm:block transition-all duration-300 group-hover:translate-x-1">
-                <h1 className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
-                  Office Management
+                <h1 className="text-xl font-bold bg-gradient-to-r from-red-600 to-blue-800 bg-clip-text text-transparent">
+                  Shyaw Administration
                 </h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300 group-hover:text-green-500">
-                  Internal Employee System
+                <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300 group-hover:text-red-500">
+                  Administration Shyaw System
                 </p>
               </div>
             </div>
@@ -162,7 +167,7 @@ export default function AppBar({}: AppBarProps) {
                 </div>
               </div>
               <div className="max-h-64 overflow-y-auto">
-                {notificationData?.notifications?.slice(0, 5).map((notification: any, index: number) => (
+                {notifications.slice(0, 5).map((notification: any, index: number) => (
                   <DropdownMenuItem 
                     key={notification.id} 
                     className="p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 cursor-pointer"
@@ -221,7 +226,7 @@ export default function AppBar({}: AppBarProps) {
                     variant="secondary" 
                     className={`text-xs ${getRoleColor(user?.role || '')} transition-all duration-300 hover:scale-105`}
                   >
-                    {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
+                    {user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : ''}
                   </Badge>
                 </div>
                 <ChevronDown className="h-4 w-4 hidden sm:block transition-transform duration-300" />
@@ -246,7 +251,7 @@ export default function AppBar({}: AppBarProps) {
                       variant="secondary" 
                       className={`text-xs ${getRoleColor(user?.role || '')}`}
                     >
-                      {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
+                      {user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : ''}
                     </Badge>
                   </div>
                 </div>

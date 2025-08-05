@@ -4,7 +4,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { insertUserSchema, loginSchema, insertTodoListSchema, insertTodoItemSchema, insertInterviewRequestSchema } from "@shared/schema";
+import { insertUserSchema, loginSchema, insertTodoListSchema, insertTodoItemSchema, insertInterviewRequestSchema, changePasswordSchema, updateUserPasswordSchema } from "@shared/schema";
 import { Request, Response, NextFunction } from "express";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
@@ -151,7 +151,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/users", authenticateToken, requireRole(['admin']), async (req, res) => {
+  app.post("/api/users", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
     try {
       const userData = insertUserSchema.parse(req.body);
 
@@ -189,7 +189,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/users/:id", authenticateToken, requireRole(['admin']), async (req, res) => {
+  app.patch("/api/users/:id", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
     try {
       const id = parseInt(req.params.id);
       const updates = req.body;
@@ -210,19 +210,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Change user password
+  // Change user password (for users changing their own password)
   app.patch("/api/users/:id/password", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const userId = parseInt(req.params.id);
-      const { currentPassword, newPassword } = req.body;
-
-      if (!currentPassword || !newPassword) {
-        return res.status(400).json({ message: "Current password and new password are required" });
-      }
-
-      if (newPassword.length < 6) {
-        return res.status(400).json({ message: "New password must be at least 6 characters long" });
-      }
+      const passwordData = changePasswordSchema.parse(req.body);
 
       // Get the user
       const user = await storage.getUser(userId);
@@ -237,16 +229,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // If not admin, verify current password
       if (req.user!.role !== 'admin') {
-        const bcrypt = require('bcrypt');
-        const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+        const isCurrentPasswordValid = await bcrypt.compare(passwordData.currentPassword, user.password);
         if (!isCurrentPasswordValid) {
           return res.status(400).json({ message: "Current password is incorrect" });
         }
       }
 
       // Hash new password
-      const bcrypt = require('bcrypt');
-      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+      const hashedNewPassword = await bcrypt.hash(passwordData.newPassword, 12);
 
       // Update password
       const updatedUser = await storage.updateUser(userId, { password: hashedNewPassword });
@@ -256,11 +246,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ message: "Password updated successfully" });
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      res.status(400).json({ message: error.message });
     }
   });
 
-  app.delete("/api/users/:id", authenticateToken, requireRole(['admin']), async (req, res) => {
+  // Admin route to update user password without current password verification
+  app.patch("/api/admin/users/:id/password", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const passwordData = updateUserPasswordSchema.parse(req.body);
+
+      // Get the user
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Hash new password
+      const hashedNewPassword = await bcrypt.hash(passwordData.newPassword, 12);
+
+      // Update password
+      const updatedUser = await storage.updateUser(userId, { password: hashedNewPassword });
+      if (!updatedUser) {
+        return res.status(500).json({ message: "Failed to update password" });
+      }
+
+      res.json({ message: "User password updated successfully" });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/users/:id", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
     try {
       const id = parseInt(req.params.id);
 
@@ -325,7 +342,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/todos/items", authenticateToken, async (req, res) => {
+  app.post("/api/todos/items", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const { todoListId, text, priority } = req.body;
       console.log("Creating todo item with data:", { todoListId, text, priority, user: req.user?.id });
@@ -354,7 +371,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/todos/:id/items", authenticateToken, async (req, res) => {
+  app.post("/api/todos/:id/items", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const todoListId = parseInt(req.params.id);
       const itemData = insertTodoItemSchema.parse({

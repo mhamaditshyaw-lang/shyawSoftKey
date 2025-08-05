@@ -351,8 +351,8 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
                   <Shield className="w-8 h-8" />
                 </motion.div>
                 <div>
-                  <h2 className="text-xl font-bold">Shyaw System</h2>
-                  <p className="text-indigo-100 text-sm">Mobile Admin Panel</p>
+                  <h2 className="text-xl font-bold">Shyaw Administration</h2>
+                  <p className="text-indigo-100 text-sm">Administration Shyaw System</p>
                 </div>
               </div>
               

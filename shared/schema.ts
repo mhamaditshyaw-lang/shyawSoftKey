@@ -146,6 +146,23 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z.string()
+    .min(6, "New password must be at least 6 characters long")
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain at least one uppercase letter, one lowercase letter, and one number"),
+  confirmPassword: z.string().min(1, "Please confirm your new password"),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+export const updateUserPasswordSchema = z.object({
+  newPassword: z.string()
+    .min(6, "New password must be at least 6 characters long")
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain at least one uppercase letter, one lowercase letter, and one number"),
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -156,6 +173,8 @@ export type InsertTodoItem = z.infer<typeof insertTodoItemSchema>;
 export type InterviewRequest = typeof interviewRequests.$inferSelect;
 export type InsertInterviewRequest = z.infer<typeof insertInterviewRequestSchema>;
 export type LoginCredentials = z.infer<typeof loginSchema>;
+export type ChangePasswordData = z.infer<typeof changePasswordSchema>;
+export type UpdateUserPasswordData = z.infer<typeof updateUserPasswordSchema>;
 
 // Operational data table
 export const operationalData = pgTable("operational_data", {

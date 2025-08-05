@@ -136,11 +136,15 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       <div className="flex items-center justify-between p-4 border-b border-dashboard-secondary/10">
         {!isCollapsed && (
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-dashboard-primary to-dashboard-accent flex items-center justify-center">
-              <span className="text-white font-bold text-sm">AS</span>
+            <div className="h-8 w-8 rounded-lg bg-white border border-red-200 flex items-center justify-center">
+              <img 
+                src="/attached_assets/shyaw_1754394841900.jpg" 
+                alt="Shyaw Logo" 
+                className="w-6 h-6 object-contain" 
+              />
             </div>
             <span className="font-semibold text-dashboard-text-light dark:text-dashboard-text-dark">
-              Admin System
+              Shyaw System
             </span>
           </div>
         )}
