@@ -29,6 +29,7 @@ import {
   Bell,
   TestTube
 } from "lucide-react";
+import shyawLogo from "@assets/shyaw_1754396249542.jpg";
 
 interface NavigationItem {
   kind?: 'header' | 'divider';
@@ -350,7 +351,7 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
                   className="flex items-center justify-center w-12 h-12 bg-white/20 rounded-xl border border-white/30"
                 >
                   <img 
-                    src="/attached_assets/shyaw_1754396249542.jpg" 
+                    src={shyawLogo} 
                     alt="Shyaw Logo" 
                     className="w-8 h-8 object-contain" 
                   />
