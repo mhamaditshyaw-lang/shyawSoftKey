@@ -1,8 +1,16 @@
-# Office Management System
+# Shyaw Administration System
 
 ## Overview
 
 This is a full-stack web application for internal employee management with role-based access control (admin, manager, security). It manages employees, todo lists, and internal interview/evaluation requests, focusing on employee affairs, performance reviews, internal role changes, and administrative tasks. The project's business vision is to streamline internal HR and operational processes, enhance employee management efficiency, and provide comprehensive reporting tools.
+
+## Recent Changes (August 2025)
+
+- **Brand Update**: Integrated Shyaw logo and updated system branding from "Office Management" to "Shyaw Administration"
+- **Logo Integration**: Added Shyaw logo consistently across main header, dashboard sidebar, and mobile menu
+- **Password Security**: Enhanced password update functionality with stronger validation requirements (uppercase, lowercase, numbers)
+- **API Improvements**: Added separate admin and user password change routes with proper validation schemas
+- **Code Quality**: Fixed TypeScript compilation errors and improved type safety across the application
 
 ## User Preferences
 
