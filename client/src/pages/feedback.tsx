@@ -46,8 +46,17 @@ export default function FeedbackPage() {
     },
   });
 
+  const { data: feedbackTypesData } = useQuery({
+    queryKey: ["/api/feedback-types"],
+    queryFn: async () => {
+      const response = await authenticatedRequest("GET", "/api/feedback-types");
+      return await response.json();
+    },
+  });
+
   const feedbackList = feedbackData?.feedback || [];
   const interviews = interviewsData?.requests || [];
+  const feedbackTypes = feedbackTypesData?.feedbackTypes || [];
 
   // Date filtering functions
   const isToday = (date: string): boolean => {
@@ -232,10 +241,17 @@ export default function FeedbackPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Types</SelectItem>
+                  {/* Default types */}
                   <SelectItem value="interview_feedback">Interview Feedback</SelectItem>
                   <SelectItem value="general_feedback">General Feedback</SelectItem>
                   <SelectItem value="system_improvement">System Improvement</SelectItem>
                   <SelectItem value="user_experience">User Experience</SelectItem>
+                  {/* Dynamic types */}
+                  {feedbackTypes.map((type: any) => (
+                    <SelectItem key={type.id} value={type.name}>
+                      {type.displayName}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -438,6 +454,7 @@ export default function FeedbackPage() {
         open={showFeedbackModal} 
         onOpenChange={setShowFeedbackModal} 
         interviews={interviews}
+        feedbackTypes={feedbackTypes}
       />
 
 

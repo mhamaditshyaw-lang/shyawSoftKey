@@ -442,6 +442,26 @@ export class DatabaseStorage implements IStorage {
     await FeedbackService.restoreItem(archiveId, itemType);
   }
 
+  async createFeedbackType(feedbackTypeData: any): Promise<any> {
+    const { FeedbackService } = await import("./feedback-service");
+    return await FeedbackService.createFeedbackType(feedbackTypeData);
+  }
+
+  async getAllFeedbackTypes(): Promise<any[]> {
+    const { FeedbackService } = await import("./feedback-service");
+    return await FeedbackService.getAllFeedbackTypes();
+  }
+
+  async updateFeedbackType(typeId: number, updates: any): Promise<any> {
+    const { FeedbackService } = await import("./feedback-service");
+    return await FeedbackService.updateFeedbackType(typeId, updates);
+  }
+
+  async deleteFeedbackType(typeId: number): Promise<void> {
+    const { FeedbackService } = await import("./feedback-service");
+    await FeedbackService.deleteFeedbackType(typeId);
+  }
+
 
   async createOperationalData(data: any): Promise<any> {
     const [entry] = await db

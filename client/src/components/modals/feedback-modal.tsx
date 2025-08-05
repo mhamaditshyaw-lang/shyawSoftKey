@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useTranslation } from "react-i18next";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Star, Plus } from "lucide-react";
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Star, Plus } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 interface FeedbackModalProps {
   open: boolean;
@@ -97,7 +97,7 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
             Share your feedback to help us improve our system and processes.
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -152,7 +152,7 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
               </Select>
             </div>
           )}
-          
+
           <div className="space-y-2">
             <Label htmlFor="title">Title</Label>
             <Input
@@ -163,7 +163,7 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
               required
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
             <Textarea
@@ -199,7 +199,7 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
               </div>
             </div>
           )}
-          
+
           <div className="flex justify-end space-x-3 pt-4">
             <Button
               type="button"

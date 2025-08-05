@@ -13,9 +13,21 @@ export const feedbackTypeEnum = pgEnum("feedback_type", [
 
 export const ratingEnum = pgEnum("rating", ["1", "2", "3", "4", "5"]);
 
+// Dynamic feedback types table
+export const feedbackTypes = pgTable("feedback_types", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  name: text("name").notNull().unique(),
+  displayName: text("display_name").notNull(),
+  description: text("description"),
+  isActive: integer("is_active").default(1).notNull(), // 1 = active, 0 = inactive
+  createdById: integer("created_by_id").notNull().references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const feedback = pgTable("feedback", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  type: feedbackTypeEnum("type").notNull(),
+  type: text("type").notNull(), // Changed from enum to text to support dynamic types
   title: text("title").notNull(),
   description: text("description").notNull(),
   rating: ratingEnum("rating"),
@@ -35,6 +47,13 @@ export const archivedItems = pgTable("archived_items", {
   archivedAt: timestamp("archived_at").defaultNow().notNull(),
   reason: text("reason"), // Optional reason for archiving
 });
+
+export const feedbackTypesRelations = relations(feedbackTypes, ({ one }) => ({
+  createdBy: one(users, {
+    fields: [feedbackTypes.createdById],
+    references: [users.id],
+  }),
+}));
 
 export const feedbackRelations = relations(feedback, ({ one }) => ({
   submittedBy: one(users, {
@@ -60,6 +79,12 @@ export const insertFeedbackSchema = createInsertSchema(feedback).omit({
   updatedAt: true,
 });
 
+export const insertFeedbackTypeSchema = createInsertSchema(feedbackTypes).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertArchivedItemSchema = createInsertSchema(archivedItems).omit({
   id: true,
   archivedAt: true,
@@ -67,5 +92,7 @@ export const insertArchivedItemSchema = createInsertSchema(archivedItems).omit({
 
 export type Feedback = typeof feedback.$inferSelect;
 export type InsertFeedback = z.infer<typeof insertFeedbackSchema>;
+export type FeedbackType = typeof feedbackTypes.$inferSelect;
+export type InsertFeedbackType = z.infer<typeof insertFeedbackTypeSchema>;
 export type ArchivedItem = typeof archivedItems.$inferSelect;
 export type InsertArchivedItem = z.infer<typeof insertArchivedItemSchema>;

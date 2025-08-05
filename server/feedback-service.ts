@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { feedback, archivedItems, InsertFeedback, InsertArchivedItem } from "../shared/feedback-schema";
+import { feedback, archivedItems, feedbackTypes, InsertFeedback, InsertArchivedItem, InsertFeedbackType } from "../shared/feedback-schema";
 import { users, interviewRequests, todoLists } from "../shared/schema";
 import { eq, desc } from "drizzle-orm";
 
@@ -128,5 +128,51 @@ export class FeedbackService {
 
     // Remove from archive
     await db.delete(archivedItems).where(eq(archivedItems.id, archiveId));
+  }
+
+  // Feedback Types Management
+  static async createFeedbackType(feedbackTypeData: InsertFeedbackType): Promise<any> {
+    const [newType] = await db.insert(feedbackTypes).values(feedbackTypeData).returning();
+    return newType;
+  }
+
+  static async getAllFeedbackTypes(): Promise<any[]> {
+    const types = await db
+      .select({
+        id: feedbackTypes.id,
+        name: feedbackTypes.name,
+        displayName: feedbackTypes.displayName,
+        description: feedbackTypes.description,
+        isActive: feedbackTypes.isActive,
+        createdAt: feedbackTypes.createdAt,
+        createdBy: {
+          id: users.id,
+          firstName: users.firstName,
+          lastName: users.lastName,
+        },
+      })
+      .from(feedbackTypes)
+      .leftJoin(users, eq(feedbackTypes.createdById, users.id))
+      .where(eq(feedbackTypes.isActive, 1))
+      .orderBy(feedbackTypes.displayName);
+
+    return types;
+  }
+
+  static async updateFeedbackType(typeId: number, updates: Partial<InsertFeedbackType>): Promise<any> {
+    const [updatedType] = await db
+      .update(feedbackTypes)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(feedbackTypes.id, typeId))
+      .returning();
+
+    return updatedType;
+  }
+
+  static async deleteFeedbackType(typeId: number): Promise<void> {
+    await db
+      .update(feedbackTypes)
+      .set({ isActive: 0, updatedAt: new Date() })
+      .where(eq(feedbackTypes.id, typeId));
   }
 }

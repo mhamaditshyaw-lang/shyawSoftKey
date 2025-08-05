@@ -29,7 +29,7 @@ async function authenticateToken(req: AuthRequest, res: Response, next: NextFunc
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as any;
     const user = await storage.getUser(decoded.id);
-    
+
     if (!user) {
       return res.status(401).json({ message: 'Invalid token' });
     }
@@ -60,12 +60,12 @@ function requireRole(roles: string[]) {
 
 export async function registerRoutes(app: Express): Promise<Server> {
 
-  
+
   // Auth routes
   app.post("/api/auth/register", async (req, res) => {
     try {
       const userData = insertUserSchema.parse(req.body);
-      
+
       // Check if user already exists
       const existingUser = await storage.getUserByUsername(userData.username);
       if (existingUser) {
@@ -79,7 +79,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Hash password
       const hashedPassword = await bcrypt.hash(userData.password, 12);
-      
+
       const user = await storage.createUser({
         ...userData,
         password: hashedPassword,
@@ -96,7 +96,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/login", async (req, res) => {
     try {
       const { username, password } = loginSchema.parse(req.body);
-      
+
       const user = await storage.getUserByUsername(username);
       if (!user) {
         return res.status(401).json({ message: "Invalid credentials" });
@@ -154,7 +154,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/users", authenticateToken, requireRole(['admin']), async (req, res) => {
     try {
       const userData = insertUserSchema.parse(req.body);
-      
+
       const existingUser = await storage.getUserByUsername(userData.username);
       if (existingUser) {
         return res.status(400).json({ message: "Username already exists" });
@@ -193,7 +193,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       const updates = req.body;
-      
+
       if (updates.password) {
         updates.password = await bcrypt.hash(updates.password, 12);
       }
@@ -263,7 +263,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/users/:id", authenticateToken, requireRole(['admin']), async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      
+
       // Check if user exists
       const user = await storage.getUser(id);
       if (!user) {
@@ -303,10 +303,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...req.body,
         createdById: req.user?.id || 0,
       });
-      
+
       const todoList = await storage.createTodoList(todoData);
       const fullTodoList = await storage.getTodoList(todoList.id);
-      
+
       // Send notification if todo is assigned to someone
       if (todoData.assignedToId && todoData.assignedToId !== req.user?.id) {
         const { DeviceNotificationService } = await import("./device-notification-service");
@@ -318,7 +318,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           "normal"
         );
       }
-      
+
       res.status(201).json({ todoList: fullTodoList });
     } catch (error: any) {
       res.status(400).json({ message: error.message });
@@ -329,12 +329,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { todoListId, text, priority } = req.body;
       console.log("Creating todo item with data:", { todoListId, text, priority, user: req.user?.id });
-      
+
       // Validate input
       if (!todoListId || !text || !text.trim()) {
         return res.status(400).json({ message: "Todo list ID and task text are required" });
       }
-      
+
       const itemData = {
         todoListId: parseInt(todoListId),
         title: text.trim(),
@@ -342,11 +342,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         priority: priority || "medium",
         isCompleted: false,
       };
-      
+
       console.log("Parsed item data:", itemData);
       const todoItem = await storage.createTodoItem(itemData);
       console.log("Created todo item:", todoItem);
-      
+
       res.status(201).json({ todoItem });
     } catch (error: any) {
       console.error("Error creating todo item:", error);
@@ -361,7 +361,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...req.body,
         todoListId,
       });
-      
+
       const todoItem = await storage.createTodoItem(itemData);
       res.status(201).json({ todoItem });
     } catch (error: any) {
@@ -373,7 +373,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       const updates = req.body;
-      
+
       const todoItem = await storage.updateTodoItem(id, updates);
       if (!todoItem) {
         return res.status(404).json({ message: "Todo item not found" });
@@ -390,7 +390,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       const success = await storage.deleteTodoItem(id);
-      
+
       if (!success) {
         return res.status(404).json({ message: "Todo item not found" });
       }
@@ -407,7 +407,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const todoListId = parseInt(req.params.id);
       const success = await storage.deleteAllTodoItems(todoListId);
-      
+
       if (!success) {
         return res.status(404).json({ message: "Todo list not found" });
       }
@@ -427,7 +427,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const days = parseInt(req.query.days as string) || 30;
       const startDate = req.query.startDate as string;
       const endDate = req.query.endDate as string;
-      
+
       // Get user stats
       const userStats = await storage.getUserStats();
       const allUsers = await storage.getAllUsers();
@@ -453,7 +453,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Others see only their own tasks
         todoLists = await storage.getTodoListsByUser(req.user!.id);
       }
-      
+
       // Get todo stats based on role
       let todoStats;
       if (req.user!.role === 'admin') {
@@ -597,11 +597,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         managerId: req.body.managerId && req.body.managerId !== "" ? parseInt(req.body.managerId) : null,
         description: req.body.description && req.body.description.trim() !== "" ? req.body.description : undefined,
       };
-      
+
 
       const requestData = insertInterviewRequestSchema.parse(transformedData);
       const request = await storage.createInterviewRequest(requestData);
-      
+
       // Send device notification about new interview request
       const { DeviceNotificationService } = await import("./device-notification-service");
       if (requestData.managerId) {
@@ -613,7 +613,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           "high"
         );
       }
-      
+
       res.status(201).json({ request });
     } catch (error: any) {
       console.error('Interview request validation error:', error);
@@ -632,11 +632,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       const updates = req.body;
-      
+
       // Get original request to get requestedById
       const allRequests = await storage.getInterviewRequests();
       const original = allRequests.find(r => r.id === id);
-      
+
       const request = await storage.updateInterviewRequest(id, updates);
       if (!request) {
         return res.status(404).json({ message: "Interview request not found" });
@@ -714,6 +714,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Feedback Types routes
+  app.post("/api/feedback-types", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const feedbackTypeData = {
+        ...req.body,
+        createdById: req.user!.id,
+      };
+
+      const feedbackType = await storage.createFeedbackType(feedbackTypeData);
+      res.json({ feedbackType });
+    } catch (error: any) {
+      console.error("Error creating feedback type:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/feedback-types", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const feedbackTypes = await storage.getAllFeedbackTypes();
+      res.json({ feedbackTypes });
+    } catch (error: any) {
+      console.error("Error fetching feedback types:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.patch("/api/feedback-types/:id", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+
+      const feedbackType = await storage.updateFeedbackType(id, updates);
+      if (!feedbackType) {
+        return res.status(404).json({ message: "Feedback Type not found" });
+      }
+      res.json({ feedbackType });
+    } catch (error: any) {
+      console.error("Error updating feedback type:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/feedback-types/:id", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteFeedbackType(id);
+      if (!success) {
+        return res.status(404).json({ message: "Feedback Type not found" });
+      }
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Error deleting feedback type:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // Archive routes
   app.get("/api/archive", authenticateToken, requireRole(['admin', 'manager']), async (req: AuthRequest, res) => {
     try {
@@ -727,9 +783,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/archive", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const { itemType, itemId, reason } = req.body;
-      
+
       console.log("Archive request received:", { itemType, itemId, reason, userId: req.user!.id });
-      
+
       if (!itemType || !itemId) {
         return res.status(400).json({ message: "itemType and itemId are required" });
       }
@@ -753,7 +809,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       console.log("Item data found:", itemData);
-      
+
       const archivedItem = await storage.archiveItem(itemType, itemId, itemData, req.user!.id, reason);
       res.status(201).json({ archivedItem });
     } catch (error: any) {
@@ -766,7 +822,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       const { newReport, itemData } = req.body;
-      
+
       if (newReport) {
         // Adding a new interview report
         const reportData = {
@@ -775,22 +831,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
           reportedBy: req.user!.id,
           reportedAt: new Date().toISOString(),
         };
-        
+
         // Get the current archived item to append the new report
         const currentItem = await storage.getArchivedItems();
         const targetItem = currentItem.find(item => item.id === id);
-        
+
         if (!targetItem) {
           return res.status(404).json({ message: "Archive item not found" });
         }
-        
+
         // Parse existing item data and add the new report
         let existingData = JSON.parse(targetItem.itemData);
         if (!existingData.reports) {
           existingData.reports = [];
         }
         existingData.reports.push(reportData);
-        
+
         const updatedItem = await storage.updateArchivedItem(id, { 
           itemData: JSON.stringify(existingData) 
         });
@@ -822,12 +878,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/archive/:id", authenticateToken, requireRole(['admin', 'manager']), async (req: AuthRequest, res) => {
     try {
       const archiveId = parseInt(req.params.id);
-      
+
       const success = await storage.deleteArchivedItem(archiveId);
       if (!success) {
         return res.status(404).json({ message: "Archive item not found" });
       }
-      
+
       res.json({ success: true, message: "Archive item deleted successfully" });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -870,7 +926,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const entryId = parseInt(req.params.id);
       const success = await storage.deleteOperationalData(entryId);
-      
+
       if (success) {
         res.json({ message: "Operational data deleted successfully" });
       } else {
@@ -955,7 +1011,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           actionUrl: "/dashboard"
         }
       );
-      
+
       res.json({ message: "Test notification sent successfully" });
     } catch (error) {
       console.error("Error sending test notification:", error);
@@ -967,13 +1023,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { title, message, priority } = req.body;
       const { DeviceNotificationService } = await import("./device-notification-service");
-      
+
       await DeviceNotificationService.createSystemAlert(
         title || "System Alert",
         message || "A system alert has been triggered",
         priority || "normal"
       );
-      
+
       res.json({ message: "System alert sent to all users" });
     } catch (error) {
       console.error("Error sending system alert:", error);
@@ -982,8 +1038,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
-  
 
-  
+
+
   return httpServer;
 }
