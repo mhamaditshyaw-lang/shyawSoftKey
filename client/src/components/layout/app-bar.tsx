@@ -115,7 +115,7 @@ export default function AppBar({}: AppBarProps) {
             <div className="flex items-center space-x-3 group cursor-pointer" onClick={() => window.location.href = '/dashboard'}>
               <div className="flex items-center justify-center w-12 h-12 bg-white rounded-xl shadow-lg transition-all duration-300 group-hover:shadow-red-200 group-hover:scale-110 border-2 border-red-200">
                 <img 
-                  src="/attached_assets/shyaw_1754395652719.jpg" 
+                  src="/attached_assets/shyaw_1754396249542.jpg" 
                   alt="Shyaw Logo" 
                   className="w-10 h-10 object-contain transition-transform duration-300 group-hover:scale-110" 
                 />
