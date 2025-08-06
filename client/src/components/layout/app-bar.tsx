@@ -29,7 +29,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { authenticatedRequest } from "@/lib/auth";
 import { Link } from "wouter";
-import shyawLogo from "@assets/shyaw_1754396249542.jpg";
 
 interface AppBarProps {}
 
@@ -114,12 +113,8 @@ export default function AppBar({}: AppBarProps) {
           {/* Left Section - Logo */}
           <div className="flex items-center">
             <div className="flex items-center space-x-3 group cursor-pointer" onClick={() => window.location.href = '/dashboard'}>
-              <div className="flex items-center justify-center w-12 h-12 bg-white rounded-xl shadow-lg transition-all duration-300 group-hover:shadow-red-200 group-hover:scale-110 border-2 border-red-200">
-                <img 
-                  src={shyawLogo} 
-                  alt="Shyaw Logo" 
-                  className="w-10 h-10 object-contain transition-transform duration-300 group-hover:scale-110" 
-                />
+              <div className="flex items-center justify-center w-12 h-12 bg-dashboard-primary rounded-xl shadow-lg transition-all duration-300 group-hover:shadow-red-200 group-hover:scale-110 border-2 border-red-200">
+                <Building2 className="w-10 h-10 text-white transition-transform duration-300 group-hover:scale-110" />
               </div>
               <div className="hidden sm:block transition-all duration-300 group-hover:translate-x-1">
                 <h1 className="text-xl font-bold bg-gradient-to-r from-red-600 to-blue-800 bg-clip-text text-transparent">

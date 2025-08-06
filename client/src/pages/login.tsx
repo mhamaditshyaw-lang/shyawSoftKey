@@ -8,8 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, User, Lock } from "lucide-react";
-import shyawLogo from "@assets/shyaw_1754298603480.jpg";
+import { CheckCircle, User, Lock, Building2 } from "lucide-react";
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -52,11 +51,7 @@ export default function LoginPage() {
       {/* Mobile Header with Logo - Only visible on mobile */}
       <div className="lg:hidden w-full bg-gradient-to-r from-indigo-600 to-indigo-800 p-4 flex items-center justify-center">
         <div className="flex items-center space-x-3">
-          <img 
-            src={shyawLogo} 
-            alt="Shyaw Logo" 
-            className="h-12 w-auto rounded-lg"
-          />
+          <Building2 className="h-12 w-12 text-white" />
           <h1 className="text-xl font-bold text-white">{t("systemTitle")}</h1>
         </div>
       </div>
@@ -72,11 +67,9 @@ export default function LoginPage() {
         <div className="text-center text-white relative z-10">
           {/* Shyaw Logo */}
           <div className="flex justify-center mb-6">
-            <img 
-              src={shyawLogo} 
-              alt="Shyaw Logo" 
-              className="h-24 w-auto hover:scale-105 transition-transform duration-300 rounded-lg"
-            />
+            <div className="p-4 bg-white/10 rounded-lg backdrop-blur-sm">
+              <Building2 className="h-16 w-16 text-white hover:scale-105 transition-transform duration-300" />
+            </div>
           </div>
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-indigo-100 bg-clip-text text-transparent">{t("systemTitle")}</h1>
           <p className="text-xl text-indigo-100 mb-2">{t("professionalPlatform")}</p>
@@ -112,12 +105,8 @@ export default function LoginPage() {
             <CardHeader className="text-center space-y-4 pb-6">
               {/* Mobile Logo in form - only visible on mobile */}
               <div className="lg:hidden flex justify-center">
-                <div className="p-2 bg-white rounded-full shadow-lg">
-                  <img 
-                    src={shyawLogo} 
-                    alt="Shyaw Logo" 
-                    className="w-16 h-16 object-contain rounded-lg"
-                  />
+                <div className="p-2 bg-indigo-600 rounded-full shadow-lg">
+                  <Building2 className="w-16 h-16 text-white" />
                 </div>
               </div>
               <CardTitle className="text-2xl sm:text-3xl text-indigo-800 font-bold">{t("welcomeBackTitle")}</CardTitle>
