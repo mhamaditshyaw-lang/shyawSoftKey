@@ -50,13 +50,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       badge: null,
       roles: ["admin", "manager"]
     },
-    {
-      title: t("employeeManagement"),
-      href: "/employee-management",
-      icon: UserCheck,
-      badge: "New",
-      roles: ["admin", "manager"]
-    },
+    
     {
       title: t("todos"),
       href: "/todos",

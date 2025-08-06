@@ -105,22 +105,7 @@ export default function PageMenu() {
       roles: ["admin"],
       category: t("reportsCategory")
     },
-    { 
-      title: t("employeeManagement"), 
-      href: "/employee-management", 
-      icon: Users, 
-      description: "Comprehensive employee management with detailed profiles", 
-      roles: ["admin", "manager"],
-      category: t("hrCategory")
-    },
-    { 
-      title: t("addNewEmployee"), 
-      href: "/add-employee", 
-      icon: Users, 
-      description: "Create new employee accounts with complete information", 
-      roles: ["admin", "manager"],
-      category: t("hrCategory")
-    },
+    
 
     { 
       title: "Multilingual Demo", 
