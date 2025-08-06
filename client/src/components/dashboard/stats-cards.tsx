@@ -169,8 +169,8 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
         description="Active employees"
         color="primary"
         change={{
-          value: 12,
-          type: "increase"
+          value: Math.round((stats?.totalUsers || 0) > 1 ? ((stats.totalUsers - 1) / 1) * 100 : 0),
+          type: (stats?.totalUsers || 0) > 1 ? "increase" : "neutral"
         }}
       />
       <StatsCard
@@ -180,8 +180,8 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
         description="Tasks in progress"
         color="accent"
         change={{
-          value: 8,
-          type: "increase"
+          value: Math.round((stats?.pendingTodos || 0) > 0 ? ((stats.pendingTodos / Math.max(stats.totalTodos, 1)) * 100) : 0),
+          type: (stats?.pendingTodos || 0) > 0 ? "increase" : "neutral"
         }}
       />
       <StatsCard
@@ -191,8 +191,8 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
         description="Task completion rate"
         color="secondary"
         change={{
-          value: 5,
-          type: "increase"
+          value: completionRate,
+          type: completionRate > 50 ? "increase" : completionRate > 0 ? "neutral" : "decrease"
         }}
       />
       <StatsCard
@@ -202,8 +202,8 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
         description="Employee evaluations"
         color="error"
         change={{
-          value: 3,
-          type: "decrease"
+          value: Math.round((stats?.pendingRequests || 0) > 0 ? ((stats.pendingRequests / Math.max(stats.totalRequests, 1)) * 100) : 0),
+          type: (stats?.pendingRequests || 0) > (stats?.totalRequests || 0) / 2 ? "increase" : "decrease"
         }}
       />
     </div>
