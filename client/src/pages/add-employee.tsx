@@ -24,7 +24,7 @@ const addEmployeeSchema = z.object({
   lastName: z.string().min(1, "Last name is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Please confirm your password"),
-  role: z.enum(["admin", "manager", "security"]),
+  role: z.enum(["admin", "manager", "security", "office"]),
   status: z.enum(["active", "inactive", "pending"]),
 }).refine(
   (data) => data.password === data.confirmPassword,
@@ -255,6 +255,7 @@ export default function AddEmployeePage() {
                             <SelectItem value="admin">{t("admin")}</SelectItem>
                             <SelectItem value="manager">{t("manager")}</SelectItem>
                             <SelectItem value="security">{t("security")}</SelectItem>
+                            <SelectItem value="office">Office</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormDescription>
