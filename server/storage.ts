@@ -488,7 +488,7 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(operationalData)
       .where(eq(operationalData.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   async clearAllOperationalData(): Promise<boolean> {
@@ -500,7 +500,7 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(archivedItems)
       .where(eq(archivedItems.id, archiveId));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 }
 
