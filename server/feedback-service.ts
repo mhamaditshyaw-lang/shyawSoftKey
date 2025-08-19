@@ -1,11 +1,23 @@
 import { db } from "./db";
-import { feedback, archivedItems, feedbackTypes, InsertFeedback, InsertArchivedItem, InsertFeedbackType } from "../shared/feedback-schema";
+import { feedback, archivedItems, feedbackTypes, InsertFeedback, InsertArchivedItem, InsertFeedbackType, insertFeedbackSchema, insertFeedbackTypeSchema, insertArchivedItemSchema } from "../shared/feedback-schema";
 import { users, interviewRequests, todoLists } from "../shared/schema";
 import { eq, desc } from "drizzle-orm";
 
 export class FeedbackService {
   static async createFeedback(feedbackData: InsertFeedback): Promise<any> {
-    const [newFeedback] = await db.insert(feedback).values(feedbackData).returning();
+    if (!feedbackData || typeof feedbackData !== 'object' || Object.keys(feedbackData).length === 0) {
+      throw new Error('Feedback data is empty or not an object.');
+    }
+    // Accept both camelCase and snake_case for submittedById
+    const insertObj = {
+      type: (feedbackData as any).type,
+      title: (feedbackData as any).title,
+      description: (feedbackData as any).description,
+      rating: (feedbackData as any).rating,
+      submittedById: (feedbackData as any).submittedById ?? (feedbackData as any).submitted_by_id,
+      relatedInterviewId: (feedbackData as any).relatedInterviewId ?? (feedbackData as any).related_interview_id,
+    };
+    const [newFeedback] = await db.insert(feedback).values(insertObj).returning();
     return newFeedback;
   }
 
@@ -22,8 +34,8 @@ export class FeedbackService {
         updatedAt: feedback.updatedAt,
         submittedBy: {
           id: users.id,
-          firstName: users.firstName,
-          lastName: users.lastName,
+          firstName: users.first_name,
+          lastName: users.last_name,
           email: users.email,
         },
       })
@@ -41,15 +53,18 @@ export class FeedbackService {
     archivedById: number,
     reason?: string
   ): Promise<any> {
-    const archiveData: InsertArchivedItem = {
+    if (!itemType || !itemId || !itemData || !archivedById) {
+      throw new Error('Archive data is missing required fields.');
+    }
+    // Normalize and validate using insertArchivedItemSchema
+    const archiveObj = {
       itemType,
       itemId,
       itemData: JSON.stringify(itemData),
       archivedById,
       reason,
     };
-
-    const [archivedItem] = await db.insert(archivedItems).values(archiveData).returning();
+    const [archivedItem] = await db.insert(archivedItems).values(archiveObj).returning();
     return archivedItem;
   }
 
@@ -64,8 +79,8 @@ export class FeedbackService {
         archivedAt: archivedItems.archivedAt,
         archivedBy: {
           id: users.id,
-          firstName: users.firstName,
-          lastName: users.lastName,
+          firstName: users.first_name,
+          lastName: users.last_name,
           email: users.email,
         },
       })
@@ -132,7 +147,15 @@ export class FeedbackService {
 
   // Feedback Types Management
   static async createFeedbackType(feedbackTypeData: InsertFeedbackType): Promise<any> {
-    const [newType] = await db.insert(feedbackTypes).values(feedbackTypeData).returning();
+    // Accept both camelCase and snake_case for displayName/createdById
+    const typeObj = {
+      name: (feedbackTypeData as any).name,
+      displayName: (feedbackTypeData as any).displayName ?? (feedbackTypeData as any).display_name,
+      createdById: (feedbackTypeData as any).createdById ?? (feedbackTypeData as any).created_by_id,
+      description: (feedbackTypeData as any).description,
+      isActive: (feedbackTypeData as any).isActive,
+    };
+    const [newType] = await db.insert(feedbackTypes).values(typeObj).returning();
     return newType;
   }
 
@@ -147,8 +170,8 @@ export class FeedbackService {
         createdAt: feedbackTypes.createdAt,
         createdBy: {
           id: users.id,
-          firstName: users.firstName,
-          lastName: users.lastName,
+          firstName: users.first_name,
+          lastName: users.last_name,
         },
       })
       .from(feedbackTypes)

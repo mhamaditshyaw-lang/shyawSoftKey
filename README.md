@@ -24,7 +24,7 @@ Before installing, make sure you have the following installed on your local comp
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_ACTUAL_USERNAME/shyaw-administration-system.git
+git clone https://github.com/YOUR_USERNAME/shyaw-administration-system.git
 cd shyaw-administration-system
 ```
 
