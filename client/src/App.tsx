@@ -13,6 +13,7 @@ import ModernDashboard from "@/pages/modern-dashboard";
 import InterviewsPage from "@/pages/interviews";
 import TodosPage from "@/pages/todos";
 import UsersPage from "@/pages/users";
+import UserManagementPage from "@/pages/user-management";
 import EmployeeManagementPage from "@/pages/employee-management";
 import AddEmployeePage from "@/pages/add-employee";
 
@@ -70,6 +71,11 @@ function Router() {
       <Route path="/users">
         <ProtectedRoute>
           <UsersPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/user-management">
+        <ProtectedRoute>
+          <UserManagementPage />
         </ProtectedRoute>
       </Route>
       <Route path="/employee-management">

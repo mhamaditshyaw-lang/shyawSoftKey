@@ -57,6 +57,12 @@ const NAVIGATION: NavigationItem[] = [
     roles: ['admin', 'manager'],
   },
   {
+    segment: 'user-management',
+    title: 'User Management',
+    icon: <Settings className="w-5 h-5" />,
+    roles: ['admin', 'manager'],
+  },
+  {
     segment: 'todos',
     title: 'Task Management',
     icon: <CheckSquare className="w-5 h-5" />,
