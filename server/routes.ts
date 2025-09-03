@@ -141,7 +141,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // User management routes (Admin and Manager can view)
-  app.get("/api/users", authenticateToken, requireRole(['admin', 'manager']), async (req, res) => {
+  app.get("/api/users", authenticateToken, requireRole(['admin', 'manager', 'office']), async (req, res) => {
     try {
       const users = await storage.getAllUsers();
       const usersWithoutPasswords = users.map(({ password, ...user }) => user);
@@ -607,7 +607,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/interviews", authenticateToken, requireRole(['security', 'admin', 'manager']), async (req: AuthRequest, res) => {
+  app.post("/api/interviews", authenticateToken, requireRole(['security', 'admin', 'manager', 'office', 'secretary']), async (req: AuthRequest, res) => {
     try {
       // Transform the data before validation
       const transformedData = {
@@ -651,7 +651,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/interviews/:id", authenticateToken, requireRole(['manager', 'admin']), async (req, res) => {
+  app.patch("/api/interviews/:id", authenticateToken, requireRole(['manager', 'admin', 'office']), async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const updates = req.body;
@@ -794,7 +794,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Archive routes
-  app.get("/api/archive", authenticateToken, requireRole(['admin', 'manager']), async (req: AuthRequest, res) => {
+  app.get("/api/archive", authenticateToken, requireRole(['admin', 'manager', 'office']), async (req: AuthRequest, res) => {
     try {
       const archivedItems = await storage.getArchivedItems();
       res.json({ archivedItems });
@@ -841,7 +841,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/archive/:id", authenticateToken, requireRole(['admin', 'manager']), async (req: AuthRequest, res) => {
+  app.patch("/api/archive/:id", authenticateToken, requireRole(['admin', 'manager', 'office']), async (req: AuthRequest, res) => {
     try {
       const id = parseInt(req.params.id);
       const { newReport, itemData } = req.body;
