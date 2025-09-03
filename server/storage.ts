@@ -228,6 +228,20 @@ export class DatabaseStorage implements IStorage {
     return result || undefined;
   }
 
+  async getTodoLists(): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]> {
+    const result = await db.query.todoLists.findMany({
+      with: {
+        createdBy: true,
+        assignedTo: true,
+        items: {
+          orderBy: (items, { desc }) => [desc(items.createdAt)],
+        },
+      },
+      orderBy: (todoLists, { desc }) => [desc(todoLists.createdAt)],
+    });
+    return result;
+  }
+
   async createTodoItem(item: InsertTodoItem): Promise<TodoItem> {
     console.log("Storage: Creating todo item with:", item);
     try {

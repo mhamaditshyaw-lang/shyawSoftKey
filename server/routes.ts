@@ -303,11 +303,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Todo routes (users only see their own)
+  // Todo routes (office role can see all, others see their own)
   app.get("/api/todos", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      // All users (including managers and admins) only see their own todos
-      const todoLists = await storage.getTodoListsByUser(req.user?.id || 0);
+      let todoLists;
+      if (req.user?.role === 'office') {
+        // Office role users can see all todo lists
+        todoLists = await storage.getTodoLists();
+      } else {
+        // All other users only see their own todos
+        todoLists = await storage.getTodoListsByUser(req.user?.id || 0);
+      }
       res.json({ todoLists });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
