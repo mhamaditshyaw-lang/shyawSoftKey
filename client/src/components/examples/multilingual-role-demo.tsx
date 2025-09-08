@@ -178,9 +178,7 @@ export function MultilingualRoleDemo({ className }: MultilingualRoleDemoProps) {
               onClick={() => setShowRoleDetails(!showRoleDetails)}
             >
               {showRoleDetails ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              {showRoleDetails 
-                ? (i18n.language === 'ku' ? "شاردنەوە" : "Hide") 
-                : (i18n.language === 'ku' ? "پیشاندان" : "Show")}
+              {showRoleDetails ? (i18n.language === 'ku' ? "شاردنەوە" : "Hide") : (i18n.language === 'ku' ? "پیشاندان" : "Show")}
             </Button>
           </div>
         </CardHeader>
@@ -212,9 +210,7 @@ export function MultilingualRoleDemo({ className }: MultilingualRoleDemoProps) {
                       variant={permission.allowed ? "default" : "destructive"}
                       className="text-xs"
                     >
-                      {permission.allowed 
-                        ? (i18n.language === 'ku' ? "ڕێگەپێدراو" : "Allowed")
-                        : (i18n.language === 'ku' ? "قەدەغە" : "Denied")}
+                      {permission.allowed ? (i18n.language === 'ku' ? "ڕێگەپێدراو" : "Allowed") : (i18n.language === 'ku' ? "قەدەغە" : "Denied")}
                     </Badge>
                   </TableCell>
                   {showRoleDetails && (
@@ -239,14 +235,10 @@ export function MultilingualRoleDemo({ className }: MultilingualRoleDemoProps) {
       <Card className="mt-6">
         <CardHeader>
           <CardTitle>
-            {i18n.language === 'ku' 
-              ? "نمونەی گۆڕینی زمان" 
-              : "Language Switch Demo"}
+            {i18n.language === 'ku' ? "نمونەی گۆڕینی زمان" : "Language Switch Demo"}
           </CardTitle>
           <CardDescription>
-            {i18n.language === 'ku' 
-              ? "بۆ گۆڕینی زمان لە سەرەوە کلیک بکە"
-              : "Click the language switcher above to see real-time translation"}
+            {i18n.language === 'ku' ? "بۆ گۆڕینی زمان لە سەرەوە کلیک بکە" : "Click the language switcher above to see real-time translation"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -270,7 +262,7 @@ export function MultilingualRoleDemo({ className }: MultilingualRoleDemoProps) {
                 </div>
               </div>
             </div>
-            
+
             <div className="p-4 border rounded-lg">
               <h4 className="font-semibold mb-2">
                 {i18n.language === 'ku' ? "ژمارەکان:" : "Numbers:"}
