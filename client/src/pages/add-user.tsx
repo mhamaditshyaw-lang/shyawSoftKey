@@ -192,7 +192,8 @@ export default function AddUserPage() {
                       <SelectItem value="admin">{t("admin")}</SelectItem>
                       <SelectItem value="manager">{t("manager")}</SelectItem>
                       <SelectItem value="security">{t("security")}</SelectItem>
-                      
+                      <SelectItem value="secretary">{t("secretary")}</SelectItem>
+                      <SelectItem value="office">{t("office")}</SelectItem>
                       <SelectItem value="office_team">Office Team</SelectItem>
                     </SelectContent>
                   </Select>

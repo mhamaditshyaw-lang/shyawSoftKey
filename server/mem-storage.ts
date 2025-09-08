@@ -70,7 +70,7 @@ export class MemStorage implements IStorage {
         {
           id: 2,
           username: 'manager',
-          email: 'manager@shyaw.com',
+          email: 'manager@company.com',
           password: hashedPassword,
           firstName: 'Manager',
           lastName: 'User',
@@ -96,7 +96,7 @@ export class MemStorage implements IStorage {
         {
           id: 3,
           username: 'security',
-          email: 'security@shyaw.com',
+          email: 'security@company.com',
           password: hashedPassword,
           firstName: 'Security',
           lastName: 'Guard',
@@ -118,10 +118,12 @@ export class MemStorage implements IStorage {
           phoneNumber: '+964-770-300-3000',
           createdAt: new Date(),
           lastActiveAt: new Date()
-        }
+        },
+        { id: 4, username: "secretary", email: "secretary@company.com", password: "password", firstName: "Secretary", lastName: "Staff", role: "secretary", status: "active", createdAt: new Date(), lastActiveAt: new Date() },
+        { id: 5, username: "office", email: "office@company.com", password: "password", firstName: "Office", lastName: "Worker", role: "office", status: "active", createdAt: new Date(), lastActiveAt: new Date() },
       ];
 
-      this.nextUserId = 4;
+      this.nextUserId = 6; // Increment based on the number of users added
     } catch (error) {
       console.error('Error initializing test data:', error);
     }
