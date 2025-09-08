@@ -21,7 +21,7 @@ export class MemStorage implements IStorage {
   private archivedItems: any[] = [];
   private feedback: any[] = [];
   private feedbackTypes: any[] = [];
-  
+
   private nextUserId = 1;
   private nextTodoListId = 1;
   private nextTodoItemId = 1;
@@ -38,7 +38,7 @@ export class MemStorage implements IStorage {
   private async initializeTestData() {
     try {
       const hashedPassword = await bcrypt.hash('password123', 12);
-      
+
       // Create test users
       this.users = [
         {
@@ -118,36 +118,10 @@ export class MemStorage implements IStorage {
           phoneNumber: '+964-770-300-3000',
           createdAt: new Date(),
           lastActiveAt: new Date()
-        },
-        {
-          id: 4,
-          username: 'office',
-          email: 'office@shyaw.com',
-          password: hashedPassword,
-          firstName: 'Office',
-          lastName: 'Worker',
-          role: 'office' as const,
-          status: 'active' as const,
-          permissions: {
-            canViewUsers: false,
-            canEditUsers: false,
-            canDeleteUsers: false,
-            canViewTodos: true,
-            canEditTodos: true,
-            canViewInterviews: true,
-            canEditInterviews: false,
-            canViewReports: false,
-            canManageNotifications: false
-          },
-          department: 'Administration',
-          position: 'Office Assistant',
-          phoneNumber: '+964-770-123-4567',
-          createdAt: new Date(),
-          lastActiveAt: new Date()
         }
       ];
-      
-      this.nextUserId = 5;
+
+      this.nextUserId = 4;
     } catch (error) {
       console.error('Error initializing test data:', error);
     }
@@ -173,7 +147,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date(),
       lastActiveAt: new Date()
     } as User & { id: number };
-    
+
     this.users.push(newUser);
     return newUser;
   }
@@ -181,7 +155,7 @@ export class MemStorage implements IStorage {
   async updateUser(id: number, updates: Partial<User>): Promise<User | undefined> {
     const userIndex = this.users.findIndex(u => u.id === id);
     if (userIndex === -1) return undefined;
-    
+
     this.users[userIndex] = { ...this.users[userIndex], ...updates };
     return this.users[userIndex];
   }
@@ -189,7 +163,7 @@ export class MemStorage implements IStorage {
   async deleteUser(id: number): Promise<boolean> {
     const userIndex = this.users.findIndex(u => u.id === id);
     if (userIndex === -1) return false;
-    
+
     this.users.splice(userIndex, 1);
     return true;
   }
@@ -216,7 +190,7 @@ export class MemStorage implements IStorage {
     const userLists = this.todoLists.filter(list => 
       list.createdById === userId || list.assignedToId === userId
     );
-    
+
     return userLists.map(list => ({
       ...list,
       createdBy: this.users.find(u => u.id === list.createdById)!,
@@ -231,7 +205,7 @@ export class MemStorage implements IStorage {
       id: this.nextTodoListId++,
       createdAt: new Date()
     } as TodoList & { id: number };
-    
+
     this.todoLists.push(newList);
     return newList;
   }
@@ -239,7 +213,7 @@ export class MemStorage implements IStorage {
   async getTodoList(id: number): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] }) | undefined> {
     const list = this.todoLists.find(l => l.id === id);
     if (!list) return undefined;
-    
+
     return {
       ...list,
       createdBy: this.users.find(u => u.id === list.createdById)!,
@@ -256,7 +230,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date(),
       completedAt: item.isCompleted ? new Date() : null
     } as TodoItem & { id: number };
-    
+
     this.todoItems.push(newItem);
     return newItem;
   }
@@ -264,13 +238,13 @@ export class MemStorage implements IStorage {
   async updateTodoItem(id: number, updates: Partial<TodoItem>): Promise<TodoItem | undefined> {
     const itemIndex = this.todoItems.findIndex(item => item.id === id);
     if (itemIndex === -1) return undefined;
-    
+
     const updateData = { 
       ...updates, 
       updatedAt: new Date(),
       completedAt: updates.isCompleted ? new Date() : null
     };
-    
+
     this.todoItems[itemIndex] = { ...this.todoItems[itemIndex], ...updateData };
     return this.todoItems[itemIndex];
   }
@@ -278,7 +252,7 @@ export class MemStorage implements IStorage {
   async deleteTodoItem(id: number): Promise<boolean> {
     const itemIndex = this.todoItems.findIndex(item => item.id === id);
     if (itemIndex === -1) return false;
-    
+
     this.todoItems.splice(itemIndex, 1);
     return true;
   }
@@ -295,11 +269,11 @@ export class MemStorage implements IStorage {
     );
     const listIds = userLists.map(list => list.id);
     const userItems = this.todoItems.filter(item => listIds.includes(item.todoListId));
-    
+
     const totalTodos = userItems.length;
     const completedTodos = userItems.filter(item => item.isCompleted).length;
     const pendingTodos = totalTodos - completedTodos;
-    
+
     return { totalTodos, completedTodos, pendingTodos };
   }
 
@@ -332,7 +306,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date(),
       updatedAt: new Date()
     } as InterviewRequest & { id: number };
-    
+
     this.interviewRequests.push(newRequest);
     return newRequest;
   }
@@ -340,7 +314,7 @@ export class MemStorage implements IStorage {
   async updateInterviewRequest(id: number, updates: Partial<InterviewRequest>): Promise<InterviewRequest | undefined> {
     const requestIndex = this.interviewRequests.findIndex(req => req.id === id);
     if (requestIndex === -1) return undefined;
-    
+
     this.interviewRequests[requestIndex] = { 
       ...this.interviewRequests[requestIndex], 
       ...updates,
@@ -354,7 +328,7 @@ export class MemStorage implements IStorage {
     const totalUsers = this.users.length;
     const activeUsers = this.users.filter(u => u.status === 'active').length;
     const pendingUsers = this.users.filter(u => u.status === 'pending').length;
-    
+
     return { totalUsers, activeUsers, pendingUsers };
   }
 
@@ -362,7 +336,7 @@ export class MemStorage implements IStorage {
     const totalTodos = this.todoItems.length;
     const completedTodos = this.todoItems.filter(item => item.isCompleted).length;
     const pendingTodos = totalTodos - completedTodos;
-    
+
     return { totalTodos, completedTodos, pendingTodos };
   }
 
@@ -370,7 +344,7 @@ export class MemStorage implements IStorage {
     const totalRequests = this.interviewRequests.length;
     const pendingRequests = this.interviewRequests.filter(req => req.status === 'pending').length;
     const approvedRequests = this.interviewRequests.filter(req => req.status === 'approved').length;
-    
+
     return { totalRequests, pendingRequests, approvedRequests };
   }
 
@@ -407,7 +381,7 @@ export class MemStorage implements IStorage {
   async updateArchivedItem(archiveId: number, updates: any): Promise<any> {
     const itemIndex = this.archivedItems.findIndex(item => item.id === archiveId);
     if (itemIndex === -1) return null;
-    
+
     this.archivedItems[itemIndex] = { ...this.archivedItems[itemIndex], ...updates };
     return this.archivedItems[itemIndex];
   }
@@ -422,7 +396,7 @@ export class MemStorage implements IStorage {
   async deleteArchivedItem(archiveId: number): Promise<boolean> {
     const itemIndex = this.archivedItems.findIndex(item => item.id === archiveId);
     if (itemIndex === -1) return false;
-    
+
     this.archivedItems.splice(itemIndex, 1);
     return true;
   }
@@ -444,7 +418,7 @@ export class MemStorage implements IStorage {
   async deleteOperationalData(id: number): Promise<boolean> {
     const itemIndex = this.operationalData.findIndex(item => item.id === id);
     if (itemIndex === -1) return false;
-    
+
     this.operationalData.splice(itemIndex, 1);
     return true;
   }
@@ -468,7 +442,7 @@ export class MemStorage implements IStorage {
   async updateFeedbackType(typeId: number, updates: any): Promise<any> {
     const typeIndex = this.feedbackTypes.findIndex(type => type.id === typeId);
     if (typeIndex === -1) return null;
-    
+
     this.feedbackTypes[typeIndex] = { ...this.feedbackTypes[typeIndex], ...updates };
     return this.feedbackTypes[typeIndex];
   }
