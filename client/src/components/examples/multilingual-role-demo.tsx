@@ -53,6 +53,13 @@ export function MultilingualRoleDemo({ className }: MultilingualRoleDemoProps) {
       { key: "reports", action: t("reports"), allowed: false },
       { key: "archive", action: t("archive"), allowed: false },
       { key: "systemSettings", action: t("settings"), allowed: false }
+    ],
+    office_team: [
+      { key: "userManagement", action: t("users"), allowed: true },
+      { key: "dataView", action: t("dataView"), allowed: true },
+      { key: "reports", action: t("reports"), allowed: true },
+      { key: "archive", action: t("archive"), allowed: true },
+      { key: "systemSettings", action: t("settings"), allowed: false }
     ]
   };
 
@@ -66,6 +73,7 @@ export function MultilingualRoleDemo({ className }: MultilingualRoleDemoProps) {
       case 'security': return <UserCheck className="w-4 h-4" />;
       case 'office': return <Database className="w-4 h-4" />;
       case 'secretary': return <Settings className="w-4 h-4" />;
+      case 'office_team': return <Users className="w-4 h-4" />;
       default: return <Users className="w-4 h-4" />;
     }
   };
@@ -77,6 +85,7 @@ export function MultilingualRoleDemo({ className }: MultilingualRoleDemoProps) {
       case 'security': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
       case 'office': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
       case 'secretary': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300';
+      case 'office_team': return 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300';
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
     }
   };

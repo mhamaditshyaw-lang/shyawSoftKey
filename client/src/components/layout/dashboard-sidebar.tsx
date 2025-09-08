@@ -41,14 +41,14 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       href: "/",
       icon: Home,
       badge: null,
-      roles: ["admin", "manager", "security", "office", "secretary"]
+      roles: ["admin", "manager", "security", "office", "secretary", "office_team"]
     },
     {
       title: t("users"),
       href: "/users",
       icon: Users,
       badge: null,
-      roles: ["admin", "manager", "office"]
+      roles: ["admin", "manager", "office", "office_team"]
     },
     
     {
@@ -56,7 +56,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       href: "/todos",
       icon: CheckSquare,
       badge: null,
-      roles: ["admin", "manager", "security", "office", "secretary"]
+      roles: ["admin", "manager", "security", "office", "secretary", "office_team"]
     },
 
     {
@@ -64,35 +64,35 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       href: "/interviews",
       icon: UserCheck,
       badge: null,
-      roles: ["admin", "manager", "security", "office", "secretary"]
+      roles: ["admin", "manager", "security", "office", "secretary", "office_team"]
     },
     {
       title: t("reports"),
       href: "/reports",
       icon: BarChart3,
       badge: null,
-      roles: ["admin", "manager", "office"]
+      roles: ["admin", "manager", "office", "office_team"]
     },
     {
       title: t("feedback"),
       href: "/feedback",
       icon: MessageSquare,
       badge: null,
-      roles: ["admin", "manager", "security", "secretary"]
+      roles: ["admin", "manager", "security", "secretary", "office_team"]
     },
     {
       title: t("archive"),
       href: "/archive",
       icon: Archive,
       badge: null,
-      roles: ["admin", "manager", "office"]
+      roles: ["admin", "manager", "office", "office_team"]
     },
     {
       title: "Daily Operations",
       href: "/metrics",
       icon: BarChart3,
       badge: "Data Entry",
-      roles: ["admin", "manager", "security", "office", "secretary"]
+      roles: ["admin", "manager", "security", "office", "secretary", "office_team"]
     },
     {
       title: "Data View",
