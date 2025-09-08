@@ -20,6 +20,9 @@ export default function AllDataPage() {
   const [customDate, setCustomDate] = useState("");
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [dataType, setDataType] = useState("all");
+  const [userFilter, setUserFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   // Fetch all data from different endpoints
   const { data: operationalData } = useQuery({
@@ -89,18 +92,30 @@ export default function AllDataPage() {
       type: "interview",
       title: `Interview: ${item.position}`,
       description: `Employee: ${item.candidateName} | Status: ${item.status}`,
+      userName: item.candidateName || 'Unknown',
+      userRole: 'candidate',
+      priority: item.status === 'urgent' ? 'high' : 'medium',
+      status: item.status || 'pending',
     })),
     ...(todosData?.todoLists || []).map((item: any) => ({
       ...item,
       type: "todo",
       title: `Todo: ${item.title}`,
       description: `${item.items?.length || 0} tasks | Priority: ${item.priority}`,
+      userName: item.assignedTo ? `${item.assignedTo.firstName} ${item.assignedTo.lastName}` : (item.createdBy ? `${item.createdBy.firstName} ${item.createdBy.lastName}` : 'Unknown'),
+      userRole: item.assignedTo?.role || item.createdBy?.role || 'Unknown',
+      priority: item.priority,
+      status: item.items?.every((i: any) => i.isCompleted) ? 'completed' : (item.items?.some((i: any) => i.isCompleted) ? 'in-progress' : 'pending'),
     })),
     ...(feedbackData?.feedback || []).map((item: any) => ({
       ...item,
       type: "feedback",
       title: `Feedback: ${item.type}`,
-      description: `Rating: ${item.rating}/5 | ${item.message?.substring(0, 50)}...`,
+      description: `Rating: ${item.rating}/5 | ${item.title || item.message?.substring(0, 50) || 'No description'}...`,
+      userName: item.submittedBy ? `${item.submittedBy.firstName} ${item.submittedBy.lastName}` : 'Unknown',
+      userRole: item.submittedBy?.role || 'Unknown',
+      priority: item.rating >= 4 ? 'high' : item.rating >= 3 ? 'medium' : 'low',
+      status: item.rating ? 'completed' : 'pending',
     })),
     ...(archiveData?.archivedItems || []).map((item: any) => ({
       ...item,
@@ -113,6 +128,10 @@ export default function AllDataPage() {
       type: "user",
       title: `User: ${item.username}`,
       description: `${item.firstName} ${item.lastName} | Role: ${item.role}`,
+      userName: `${item.firstName} ${item.lastName}`,
+      userRole: item.role,
+      priority: item.role === 'admin' ? 'high' : item.role === 'manager' ? 'medium' : 'low',
+      status: 'active',
     })),
   ];
 
@@ -155,10 +174,28 @@ export default function AllDataPage() {
     );
   };
 
+  // Get unique users for filter dropdown
+  const uniqueUsers = Array.from(new Set(allData.map((item: any) => item.userName).filter(Boolean)));
+
   // Filter data
   const filteredData = allData.filter((item: any) => {
     // Data type filter
     if (dataType !== "all" && item.type !== dataType) {
+      return false;
+    }
+
+    // User filter
+    if (userFilter !== "all" && item.userName !== userFilter) {
+      return false;
+    }
+
+    // Priority filter
+    if (priorityFilter !== "all" && item.priority !== priorityFilter) {
+      return false;
+    }
+
+    // Status filter
+    if (statusFilter !== "all" && item.status !== statusFilter) {
       return false;
     }
 
@@ -169,8 +206,10 @@ export default function AllDataPage() {
         item.title?.toLowerCase().includes(searchLower) ||
         item.description?.toLowerCase().includes(searchLower) ||
         item.username?.toLowerCase().includes(searchLower) ||
+        item.userName?.toLowerCase().includes(searchLower) ||
         item.position?.toLowerCase().includes(searchLower) ||
-        item.candidateName?.toLowerCase().includes(searchLower);
+        item.candidateName?.toLowerCase().includes(searchLower) ||
+        item.userRole?.toLowerCase().includes(searchLower);
       
       if (!matchesSearch) return false;
     }
@@ -246,6 +285,34 @@ export default function AllDataPage() {
         return "bg-gray-100 text-gray-800";
       case "user":
         return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getPriorityBadgeColor = (priority: string) => {
+    switch (priority) {
+      case "high":
+        return "bg-red-100 text-red-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "low":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getStatusBadgeColor = (status: string) => {
+    switch (status) {
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "in-progress":
+        return "bg-blue-100 text-blue-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "active":
+        return "bg-green-100 text-green-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -362,7 +429,7 @@ export default function AllDataPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4">
             {/* Search Input */}
             <div className="space-y-2">
               <Label htmlFor="search" className="text-sm font-medium">Search All Data</Label>
@@ -426,6 +493,55 @@ export default function AllDataPage() {
               </div>
             )}
 
+            {/* User Filter */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Filter by User</Label>
+              <Select value={userFilter} onValueChange={setUserFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Users" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Users</SelectItem>
+                  {uniqueUsers.map((userName) => (
+                    <SelectItem key={userName} value={userName}>{userName}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Priority Filter */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Filter by Priority</Label>
+              <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Priorities" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Priorities</SelectItem>
+                  <SelectItem value="high">High Priority</SelectItem>
+                  <SelectItem value="medium">Medium Priority</SelectItem>
+                  <SelectItem value="low">Low Priority</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Status Filter */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Filter by Status</Label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="in-progress">In Progress</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Auto Refresh */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">Auto Refresh</Label>
@@ -447,10 +563,13 @@ export default function AllDataPage() {
               <span className="text-gray-600">
                 Showing {filteredData.length} of {allData.length} total records
                 {dataType !== "all" && ` • Type: ${dataType}`}
+                {userFilter !== "all" && ` • User: ${userFilter}`}
+                {priorityFilter !== "all" && ` • Priority: ${priorityFilter}`}
+                {statusFilter !== "all" && ` • Status: ${statusFilter}`}
                 {dateFilter !== "all" && ` • Date: ${dateFilter === "custom" ? customDate : dateFilter}`}
                 {searchTerm && ` • Search: "${searchTerm}"`}
               </span>
-              {(searchTerm || dateFilter !== "all" || dataType !== "all") && (
+              {(searchTerm || dateFilter !== "all" || dataType !== "all" || userFilter !== "all" || priorityFilter !== "all" || statusFilter !== "all") && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -458,6 +577,9 @@ export default function AllDataPage() {
                     setSearchTerm("");
                     setDateFilter("all");
                     setDataType("all");
+                    setUserFilter("all");
+                    setPriorityFilter("all");
+                    setStatusFilter("all");
                     setCustomDate("");
                   }}
                   className="text-blue-600 hover:text-blue-800"
@@ -495,24 +617,35 @@ export default function AllDataPage() {
                 <div key={`${item.type}-${item.id || index}`} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
+                      <div className="flex items-center space-x-2 mb-2 flex-wrap">
                         {getTypeIcon(item.type)}
                         <h3 className="font-medium text-gray-900">{item.title}</h3>
                         <Badge className={getTypeBadgeColor(item.type)}>
                           {item.type}
                         </Badge>
                         {item.status && (
-                          <Badge variant="outline">
+                          <Badge className={getStatusBadgeColor(item.status)}>
                             {item.status}
+                          </Badge>
+                        )}
+                        {item.priority && (
+                          <Badge className={getPriorityBadgeColor(item.priority)}>
+                            {item.priority} priority
                           </Badge>
                         )}
                       </div>
                       <p className="text-sm text-gray-600 mb-2">{item.description}</p>
-                      <div className="flex items-center space-x-4 text-xs text-gray-500">
+                      <div className="flex items-center space-x-4 text-xs text-gray-500 flex-wrap">
                         <span className="flex items-center space-x-1">
                           <Calendar className="w-3 h-3" />
                           <span>{getRelativeTime(item.createdAt || item.updatedAt || new Date())}</span>
                         </span>
+                        {item.userName && (
+                          <span className="flex items-center space-x-1">
+                            <User className="w-3 h-3" />
+                            <span>{item.userName} ({item.userRole})</span>
+                          </span>
+                        )}
                         {item.id && (
                           <span>ID: {item.id}</span>
                         )}
