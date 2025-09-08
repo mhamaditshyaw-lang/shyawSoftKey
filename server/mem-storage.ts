@@ -119,11 +119,10 @@ export class MemStorage implements IStorage {
           createdAt: new Date(),
           lastActiveAt: new Date()
         },
-        { id: 4, username: "secretary", email: "secretary@company.com", password: "password", firstName: "Secretary", lastName: "Staff", role: "secretary", status: "active", createdAt: new Date(), lastActiveAt: new Date() },
-        { id: 5, username: "office", email: "office@company.com", password: "password", firstName: "Office", lastName: "Worker", role: "office", status: "active", createdAt: new Date(), lastActiveAt: new Date() },
+        
       ];
 
-      this.nextUserId = 6; // Increment based on the number of users added
+      this.nextUserId = 4; // Increment based on the number of users added
     } catch (error) {
       console.error('Error initializing test data:', error);
     }
