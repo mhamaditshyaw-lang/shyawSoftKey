@@ -43,12 +43,56 @@ async function createAdminUser() {
       status: 'active'
     }).returning();
 
+    // Create additional users
+    const additionalUsers = [
+      {
+        username: 'manager',
+        email: 'manager@shyaw.com',
+        password: hashedPassword,
+        firstName: 'System',
+        lastName: 'Manager',
+        role: 'manager',
+        status: 'active'
+      },
+      {
+        username: 'security',
+        email: 'security@shyaw.com',
+        password: hashedPassword,
+        firstName: 'Security',
+        lastName: 'Guard',
+        role: 'security',
+        status: 'active'
+      },
+      {
+        username: 'office',
+        email: 'office@shyaw.com',
+        password: hashedPassword,
+        firstName: 'Office',
+        lastName: 'Staff',
+        role: 'office',
+        status: 'active'
+      }
+    ];
+
+    for (const userData of additionalUsers) {
+      const existingUser = await db.select().from(users).where(eq(users.username, userData.username)).limit(1);
+      if (existingUser.length === 0) {
+        await db.insert(users).values(userData);
+        console.log(`✅ ${userData.role} user created: ${userData.username}`);
+      } else {
+        console.log(`⚠️  ${userData.username} already exists`);
+      }
+    }
+
     console.log('✅ Admin user created successfully!');
-    console.log('📧 Email: admin@shyaw.com');
-    console.log('👤 Username: admin');
-    console.log('🔑 Password: password123');
     console.log('');
-    console.log('⚠️  Please change the default password after first login!');
+    console.log('📋 Default user accounts:');
+    console.log('👤 admin (admin): password123');
+    console.log('👤 manager (manager): password123');
+    console.log('👤 security (security): password123');
+    console.log('👤 office (office): password123');
+    console.log('');
+    console.log('⚠️  Please change the default passwords after first login!');
     
   } catch (error) {
     console.error('❌ Error creating admin user:', error.message);
