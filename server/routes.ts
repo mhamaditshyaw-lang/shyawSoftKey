@@ -151,7 +151,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/users", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+  app.post("/api/users", authenticateToken, requireRole(['admin', 'office_team']), async (req: AuthRequest, res) => {
     try {
       const userData = insertUserSchema.parse(req.body);
 
