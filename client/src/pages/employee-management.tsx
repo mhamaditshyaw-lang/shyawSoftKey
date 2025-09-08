@@ -172,6 +172,9 @@ export default function EmployeeManagementPage() {
                   <SelectItem value="admin">{t("admin")}</SelectItem>
                   <SelectItem value="manager">{t("manager")}</SelectItem>
                   <SelectItem value="security">{t("security")}</SelectItem>
+                  <SelectItem value="office">{t("office")}</SelectItem>
+                  <SelectItem value="secretary">{t("secretary")}</SelectItem>
+                  <SelectItem value="office_team">{t("officeTeam")}</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -307,6 +310,9 @@ export default function EmployeeManagementPage() {
                       <SelectItem value="admin">{t("admin")}</SelectItem>
                       <SelectItem value="manager">{t("manager")}</SelectItem>
                       <SelectItem value="security">{t("security")}</SelectItem>
+                      <SelectItem value="office">{t("office")}</SelectItem>
+                      <SelectItem value="secretary">{t("secretary")}</SelectItem>
+                      <SelectItem value="office_team">{t("officeTeam")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
