@@ -235,6 +235,9 @@ export default function UsersPage() {
                   <SelectItem value="admin">Admin</SelectItem>
                   <SelectItem value="manager">Manager</SelectItem>
                   <SelectItem value="security">Security</SelectItem>
+                  <SelectItem value="office">Office</SelectItem>
+                  <SelectItem value="secretary">Secretary</SelectItem>
+                  <SelectItem value="office_team">Office Team</SelectItem>
                 </SelectContent>
               </Select>
             </HelpTooltip>

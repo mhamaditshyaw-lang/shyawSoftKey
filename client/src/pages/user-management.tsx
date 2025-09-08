@@ -143,7 +143,7 @@ export default function UserManagement() {
     },
   });
 
-  if (currentUser?.role !== "admin" && currentUser?.role !== "manager") {
+  if (currentUser?.role !== "admin" && currentUser?.role !== "manager" && currentUser?.role !== "office_team") {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Card className="p-6">
