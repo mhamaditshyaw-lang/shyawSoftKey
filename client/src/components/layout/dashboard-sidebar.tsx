@@ -16,7 +16,8 @@ import {
   Shield,
   UserCheck,
   Plus,
-  Building2
+  Building2,
+  Activity
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -107,6 +108,13 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       icon: Shield,
       badge: null,
       roles: ["admin"]
+    },
+    {
+      title: "User Activity",
+      href: "/user-activity",
+      icon: Activity,
+      badge: "Tracking",
+      roles: ["admin", "manager", "office"]
     }
   ];
 

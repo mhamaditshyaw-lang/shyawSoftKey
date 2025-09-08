@@ -126,6 +126,12 @@ const NAVIGATION: Navigation = [
     ],
   },
   {
+    segment: 'user-activity',
+    title: 'User Activity',
+    icon: <Activity className="w-5 h-5" />,
+    roles: ['admin', 'manager', 'office'],
+  },
+  {
     segment: 'feedback',
     title: 'Feedback & Reviews',
     icon: <MessageSquare className="w-5 h-5" />,

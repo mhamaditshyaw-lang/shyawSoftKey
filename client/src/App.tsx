@@ -23,6 +23,7 @@ import MetricsPage from "@/pages/metrics";
 import MultilingualDemoPage from "@/pages/multilingual-demo";
 import DataViewPage from "@/pages/data-view";
 import AllDataPage from "@/pages/all-data";
+import UserActivityPage from "@/pages/user-activity";
 import ReportsPage from "@/pages/reports";
 import NotificationTestPage from "@/pages/notification-test";
 import NotificationManagementPage from "@/pages/notification-management";
@@ -112,6 +113,11 @@ function Router() {
       <Route path="/all-data">
         <ProtectedRoute>
           <AllDataPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/user-activity">
+        <ProtectedRoute>
+          <UserActivityPage />
         </ProtectedRoute>
       </Route>
       <Route path="/reports">
