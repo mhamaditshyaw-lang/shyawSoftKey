@@ -307,8 +307,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/todos", authenticateToken, async (req: AuthRequest, res) => {
     try {
       let todoLists;
-      if (req.user?.role === 'office' || req.user?.role === 'admin' || req.user?.role === 'user') {
-        // Office, admin, and user roles can see all todo lists
+      if (req.user?.role === 'office' || req.user?.role === 'admin' || req.user?.role === 'user' || req.user?.role === 'office_team') {
+        // Office, admin, user, and office_team roles can see all todo lists
         todoLists = await storage.getTodoLists();
       } else {
         // Manager, security, and other roles only see their own todos

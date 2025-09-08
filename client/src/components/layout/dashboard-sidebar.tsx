@@ -100,7 +100,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       href: "/data-view",
       icon: Database,
       badge: null,
-      roles: ["admin", "manager", "security", "office"]
+      roles: ["admin", "manager", "security", "office", "office_team"]
     },
     {
       title: t("allData"),
@@ -114,7 +114,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       href: "/user-activity",
       icon: Activity,
       badge: "Tracking",
-      roles: ["admin", "manager", "office"]
+      roles: ["admin", "manager", "office", "office_team"]
     }
   ];
 
