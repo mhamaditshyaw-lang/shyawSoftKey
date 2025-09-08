@@ -18,7 +18,7 @@ export default function AddUserPage() {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
-  
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -38,12 +38,12 @@ export default function AddUserPage() {
         },
         body: JSON.stringify(userData)
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Failed to create user");
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -191,9 +191,9 @@ export default function AddUserPage() {
                     <SelectContent>
                       <SelectItem value="admin">{t("admin")}</SelectItem>
                       <SelectItem value="manager">{t("manager")}</SelectItem>
-                      <SelectItem value="security">{t("security")}</SelectItem>
-                      <SelectItem value="secretary">{t("secretary")}</SelectItem>
-                      <SelectItem value="office">{t("office")}</SelectItem>
+                      <SelectItem value="security">Security</SelectItem>
+                      <SelectItem value="secretary">Secretary</SelectItem>
+                      <SelectItem value="office">Office</SelectItem>
                       <SelectItem value="office_team">Office Team</SelectItem>
                     </SelectContent>
                   </Select>
