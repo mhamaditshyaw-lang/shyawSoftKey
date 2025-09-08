@@ -256,6 +256,8 @@ export default function AddEmployeePage() {
                             <SelectItem value="manager">{t("manager")}</SelectItem>
                             <SelectItem value="security">{t("security")}</SelectItem>
                             <SelectItem value="office">Office</SelectItem>
+                            <SelectItem value="secretary">Secretary</SelectItem>
+                            <SelectItem value="office_team">Office Team</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormDescription>
