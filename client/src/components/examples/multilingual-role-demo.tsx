@@ -47,13 +47,6 @@ export function MultilingualRoleDemo({ className }: MultilingualRoleDemoProps) {
       { key: "archive", action: t("archive"), allowed: true },
       { key: "systemSettings", action: t("settings"), allowed: false }
     ],
-    
-      { key: "userManagement", action: t("users"), allowed: false },
-      { key: "dataView", action: t("dataView"), allowed: true },
-      { key: "reports", action: t("reports"), allowed: false },
-      { key: "archive", action: t("archive"), allowed: false },
-      { key: "systemSettings", action: t("settings"), allowed: false }
-    ],
     office_team: [
       { key: "userManagement", action: t("users"), allowed: true },
       { key: "dataView", action: t("dataView"), allowed: true },
