@@ -321,8 +321,8 @@ export class MemStorage implements IStorage {
     }));
   }
 
-  async getInterviewRequestsBySecretary(secretaryId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]> {
-    return this.getInterviewRequests(); // Secretary can see all requests
+  async getInterviewRequestsByUser(userId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]> {
+    return this.getInterviewRequests(); // User can see all requests
   }
 
   async createInterviewRequest(request: InsertInterviewRequest): Promise<InterviewRequest> {

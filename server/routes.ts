@@ -515,7 +515,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         interviews = await storage.getInterviewRequestsByManager(req.user!.id);
       } else {
         interviewStats = await storage.getInterviewStats();
-        interviews = await storage.getInterviewRequestsBySecretary(req.user!.id);
+        interviews = await storage.getInterviewRequestsByUser(req.user!.id);
       }
       const requestsByStatus = interviews.reduce((acc: any[], request) => {
         const existing = acc.find(item => item.status === request.status);
@@ -599,7 +599,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           r.managerId === req.user!.id || r.managerId === null
         );
       } else if (req.user!.role === 'security') {
-        requests = await storage.getInterviewRequestsBySecretary(req.user!.id);
+        requests = await storage.getInterviewRequestsByUser(req.user!.id);
       }
       res.json({ requests });
     } catch (error: any) {
@@ -607,7 +607,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/interviews", authenticateToken, requireRole(['security', 'admin', 'manager', 'office', 'secretary', 'office_team']), async (req: AuthRequest, res) => {
+  app.post("/api/interviews", authenticateToken, requireRole(['security', 'admin', 'manager', 'office', 'office_team']), async (req: AuthRequest, res) => {
     try {
       // Transform the data before validation
       const transformedData = {

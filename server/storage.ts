@@ -50,7 +50,7 @@ export interface IStorage {
   // Interview request methods
   getInterviewRequests(): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;
   getInterviewRequestsByManager(managerId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;
-  getInterviewRequestsBySecretary(secretaryId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;
+  getInterviewRequestsByUser(userId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;
   createInterviewRequest(request: InsertInterviewRequest): Promise<InterviewRequest>;
   updateInterviewRequest(id: number, updates: Partial<InterviewRequest>): Promise<InterviewRequest | undefined>;
   
@@ -324,9 +324,9 @@ export class DatabaseStorage implements IStorage {
     return result;
   }
 
-  async getInterviewRequestsBySecretary(secretaryId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]> {
+  async getInterviewRequestsByUser(userId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]> {
     const result = await db.query.interviewRequests.findMany({
-      where: (interviewRequests, { eq }) => eq(interviewRequests.requestedById, secretaryId),
+      where: (interviewRequests, { eq }) => eq(interviewRequests.requestedById, userId),
       with: {
         requestedBy: true,
         manager: true,
