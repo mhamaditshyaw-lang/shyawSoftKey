@@ -11,7 +11,7 @@ build = ["npm", "run", "build"]
 run = ["npm", "run", "start"]
 
 [workflows]
-runButton = "Start Application"
+runButton = "No Run"
 
 [[workflows.workflow]]
 name = "Project"
@@ -39,6 +39,15 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev"
+
+[[workflows.workflow]]
+name = "No Run"
+author = 47360066
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Application is not configured to run automatically\""
 
 [[ports]]
 localPort = 5000
