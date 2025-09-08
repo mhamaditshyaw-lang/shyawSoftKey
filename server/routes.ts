@@ -172,23 +172,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status: 'active', // Admin created users are active by default
       });
 
-      // Send device notification about new user creation (with error handling)
-      try {
-        const { DeviceNotificationService } = await import("./device-notification-service");
-        // Only create notification if the creator exists and has a valid ID
-        if (req.user?.id && typeof req.user.id === 'number' && req.user.id > 0) {
-          await DeviceNotificationService.createUserNotification(
-            req.user.id,
-            "user_activity",
-            "New User Created",
-            `User ${user.username} has been added to the system`,
-            "normal"
-          );
-        }
-      } catch (notificationError) {
-        // Log error but don't fail user creation
-        console.log("Failed to create device notification:", notificationError);
-      }
+      // Device notification creation temporarily disabled due to foreign key constraint issues
+      // TODO: Re-enable once user database issues are resolved
+      console.log(`User ${user.username} created successfully by admin ${req.user?.username || req.user?.id}`);
 
       const { password, ...userWithoutPassword } = user;
       res.status(201).json({ user: userWithoutPassword });
