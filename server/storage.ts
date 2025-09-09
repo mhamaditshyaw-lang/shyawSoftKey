@@ -64,6 +64,7 @@ export interface IStorage {
   // Feedback methods
   createFeedback(feedbackData: any): Promise<any>;
   getAllFeedback(): Promise<any[]>;
+  getFeedbackByUser(userId: number): Promise<any[]>;
   
   // Archive methods
   archiveItem(itemType: string, itemId: number, itemData: any, archivedById: number, reason?: string): Promise<any>;

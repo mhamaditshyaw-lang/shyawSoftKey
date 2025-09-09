@@ -711,7 +711,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Feedback routes
   app.get("/api/feedback", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const feedback = await storage.getAllFeedback();
+      let feedback;
+      if (req.user?.role === 'security') {
+        // Security role can only see their own feedback
+        feedback = await storage.getFeedbackByUser(req.user?.id || 0);
+      } else {
+        // All other roles can see all feedback
+        feedback = await storage.getAllFeedback();
+      }
       res.json({ feedback });
     } catch (error: any) {
       res.status(500).json({ message: error.message });

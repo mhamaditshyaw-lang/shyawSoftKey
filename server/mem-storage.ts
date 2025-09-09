@@ -360,6 +360,10 @@ export class MemStorage implements IStorage {
     return [...this.feedback];
   }
 
+  async getFeedbackByUser(userId: number): Promise<any[]> {
+    return this.feedback.filter(feedback => feedback.submittedById === userId);
+  }
+
   // Archive methods (mock implementations)
   async archiveItem(itemType: string, itemId: number, itemData: any, archivedById: number, reason?: string): Promise<any> {
     const archivedItem = {
