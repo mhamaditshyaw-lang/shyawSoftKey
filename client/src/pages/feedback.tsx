@@ -313,66 +313,6 @@ export default function FeedbackPage() {
         </CardContent>
       </Card>
 
-      {/* Enhanced Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-blue-100 text-sm font-medium">{t("totalFeedback")}</p>
-                <p className="text-3xl font-bold">{feedbackList.length}</p>
-                <p className="text-blue-200 text-xs">{t("filtered")}: {filteredFeedback.length}</p>
-              </div>
-              <MessageSquare className="w-10 h-10 text-blue-200" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-yellow-100 text-sm font-medium">{t("highRated")}</p>
-                <p className="text-3xl font-bold">
-                  {filteredFeedback.filter((f: any) => f.rating && parseInt(f.rating) >= 4).length}
-                </p>
-                <p className="text-yellow-200 text-xs">4+ {t("stars")}</p>
-              </div>
-              <Star className="w-10 h-10 text-yellow-200" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-green-100 text-sm font-medium">Today's Feedback</p>
-                <p className="text-3xl font-bold">
-                  {feedbackList.filter((f: any) => isToday(f.createdAt)).length}
-                </p>
-                <p className="text-green-200 text-xs">New submissions</p>
-              </div>
-              <TrendingUp className="w-10 h-10 text-green-200" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-purple-100 text-sm font-medium">Contributors</p>
-                <p className="text-3xl font-bold">
-                  {new Set(filteredFeedback.map((f: any) => f.submittedBy.id)).size}
-                </p>
-                <p className="text-purple-200 text-xs">Unique users</p>
-              </div>
-              <User className="w-10 h-10 text-purple-200" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Feedback List */}
       <div className="space-y-6">
@@ -454,7 +394,6 @@ export default function FeedbackPage() {
         open={showFeedbackModal} 
         onOpenChange={setShowFeedbackModal} 
         interviews={interviews}
-        feedbackTypes={feedbackTypes}
       />
 
 
