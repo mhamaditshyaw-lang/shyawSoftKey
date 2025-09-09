@@ -342,7 +342,10 @@ export default function FeedbackPage() {
                       {(user?.role === "admin" || user?.role === "manager") && (
                         <div className="flex space-x-2">
                           <Button variant="outline" size="sm">
-                            Reply
+                            Comments
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            Details
                           </Button>
                           <Button variant="outline" size="sm">
                             Archive
