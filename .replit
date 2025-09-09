@@ -40,15 +40,6 @@ mode = "sequential"
 task = "shell.exec"
 args = "npm run dev"
 
-[[workflows.workflow]]
-name = "No Run"
-author = 47360066
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"Application is not configured to run automatically\""
-
 [[ports]]
 localPort = 5000
 externalPort = 80
