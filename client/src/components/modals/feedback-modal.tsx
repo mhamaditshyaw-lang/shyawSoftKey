@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -28,9 +28,47 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
   });
   const [selectedRating, setSelectedRating] = useState(0);
   const [showAddTypeModal, setShowAddTypeModal] = useState(false);
-  const [newTypeName, setNewTypeName] = useState("");
+  const [newTypeData, setNewTypeData] = useState({
+    name: "",
+    displayName: "",
+    description: ""
+  });
   const { toast } = useToast();
   const { t } = useTranslation();
+
+  // Fetch feedback types from API
+  const { data: feedbackTypes, isLoading: typesLoading } = useQuery({
+    queryKey: ["/api/feedback-types"],
+    queryFn: async () => {
+      const response = await authenticatedRequest("GET", "/api/feedback-types");
+      const data = await response.json();
+      return data.feedbackTypes;
+    },
+  });
+
+  // Mutation for creating new feedback types
+  const createTypeMutation = useMutation({
+    mutationFn: async (typeData: any) => {
+      const response = await authenticatedRequest("POST", "/api/feedback-types", typeData);
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/feedback-types"] });
+      toast({
+        title: "Success",
+        description: "New feedback type added successfully",
+      });
+      setNewTypeData({ name: "", displayName: "", description: "" });
+      setShowAddTypeModal(false);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add feedback type",
+        variant: "destructive",
+      });
+    },
+  });
 
   const createFeedbackMutation = useMutation({
     mutationFn: async (feedbackData: any) => {
@@ -123,10 +161,21 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="interview_feedback">Interview Feedback</SelectItem>
-                <SelectItem value="general_feedback">General Feedback</SelectItem>
-                <SelectItem value="system_improvement">System Improvement</SelectItem>
-                <SelectItem value="user_experience">User Experience</SelectItem>
+                {typesLoading ? (
+                  <SelectItem value="loading" disabled>Loading types...</SelectItem>
+                ) : (
+                  Array.isArray(feedbackTypes) ? feedbackTypes.map((type: any) => (
+                    <SelectItem key={type.id} value={type.name}>
+                      {type.displayName}
+                    </SelectItem>
+                  )) : [
+                    // Fallback types if API fails
+                    <SelectItem key="general" value="general_feedback">General Feedback</SelectItem>,
+                    <SelectItem key="interview" value="interview_feedback">Interview Feedback</SelectItem>,
+                    <SelectItem key="system" value="system_improvement">System Improvement</SelectItem>,
+                    <SelectItem key="ux" value="user_experience">User Experience</SelectItem>
+                  ]
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -227,34 +276,50 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="type-name">{t("typeName")}</Label>
+              <Label htmlFor="type-name">Type Name</Label>
               <Input
                 id="type-name"
-                placeholder={t("enterTypeName")}
-                value={newTypeName}
-                onChange={(e) => setNewTypeName(e.target.value)}
+                placeholder="Enter type name (e.g., performance_review)"
+                value={newTypeData.name}
+                onChange={(e) => setNewTypeData({...newTypeData, name: e.target.value})}
+              />
+            </div>
+            <div>
+              <Label htmlFor="display-name">Display Name</Label>
+              <Input
+                id="display-name"
+                placeholder="Enter display name (e.g., Performance Review)"
+                value={newTypeData.displayName}
+                onChange={(e) => setNewTypeData({...newTypeData, displayName: e.target.value})}
+              />
+            </div>
+            <div>
+              <Label htmlFor="type-description">Description (Optional)</Label>
+              <Textarea
+                id="type-description"
+                placeholder="Describe when this feedback type should be used..."
+                value={newTypeData.description}
+                onChange={(e) => setNewTypeData({...newTypeData, description: e.target.value})}
+                rows={3}
               />
             </div>
           </div>
           <div className="flex justify-end space-x-3 pt-4">
             <Button variant="outline" onClick={() => {
               setShowAddTypeModal(false);
-              setNewTypeName("");
+              setNewTypeData({ name: "", displayName: "", description: "" });
             }}>
-              {t("cancel")}
+              Cancel
             </Button>
-            <Button onClick={() => {
-              // Here you would handle adding the new type
-              if (newTypeName.trim()) {
-                toast({
-                  title: t("success"),
-                  description: `${t("feedbackType")} "${newTypeName}" ${t("addedSuccessfully")}`,
-                });
-                setNewTypeName("");
-                setShowAddTypeModal(false);
-              }
-            }}>
-              {t("addType")}
+            <Button 
+              onClick={() => {
+                if (newTypeData.name.trim() && newTypeData.displayName.trim()) {
+                  createTypeMutation.mutate(newTypeData);
+                }
+              }}
+              disabled={createTypeMutation.isPending || !newTypeData.name.trim() || !newTypeData.displayName.trim()}
+            >
+              {createTypeMutation.isPending ? "Adding..." : "Add Type"}
             </Button>
           </div>
         </DialogContent>
