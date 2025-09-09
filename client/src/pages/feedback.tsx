@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { authenticatedRequest } from "@/lib/auth";
-import { queryClient } from "@/lib/queryClient";
+import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { MessageSquare, Plus, Star, Calendar, User, Search, RefreshCw, Filter, TrendingUp } from "lucide-react";
@@ -652,14 +652,29 @@ export default function FeedbackPage() {
             }}>
               Cancel
             </Button>
-            <Button onClick={() => {
+            <Button onClick={async () => {
               if (newTypeName.trim()) {
-                toast({
-                  title: "Success",
-                  description: `Feedback type "${newTypeName}" added successfully`,
-                });
-                setNewTypeName("");
-                setShowAddTypeModal(false);
+                try {
+                  await apiRequest('POST', '/api/feedback-types', {
+                    name: newTypeName,
+                    displayName: newTypeName
+                  });
+                  
+                  queryClient.invalidateQueries({ queryKey: ["/api/feedback-types"] });
+                  
+                  toast({
+                    title: "Success",
+                    description: `Feedback type "${newTypeName}" added successfully`,
+                  });
+                  setNewTypeName("");
+                  setShowAddTypeModal(false);
+                } catch (error) {
+                  toast({
+                    title: "Error",
+                    description: "Failed to add feedback type",
+                    variant: "destructive"
+                  });
+                }
               }
             }}>
               Add Type
