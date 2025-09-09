@@ -108,7 +108,7 @@ export default function FeedbackPage() {
 
   const filteredFeedback = feedbackList.filter((item: any) => {
     const matchesType = typeFilter === "all" || item.type === typeFilter;
-    
+
     const matchesSearch = searchTerm === "" || 
       item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -344,9 +344,9 @@ export default function FeedbackPage() {
                         </div>
                       )}
                     </div>
-                    
+
                     <p className="text-gray-700 mb-4">{item.description}</p>
-                    
+
                     {item.relatedInterviewId && (
                       <div className="mb-4">
                         <p className="text-sm font-medium text-gray-500 mb-1">Related Interview:</p>
@@ -364,7 +364,7 @@ export default function FeedbackPage() {
                         <span>•</span>
                         <span>{getRelativeTime(item.createdAt)}</span>
                       </div>
-                      
+
                       {(user?.role === "admin" || user?.role === "manager") && (
                         <div className="flex space-x-2">
                           <Button 
@@ -413,7 +413,7 @@ export default function FeedbackPage() {
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Feedback Details & Comment History</DialogTitle>
           </DialogHeader>
-          
+
           {selectedFeedback && (
             <div className="space-y-6">
               {/* Feedback Summary */}
@@ -538,7 +538,7 @@ export default function FeedbackPage() {
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Comments</DialogTitle>
           </DialogHeader>
-          
+
           {selectedFeedback && (
             <div className="space-y-4">
               {/* Feedback Info */}
@@ -550,7 +550,7 @@ export default function FeedbackPage() {
               {/* Comments List */}
               <div className="space-y-3">
                 <h4 className="font-medium">Comments</h4>
-                
+
                 {/* Comment List */}
                 <div className="space-y-3">
                   {comments.length === 0 ? (
@@ -659,9 +659,9 @@ export default function FeedbackPage() {
                     name: newTypeName,
                     displayName: newTypeName
                   });
-                  
+
                   queryClient.invalidateQueries({ queryKey: ["/api/feedback-types"] });
-                  
+
                   toast({
                     title: "Success",
                     description: `Feedback type "${newTypeName}" added successfully`,
