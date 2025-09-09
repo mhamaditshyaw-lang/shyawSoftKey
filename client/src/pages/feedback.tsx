@@ -188,6 +188,14 @@ export default function FeedbackPage() {
     <DashboardLayout>
       <div>
 
+      {/* Create New Feedback Button */}
+      <div className="mb-6 flex justify-end">
+        <Button onClick={() => setShowFeedbackModal(true)} className="bg-blue-600 hover:bg-blue-700">
+          <Plus className="w-4 h-4 mr-2" />
+          Create New Feedback
+        </Button>
+      </div>
+
       {/* Search and Filter Controls */}
       <Card className="mb-6">
         <CardContent className="p-6">
