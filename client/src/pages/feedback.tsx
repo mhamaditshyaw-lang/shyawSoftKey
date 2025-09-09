@@ -185,38 +185,6 @@ export default function FeedbackPage() {
   return (
     <DashboardLayout>
       <div>
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              {t("feedbackAndReviews")}
-            </h2>
-            <p className="text-lg text-gray-600">{t("systemFeedback")}</p>
-            <div className="flex items-center gap-6 mt-3">
-              <Badge variant="outline" className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4" />
-                {t("total")}: {feedbackList.length} {t("items")}
-              </Badge>
-              <Badge variant="outline" className="flex items-center gap-2">
-                <Filter className="w-4 h-4" />
-                {t("filtered")}: {filteredFeedback.length} {t("items")}
-              </Badge>
-              {dateFilter === "today" && (
-                <Badge className="bg-green-100 text-green-800 border-green-200">
-                  {t("todayOnly")}
-                </Badge>
-              )}
-            </div>
-          </div>
-          <div className="flex space-x-3">
-            <Button onClick={() => setShowFeedbackModal(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              {t("submitFeedback")}
-            </Button>
-
-          </div>
-        </div>
-      </div>
 
       {/* Search and Filter Controls */}
       <Card className="mb-6">
