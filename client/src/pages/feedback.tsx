@@ -33,6 +33,7 @@ export default function FeedbackPage() {
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [showAddTypeModal, setShowAddTypeModal] = useState(false);
   const [newTypeName, setNewTypeName] = useState("");
+  const [newComment, setNewComment] = useState("");
 
 
   const { data: feedbackData, isLoading } = useQuery({
@@ -569,13 +570,39 @@ export default function FeedbackPage() {
                     <textarea 
                       className="w-full p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Type your comment here..."
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
                       rows={3}
                     />
                     <div className="flex justify-end space-x-2">
-                      <Button variant="outline" size="sm" onClick={() => setShowCommentsModal(false)}>
+                      <Button variant="outline" size="sm" onClick={() => {
+                        setShowCommentsModal(false);
+                        setNewComment("");
+                      }}>
                         Cancel
                       </Button>
-                      <Button size="sm">Add Comment</Button>
+                      <Button 
+                        size="sm"
+                        onClick={() => {
+                          if (newComment.trim()) {
+                            toast({
+                              title: "Success",
+                              description: "Comment added successfully",
+                            });
+                            setNewComment("");
+                            // In a real app, you would also add the comment to the backend here
+                          } else {
+                            toast({
+                              title: "Error",
+                              description: "Please enter a comment",
+                              variant: "destructive"
+                            });
+                          }
+                        }}
+                        disabled={!newComment.trim()}
+                      >
+                        Add Comment
+                      </Button>
                     </div>
                   </div>
                 </div>
