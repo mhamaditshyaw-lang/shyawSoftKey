@@ -30,6 +30,9 @@ export default function FeedbackPage() {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState<any>(null);
+  const [showCommentsModal, setShowCommentsModal] = useState(false);
+  const [showAddTypeModal, setShowAddTypeModal] = useState(false);
+  const [newTypeName, setNewTypeName] = useState("");
 
 
   const { data: feedbackData, isLoading } = useQuery({
@@ -213,25 +216,35 @@ export default function FeedbackPage() {
                   />
                 </div>
               </div>
-              <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger className="w-full md:w-48">
-                  <SelectValue placeholder="All Types" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  {/* Default types */}
-                  <SelectItem value="interview_feedback">Interview Feedback</SelectItem>
-                  <SelectItem value="general_feedback">General Feedback</SelectItem>
-                  <SelectItem value="system_improvement">System Improvement</SelectItem>
-                  <SelectItem value="user_experience">User Experience</SelectItem>
-                  {/* Dynamic types */}
-                  {feedbackTypes.map((type: any) => (
-                    <SelectItem key={type.id} value={type.name}>
-                      {type.displayName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex gap-2 w-full md:w-auto">
+                <Select value={typeFilter} onValueChange={setTypeFilter}>
+                  <SelectTrigger className="w-full md:w-48">
+                    <SelectValue placeholder="All Types" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Types</SelectItem>
+                    {/* Default types */}
+                    <SelectItem value="interview_feedback">Interview Feedback</SelectItem>
+                    <SelectItem value="general_feedback">General Feedback</SelectItem>
+                    <SelectItem value="system_improvement">System Improvement</SelectItem>
+                    <SelectItem value="user_experience">User Experience</SelectItem>
+                    {/* Dynamic types */}
+                    {feedbackTypes.map((type: any) => (
+                      <SelectItem key={type.id} value={type.name}>
+                        {type.displayName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setShowAddTypeModal(true)}
+                  className="shrink-0"
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
 
             {/* Date Filter Controls */}
@@ -351,7 +364,14 @@ export default function FeedbackPage() {
                       
                       {(user?.role === "admin" || user?.role === "manager") && (
                         <div className="flex space-x-2">
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              setSelectedFeedback(item);
+                              setShowCommentsModal(true);
+                            }}
+                          >
                             Comments
                           </Button>
                           <Button 
@@ -495,6 +515,113 @@ export default function FeedbackPage() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Comments Modal */}
+      <Dialog open={showCommentsModal} onOpenChange={setShowCommentsModal}>
+        <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Comments</DialogTitle>
+          </DialogHeader>
+          
+          {selectedFeedback && (
+            <div className="space-y-4">
+              {/* Feedback Info */}
+              <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-l-blue-500">
+                <h3 className="font-semibold text-lg">{selectedFeedback.title}</h3>
+                <p className="text-sm text-gray-600 mt-1">{selectedFeedback.description}</p>
+              </div>
+
+              {/* Comments List */}
+              <div className="space-y-3">
+                <h4 className="font-medium">Comments</h4>
+                
+                {/* Sample Comments */}
+                <div className="space-y-3">
+                  <div className="border rounded-lg p-3 bg-white">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm">Admin User</span>
+                        <Badge variant="outline" className="text-xs">Admin</Badge>
+                      </div>
+                      <span className="text-xs text-gray-500">2 hours ago</span>
+                    </div>
+                    <p className="text-sm">Thank you for this feedback. We're reviewing it now.</p>
+                  </div>
+
+                  <div className="border rounded-lg p-3 bg-white">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm">Manager John</span>
+                        <Badge variant="outline" className="text-xs">Manager</Badge>
+                      </div>
+                      <span className="text-xs text-gray-500">1 day ago</span>
+                    </div>
+                    <p className="text-sm">I've assigned this to the development team.</p>
+                  </div>
+                </div>
+
+                {/* Add Comment */}
+                <div className="border-t pt-4 mt-4">
+                  <div className="space-y-3">
+                    <Label>Add Comment</Label>
+                    <textarea 
+                      className="w-full p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Type your comment here..."
+                      rows={3}
+                    />
+                    <div className="flex justify-end space-x-2">
+                      <Button variant="outline" size="sm" onClick={() => setShowCommentsModal(false)}>
+                        Cancel
+                      </Button>
+                      <Button size="sm">Add Comment</Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Type Modal */}
+      <Dialog open={showAddTypeModal} onOpenChange={setShowAddTypeModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Feedback Type</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="type-name">Type Name</Label>
+              <Input
+                id="type-name"
+                placeholder="Enter type name"
+                value={newTypeName}
+                onChange={(e) => setNewTypeName(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end space-x-3 pt-4">
+            <Button variant="outline" onClick={() => {
+              setShowAddTypeModal(false);
+              setNewTypeName("");
+            }}>
+              Cancel
+            </Button>
+            <Button onClick={() => {
+              if (newTypeName.trim()) {
+                toast({
+                  title: "Success",
+                  description: `Feedback type "${newTypeName}" added successfully`,
+                });
+                setNewTypeName("");
+                setShowAddTypeModal(false);
+              }
+            }}>
+              Add Type
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
 
