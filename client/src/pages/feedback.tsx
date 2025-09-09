@@ -35,6 +35,7 @@ export default function FeedbackPage() {
   const [newTypeName, setNewTypeName] = useState("");
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState<any[]>([]);
+  const [detailComment, setDetailComment] = useState("");
 
 
   const { data: feedbackData, isLoading } = useQuery({
@@ -452,49 +453,31 @@ export default function FeedbackPage() {
                     <MessageSquare className="w-5 h-5" />
                     Comment History
                   </h4>
-                  <Badge variant="outline">{/* Mock comment count */}3 Comments</Badge>
+                  <Badge variant="outline">{comments.length} Comments</Badge>
                 </div>
 
-                {/* Mock Comment History */}
+                {/* Comment History */}
                 <div className="space-y-3">
-                  <Card className="border-l-4 border-l-green-500">
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center space-x-2">
-                          <span className="font-medium text-sm">Admin User</span>
-                          <Badge variant="outline" className="text-xs">Admin</Badge>
-                        </div>
-                        <span className="text-xs text-gray-500">2 hours ago</span>
-                      </div>
-                      <p className="text-sm text-gray-700">Thank you for this feedback. We're reviewing the suggested improvements and will implement them in the next update.</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-l-4 border-l-blue-500">
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center space-x-2">
-                          <span className="font-medium text-sm">Manager John</span>
-                          <Badge variant="outline" className="text-xs">Manager</Badge>
-                        </div>
-                        <span className="text-xs text-gray-500">1 day ago</span>
-                      </div>
-                      <p className="text-sm text-gray-700">I've assigned this to the development team for further analysis. We'll keep you updated on the progress.</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-l-4 border-l-purple-500">
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center space-x-2">
-                          <span className="font-medium text-sm">{selectedFeedback.submittedBy?.firstName || "Unknown"} {selectedFeedback.submittedBy?.lastName || "User"}</span>
-                          <Badge variant="outline" className="text-xs">Author</Badge>
-                        </div>
-                        <span className="text-xs text-gray-500">{getRelativeTime(selectedFeedback.createdAt)}</span>
-                      </div>
-                      <p className="text-sm text-gray-700">Initial feedback submitted.</p>
-                    </CardContent>
-                  </Card>
+                  {comments.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <p>No comments yet. Be the first to add one!</p>
+                    </div>
+                  ) : (
+                    comments.map((comment, index) => (
+                      <Card key={index} className="border-l-4 border-l-blue-500">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex items-center space-x-2">
+                              <span className="font-medium text-sm">{comment.author}</span>
+                              <Badge variant="outline" className="text-xs">{comment.role}</Badge>
+                            </div>
+                            <span className="text-xs text-gray-500">{comment.timestamp}</span>
+                          </div>
+                          <p className="text-sm text-gray-700">{comment.text}</p>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
                 </div>
 
                 {/* Add Comment Section */}
@@ -505,11 +488,40 @@ export default function FeedbackPage() {
                       <textarea 
                         className="w-full p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Add your comment here..."
+                        value={detailComment}
+                        onChange={(e) => setDetailComment(e.target.value)}
                         rows={3}
                       />
                       <div className="flex justify-end space-x-2">
-                        <Button variant="outline" size="sm">Cancel</Button>
-                        <Button size="sm">Add Comment</Button>
+                        <Button variant="outline" size="sm" onClick={() => setDetailComment("")}>Cancel</Button>
+                        <Button 
+                          size="sm"
+                          onClick={() => {
+                            if (detailComment.trim()) {
+                              const newCommentObj = {
+                                text: detailComment,
+                                author: user?.username || "Current User",
+                                role: user?.role || "User",
+                                timestamp: "Just now"
+                              };
+                              setComments(prev => [newCommentObj, ...prev]);
+                              toast({
+                                title: "Success",
+                                description: "Comment added successfully",
+                              });
+                              setDetailComment("");
+                            } else {
+                              toast({
+                                title: "Error",
+                                description: "Please enter a comment",
+                                variant: "destructive"
+                              });
+                            }
+                          }}
+                          disabled={!detailComment.trim()}
+                        >
+                          Add Comment
+                        </Button>
                       </div>
                     </div>
                   </CardContent>
