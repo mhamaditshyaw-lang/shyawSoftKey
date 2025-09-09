@@ -335,7 +335,7 @@ export default function FeedbackPage() {
                     <div className="flex items-center justify-between text-sm text-gray-500">
                       <div className="flex items-center space-x-4">
                         <span>
-                          By {item.submittedBy.firstName} {item.submittedBy.lastName}
+                          By {item.submittedBy?.firstName || "Unknown"} {item.submittedBy?.lastName || "User"}
                         </span>
                         <span>•</span>
                         <span>{getRelativeTime(item.createdAt)}</span>
@@ -399,7 +399,7 @@ export default function FeedbackPage() {
                     <div className="flex items-center space-x-4">
                       <span className="flex items-center gap-1">
                         <User className="w-4 h-4" />
-                        {selectedFeedback.submittedBy.firstName} {selectedFeedback.submittedBy.lastName}
+                        {selectedFeedback.submittedBy?.firstName || "Unknown"} {selectedFeedback.submittedBy?.lastName || "User"}
                       </span>
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
@@ -457,7 +457,7 @@ export default function FeedbackPage() {
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center space-x-2">
-                          <span className="font-medium text-sm">{selectedFeedback.submittedBy.firstName} {selectedFeedback.submittedBy.lastName}</span>
+                          <span className="font-medium text-sm">{selectedFeedback.submittedBy?.firstName || "Unknown"} {selectedFeedback.submittedBy?.lastName || "User"}</span>
                           <Badge variant="outline" className="text-xs">Author</Badge>
                         </div>
                         <span className="text-xs text-gray-500">{getRelativeTime(selectedFeedback.createdAt)}</span>
