@@ -28,6 +28,8 @@ export default function FeedbackPage() {
   const [customDate, setCustomDate] = useState("");
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedFeedback, setSelectedFeedback] = useState<any>(null);
 
 
   const { data: feedbackData, isLoading } = useQuery({
@@ -344,7 +346,14 @@ export default function FeedbackPage() {
                           <Button variant="outline" size="sm">
                             Comments
                           </Button>
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              setSelectedFeedback(item);
+                              setShowDetailsModal(true);
+                            }}
+                          >
                             Details
                           </Button>
                           <Button variant="outline" size="sm">
@@ -366,6 +375,120 @@ export default function FeedbackPage() {
         onOpenChange={setShowFeedbackModal} 
         interviews={interviews}
       />
+
+      {/* Details Modal */}
+      <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
+        <DialogContent className="sm:max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Feedback Details & Comment History</DialogTitle>
+          </DialogHeader>
+          
+          {selectedFeedback && (
+            <div className="space-y-6">
+              {/* Feedback Summary */}
+              <Card className="bg-gray-50 border-l-4 border-l-blue-500">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold">{selectedFeedback.title}</h3>
+                    <Badge className={getTypeColor(selectedFeedback.type)}>
+                      {selectedFeedback.type.replace('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
+                    </Badge>
+                  </div>
+                  <p className="text-gray-700 mb-3">{selectedFeedback.description}</p>
+                  <div className="flex items-center justify-between text-sm text-gray-600">
+                    <div className="flex items-center space-x-4">
+                      <span className="flex items-center gap-1">
+                        <User className="w-4 h-4" />
+                        {selectedFeedback.submittedBy.firstName} {selectedFeedback.submittedBy.lastName}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        {new Date(selectedFeedback.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    {selectedFeedback.rating && (
+                      <div className="flex space-x-1">
+                        {getRatingStars(selectedFeedback.rating)}
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Comment History Section */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-lg font-semibold flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5" />
+                    Comment History
+                  </h4>
+                  <Badge variant="outline">{/* Mock comment count */}3 Comments</Badge>
+                </div>
+
+                {/* Mock Comment History */}
+                <div className="space-y-3">
+                  <Card className="border-l-4 border-l-green-500">
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center space-x-2">
+                          <span className="font-medium text-sm">Admin User</span>
+                          <Badge variant="outline" className="text-xs">Admin</Badge>
+                        </div>
+                        <span className="text-xs text-gray-500">2 hours ago</span>
+                      </div>
+                      <p className="text-sm text-gray-700">Thank you for this feedback. We're reviewing the suggested improvements and will implement them in the next update.</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-l-4 border-l-blue-500">
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center space-x-2">
+                          <span className="font-medium text-sm">Manager John</span>
+                          <Badge variant="outline" className="text-xs">Manager</Badge>
+                        </div>
+                        <span className="text-xs text-gray-500">1 day ago</span>
+                      </div>
+                      <p className="text-sm text-gray-700">I've assigned this to the development team for further analysis. We'll keep you updated on the progress.</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-l-4 border-l-purple-500">
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center space-x-2">
+                          <span className="font-medium text-sm">{selectedFeedback.submittedBy.firstName} {selectedFeedback.submittedBy.lastName}</span>
+                          <Badge variant="outline" className="text-xs">Author</Badge>
+                        </div>
+                        <span className="text-xs text-gray-500">{getRelativeTime(selectedFeedback.createdAt)}</span>
+                      </div>
+                      <p className="text-sm text-gray-700">Initial feedback submitted.</p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Add Comment Section */}
+                <Card className="bg-blue-50 border-blue-200">
+                  <CardContent className="p-4">
+                    <h5 className="font-medium mb-3">Add New Comment</h5>
+                    <div className="space-y-3">
+                      <textarea 
+                        className="w-full p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Add your comment here..."
+                        rows={3}
+                      />
+                      <div className="flex justify-end space-x-2">
+                        <Button variant="outline" size="sm">Cancel</Button>
+                        <Button size="sm">Add Comment</Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
 
     </div>
