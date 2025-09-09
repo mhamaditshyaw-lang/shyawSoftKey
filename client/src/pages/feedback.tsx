@@ -34,6 +34,7 @@ export default function FeedbackPage() {
   const [showAddTypeModal, setShowAddTypeModal] = useState(false);
   const [newTypeName, setNewTypeName] = useState("");
   const [newComment, setNewComment] = useState("");
+  const [comments, setComments] = useState<any[]>([]);
 
 
   const { data: feedbackData, isLoading } = useQuery({
@@ -538,29 +539,26 @@ export default function FeedbackPage() {
               <div className="space-y-3">
                 <h4 className="font-medium">Comments</h4>
                 
-                {/* Sample Comments */}
+                {/* Comment List */}
                 <div className="space-y-3">
-                  <div className="border rounded-lg p-3 bg-white">
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm">Admin User</span>
-                        <Badge variant="outline" className="text-xs">Admin</Badge>
-                      </div>
-                      <span className="text-xs text-gray-500">2 hours ago</span>
+                  {comments.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <p>No comments yet. Be the first to add one!</p>
                     </div>
-                    <p className="text-sm">Thank you for this feedback. We're reviewing it now.</p>
-                  </div>
-
-                  <div className="border rounded-lg p-3 bg-white">
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm">Manager John</span>
-                        <Badge variant="outline" className="text-xs">Manager</Badge>
+                  ) : (
+                    comments.map((comment, index) => (
+                      <div key={index} className="border rounded-lg p-3 bg-white">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-sm">{comment.author}</span>
+                            <Badge variant="outline" className="text-xs">{comment.role}</Badge>
+                          </div>
+                          <span className="text-xs text-gray-500">{comment.timestamp}</span>
+                        </div>
+                        <p className="text-sm">{comment.text}</p>
                       </div>
-                      <span className="text-xs text-gray-500">1 day ago</span>
-                    </div>
-                    <p className="text-sm">I've assigned this to the development team.</p>
-                  </div>
+                    ))
+                  )}
                 </div>
 
                 {/* Add Comment */}
@@ -585,12 +583,18 @@ export default function FeedbackPage() {
                         size="sm"
                         onClick={() => {
                           if (newComment.trim()) {
+                            const newCommentObj = {
+                              text: newComment,
+                              author: user?.username || "Current User",
+                              role: user?.role || "User",
+                              timestamp: "Just now"
+                            };
+                            setComments(prev => [newCommentObj, ...prev]);
                             toast({
                               title: "Success",
                               description: "Comment added successfully",
                             });
                             setNewComment("");
-                            // In a real app, you would also add the comment to the backend here
                           } else {
                             toast({
                               title: "Error",
