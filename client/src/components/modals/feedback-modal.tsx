@@ -529,7 +529,7 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
                 if (reminderText.trim() && reminderDate) {
                   createReminderMutation.mutate({
                     title: reminderText.trim(),
-                    reminderDate: new Date(reminderDate).toISOString(),
+                    reminderDate: reminderDate,
                     message: selectedReminderIndex !== null ? `Related to feedback item ${selectedReminderIndex + 1}` : 'General reminder from feedback form',
                   });
                 }

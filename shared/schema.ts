@@ -176,6 +176,7 @@ export const insertReminderSchema = createInsertSchema(reminders, {
   message: z.string().optional(),
   title: z.string().optional(),
   todoItemId: z.number().optional(),
+  reminderDate: z.string().transform((str) => new Date(str)),
 }).omit({
   id: true,
   createdAt: true,
