@@ -73,7 +73,9 @@ export const archivedItemsRelations = relations(archivedItems, ({ one }) => ({
   }),
 }));
 
-export const insertFeedbackSchema = createInsertSchema(feedback).omit({
+export const insertFeedbackSchema = createInsertSchema(feedback, {
+  rating: z.enum(["1", "2", "3", "4", "5"]).optional(),
+}).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
