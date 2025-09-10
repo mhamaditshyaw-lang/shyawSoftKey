@@ -45,6 +45,7 @@ export const todoItems = pgTable("todo_items", {
   isCompleted: boolean("is_completed").notNull().default(false),
   priority: priorityEnum("priority").notNull().default("medium"),
   dueDate: timestamp("due_date"),
+  reminderDate: timestamp("reminder_date"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   completedAt: timestamp("completed_at"),
