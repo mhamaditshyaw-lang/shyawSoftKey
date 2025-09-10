@@ -25,6 +25,9 @@ interface Reminder {
   todoItemId: number;
   reminderDate: string;
   message?: string;
+  title?: string;
+  itemText?: string;
+  itemData?: any;
   isCompleted: boolean;
   createdById: number;
   createdAt: string;
@@ -304,6 +307,27 @@ export default function RemindersPage() {
                                   {formatDate(reminder.reminderDate)}
                                 </span>
                               </div>
+
+                              {/* Item Content */}
+                              {reminder.itemText && (
+                                <div className={`p-3 bg-gray-50 rounded-lg border-l-4 border-blue-500 mb-2 ${reminder.isCompleted ? 'opacity-60' : ''}`}>
+                                  <p className="text-sm font-medium text-gray-900 mb-1">Task Item:</p>
+                                  <p className={`text-sm text-gray-800 ${reminder.isCompleted ? 'line-through' : ''}`}>
+                                    "{reminder.itemText}"
+                                  </p>
+                                  {reminder.itemData?.list && (
+                                    <div className="mt-2 text-xs text-gray-600">
+                                      <span className="inline-flex items-center gap-1">
+                                        <span>From list:</span>
+                                        <span className="font-medium">{reminder.itemData.list.title}</span>
+                                        <Badge variant="outline" className="text-xs">
+                                          {reminder.itemData.list.priority}
+                                        </Badge>
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
 
                               {reminder.message && (
                                 <p className={`text-sm text-gray-800 ${reminder.isCompleted ? 'line-through' : ''}`}>

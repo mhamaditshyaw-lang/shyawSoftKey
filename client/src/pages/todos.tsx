@@ -84,7 +84,7 @@ export default function TodosPage() {
   const [selectedLists, setSelectedLists] = useState<Set<number>>(new Set());
   const [selectionMode, setSelectionMode] = useState(false);
   const [showReminderDialog, setShowReminderDialog] = useState(false);
-  const [selectedItemForReminder, setSelectedItemForReminder] = useState<number | null>(null);
+  const [selectedItemForReminder, setSelectedItemForReminder] = useState<TodoItem | null>(null);
   const [reminderDate, setReminderDate] = useState("");
   const [reminderMessage, setReminderMessage] = useState("");
 
@@ -271,7 +271,7 @@ export default function TodosPage() {
 
   // Create reminder mutation
   const createReminderMutation = useMutation({
-    mutationFn: async (data: { todoItemId: number; reminderDate: string; message?: string }) => {
+    mutationFn: async (data: { todoItemId: number; reminderDate: string; message?: string; itemText: string; itemData: any }) => {
       const response = await authenticatedRequest("POST", "/api/reminders", data);
       return response.json();
     },
@@ -308,10 +308,30 @@ export default function TodosPage() {
   const handleCreateReminder = () => {
     if (!selectedItemForReminder || !reminderDate) return;
     
+    // Find the list that contains this item for context
+    let listContext = null;
+    for (const list of todoLists) {
+      if (list.items.some(item => item.id === selectedItemForReminder.id)) {
+        listContext = list;
+        break;
+      }
+    }
+    
     createReminderMutation.mutate({
-      todoItemId: selectedItemForReminder,
-      reminderDate: new Date(reminderDate).toISOString(),
-      message: reminderMessage.trim() || undefined,
+      todoItemId: selectedItemForReminder.id,
+      reminderDate: reminderDate,
+      message: reminderMessage.trim() || `Reminder for: ${selectedItemForReminder.text}`,
+      itemText: selectedItemForReminder.text,
+      itemData: {
+        item: selectedItemForReminder,
+        list: listContext ? {
+          id: listContext.id,
+          title: listContext.title,
+          description: listContext.description,
+          priority: listContext.priority
+        } : null,
+        createdAt: new Date().toISOString()
+      },
     });
   };
 
@@ -1068,7 +1088,7 @@ export default function TodosPage() {
             >
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <Bell className="w-5 h-5 text-amber-600" />
-                Set Reminder
+                Set Reminder for: "{selectedItemForReminder?.text}"
               </h3>
               <div className="space-y-4">
                 <div>
@@ -1270,11 +1290,12 @@ export default function TodosPage() {
                                   size="sm"
                                   variant="ghost"
                                   onClick={() => {
-                                    setSelectedItemForReminder(item.id);
+                                    setSelectedItemForReminder(item);
                                     setShowReminderDialog(true);
                                   }}
                                   className="text-amber-500 hover:text-amber-700 hover:bg-amber-50 p-1 h-6 w-6"
                                   title="Set reminder"
+                                  data-testid={`button-reminder-${item.id}`}
                                 >
                                   <Bell className="w-3 h-3" />
                                 </Button>
