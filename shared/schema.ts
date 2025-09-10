@@ -51,6 +51,18 @@ export const todoItems = pgTable("todo_items", {
   completedAt: timestamp("completed_at"),
 });
 
+export const reminders = pgTable("reminders", {
+  id: serial("id").primaryKey(),
+  todoItemId: integer("todo_item_id").references(() => todoItems.id, {
+    onDelete: "cascade"
+  }).notNull(),
+  reminderDate: timestamp("reminder_date").notNull(),
+  message: text("message"),
+  isCompleted: boolean("is_completed").notNull().default(false),
+  createdById: integer("created_by_id").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const interviewRequests = pgTable("interview_requests", {
   id: serial("id").primaryKey(),
   position: text("position").notNull(),
@@ -89,10 +101,22 @@ export const todoListsRelations = relations(todoLists, ({ one, many }) => ({
   items: many(todoItems),
 }));
 
-export const todoItemsRelations = relations(todoItems, ({ one }) => ({
+export const todoItemsRelations = relations(todoItems, ({ one, many }) => ({
   todoList: one(todoLists, {
     fields: [todoItems.todoListId],
     references: [todoLists.id],
+  }),
+  reminders: many(reminders),
+}));
+
+export const remindersRelations = relations(reminders, ({ one }) => ({
+  todoItem: one(todoItems, {
+    fields: [reminders.todoItemId],
+    references: [todoItems.id],
+  }),
+  createdBy: one(users, {
+    fields: [reminders.createdById],
+    references: [users.id],
   }),
 }));
 
@@ -147,6 +171,13 @@ export const insertInterviewRequestSchema = createInsertSchema(interviewRequests
   description: data.description && data.description.trim() !== "" ? data.description : undefined,
 }));
 
+export const insertReminderSchema = createInsertSchema(reminders, {
+  message: z.string().optional(),
+}).omit({
+  id: true,
+  createdAt: true,
+});
+
 
 export const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -177,6 +208,8 @@ export type TodoList = typeof todoLists.$inferSelect;
 export type InsertTodoList = z.infer<typeof insertTodoListSchema>;
 export type TodoItem = typeof todoItems.$inferSelect;
 export type InsertTodoItem = z.infer<typeof insertTodoItemSchema>;
+export type Reminder = typeof reminders.$inferSelect;
+export type InsertReminder = z.infer<typeof insertReminderSchema>;
 export type InterviewRequest = typeof interviewRequests.$inferSelect;
 export type InsertInterviewRequest = z.infer<typeof insertInterviewRequestSchema>;
 export type LoginCredentials = z.infer<typeof loginSchema>;
