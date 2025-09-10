@@ -77,6 +77,32 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
     },
   });
 
+  // Mutation for creating reminders
+  const createReminderMutation = useMutation({
+    mutationFn: async (reminderData: any) => {
+      const response = await authenticatedRequest("POST", "/api/reminders", reminderData);
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+      toast({
+        title: "Success",
+        description: "Reminder created successfully!",
+      });
+      setShowReminderCreator(false);
+      setReminderText('');
+      setReminderDate('');
+      setSelectedReminderIndex(null);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create reminder",
+        variant: "destructive",
+      });
+    },
+  });
+
   const createFeedbackMutation = useMutation({
     mutationFn: async (feedbackData: any) => {
       const response = await authenticatedRequest("POST", "/api/feedback", {
@@ -500,19 +526,17 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
             </Button>
             <Button
               onClick={() => {
-                const textarea = document.getElementById('description') as HTMLTextAreaElement;
-                const cursorPos = textarea.selectionStart;
-                const textBefore = formData.description.substring(0, cursorPos);
-                const textAfter = formData.description.substring(cursorPos);
-                const reminderTextFormatted = `\n\n**⏰ Reminder:** ${reminderText} - Due: ${reminderDate}`;
-                setFormData({ ...formData, description: textBefore + reminderTextFormatted + textAfter });
-                setShowReminderCreator(false);
-                setReminderText('');
-                setReminderDate('');
+                if (reminderText.trim() && reminderDate) {
+                  createReminderMutation.mutate({
+                    title: reminderText.trim(),
+                    reminderDate: new Date(reminderDate).toISOString(),
+                    message: selectedReminderIndex !== null ? `Related to feedback item ${selectedReminderIndex + 1}` : 'General reminder from feedback form',
+                  });
+                }
               }}
-              disabled={!reminderText.trim() || !reminderDate}
+              disabled={!reminderText.trim() || !reminderDate || createReminderMutation.isPending}
             >
-              Add Reminder
+              {createReminderMutation.isPending ? "Creating..." : "Add Reminder"}
             </Button>
           </div>
         </DialogContent>

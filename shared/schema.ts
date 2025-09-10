@@ -55,9 +55,10 @@ export const reminders = pgTable("reminders", {
   id: serial("id").primaryKey(),
   todoItemId: integer("todo_item_id").references(() => todoItems.id, {
     onDelete: "cascade"
-  }).notNull(),
+  }),
   reminderDate: timestamp("reminder_date").notNull(),
   message: text("message"),
+  title: text("title"),
   isCompleted: boolean("is_completed").notNull().default(false),
   createdById: integer("created_by_id").references(() => users.id).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -173,6 +174,8 @@ export const insertInterviewRequestSchema = createInsertSchema(interviewRequests
 
 export const insertReminderSchema = createInsertSchema(reminders, {
   message: z.string().optional(),
+  title: z.string().optional(),
+  todoItemId: z.number().optional(),
 }).omit({
   id: true,
   createdAt: true,
