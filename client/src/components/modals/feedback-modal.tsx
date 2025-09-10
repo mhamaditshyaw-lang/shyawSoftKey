@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Star, Plus, List, Clock, CheckSquare, Trash2 } from "lucide-react";
+import { Star, Plus, List, Clock, CheckSquare, Trash2, Bell } from "lucide-react";
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -39,6 +39,7 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
   const [listTitle, setListTitle] = useState('');
   const [reminderText, setReminderText] = useState('');
   const [reminderDate, setReminderDate] = useState('');
+  const [selectedReminderIndex, setSelectedReminderIndex] = useState<number | null>(null);
   const { toast } = useToast();
   const { t } = useTranslation();
 
@@ -393,19 +394,36 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
                         }
                       }}
                     />
-                    {currentList.length > 1 && (
+                    <div className="flex items-center gap-1 border border-red-300 rounded-md px-1 py-0.5 bg-red-50">
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
                         onClick={() => {
-                          const newList = currentList.filter((_, i) => i !== index);
-                          setCurrentList(newList.length ? newList : ['']);
+                          setSelectedReminderIndex(index);
+                          setShowReminderCreator(true);
                         }}
+                        className="text-amber-500 hover:text-amber-700 hover:bg-amber-50 p-1 h-6 w-6"
+                        title="Set reminder for this item"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Bell className="w-3 h-3" />
                       </Button>
-                    )}
+                      {currentList.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            const newList = currentList.filter((_, i) => i !== index);
+                            setCurrentList(newList.length ? newList : ['']);
+                          }}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 h-6 w-6"
+                          title="Delete this item"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
