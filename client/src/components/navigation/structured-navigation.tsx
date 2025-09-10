@@ -22,7 +22,8 @@ import {
   Clock,
   BookOpen,
   Shield,
-  Target
+  Target,
+  Bell
 } from "lucide-react";
 
 interface NavigationItem {
@@ -51,6 +52,11 @@ const NAVIGATION: Navigation = [
     segment: 'todos',
     title: 'Task Management',
     icon: <CheckSquare className="w-5 h-5" />,
+  },
+  {
+    segment: 'reminders',
+    title: 'Reminders',
+    icon: <Bell className="w-5 h-5" />,
   },
   {
     kind: 'divider',

@@ -68,6 +68,11 @@ const NAVIGATION: NavigationItem[] = [
     icon: <CheckSquare className="w-5 h-5" />,
   },
   {
+    segment: 'reminders',
+    title: 'Reminders',
+    icon: <Bell className="w-5 h-5" />,
+  },
+  {
     segment: 'interviews',
     title: 'Employee Reviews',
     icon: <Calendar className="w-5 h-5" />,
