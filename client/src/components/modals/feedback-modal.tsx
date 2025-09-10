@@ -33,14 +33,6 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
     displayName: "",
     description: ""
   });
-  const [descriptionLists, setDescriptionLists] = useState<{id: string, title: string, items: string[]}[]>([]);
-  const [reminders, setReminders] = useState<{id: string, title: string, dueDate: string, completed: boolean}[]>([]);
-  const [showListModal, setShowListModal] = useState(false);
-  const [showReminderModal, setShowReminderModal] = useState(false);
-  const [newListTitle, setNewListTitle] = useState("");
-  const [newListItem, setNewListItem] = useState("");
-  const [newReminderTitle, setNewReminderTitle] = useState("");
-  const [newReminderDate, setNewReminderDate] = useState("");
   const { toast } = useToast();
   const { t } = useTranslation();
 
@@ -116,43 +108,6 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
       relatedInterviewId: "none",
     });
     setSelectedRating(0);
-    setDescriptionLists([]);
-    setReminders([]);
-  };
-
-  const addListToDescription = (title: string, items: string[]) => {
-    const newList = { id: Date.now().toString(), title, items };
-    setDescriptionLists([...descriptionLists, newList]);
-    updateDescriptionWithLists([...descriptionLists, newList]);
-  };
-
-  const addReminderToDescription = (title: string, dueDate: string) => {
-    const newReminder = { id: Date.now().toString(), title, dueDate, completed: false };
-    setReminders([...reminders, newReminder]);
-    updateDescriptionWithReminders([...reminders, newReminder]);
-  };
-
-  const updateDescriptionWithLists = (lists: typeof descriptionLists) => {
-    let description = formData.description;
-    const listsText = lists.map(list => 
-      `\n\n**${list.title}:**\n${list.items.map(item => `• ${item}`).join('\n')}`
-    ).join('');
-    
-    // Remove existing lists from description
-    const cleanDescription = description.replace(/\n\n\*\*.*:\*\*[\s\S]*?(?=\n\n|$)/g, '');
-    setFormData({...formData, description: cleanDescription + listsText});
-  };
-
-  const updateDescriptionWithReminders = (remindersList: typeof reminders) => {
-    let description = formData.description;
-    const remindersText = remindersList.length > 0 ? 
-      `\n\n**Reminders:**\n${remindersList.map(reminder => 
-        `• ${reminder.title} (Due: ${reminder.dueDate}) ${reminder.completed ? '✓' : '○'}`
-      ).join('\n')}` : '';
-    
-    // Remove existing reminders from description
-    const cleanDescription = description.replace(/\n\n\*\*Reminders:\*\*[\s\S]*?(?=\n\n|$)/g, '');
-    setFormData({...formData, description: cleanDescription + remindersText});
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -259,61 +214,15 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="description">Description</Label>
-              <div className="flex space-x-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowListModal(true)}
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Add List
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowReminderModal(true)}
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Add Reminder
-                </Button>
-              </div>
-            </div>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
               placeholder="Detailed feedback and suggestions..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={6}
+              rows={4}
               required
             />
-            
-            {/* Show current lists and reminders */}
-            {(descriptionLists.length > 0 || reminders.length > 0) && (
-              <div className="mt-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
-                <div className="text-sm font-medium mb-2">Current Lists & Reminders:</div>
-                {descriptionLists.map(list => (
-                  <div key={list.id} className="mb-2">
-                    <div className="font-medium text-sm">{list.title}:</div>
-                    <ul className="text-xs ml-2">
-                      {list.items.map((item, index) => (
-                        <li key={index}>• {item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-                {reminders.map(reminder => (
-                  <div key={reminder.id} className="mb-1 text-xs">
-                    <span className={reminder.completed ? 'line-through' : ''}>
-                      📅 {reminder.title} (Due: {reminder.dueDate})
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
 
           {showRating && (
@@ -411,121 +320,6 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
               disabled={createTypeMutation.isPending || !newTypeData.name.trim() || !newTypeData.displayName.trim()}
             >
               {createTypeMutation.isPending ? "Adding..." : "Add Type"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Add New List Modal */}
-      <Dialog open={showListModal} onOpenChange={setShowListModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New List</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="list-title">List Title</Label>
-              <Input
-                id="list-title"
-                placeholder="Enter list title..."
-                value={newListTitle}
-                onChange={(e) => setNewListTitle(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="list-item">Add Items</Label>
-              <div className="flex space-x-2">
-                <Input
-                  id="list-item"
-                  placeholder="Enter list item..."
-                  value={newListItem}
-                  onChange={(e) => setNewListItem(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' && newListItem.trim()) {
-                      const currentItems = newListTitle ? (
-                        descriptionLists.find(list => list.title === newListTitle)?.items || []
-                      ) : [];
-                      if (newListTitle.trim()) {
-                        addListToDescription(newListTitle, [...currentItems, newListItem.trim()]);
-                        setNewListItem("");
-                      }
-                    }
-                  }}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    if (newListItem.trim() && newListTitle.trim()) {
-                      const currentItems = descriptionLists.find(list => list.title === newListTitle)?.items || [];
-                      addListToDescription(newListTitle, [...currentItems, newListItem.trim()]);
-                      setNewListItem("");
-                    }
-                  }}
-                >
-                  Add Item
-                </Button>
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-end space-x-3 pt-4">
-            <Button variant="outline" onClick={() => {
-              setShowListModal(false);
-              setNewListTitle("");
-              setNewListItem("");
-            }}>
-              Done
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Add New Reminder Modal */}
-      <Dialog open={showReminderModal} onOpenChange={setShowReminderModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Reminder</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="reminder-title">Reminder Title</Label>
-              <Input
-                id="reminder-title"
-                placeholder="Enter reminder title..."
-                value={newReminderTitle}
-                onChange={(e) => setNewReminderTitle(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="reminder-date">Due Date</Label>
-              <Input
-                id="reminder-date"
-                type="date"
-                value={newReminderDate}
-                onChange={(e) => setNewReminderDate(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="flex justify-end space-x-3 pt-4">
-            <Button variant="outline" onClick={() => {
-              setShowReminderModal(false);
-              setNewReminderTitle("");
-              setNewReminderDate("");
-            }}>
-              Cancel
-            </Button>
-            <Button 
-              onClick={() => {
-                if (newReminderTitle.trim() && newReminderDate) {
-                  addReminderToDescription(newReminderTitle, newReminderDate);
-                  setNewReminderTitle("");
-                  setNewReminderDate("");
-                  setShowReminderModal(false);
-                }
-              }}
-              disabled={!newReminderTitle.trim() || !newReminderDate}
-            >
-              Add Reminder
             </Button>
           </div>
         </DialogContent>
