@@ -226,7 +226,11 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
                     const cursorPos = textarea.selectionStart;
                     const textBefore = formData.description.substring(0, cursorPos);
                     const textAfter = formData.description.substring(cursorPos);
-                    const listText = '\n\n**List:**\n• Item 1\n• Item 2\n• Item 3';
+                    const today = new Date().toISOString().split('T')[0];
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+                    const listText = `\n\n**List with Reminders:**\n• Item 1 - ⏰ Due: ${today}\n• Item 2 - ⏰ Due: ${tomorrowStr}\n• Item 3`;
                     setFormData({ ...formData, description: textBefore + listText + textAfter });
                   }}
                 >
@@ -241,27 +245,15 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
                     const cursorPos = textarea.selectionStart;
                     const textBefore = formData.description.substring(0, cursorPos);
                     const textAfter = formData.description.substring(cursorPos);
-                    const checklistText = '\n\n**Checklist:**\n☐ Task 1\n☐ Task 2\n☐ Task 3';
+                    const today = new Date().toISOString().split('T')[0];
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+                    const checklistText = `\n\n**Checklist with Reminders:**\n☐ Task 1 - ⏰ Due: ${today}\n☐ Task 2 - ⏰ Due: ${tomorrowStr}\n☐ Task 3`;
                     setFormData({ ...formData, description: textBefore + checklistText + textAfter });
                   }}
                 >
                   <CheckSquare className="w-4 h-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    const textarea = document.getElementById('description') as HTMLTextAreaElement;
-                    const cursorPos = textarea.selectionStart;
-                    const textBefore = formData.description.substring(0, cursorPos);
-                    const textAfter = formData.description.substring(cursorPos);
-                    const today = new Date().toISOString().split('T')[0];
-                    const reminderText = `\n\n**⏰ Reminder:** Follow up on this by ${today}`;
-                    setFormData({ ...formData, description: textBefore + reminderText + textAfter });
-                  }}
-                >
-                  <Clock className="w-4 h-4" />
                 </Button>
               </div>
             </div>
