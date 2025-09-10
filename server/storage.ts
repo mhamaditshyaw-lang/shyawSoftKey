@@ -2,6 +2,7 @@ import {
   users, 
   todoLists, 
   todoItems, 
+  reminders,
   interviewRequests,
   operationalData,
   type User, 
@@ -10,6 +11,8 @@ import {
   type InsertTodoList,
   type TodoItem,
   type InsertTodoItem,
+  type Reminder,
+  type InsertReminder,
   type InterviewRequest,
   type InsertInterviewRequest
 } from "@shared/schema";
@@ -46,6 +49,13 @@ export interface IStorage {
   deleteTodoItem(id: number): Promise<boolean>;
   deleteAllTodoItems(todoListId: number): Promise<boolean>;
   getTodoStatsByUser(userId: number): Promise<{ totalTodos: number; completedTodos: number; pendingTodos: number }>;
+  
+  // Reminder methods
+  getReminders(userId: number): Promise<Reminder[]>;
+  getRemindersByDateRange(userId: number, startDate: Date, endDate: Date): Promise<Reminder[]>;
+  createReminder(reminder: InsertReminder): Promise<Reminder>;
+  updateReminder(id: number, updates: Partial<Reminder>): Promise<Reminder | undefined>;
+  deleteReminder(id: number): Promise<boolean>;
   
   // Interview request methods
   getInterviewRequests(): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;
@@ -413,6 +423,66 @@ export class DatabaseStorage implements IStorage {
       completedTodos: Number(stats.completedTodos),
       pendingTodos: Number(stats.pendingTodos),
     };
+  }
+
+  // Reminder methods implementation
+  async getReminders(userId: number): Promise<Reminder[]> {
+    return await executeWithRetry(async () => {
+      const results = await db.select().from(reminders).where(eq(reminders.createdById, userId)).orderBy(desc(reminders.reminderDate));
+      return results;
+    });
+  }
+
+  async getRemindersByDateRange(userId: number, startDate: Date, endDate: Date): Promise<Reminder[]> {
+    return await executeWithRetry(async () => {
+      const results = await db
+        .select()
+        .from(reminders)
+        .where(
+          and(
+            eq(reminders.createdById, userId),
+            sql`${reminders.reminderDate} >= ${startDate}`,
+            sql`${reminders.reminderDate} < ${endDate}`
+          )
+        )
+        .orderBy(reminders.reminderDate);
+      return results;
+    });
+  }
+
+  async createReminder(reminder: InsertReminder): Promise<Reminder> {
+    return await executeWithRetry(async () => {
+      const [newReminder] = await db
+        .insert(reminders)
+        .values(reminder)
+        .returning();
+      return newReminder;
+    });
+  }
+
+  async updateReminder(id: number, updates: Partial<Reminder>): Promise<Reminder | undefined> {
+    return await executeWithRetry(async () => {
+      const [updatedReminder] = await db
+        .update(reminders)
+        .set(updates)
+        .where(eq(reminders.id, id))
+        .returning();
+      return updatedReminder || undefined;
+    });
+  }
+
+  async deleteReminder(id: number): Promise<boolean> {
+    return await executeWithRetry(async () => {
+      try {
+        const result = await db
+          .delete(reminders)
+          .where(eq(reminders.id, id));
+        return (result.rowCount || 0) > 0;
+      } catch (error) {
+        console.error("Storage: Error deleting reminder:", error);
+        return false;
+      }
+    });
   }
 
   async getInterviewStats(): Promise<{ totalRequests: number; pendingRequests: number; approvedRequests: number }> {

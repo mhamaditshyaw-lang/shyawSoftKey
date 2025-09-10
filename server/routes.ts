@@ -4,7 +4,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { insertUserSchema, loginSchema, insertTodoListSchema, insertTodoItemSchema, insertInterviewRequestSchema, changePasswordSchema, updateUserPasswordSchema } from "@shared/schema";
+import { insertUserSchema, loginSchema, insertTodoListSchema, insertTodoItemSchema, insertInterviewRequestSchema, changePasswordSchema, updateUserPasswordSchema, insertReminderSchema } from "@shared/schema";
 import { Request, Response, NextFunction } from "express";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
@@ -436,7 +436,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Reminder routes
+  app.get("/api/reminders", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const reminders = await storage.getReminders(req.user?.id || 0);
+      res.json({ reminders });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
 
+  app.get("/api/reminders/today", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      
+      const reminders = await storage.getRemindersByDateRange(req.user?.id || 0, today, tomorrow);
+      res.json({ reminders });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/reminders", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const reminderData = insertReminderSchema.parse({
+        ...req.body,
+        createdById: req.user?.id || 0,
+      });
+
+      const reminder = await storage.createReminder(reminderData);
+      res.status(201).json({ reminder });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.patch("/api/reminders/:id", authenticateToken, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+
+      const reminder = await storage.updateReminder(id, updates);
+      if (!reminder) {
+        return res.status(404).json({ message: "Reminder not found" });
+      }
+
+      res.json({ reminder });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/reminders/:id", authenticateToken, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteReminder(id);
+
+      if (!success) {
+        return res.status(404).json({ message: "Reminder not found" });
+      }
+
+      res.json({ message: "Reminder deleted successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
 
   // Reports endpoints (manager/admin only)
   app.get("/api/reports", authenticateToken, requireRole(['manager', 'admin']), async (req: AuthRequest, res) => {
