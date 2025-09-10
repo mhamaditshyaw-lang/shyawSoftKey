@@ -17,7 +17,8 @@ import {
   UserCheck,
   Plus,
   Building2,
-  Activity
+  Activity,
+  Bell
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -59,7 +60,13 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       badge: null,
       roles: ["admin", "manager", "security", "office", "secretary", "office_team"]
     },
-
+    {
+      title: "Reminders",
+      href: "/reminders",
+      icon: Bell,
+      badge: null,
+      roles: ["admin", "manager", "security", "office", "secretary", "office_team"]
+    },
     {
       title: t("interviews"),
       href: "/interviews",
