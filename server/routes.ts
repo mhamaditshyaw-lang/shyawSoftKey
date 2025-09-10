@@ -805,6 +805,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/feedback/:id", authenticateToken, requireRole(['admin', 'manager']), async (req: AuthRequest, res) => {
+    try {
+      const feedbackId = parseInt(req.params.id);
+      const success = await storage.deleteFeedback(feedbackId);
+      
+      if (!success) {
+        return res.status(404).json({ message: "Feedback not found" });
+      }
+
+      res.json({ message: "Feedback deleted successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // Feedback Types routes
   app.post("/api/feedback-types", authenticateToken, async (req: AuthRequest, res) => {
     try {

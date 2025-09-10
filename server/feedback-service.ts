@@ -198,4 +198,16 @@ export class FeedbackService {
       .set({ isActive: 0, updatedAt: new Date() })
       .where(eq(feedbackTypes.id, typeId));
   }
+
+  static async deleteFeedback(feedbackId: number): Promise<boolean> {
+    try {
+      const result = await db
+        .delete(feedback)
+        .where(eq(feedback.id, feedbackId));
+      return (result.rowCount || 0) > 0;
+    } catch (error) {
+      console.error("FeedbackService: Error deleting feedback:", error);
+      return false;
+    }
+  }
 }

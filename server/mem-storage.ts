@@ -7,6 +7,8 @@ import type {
   InsertTodoList,
   TodoItem,
   InsertTodoItem,
+  Reminder,
+  InsertReminder,
   InterviewRequest,
   InsertInterviewRequest
 } from "@shared/schema";
@@ -16,6 +18,7 @@ export class MemStorage implements IStorage {
   private users: (User & { id: number })[] = [];
   private todoLists: (TodoList & { id: number })[] = [];
   private todoItems: (TodoItem & { id: number })[] = [];
+  private reminders: (Reminder & { id: number })[] = [];
   private interviewRequests: (InterviewRequest & { id: number })[] = [];
   private operationalData: any[] = [];
   private archivedItems: any[] = [];
@@ -25,6 +28,7 @@ export class MemStorage implements IStorage {
   private nextUserId = 1;
   private nextTodoListId = 1;
   private nextTodoItemId = 1;
+  private nextReminderId = 1;
   private nextInterviewRequestId = 1;
   private nextOperationalDataId = 1;
   private nextArchivedItemId = 1;
@@ -433,6 +437,56 @@ export class MemStorage implements IStorage {
     return true;
   }
 
+  // Reminder methods implementation
+  async getReminders(userId: number): Promise<Reminder[]> {
+    return this.reminders
+      .filter(reminder => reminder.createdById === userId)
+      .sort((a, b) => new Date(b.reminderDate).getTime() - new Date(a.reminderDate).getTime());
+  }
+
+  async getRemindersByDateRange(userId: number, startDate: Date, endDate: Date): Promise<Reminder[]> {
+    return this.reminders
+      .filter(reminder => {
+        const reminderDate = new Date(reminder.reminderDate);
+        return reminder.createdById === userId && 
+               reminderDate >= startDate && 
+               reminderDate < endDate;
+      })
+      .sort((a, b) => new Date(a.reminderDate).getTime() - new Date(b.reminderDate).getTime());
+  }
+
+  async createReminder(reminder: InsertReminder): Promise<Reminder> {
+    const newReminder = {
+      ...reminder,
+      id: this.nextReminderId++,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    } as Reminder & { id: number };
+
+    this.reminders.push(newReminder);
+    return newReminder;
+  }
+
+  async updateReminder(id: number, updates: Partial<Reminder>): Promise<Reminder | undefined> {
+    const reminderIndex = this.reminders.findIndex(r => r.id === id);
+    if (reminderIndex === -1) return undefined;
+
+    this.reminders[reminderIndex] = { 
+      ...this.reminders[reminderIndex], 
+      ...updates,
+      updatedAt: new Date().toISOString()
+    };
+    return this.reminders[reminderIndex];
+  }
+
+  async deleteReminder(id: number): Promise<boolean> {
+    const reminderIndex = this.reminders.findIndex(r => r.id === id);
+    if (reminderIndex === -1) return false;
+
+    this.reminders.splice(reminderIndex, 1);
+    return true;
+  }
+
   // Additional mock methods for feedback types
   async createFeedbackType(feedbackTypeData: any): Promise<any> {
     const feedbackType = { ...feedbackTypeData, id: this.nextFeedbackTypeId++, createdAt: new Date() };
@@ -457,5 +511,14 @@ export class MemStorage implements IStorage {
     if (typeIndex !== -1) {
       this.feedbackTypes.splice(typeIndex, 1);
     }
+  }
+
+  // Add feedback delete method
+  async deleteFeedback(feedbackId: number): Promise<boolean> {
+    const feedbackIndex = this.feedback.findIndex(f => f.id === feedbackId);
+    if (feedbackIndex === -1) return false;
+
+    this.feedback.splice(feedbackIndex, 1);
+    return true;
   }
 }

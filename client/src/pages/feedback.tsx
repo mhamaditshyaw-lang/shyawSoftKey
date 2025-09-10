@@ -13,7 +13,7 @@ import { authenticatedRequest } from "@/lib/auth";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { MessageSquare, Plus, Star, Calendar, User, Search, RefreshCw, Filter, TrendingUp } from "lucide-react";
+import { MessageSquare, Plus, Star, Calendar, User, Search, RefreshCw, Filter, TrendingUp, Trash2 } from "lucide-react";
 import FeedbackModal from "@/components/modals/feedback-modal";
 import { getRelativeTime } from "@/lib/utils";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
@@ -36,6 +36,34 @@ export default function FeedbackPage() {
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState<any[]>([]);
   const [detailComment, setDetailComment] = useState("");
+
+  // Delete feedback mutation
+  const deleteFeedbackMutation = useMutation({
+    mutationFn: async (feedbackId: number) => {
+      const response = await authenticatedRequest("DELETE", `/api/feedback/${feedbackId}`);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/feedback"] });
+      toast({
+        title: "Success",
+        description: "Feedback deleted successfully!",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete feedback",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeleteFeedback = (feedbackId: number) => {
+    if (window.confirm("Are you sure you want to delete this feedback? This action cannot be undone.")) {
+      deleteFeedbackMutation.mutate(feedbackId);
+    }
+  };
 
 
   const { data: feedbackData, isLoading } = useQuery({
@@ -389,6 +417,16 @@ export default function FeedbackPage() {
                           </Button>
                           <Button variant="outline" size="sm">
                             Archive
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleDeleteFeedback(item.id)}
+                            disabled={deleteFeedbackMutation.isPending}
+                            className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
+                          >
+                            <Trash2 className="w-4 h-4 mr-1" />
+                            {deleteFeedbackMutation.isPending ? "Deleting..." : "Delete"}
                           </Button>
                         </div>
                       )}

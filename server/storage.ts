@@ -75,6 +75,7 @@ export interface IStorage {
   createFeedback(feedbackData: any): Promise<any>;
   getAllFeedback(): Promise<any[]>;
   getFeedbackByUser(userId: number): Promise<any[]>;
+  deleteFeedback(feedbackId: number): Promise<boolean>;
   
   // Feedback type methods
   createFeedbackType(feedbackTypeData: any): Promise<any>;
@@ -511,6 +512,16 @@ export class DatabaseStorage implements IStorage {
   async getAllFeedback(): Promise<any[]> {
     const { FeedbackService } = await import("./feedback-service");
     return await FeedbackService.getAllFeedback();
+  }
+
+  async getFeedbackByUser(userId: number): Promise<any[]> {
+    const { FeedbackService } = await import("./feedback-service");
+    return await FeedbackService.getFeedbackByUser(userId);
+  }
+
+  async deleteFeedback(feedbackId: number): Promise<boolean> {
+    const { FeedbackService } = await import("./feedback-service");
+    return await FeedbackService.deleteFeedback(feedbackId);
   }
 
   async archiveItem(itemType: string, itemId: number, itemData: any, archivedById: number, reason?: string): Promise<any> {
