@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Star, Plus } from "lucide-react";
+import { Star, Plus, List, Clock, CheckSquare } from "lucide-react";
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -214,15 +214,68 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="description">Description</Label>
+              <div className="flex space-x-1">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const textarea = document.getElementById('description') as HTMLTextAreaElement;
+                    const cursorPos = textarea.selectionStart;
+                    const textBefore = formData.description.substring(0, cursorPos);
+                    const textAfter = formData.description.substring(cursorPos);
+                    const listText = '\n\n**List:**\n• Item 1\n• Item 2\n• Item 3';
+                    setFormData({ ...formData, description: textBefore + listText + textAfter });
+                  }}
+                >
+                  <List className="w-4 h-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const textarea = document.getElementById('description') as HTMLTextAreaElement;
+                    const cursorPos = textarea.selectionStart;
+                    const textBefore = formData.description.substring(0, cursorPos);
+                    const textAfter = formData.description.substring(cursorPos);
+                    const checklistText = '\n\n**Checklist:**\n☐ Task 1\n☐ Task 2\n☐ Task 3';
+                    setFormData({ ...formData, description: textBefore + checklistText + textAfter });
+                  }}
+                >
+                  <CheckSquare className="w-4 h-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const textarea = document.getElementById('description') as HTMLTextAreaElement;
+                    const cursorPos = textarea.selectionStart;
+                    const textBefore = formData.description.substring(0, cursorPos);
+                    const textAfter = formData.description.substring(cursorPos);
+                    const today = new Date().toISOString().split('T')[0];
+                    const reminderText = `\n\n**⏰ Reminder:** Follow up on this by ${today}`;
+                    setFormData({ ...formData, description: textBefore + reminderText + textAfter });
+                  }}
+                >
+                  <Clock className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
             <Textarea
               id="description"
-              placeholder="Detailed feedback and suggestions..."
+              placeholder="Type your feedback here...\n\nUse the buttons above to add:\n• Lists for organizing points\n• Checklists for tasks\n• Reminders for follow-ups"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={4}
+              rows={6}
               required
             />
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              💡 Tip: Use the formatting buttons above to quickly add lists, checklists, and reminders
+            </div>
           </div>
 
           {showRating && (
