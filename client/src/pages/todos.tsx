@@ -33,7 +33,7 @@ import {
   ListTodo,
   Sparkles,
   Award,
-
+  Bell,
   X,
   Archive,
   Undo2,
@@ -47,6 +47,7 @@ interface TodoItem {
   createdAt: string;
   updatedAt: string;
   priority: "low" | "medium" | "high";
+  reminderDate?: string;
 }
 
 interface TodoList {
@@ -82,6 +83,10 @@ export default function TodosPage() {
   const [selectedTasks, setSelectedTasks] = useState<Set<number>>(new Set());
   const [selectedLists, setSelectedLists] = useState<Set<number>>(new Set());
   const [selectionMode, setSelectionMode] = useState(false);
+  const [showReminderDialog, setShowReminderDialog] = useState(false);
+  const [selectedItemForReminder, setSelectedItemForReminder] = useState<number | null>(null);
+  const [reminderDate, setReminderDate] = useState("");
+  const [reminderMessage, setReminderMessage] = useState("");
 
   // Fetch todos data
   const { data: todosData, isLoading } = useQuery({
@@ -264,6 +269,32 @@ export default function TodosPage() {
     },
   });
 
+  // Create reminder mutation
+  const createReminderMutation = useMutation({
+    mutationFn: async (data: { todoItemId: number; reminderDate: string; message?: string }) => {
+      const response = await authenticatedRequest("POST", "/api/reminders", data);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+      setShowReminderDialog(false);
+      setSelectedItemForReminder(null);
+      setReminderDate("");
+      setReminderMessage("");
+      toast({
+        title: "Success",
+        description: "Reminder set successfully!",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to set reminder",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleCreateTodoList = () => {
     if (!newListTitle.trim()) return;
     
@@ -271,6 +302,16 @@ export default function TodosPage() {
       title: newListTitle,
       description: newListDescription,
       priority: newListPriority,
+    });
+  };
+
+  const handleCreateReminder = () => {
+    if (!selectedItemForReminder || !reminderDate) return;
+    
+    createReminderMutation.mutate({
+      todoItemId: selectedItemForReminder,
+      reminderDate: new Date(reminderDate).toISOString(),
+      message: reminderMessage.trim() || undefined,
     });
   };
 
@@ -1003,6 +1044,79 @@ export default function TodosPage() {
         )}
       </AnimatePresence>
 
+      {/* Set Reminder Modal */}
+      <AnimatePresence>
+        {showReminderDialog && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+            onClick={() => {
+              setShowReminderDialog(false);
+              setSelectedItemForReminder(null);
+              setReminderDate("");
+              setReminderMessage("");
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="bg-white rounded-lg p-6 w-full max-w-md mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Bell className="w-5 h-5 text-amber-600" />
+                Set Reminder
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="reminder-date">Reminder Date & Time</Label>
+                  <Input
+                    id="reminder-date"
+                    type="datetime-local"
+                    value={reminderDate}
+                    onChange={(e) => setReminderDate(e.target.value)}
+                    min={new Date().toISOString().slice(0, 16)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="reminder-message">Message (Optional)</Label>
+                  <Textarea
+                    id="reminder-message"
+                    placeholder="Add a reminder message..."
+                    value={reminderMessage}
+                    onChange={(e) => setReminderMessage(e.target.value)}
+                    rows={3}
+                  />
+                </div>
+                <div className="flex gap-2 pt-4">
+                  <Button
+                    onClick={handleCreateReminder}
+                    disabled={!reminderDate || createReminderMutation.isPending}
+                    className="flex-1"
+                  >
+                    {createReminderMutation.isPending ? "Setting..." : "Set Reminder"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowReminderDialog(false);
+                      setSelectedItemForReminder(null);
+                      setReminderDate("");
+                      setReminderMessage("");
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Todo Lists Grid */}
       {filteredTodoLists.length === 0 ? (
         <motion.div
@@ -1152,6 +1266,18 @@ export default function TodosPage() {
                             )}
                             {!selectionMode && (
                               <>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setSelectedItemForReminder(item.id);
+                                    setShowReminderDialog(true);
+                                  }}
+                                  className="opacity-0 group-hover:opacity-100 transition-opacity text-amber-500 hover:text-amber-700 hover:bg-amber-50 p-1"
+                                  title="Set reminder"
+                                >
+                                  <Bell className="w-3 h-3" />
+                                </Button>
                                 <Button
                                   size="sm"
                                   variant="ghost"
