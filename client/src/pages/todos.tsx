@@ -42,7 +42,7 @@ import {
 
 interface TodoItem {
   id: number;
-  text: string;
+  title: string;
   isCompleted: boolean;
   createdAt: string;
   updatedAt: string;
@@ -320,8 +320,8 @@ export default function TodosPage() {
     createReminderMutation.mutate({
       todoItemId: selectedItemForReminder.id,
       reminderDate: reminderDate,
-      message: reminderMessage.trim() || `Reminder for: ${selectedItemForReminder.text}`,
-      itemText: selectedItemForReminder.text,
+      message: reminderMessage.trim() || `Reminder for: ${selectedItemForReminder.title}`,
+      itemText: selectedItemForReminder.title,
       itemData: {
         item: selectedItemForReminder,
         list: listContext ? {
@@ -1088,7 +1088,7 @@ export default function TodosPage() {
             >
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <Bell className="w-5 h-5 text-amber-600" />
-                Set Reminder for: "{selectedItemForReminder?.text}"
+                Set Reminder for: "{selectedItemForReminder?.title}"
               </h3>
               <div className="space-y-4">
                 <div>
@@ -1272,7 +1272,7 @@ export default function TodosPage() {
                           <span className={`flex-1 text-sm font-medium ${
                             item.isCompleted ? 'text-green-700 line-through' : 'text-gray-900'
                           }`}>
-                            {item.text}
+                            {item.title}
                           </span>
                           <div className="flex items-center gap-2">
                             {item.isCompleted && (
