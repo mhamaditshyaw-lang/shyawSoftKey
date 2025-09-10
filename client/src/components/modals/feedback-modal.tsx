@@ -226,11 +226,7 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
                     const cursorPos = textarea.selectionStart;
                     const textBefore = formData.description.substring(0, cursorPos);
                     const textAfter = formData.description.substring(cursorPos);
-                    const today = new Date().toISOString().split('T')[0];
-                    const tomorrow = new Date();
-                    tomorrow.setDate(tomorrow.getDate() + 1);
-                    const tomorrowStr = tomorrow.toISOString().split('T')[0];
-                    const listText = `\n\n**List with Reminders:**\n• Item 1 - ⏰ Due: ${today}\n• Item 2 - ⏰ Due: ${tomorrowStr}\n• Item 3`;
+                    const listText = `\n\n**List with Reminders:**\n• Item 1 - ⏰ Due: YYYY-MM-DD\n• Item 2 - ⏰ Due: YYYY-MM-DD\n• Item 3 - ⏰ Due: YYYY-MM-DD`;
                     setFormData({ ...formData, description: textBefore + listText + textAfter });
                   }}
                 >
@@ -245,11 +241,7 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
                     const cursorPos = textarea.selectionStart;
                     const textBefore = formData.description.substring(0, cursorPos);
                     const textAfter = formData.description.substring(cursorPos);
-                    const today = new Date().toISOString().split('T')[0];
-                    const tomorrow = new Date();
-                    tomorrow.setDate(tomorrow.getDate() + 1);
-                    const tomorrowStr = tomorrow.toISOString().split('T')[0];
-                    const checklistText = `\n\n**Checklist with Reminders:**\n☐ Task 1 - ⏰ Due: ${today}\n☐ Task 2 - ⏰ Due: ${tomorrowStr}\n☐ Task 3`;
+                    const checklistText = `\n\n**Checklist with Reminders:**\n☐ Task 1 - ⏰ Due: YYYY-MM-DD\n☐ Task 2 - ⏰ Due: YYYY-MM-DD\n☐ Task 3 - ⏰ Due: YYYY-MM-DD`;
                     setFormData({ ...formData, description: textBefore + checklistText + textAfter });
                   }}
                 >

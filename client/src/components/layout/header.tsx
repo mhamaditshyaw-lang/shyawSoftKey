@@ -1,4 +1,5 @@
-import { Building2, User, LogOut, Menu } from "lucide-react";
+import { useState } from "react";
+import { Building2, User, LogOut, Menu, Clock } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 import NotificationCenter from "@/components/device-notifications/notification-center";
@@ -16,6 +17,7 @@ interface HeaderProps {
 export default function Header({ onMenuClick }: HeaderProps) {
   const { user, logout } = useAuth();
   const { notifications, unreadCount } = useDeviceNotifications();
+  const [showReminders, setShowReminders] = useState(false);
 
   if (!user) return null;
 
@@ -78,6 +80,19 @@ export default function Header({ onMenuClick }: HeaderProps) {
                 <ThemeToggle />
               </div>
               
+              {/* Reminders Icon */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowReminders(!showReminders)}
+                className="relative hover:bg-muted/50 touch-target p-2"
+              >
+                <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground hover:text-foreground" />
+                <Badge className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 p-0 flex items-center justify-center bg-orange-500 text-white text-xs">
+                  3
+                </Badge>
+              </Button>
+
               {/* Mobile: Simplified notifications */}
               <div className="relative sm:block">
                 <NotificationCenter />
