@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Star, Plus, List, Clock, CheckSquare } from "lucide-react";
+import { Star, Plus, List, Clock, CheckSquare, Trash2 } from "lucide-react";
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -33,6 +33,12 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
     displayName: "",
     description: ""
   });
+  const [showListCreator, setShowListCreator] = useState(false);
+  const [showReminderCreator, setShowReminderCreator] = useState(false);
+  const [currentList, setCurrentList] = useState<string[]>(['']);
+  const [listTitle, setListTitle] = useState('');
+  const [reminderText, setReminderText] = useState('');
+  const [reminderDate, setReminderDate] = useState('');
   const { toast } = useToast();
   const { t } = useTranslation();
 
@@ -221,14 +227,7 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    const textarea = document.getElementById('description') as HTMLTextAreaElement;
-                    const cursorPos = textarea.selectionStart;
-                    const textBefore = formData.description.substring(0, cursorPos);
-                    const textAfter = formData.description.substring(cursorPos);
-                    const listText = `\n\n**List with Reminders:**\n• Item 1 - ⏰ Due: YYYY-MM-DD\n• Item 2 - ⏰ Due: YYYY-MM-DD\n• Item 3 - ⏰ Due: YYYY-MM-DD`;
-                    setFormData({ ...formData, description: textBefore + listText + textAfter });
-                  }}
+                  onClick={() => setShowListCreator(true)}
                 >
                   <List className="w-4 h-4" />
                 </Button>
@@ -236,16 +235,9 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    const textarea = document.getElementById('description') as HTMLTextAreaElement;
-                    const cursorPos = textarea.selectionStart;
-                    const textBefore = formData.description.substring(0, cursorPos);
-                    const textAfter = formData.description.substring(cursorPos);
-                    const checklistText = `\n\n**Checklist with Reminders:**\n☐ Task 1 - ⏰ Due: YYYY-MM-DD\n☐ Task 2 - ⏰ Due: YYYY-MM-DD\n☐ Task 3 - ⏰ Due: YYYY-MM-DD`;
-                    setFormData({ ...formData, description: textBefore + checklistText + textAfter });
-                  }}
+                  onClick={() => setShowReminderCreator(true)}
                 >
-                  <CheckSquare className="w-4 h-4" />
+                  <Clock className="w-4 h-4" />
                 </Button>
               </div>
             </div>
@@ -258,7 +250,7 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
               required
             />
             <div className="text-xs text-gray-500 dark:text-gray-400">
-              💡 Tip: Use the formatting buttons above to quickly add lists, checklists, and reminders
+              💡 Tip: Use the formatting buttons above to create interactive lists and set reminder dates
             </div>
           </div>
 
@@ -357,6 +349,152 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
               disabled={createTypeMutation.isPending || !newTypeData.name.trim() || !newTypeData.displayName.trim()}
             >
               {createTypeMutation.isPending ? "Adding..." : "Add Type"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* List Creator Modal */}
+      <Dialog open={showListCreator} onOpenChange={setShowListCreator}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create List</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="list-title-input">List Title</Label>
+              <Input
+                id="list-title-input"
+                placeholder="Enter list title..."
+                value={listTitle}
+                onChange={(e) => setListTitle(e.target.value)}
+              />
+            </div>
+            <div>
+              <Label>List Items</Label>
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {currentList.map((item, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <Input
+                      placeholder={`Item ${index + 1}`}
+                      value={item}
+                      onChange={(e) => {
+                        const newList = [...currentList];
+                        newList[index] = e.target.value;
+                        setCurrentList(newList);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && index === currentList.length - 1 && item.trim()) {
+                          setCurrentList([...currentList, '']);
+                          setTimeout(() => {
+                            const inputs = document.querySelectorAll('input[placeholder^="Item"]');
+                            (inputs[inputs.length - 1] as HTMLInputElement)?.focus();
+                          }, 10);
+                        }
+                      }}
+                    />
+                    {currentList.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          const newList = currentList.filter((_, i) => i !== index);
+                          setCurrentList(newList.length ? newList : ['']);
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end space-x-3 pt-4">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowListCreator(false);
+                setCurrentList(['']);
+                setListTitle('');
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                const textarea = document.getElementById('description') as HTMLTextAreaElement;
+                const cursorPos = textarea.selectionStart;
+                const textBefore = formData.description.substring(0, cursorPos);
+                const textAfter = formData.description.substring(cursorPos);
+                const filteredItems = currentList.filter(item => item.trim());
+                const listText = `\n\n**${listTitle || 'List'}:**\n${filteredItems.map(item => `• ${item}`).join('\n')}`;
+                setFormData({ ...formData, description: textBefore + listText + textAfter });
+                setShowListCreator(false);
+                setCurrentList(['']);
+                setListTitle('');
+              }}
+              disabled={!currentList.some(item => item.trim())}
+            >
+              Add List
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reminder Creator Modal */}
+      <Dialog open={showReminderCreator} onOpenChange={setShowReminderCreator}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create Reminder</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="reminder-text-input">Reminder Text</Label>
+              <Input
+                id="reminder-text-input"
+                placeholder="Enter reminder description..."
+                value={reminderText}
+                onChange={(e) => setReminderText(e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="reminder-date-input">Due Date</Label>
+              <Input
+                id="reminder-date-input"
+                type="date"
+                value={reminderDate}
+                onChange={(e) => setReminderDate(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end space-x-3 pt-4">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowReminderCreator(false);
+                setReminderText('');
+                setReminderDate('');
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                const textarea = document.getElementById('description') as HTMLTextAreaElement;
+                const cursorPos = textarea.selectionStart;
+                const textBefore = formData.description.substring(0, cursorPos);
+                const textAfter = formData.description.substring(cursorPos);
+                const reminderTextFormatted = `\n\n**⏰ Reminder:** ${reminderText} - Due: ${reminderDate}`;
+                setFormData({ ...formData, description: textBefore + reminderTextFormatted + textAfter });
+                setShowReminderCreator(false);
+                setReminderText('');
+                setReminderDate('');
+              }}
+              disabled={!reminderText.trim() || !reminderDate}
+            >
+              Add Reminder
             </Button>
           </div>
         </DialogContent>
