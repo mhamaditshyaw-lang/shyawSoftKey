@@ -13,6 +13,7 @@ import ModernDashboard from "@/pages/modern-dashboard";
 import InterviewsPage from "@/pages/interviews";
 import TodosPage from "@/pages/todos";
 import RemindersPage from "@/pages/reminders";
+import CalendarPage from "@/pages/calendar";
 import UsersPage from "@/pages/users";
 import UserManagementPage from "@/pages/user-management";
 import EmployeeManagementPage from "@/pages/employee-management";
@@ -73,6 +74,11 @@ function Router() {
       <Route path="/reminders">
         <ProtectedRoute>
           <RemindersPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/calendar">
+        <ProtectedRoute>
+          <CalendarPage />
         </ProtectedRoute>
       </Route>
       <Route path="/users">

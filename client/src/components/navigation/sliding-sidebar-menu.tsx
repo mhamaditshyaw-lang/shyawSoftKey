@@ -8,6 +8,7 @@ import {
   Home,
   Users,
   Calendar,
+  CalendarDays,
   CheckSquare,
   MessageSquare,
   BarChart3,
@@ -71,6 +72,11 @@ const NAVIGATION: NavigationItem[] = [
     segment: 'reminders',
     title: 'Reminders',
     icon: <Bell className="w-5 h-5" />,
+  },
+  {
+    segment: 'calendar',
+    title: 'Calendar View',
+    icon: <CalendarDays className="w-5 h-5" />,
   },
   {
     segment: 'interviews',
