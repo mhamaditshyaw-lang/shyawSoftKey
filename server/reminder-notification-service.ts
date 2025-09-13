@@ -4,6 +4,7 @@ import { DeviceNotificationService } from "./device-notification-service";
 export class ReminderNotificationService {
   private static intervalId: NodeJS.Timeout | null = null;
   private static isRunning = false;
+  private static isCheckingReminders = false;
 
   /**
    * Start the reminder notification service
@@ -45,6 +46,13 @@ export class ReminderNotificationService {
    * Check for due reminders and send notifications
    */
   static async checkAndSendReminders() {
+    // Prevent overlapping runs
+    if (this.isCheckingReminders) {
+      console.log("Reminder check already in progress, skipping...");
+      return;
+    }
+
+    this.isCheckingReminders = true;
     try {
       console.log("Checking for due reminders...");
 
@@ -77,10 +85,16 @@ export class ReminderNotificationService {
 
           // Send notifications for each pending reminder
           for (const reminder of pendingReminders) {
-            await this.sendReminderNotification(user.id, reminder);
-            
-            // Mark notification as sent in the database
-            await storage.updateReminder(reminder.id, { notificationSent: true });
+            try {
+              await this.sendReminderNotification(user.id, reminder);
+              
+              // Only mark notification as sent if sending was successful
+              await storage.updateReminder(reminder.id, { notificationSent: true });
+              console.log(`Successfully sent and marked notification for reminder ${reminder.id}`);
+            } catch (error) {
+              console.error(`Failed to send notification for reminder ${reminder.id}:`, error);
+              // Don't mark as sent if sending failed - retry on next check
+            }
           }
         } catch (userError) {
           console.error(`Error processing reminders for user ${user.username}:`, userError);
@@ -90,6 +104,8 @@ export class ReminderNotificationService {
       console.log("Reminder check completed");
     } catch (error) {
       console.error("Error in reminder notification service:", error);
+    } finally {
+      this.isCheckingReminders = false;
     }
   }
 
@@ -97,26 +113,22 @@ export class ReminderNotificationService {
    * Send a notification for a specific reminder
    */
   private static async sendReminderNotification(userId: number, reminder: any) {
-    try {
-      const title = reminder.title || "Reminder";
-      const message = reminder.message || reminder.itemText || "You have a reminder due today";
+    const title = reminder.title || "Reminder";
+    const message = reminder.message || reminder.itemText || "You have a reminder due today";
 
-      await DeviceNotificationService.createUserNotification(
-        userId,
-        "reminder",
-        `📅 ${title}`,
-        message,
-        "normal",
-        {
-          icon: "🔔",
-          actionUrl: "/reminders",
-        }
-      );
+    await DeviceNotificationService.createUserNotification(
+      userId,
+      "reminder",
+      `📅 ${title}`,
+      message,
+      "normal",
+      {
+        icon: "🔔",
+        actionUrl: "/reminders",
+      }
+    );
 
-      console.log(`Notification sent for reminder "${title}" to user ${userId}`);
-    } catch (error) {
-      console.error(`Failed to send notification for reminder ${reminder.id}:`, error);
-    }
+    console.log(`Notification sent for reminder "${title}" to user ${userId}`);
   }
 
   /**
