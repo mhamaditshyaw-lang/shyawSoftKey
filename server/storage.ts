@@ -44,6 +44,8 @@ export interface IStorage {
   getTodoListsByUser(userId: number): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]>;
   createTodoList(todoList: InsertTodoList): Promise<TodoList>;
   getTodoList(id: number): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] }) | undefined>;
+  deleteTodoList(id: number): Promise<boolean>;
+  updateTodoList(id: number, updates: Partial<TodoList>): Promise<TodoList | undefined>;
   createTodoItem(item: InsertTodoItem): Promise<TodoItem>;
   updateTodoItem(id: number, updates: Partial<TodoItem>): Promise<TodoItem | undefined>;
   deleteTodoItem(id: number): Promise<boolean>;
@@ -316,6 +318,48 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Storage: Error deleting all todo items:", error);
       return false;
+    }
+  }
+
+  async deleteTodoList(id: number): Promise<boolean> {
+    try {
+      // Use a transaction to ensure consistency and defensive deletion
+      return await db.transaction(async (tx) => {
+        // First check if the list exists
+        const existingList = await tx.select({ id: todoLists.id })
+          .from(todoLists)
+          .where(eq(todoLists.id, id));
+        
+        if (existingList.length === 0) {
+          return false; // List not found
+        }
+
+        // Delete all associated items first (defensive approach)
+        await tx.delete(todoItems).where(eq(todoItems.todoListId, id));
+        
+        // Then delete the list
+        const result = await tx.delete(todoLists).where(eq(todoLists.id, id)).returning();
+        
+        return result.length > 0;
+      });
+    } catch (error) {
+      console.error("Storage: Error deleting todo list:", error);
+      // Re-throw the error so the route can handle it properly (500 vs 404)
+      throw error;
+    }
+  }
+
+  async updateTodoList(id: number, updates: Partial<TodoList>): Promise<TodoList | undefined> {
+    try {
+      const [list] = await db
+        .update(todoLists)
+        .set(updates)
+        .where(eq(todoLists.id, id))
+        .returning();
+      return list || undefined;
+    } catch (error) {
+      console.error("Storage: Error updating todo list:", error);
+      return undefined;
     }
   }
 

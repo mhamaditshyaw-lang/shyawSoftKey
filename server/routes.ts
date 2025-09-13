@@ -436,6 +436,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete entire todo list
+  app.delete("/api/todos/:id", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const todoListId = parseInt(req.params.id);
+      
+      // Check if the todo list exists and get its details for authorization
+      const existingList = await storage.getTodoList(todoListId);
+      if (!existingList) {
+        return res.status(404).json({ message: "Todo list not found" });
+      }
+
+      // Authorization: Allow deletion if user is admin/office or owns/is assigned to the list
+      const isAuthorized = req.user?.role === 'admin' || 
+                          req.user?.role === 'office' ||
+                          existingList.createdById === req.user?.id ||
+                          existingList.assignedToId === req.user?.id;
+
+      if (!isAuthorized) {
+        return res.status(403).json({ message: "Not authorized to delete this todo list" });
+      }
+
+      const success = await storage.deleteTodoList(todoListId);
+      if (!success) {
+        return res.status(404).json({ message: "Todo list not found" });
+      }
+
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("Error deleting todo list:", error);
+      res.status(500).json({ message: error.message || "Failed to delete todo list" });
+    }
+  });
+
+  // Update todo list
+  app.patch("/api/todos/:id", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const todoListId = parseInt(req.params.id);
+      
+      // Check if the todo list exists and get its details for authorization
+      const existingList = await storage.getTodoList(todoListId);
+      if (!existingList) {
+        return res.status(404).json({ message: "Todo list not found" });
+      }
+
+      // Authorization: Allow updates if user is admin/office or owns/is assigned to the list
+      const isAuthorized = req.user?.role === 'admin' || 
+                          req.user?.role === 'office' ||
+                          existingList.createdById === req.user?.id ||
+                          existingList.assignedToId === req.user?.id;
+
+      if (!isAuthorized) {
+        return res.status(403).json({ message: "Not authorized to update this todo list" });
+      }
+
+      // Validate updates with Zod - only allow specific fields
+      const updateTodoListSchema = insertTodoListSchema.pick({
+        title: true,
+        description: true,
+        priority: true,
+        assignedToId: true,
+      }).partial();
+
+      const validatedUpdates = updateTodoListSchema.parse(req.body);
+
+      const todoList = await storage.updateTodoList(todoListId, validatedUpdates);
+      if (!todoList) {
+        return res.status(404).json({ message: "Todo list not found" });
+      }
+
+      res.json({ todoList });
+    } catch (error: any) {
+      console.error("Error updating todo list:", error);
+      if (error.name === 'ZodError') {
+        return res.status(400).json({ message: "Invalid update data", errors: error.errors });
+      }
+      res.status(500).json({ message: error.message || "Failed to update todo list" });
+    }
+  });
+
   // Reminder routes
   app.get("/api/reminders", authenticateToken, async (req: AuthRequest, res) => {
     try {

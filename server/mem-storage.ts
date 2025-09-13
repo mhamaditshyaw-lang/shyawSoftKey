@@ -268,6 +268,26 @@ export class MemStorage implements IStorage {
     return this.todoItems.length < initialLength;
   }
 
+  async deleteTodoList(id: number): Promise<boolean> {
+    const listIndex = this.todoLists.findIndex(list => list.id === id);
+    if (listIndex === -1) return false;
+
+    // Remove all items associated with this todo list
+    this.todoItems = this.todoItems.filter(item => item.todoListId !== id);
+    
+    // Remove the todo list itself
+    this.todoLists.splice(listIndex, 1);
+    return true;
+  }
+
+  async updateTodoList(id: number, updates: Partial<TodoList>): Promise<TodoList | undefined> {
+    const listIndex = this.todoLists.findIndex(list => list.id === id);
+    if (listIndex === -1) return undefined;
+
+    this.todoLists[listIndex] = { ...this.todoLists[listIndex], ...updates };
+    return this.todoLists[listIndex];
+  }
+
   async getTodoStatsByUser(userId: number): Promise<{ totalTodos: number; completedTodos: number; pendingTodos: number }> {
     const userLists = this.todoLists.filter(list => 
       list.createdById === userId || list.assignedToId === userId
