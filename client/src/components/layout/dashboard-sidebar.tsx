@@ -5,6 +5,7 @@ import {
   Users, 
   CheckSquare, 
   Calendar, 
+  CalendarDays,
   BarChart3, 
   MessageSquare,
   Archive,
@@ -64,6 +65,13 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       title: "Reminders",
       href: "/reminders",
       icon: Bell,
+      badge: null,
+      roles: ["admin", "manager", "security", "office", "secretary", "office_team"]
+    },
+    {
+      title: "Calendar View",
+      href: "/calendar",
+      icon: CalendarDays,
       badge: null,
       roles: ["admin", "manager", "security", "office", "secretary", "office_team"]
     },
