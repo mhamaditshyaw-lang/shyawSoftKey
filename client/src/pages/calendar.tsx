@@ -72,49 +72,30 @@ export default function CalendarPage() {
   const [showEventDetails, setShowEventDetails] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
 
-  // Fetch reminders
-  const { data: remindersData, isLoading: remindersLoading, error: remindersError } = useQuery({
-    queryKey: ["/api/reminders"],
+  // Calculate date range for current month (plus buffer for prev/next month visibility)
+  const getDateRange = () => {
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+    
+    return {
+      from: firstDay.toISOString().split('T')[0],
+      to: lastDay.toISOString().split('T')[0]
+    };
+  };
+
+  const dateRange = getDateRange();
+
+  // Fetch calendar events for date range
+  const { data: calendarData, isLoading: calendarLoading, error: calendarError } = useQuery({
+    queryKey: ["/api/calendar/events", dateRange],
     queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/reminders");
+      const response = await authenticatedRequest("GET", `/api/calendar/events?from=${dateRange.from}&to=${dateRange.to}`);
       return response.json();
     },
   });
 
-  // Fetch interviews
-  const { data: interviewsData, isLoading: interviewsLoading, error: interviewsError } = useQuery({
-    queryKey: ["/api/interviews"],
-    queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/interviews");
-      return response.json();
-    },
-  });
-
-  const reminders: Reminder[] = remindersData?.reminders || [];
-  const interviews: InterviewRequest[] = interviewsData?.requests || [];
-
-  // Convert data to calendar events
-  const calendarEvents: CalendarEvent[] = [
-    ...reminders.map((reminder): CalendarEvent => ({
-      id: reminder.id,
-      type: "reminder",
-      title: reminder.title || reminder.itemText || "Reminder",
-      date: reminder.reminderDate,
-      description: reminder.message,
-      isCompleted: reminder.isCompleted,
-    })),
-    ...interviews.map((interview): CalendarEvent => ({
-      id: interview.id,
-      type: "interview",
-      title: `Interview: ${interview.position}`,
-      date: interview.proposedDateTime,
-      description: interview.description,
-      status: interview.status,
-      candidateName: interview.candidateName,
-      position: interview.position,
-      duration: interview.duration,
-    })),
-  ];
+  const calendarEvents: CalendarEvent[] = calendarData?.events || [];
 
   // Get events for selected date (using local timezone)
   const getEventsForDate = (date: Date) => {
@@ -142,7 +123,8 @@ export default function CalendarPage() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/calendar/events", dateRange] });
+      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] }); // Keep for other pages that might use it
       toast({
         title: "Success",
         description: "Reminder updated successfully!",
@@ -266,12 +248,12 @@ export default function CalendarPage() {
               </p>
             </CardHeader>
             <CardContent className="space-y-3">
-              {remindersLoading || interviewsLoading ? (
+              {calendarLoading ? (
                 <div className="text-center py-8">
                   <CalendarDays className="w-8 h-8 animate-pulse text-gray-400 mx-auto mb-2" />
                   <p className="text-gray-600">Loading events...</p>
                 </div>
-              ) : remindersError || interviewsError ? (
+              ) : calendarError ? (
                 <div className="text-center py-8">
                   <AlertCircle className="w-8 h-8 text-red-400 mx-auto mb-2" />
                   <h3 className="text-lg font-medium text-red-600 mb-2">Error Loading Events</h3>
