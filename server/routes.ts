@@ -454,14 +454,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
       
-      console.log(`Today range: ${today.toISOString()} to ${tomorrow.toISOString()}`);
-      
       const reminders = await storage.getRemindersByDateRange(req.user?.id || 0, today, tomorrow);
-      console.log(`Found ${reminders.length} reminders for today:`, reminders.map(r => ({ id: r.id, date: r.reminderDate })));
-      
       res.json({ reminders });
     } catch (error: any) {
-      console.error("Error fetching today's reminders:", error);
       res.status(500).json({ message: error.message });
     }
   });

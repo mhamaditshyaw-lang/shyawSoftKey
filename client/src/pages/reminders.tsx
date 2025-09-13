@@ -63,6 +63,8 @@ export default function RemindersPage() {
       const response = await authenticatedRequest("GET", "/api/reminders/today");
       return response.json();
     },
+    refetchOnWindowFocus: false,
+    staleTime: 30000, // 30 seconds
   });
 
   // Update reminder mutation
