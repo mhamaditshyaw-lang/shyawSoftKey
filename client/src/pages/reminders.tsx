@@ -65,6 +65,7 @@ export default function RemindersPage() {
     },
     refetchOnWindowFocus: false,
     staleTime: 30000, // 30 seconds
+    enabled: !!user, // Only fetch when user is authenticated
   });
 
   // Update reminder mutation
