@@ -7,7 +7,6 @@ import {
   Home, 
   Users, 
   Calendar, 
-  CalendarDays,
   CheckSquare, 
   MessageSquare, 
   BarChart3, 
@@ -117,14 +116,6 @@ export default function NavigationBar() {
       icon: Bell,
       href: "/reminders",
       color: "from-yellow-500 to-yellow-600"
-    },
-    {
-      id: "calendar",
-      title: "Calendar View",
-      subtitle: "Events",
-      icon: CalendarDays,
-      href: "/calendar",
-      color: "from-blue-500 to-indigo-600"
     },
     {
       id: "feedback",

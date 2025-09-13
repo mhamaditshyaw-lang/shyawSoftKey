@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import { 
   Home, 
   Calendar, 
-  CalendarDays,
   CheckSquare, 
   MessageSquare, 
   Users, 
@@ -49,7 +48,6 @@ export default function ResponsiveMenuBar() {
     { title: "Employee Reviews", href: "/interviews", icon: Calendar, roles: ["admin", "manager", "security"], shortTitle: "Reviews" },
     { title: "Daily Tasks", href: "/todos", icon: CheckSquare, roles: ["admin", "manager", "security"], shortTitle: "Tasks" },
     { title: "Reminders", href: "/reminders", icon: Bell, roles: ["admin", "manager", "security"], shortTitle: "Reminders" },
-    { title: "Calendar View", href: "/calendar", icon: CalendarDays, roles: ["admin", "manager", "security"], shortTitle: "Calendar" },
     { title: "Feedback", href: "/feedback", icon: MessageSquare, roles: ["admin", "manager", "security"], shortTitle: "Feedback" },
     { title: "Employee Tracking", href: "/metrics", icon: Users, roles: ["admin", "manager", "security"], shortTitle: "Tracking" },
     { title: "Data View", href: "/data-view", icon: BarChart3, roles: ["admin", "manager", "security"], shortTitle: "Data" },
