@@ -465,61 +465,10 @@ export default function TodosPage() {
   };
 
 
-  const handleToggleTaskSelection = (taskId: number) => {
-    const newSelection = new Set(selectedTasks);
-    if (newSelection.has(taskId)) {
-      newSelection.delete(taskId);
-    } else {
-      newSelection.add(taskId);
-    }
-    setSelectedTasks(newSelection);
-  };
 
-  const handleToggleListSelection = (listId: number) => {
-    const newSelection = new Set(selectedLists);
-    if (newSelection.has(listId)) {
-      newSelection.delete(listId);
-    } else {
-      newSelection.add(listId);
-    }
-    setSelectedLists(newSelection);
-  };
 
-  const handleArchiveSelected = () => {
-    const totalSelected = selectedTasks.size + selectedLists.size;
-    if (totalSelected === 0) {
-      toast({
-        title: "No items selected",
-        description: "Please select items to archive",
-        variant: "destructive",
-      });
-      return;
-    }
 
-    if (window.confirm(`Are you sure you want to archive ${totalSelected} selected items? You can restore them from the Archive page.`)) {
-      archiveSelectedMutation.mutate();
-    }
-  };
 
-  const handleSelectAll = () => {
-    const allTaskIds = new Set<number>();
-    const allListIds = new Set<number>();
-    
-    todoLists.forEach(list => {
-      allListIds.add(list.id);
-      list.items.forEach(item => {
-        allTaskIds.add(item.id);
-      });
-    });
-    
-    setSelectedTasks(allTaskIds);
-    setSelectedLists(allListIds);
-  };
-
-  const handleClearSelection = () => {
-    setSelectedTasks(new Set());
-    setSelectedLists(new Set());
-  };
 
   const getCompletionPercentage = (items: TodoItem[]) => {
     if (items.length === 0) return 0;
@@ -1231,54 +1180,6 @@ export default function TodosPage() {
         </motion.div>
       )}
 
-      {/* Undo Toast */}
-      <AnimatePresence>
-        {showUndoToast && lastArchivedItem && (
-          <motion.div
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 100 }}
-            className="fixed bottom-6 right-6 z-50"
-          >
-            <Card className="bg-blue-900 text-white border-blue-700 shadow-lg">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <Archive className="w-5 h-5 text-blue-300" />
-                  <div className="flex-1">
-                    <p className="font-medium">
-                      {lastArchivedItem.type === 'list' ? 'List' : 'Task'} archived
-                    </p>
-                    <p className="text-sm text-blue-200">
-                      "{lastArchivedItem.data.title || lastArchivedItem.data.text}"
-                    </p>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => undoArchive.mutate()}
-                    disabled={undoArchive.isPending}
-                    className="bg-blue-800 border-blue-600 text-white hover:bg-blue-700"
-                  >
-                    <Undo2 className="w-4 h-4 mr-1" />
-                    Undo
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => {
-                      setShowUndoToast(false);
-                      setLastArchivedItem(null);
-                    }}
-                    className="text-blue-300 hover:text-white hover:bg-blue-800 p-1"
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
     </DashboardLayout>
   );
