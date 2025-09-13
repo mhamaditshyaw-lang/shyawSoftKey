@@ -4,6 +4,10 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { authenticatedRequest } from "@/lib/auth";
@@ -18,6 +22,7 @@ import {
   Filter,
   RefreshCw,
   AlertCircle,
+  Plus,
 } from "lucide-react";
 
 interface Reminder {
@@ -37,6 +42,10 @@ export default function RemindersPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [filterType, setFilterType] = useState<"all" | "today" | "upcoming" | "overdue">("today");
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [newReminderDate, setNewReminderDate] = useState("");
+  const [newReminderMessage, setNewReminderMessage] = useState("");
+  const [newReminderTitle, setNewReminderTitle] = useState("");
 
   // Fetch all reminders
   const { data: remindersData, isLoading } = useQuery({
@@ -102,6 +111,39 @@ export default function RemindersPage() {
     },
   });
 
+  // Create reminder mutation
+  const createReminderMutation = useMutation({
+    mutationFn: async (data: { reminderDate: string; message?: string; title?: string; itemText?: string }) => {
+      const response = await authenticatedRequest("POST", "/api/reminders", {
+        reminderDate: data.reminderDate,
+        message: data.message,
+        title: data.title,
+        itemText: data.itemText,
+        todoItemId: null,
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/reminders/today"] });
+      setShowCreateDialog(false);
+      setNewReminderDate("");
+      setNewReminderMessage("");
+      setNewReminderTitle("");
+      toast({
+        title: "Success",
+        description: "Reminder created successfully!",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create reminder",
+        variant: "destructive",
+      });
+    },
+  });
+
   const reminders: Reminder[] = remindersData?.reminders || [];
   const todayReminders: Reminder[] = todayRemindersData?.reminders || [];
 
@@ -150,6 +192,35 @@ export default function RemindersPage() {
     }
   };
 
+  const handleCreateReminder = () => {
+    if (!newReminderDate.trim() || (!newReminderMessage.trim() && !newReminderTitle.trim())) {
+      toast({
+        title: "Error",
+        description: "Please fill in date and either title or message",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    createReminderMutation.mutate({
+      reminderDate: newReminderDate,
+      message: newReminderMessage.trim() || undefined,
+      title: newReminderTitle.trim() || undefined,
+      itemText: newReminderTitle.trim() || newReminderMessage.trim() || undefined,
+    });
+  };
+
+  // Helper function to get current datetime for input default
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -168,12 +239,13 @@ export default function RemindersPage() {
           </CardHeader>
           <CardContent>
             {/* Filter Controls */}
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-2 mb-4 flex-wrap">
               <Button
                 variant={filterType === "today" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setFilterType("today")}
                 className="flex items-center gap-2"
+                data-testid="filter-today"
               >
                 <Calendar className="w-4 h-4" />
                 Today ({todayReminders.length})
@@ -183,6 +255,7 @@ export default function RemindersPage() {
                 size="sm"
                 onClick={() => setFilterType("upcoming")}
                 className="flex items-center gap-2"
+                data-testid="filter-upcoming"
               >
                 <Clock className="w-4 h-4" />
                 Upcoming
@@ -192,6 +265,7 @@ export default function RemindersPage() {
                 size="sm"
                 onClick={() => setFilterType("overdue")}
                 className="flex items-center gap-2"
+                data-testid="filter-overdue"
               >
                 <AlertCircle className="w-4 h-4" />
                 Overdue
@@ -201,21 +275,93 @@ export default function RemindersPage() {
                 size="sm"
                 onClick={() => setFilterType("all")}
                 className="flex items-center gap-2"
+                data-testid="filter-all"
               >
                 <Filter className="w-4 h-4" />
                 All ({reminders.length})
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
-                  queryClient.invalidateQueries({ queryKey: ["/api/reminders/today"] });
-                }}
-                className="ml-auto"
-              >
-                <RefreshCw className="w-4 h-4" />
-              </Button>
+              
+              <div className="flex gap-2 ml-auto">
+                <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+                  <DialogTrigger asChild>
+                    <Button
+                      size="sm"
+                      className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                      data-testid="button-create-reminder"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Create Reminder
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Create New Reminder</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="reminderTitle">Title</Label>
+                        <Input
+                          id="reminderTitle"
+                          value={newReminderTitle}
+                          onChange={(e) => setNewReminderTitle(e.target.value)}
+                          placeholder="Reminder title..."
+                          data-testid="input-reminder-title"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="reminderDate">Date & Time</Label>
+                        <Input
+                          id="reminderDate"
+                          type="datetime-local"
+                          value={newReminderDate}
+                          onChange={(e) => setNewReminderDate(e.target.value)}
+                          min={getCurrentDateTime()}
+                          data-testid="input-reminder-date"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="reminderMessage">Message (optional)</Label>
+                        <Textarea
+                          id="reminderMessage"
+                          value={newReminderMessage}
+                          onChange={(e) => setNewReminderMessage(e.target.value)}
+                          placeholder="Additional reminder message..."
+                          rows={3}
+                          data-testid="input-reminder-message"
+                        />
+                      </div>
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowCreateDialog(false)}
+                          data-testid="button-cancel-reminder"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={handleCreateReminder}
+                          disabled={createReminderMutation.isPending}
+                          data-testid="button-save-reminder"
+                        >
+                          {createReminderMutation.isPending ? "Creating..." : "Create Reminder"}
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+                    queryClient.invalidateQueries({ queryKey: ["/api/reminders/today"] });
+                  }}
+                  data-testid="button-refresh"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
