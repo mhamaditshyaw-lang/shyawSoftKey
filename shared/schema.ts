@@ -62,6 +62,7 @@ export const reminders = pgTable("reminders", {
   itemText: text("item_text"),
   itemData: jsonb("item_data"),
   isCompleted: boolean("is_completed").notNull().default(false),
+  notificationSent: boolean("notification_sent").notNull().default(false),
   createdById: integer("created_by_id").references(() => users.id).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

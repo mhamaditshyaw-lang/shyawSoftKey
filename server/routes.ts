@@ -1224,6 +1224,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Reminder notification service routes
+  app.post("/api/reminder-notifications/trigger", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+    try {
+      const { ReminderNotificationService } = await import("./reminder-notification-service");
+      await ReminderNotificationService.triggerCheck();
+      res.json({ message: "Reminder check triggered successfully" });
+    } catch (error) {
+      console.error("Error triggering reminder check:", error);
+      res.status(500).json({ message: "Failed to trigger reminder check" });
+    }
+  });
+
+  app.get("/api/reminder-notifications/status", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+    try {
+      const { ReminderNotificationService } = await import("./reminder-notification-service");
+      const status = ReminderNotificationService.getStatus();
+      res.json({ status });
+    } catch (error) {
+      console.error("Error getting reminder service status:", error);
+      res.status(500).json({ message: "Failed to get reminder service status" });
+    }
+  });
+
   const httpServer = createServer(app);
 
 
