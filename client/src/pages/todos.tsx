@@ -78,15 +78,12 @@ export default function TodosPage() {
   const [newListPriority, setNewListPriority] = useState<"low" | "medium" | "high">("medium");
   const [newItemText, setNewItemText] = useState("");
 
-  const [showUndoToast, setShowUndoToast] = useState(false);
-  const [lastArchivedItem, setLastArchivedItem] = useState<{id: number, data: any, type: 'task' | 'list'} | null>(null);
-  const [selectedTasks, setSelectedTasks] = useState<Set<number>>(new Set());
-  const [selectedLists, setSelectedLists] = useState<Set<number>>(new Set());
-  const [selectionMode, setSelectionMode] = useState(false);
   const [showReminderDialog, setShowReminderDialog] = useState(false);
   const [selectedItemForReminder, setSelectedItemForReminder] = useState<TodoItem | null>(null);
   const [reminderDate, setReminderDate] = useState("");
   const [reminderMessage, setReminderMessage] = useState("");
+  const [editingListId, setEditingListId] = useState<number | null>(null);
+  const [editedTitle, setEditedTitle] = useState("");
 
   // Fetch todos data
   const { data: todosData, isLoading } = useQuery({
@@ -361,37 +358,6 @@ export default function TodosPage() {
     });
   };
 
-  // Remove all tasks mutation
-  const removeAllTasksMutation = useMutation({
-    mutationFn: async (todoListId: number) => {
-      const response = await authenticatedRequest("DELETE", `/api/todos/${todoListId}/items`);
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Failed to remove all tasks');
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
-      toast({
-        title: "Success",
-        description: "All tasks removed successfully!",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to remove all tasks",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleRemoveAllTasks = (todoListId: number) => {
-    if (window.confirm("Are you sure you want to remove all tasks? This action cannot be undone.")) {
-      removeAllTasksMutation.mutate(todoListId);
-    }
-  };
 
   // Remove individual task mutation
   const removeTaskMutation = useMutation({
@@ -425,275 +391,79 @@ export default function TodosPage() {
     }
   };
 
-  // Archive mutations
-  const archiveTodoList = useMutation({
+  // Delete todo list mutation
+  const deleteTodoListMutation = useMutation({
     mutationFn: async (listId: number) => {
-      const response = await fetch("/api/archive", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          itemType: "todo_list",
-          itemId: listId,
-          reason: "Task list completed or no longer needed"
-        })
-      });
-      
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error);
-      }
-      
-      return response.json();
-    },
-    onSuccess: (data, listId) => {
-      const listData = todoLists.find(list => list.id === listId);
-      if (listData) {
-        setLastArchivedItem({
-          id: listId,
-          data: listData,
-          type: 'list'
-        });
-        setShowUndoToast(true);
-        setTimeout(() => {
-          setShowUndoToast(false);
-          setLastArchivedItem(null);
-        }, 10000); // 10 seconds to undo
-      }
-      queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to archive todo list",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const archiveTodoItem = useMutation({
-    mutationFn: async (itemId: number) => {
-      const response = await fetch("/api/archive", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          itemType: "todo_item",
-          itemId: itemId,
-          reason: "Task completed and archived"
-        })
-      });
-      
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error);
-      }
-      
-      return response.json();
-    },
-    onSuccess: (data, itemId) => {
-      // Find the item data before it's removed
-      let itemData = null;
-      for (const list of todoLists) {
-        const item = list.items.find(item => item.id === itemId);
-        if (item) {
-          itemData = item;
-          break;
-        }
-      }
-      
-      if (itemData) {
-        setLastArchivedItem({
-          id: itemId,
-          data: itemData,
-          type: 'task'
-        });
-        setShowUndoToast(true);
-        setTimeout(() => {
-          setShowUndoToast(false);
-          setLastArchivedItem(null);
-        }, 10000); // 10 seconds to undo
-      }
-      queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to archive task",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const undoArchive = useMutation({
-    mutationFn: async () => {
-      if (!lastArchivedItem) return;
-      
-      // Find the archived item and restore it
-      const response = await authenticatedRequest("GET", "/api/archive");
-      const archiveData = await response.json();
-      
-      // Find the most recent archive entry for this item
-      const archivedEntry = archiveData.archivedItems
-        .filter((item: any) => 
-          item.itemType === (lastArchivedItem.type === 'list' ? 'todo_list' : 'todo_item') &&
-          item.itemId === lastArchivedItem.id
-        )
-        .sort((a: any, b: any) => new Date(b.archivedAt).getTime() - new Date(a.archivedAt).getTime())[0];
-      
-      if (archivedEntry) {
-        return authenticatedRequest("POST", `/api/archive/${archivedEntry.id}/restore`);
-      }
+      const response = await authenticatedRequest('DELETE', `/api/todos/${listId}`);
+      // No need to parse JSON for 204 No Content responses
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
-      setShowUndoToast(false);
-      setLastArchivedItem(null);
-      toast({
-        title: "Restored",
-        description: "Item has been restored successfully",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to restore item",
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Archive all tasks mutation
-  const archiveAllTasksMutation = useMutation({
-    mutationFn: async () => {
-      const allTasks: any[] = [];
-      todoLists.forEach(list => {
-        list.items.forEach(item => {
-          allTasks.push({ type: 'task', id: item.id, data: item });
-        });
-        allTasks.push({ type: 'list', id: list.id, data: list });
-      });
-
-      // Archive all items sequentially
-      for (const task of allTasks) {
-        try {
-          const response = await fetch("/api/archive", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify({
-              itemType: task.type === 'list' ? 'todo_list' : 'todo_item',
-              itemId: task.id,
-              reason: `Bulk archive operation - ${task.type === 'list' ? 'Todo list' : 'Todo item'} archived`
-            })
-          });
-          
-          if (!response.ok) {
-            const error = await response.text();
-            throw new Error(error);
-          }
-        } catch (error) {
-          console.warn(`Failed to archive ${task.type} ${task.id}:`, error);
-        }
-      }
-      
-      return allTasks.length;
-    },
-    onSuccess: (archivedCount) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
       toast({
         title: "Success",
-        description: `${archivedCount} items have been archived`,
+        description: "Todo list deleted successfully!",
       });
     },
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to archive all tasks",
+        description: error.message || "Failed to delete todo list",
         variant: "destructive",
       });
     },
   });
 
-  const handleArchiveAllTasks = () => {
-    const totalItems = todoLists.reduce((acc, list) => acc + list.items.length + 1, 0);
-    if (window.confirm(`Are you sure you want to archive all ${totalItems} items (tasks + lists)? You can restore them from the Archive page.`)) {
-      archiveAllTasksMutation.mutate();
+  // Edit todo list mutation
+  const editTodoListMutation = useMutation({
+    mutationFn: async ({ listId, title }: { listId: number; title: string }) => {
+      const response = await authenticatedRequest('PATCH', `/api/todos/${listId}`, { title: title.trim() });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
+      setEditingListId(null);
+      setEditedTitle("");
+      toast({
+        title: "Success",
+        description: "Todo list updated successfully!",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update todo list",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeleteTodoList = (listId: number) => {
+    if (window.confirm("Are you sure you want to delete this entire todo list? This action cannot be undone.")) {
+      deleteTodoListMutation.mutate(listId);
     }
   };
 
-  // Archive selected items mutation
-  const archiveSelectedMutation = useMutation({
-    mutationFn: async () => {
-      const selectedItems: any[] = [];
-      
-      // Add selected tasks
-      todoLists.forEach(list => {
-        list.items.forEach(item => {
-          if (selectedTasks.has(item.id)) {
-            selectedItems.push({ type: 'task', id: item.id, data: item });
-          }
-        });
-      });
+  const handleStartEditTitle = (list: TodoList) => {
+    setEditingListId(list.id);
+    setEditedTitle(list.title);
+  };
 
-      // Add selected lists
-      todoLists.forEach(list => {
-        if (selectedLists.has(list.id)) {
-          selectedItems.push({ type: 'list', id: list.id, data: list });
-        }
+  const handleSaveTitle = () => {
+    if (!editedTitle.trim()) return;
+    if (editingListId) {
+      editTodoListMutation.mutate({ 
+        listId: editingListId, 
+        title: editedTitle.trim() 
       });
+    }
+  };
 
-      // Archive selected items sequentially
-      for (const item of selectedItems) {
-        try {
-          const response = await fetch("/api/archive", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify({
-              itemType: item.type === 'list' ? 'todo_list' : 'todo_item',
-              itemId: item.id,
-              reason: `Selected archive operation - ${item.type === 'list' ? 'Todo list' : 'Todo item'} archived`
-            })
-          });
-          
-          if (!response.ok) {
-            const error = await response.text();
-            throw new Error(error);
-          }
-        } catch (error) {
-          console.warn(`Failed to archive ${item.type} ${item.id}:`, error);
-        }
-      }
-      
-      return selectedItems.length;
-    },
-    onSuccess: (archivedCount) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
-      setSelectedTasks(new Set());
-      setSelectedLists(new Set());
-      setSelectionMode(false);
-      toast({
-        title: "Success",
-        description: `${archivedCount} selected items have been archived`,
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to archive selected items",
-        variant: "destructive",
-      });
-    },
-  });
+  const handleCancelEdit = () => {
+    setEditingListId(null);
+    setEditedTitle("");
+  };
+
 
   const handleToggleTaskSelection = (taskId: number) => {
     const newSelection = new Set(selectedTasks);
@@ -1200,16 +970,84 @@ export default function TodosPage() {
                               <Award className="w-5 h-5 text-green-600" />
                             </motion.div>
                           )}
-                          {list.title}
-                          {isToday(list.createdAt) && (
-                            <Badge className="bg-blue-100 text-blue-800 text-xs">Today</Badge>
+                          {editingListId === list.id ? (
+                            <div className="flex items-center gap-2 flex-1">
+                              <Input
+                                value={editedTitle}
+                                onChange={(e) => setEditedTitle(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    handleSaveTitle();
+                                  } else if (e.key === "Escape") {
+                                    e.preventDefault();
+                                    handleCancelEdit();
+                                  }
+                                }}
+                                className="text-lg font-semibold h-7 px-2"
+                                autoFocus
+                                data-testid={`input-edit-title-${list.id}`}
+                              />
+                              <Button
+                                size="sm"
+                                onClick={handleSaveTitle}
+                                disabled={!editedTitle.trim() || editTodoListMutation.isPending}
+                                className="h-7 px-2"
+                                data-testid={`button-save-title-${list.id}`}
+                              >
+                                <CheckCircle2 className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={handleCancelEdit}
+                                className="h-7 px-2"
+                                data-testid={`button-cancel-edit-${list.id}`}
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <>
+                              {list.title}
+                              {isToday(list.createdAt) && (
+                                <Badge className="bg-blue-100 text-blue-800 text-xs">Today</Badge>
+                              )}
+                            </>
                           )}
                         </CardTitle>
                         <p className="text-sm text-gray-600 mt-1">{list.description}</p>
                       </div>
-                      <Badge className={`${getPriorityColor(list.priority)} text-xs`}>
-                        {list.priority}
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge className={`${getPriorityColor(list.priority)} text-xs`}>
+                          {list.priority}
+                        </Badge>
+                        {!selectionMode && editingListId !== list.id && (
+                          <div className="flex items-center gap-1">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleStartEditTitle(list)}
+                              className="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-1 h-6 w-6"
+                              title="Edit list title"
+                              data-testid={`button-edit-list-${list.id}`}
+                            >
+                              <Edit className="w-3 h-3" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleDeleteTodoList(list.id)}
+                              disabled={deleteTodoListMutation.isPending}
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 h-6 w-6"
+                              title="Delete entire list"
+                              data-testid={`button-delete-list-${list.id}`}
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     
                     {/* Progress Bar */}
