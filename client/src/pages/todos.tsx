@@ -562,57 +562,6 @@ export default function TodosPage() {
                   <Plus className="w-4 h-4 mr-2" />
                   {t("createNewList")}
                 </Button>
-                {todoLists.length > 0 && (
-                  <>
-                    <Button
-                      onClick={() => setSelectionMode(!selectionMode)}
-                      variant="outline"
-                      className={selectionMode ? "bg-blue-50 border-blue-300 text-blue-700" : "border-gray-200 text-gray-600 hover:bg-gray-50"}
-                    >
-                      <CheckSquare className="w-4 h-4 mr-2" />
-                      {selectionMode ? t("cancel") : t("selectAllTasks")}
-                    </Button>
-                    {selectionMode && (
-                      <>
-                        <Button
-                          onClick={handleSelectAll}
-                          variant="outline"
-                          size="sm"
-                          className="border-blue-200 text-blue-600 hover:bg-blue-50"
-                        >
-                          Select All
-                        </Button>
-                        <Button
-                          onClick={handleClearSelection}
-                          variant="outline"
-                          size="sm"
-                          className="border-gray-200 text-gray-600 hover:bg-gray-50"
-                        >
-                          Clear
-                        </Button>
-                        <Button
-                          onClick={handleArchiveSelected}
-                          disabled={archiveSelectedMutation.isPending || (selectedTasks.size === 0 && selectedLists.size === 0)}
-                          className="bg-blue-600 text-white hover:bg-blue-700"
-                        >
-                          <Archive className="w-4 h-4 mr-2" />
-                          {archiveSelectedMutation.isPending ? "Archiving..." : `Archive Selected (${selectedTasks.size + selectedLists.size})`}
-                        </Button>
-                      </>
-                    )}
-                    {!selectionMode && (
-                      <Button
-                        onClick={handleArchiveAllTasks}
-                        disabled={archiveAllTasksMutation.isPending}
-                        variant="outline"
-                        className="border-blue-200 text-blue-600 hover:bg-blue-50"
-                      >
-                        <Archive className="w-4 h-4 mr-2" />
-                        {archiveAllTasksMutation.isPending ? "Archiving..." : "Archive All"}
-                      </Button>
-                    )}
-                  </>
-                )}
               </div>
             </div>
 
@@ -895,18 +844,8 @@ export default function TodosPage() {
                 whileHover={{ y: -5 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <Card className={`hover:shadow-lg transition-all duration-300 ${isCompleted ? 'ring-2 ring-green-200 bg-green-50' : ''} ${selectedLists.has(list.id) ? 'ring-2 ring-blue-300 bg-blue-50' : ''}`}>
+                <Card className={`hover:shadow-lg transition-all duration-300 ${isCompleted ? 'ring-2 ring-green-200 bg-green-50' : ''}`}>
                   <CardHeader className="pb-3">
-                    {selectionMode && (
-                      <div className="absolute top-3 right-3 z-10">
-                        <input
-                          type="checkbox"
-                          checked={selectedLists.has(list.id)}
-                          onChange={() => handleToggleListSelection(list.id)}
-                          className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                        />
-                      </div>
-                    )}
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <CardTitle className="text-lg font-semibold flex items-center gap-2">
@@ -971,7 +910,7 @@ export default function TodosPage() {
                         <Badge className={`${getPriorityColor(list.priority)} text-xs`}>
                           {list.priority}
                         </Badge>
-                        {!selectionMode && editingListId !== list.id && (
+                        {editingListId !== list.id && (
                           <div className="flex items-center gap-1">
                             <Button
                               size="sm"
@@ -1028,16 +967,8 @@ export default function TodosPage() {
                           exit={{ opacity: 0, x: -20 }}
                           className={`group flex items-center gap-3 p-2 rounded-lg transition-colors ${
                             item.isCompleted ? 'bg-green-50 border border-green-200' : 'bg-gray-50 hover:bg-gray-100'
-                          } ${selectedTasks.has(item.id) ? 'ring-2 ring-blue-300 bg-blue-50' : ''}`}
+                          }`}
                         >
-                          {selectionMode && (
-                            <input
-                              type="checkbox"
-                              checked={selectedTasks.has(item.id)}
-                              onChange={() => handleToggleTaskSelection(item.id)}
-                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 flex-shrink-0"
-                            />
-                          )}
                           <motion.button
                             onClick={() => handleToggleItem(item.id, item.isCompleted)}
                             whileHover={{ scale: 1.1 }}
@@ -1071,7 +1002,7 @@ export default function TodosPage() {
                                 <Sparkles className="w-4 h-4 text-green-500" />
                               </motion.div>
                             )}
-                            {!selectionMode && (
+                            {true && (
                               <div className="flex items-center gap-1 border border-red-300 rounded-md px-1 py-0.5 bg-red-50">
                                 <Button
                                   size="sm"
@@ -1131,31 +1062,6 @@ export default function TodosPage() {
                       </Button>
                     </div>
                     
-                    {/* List Actions */}
-                    {!selectionMode && (
-                      <div className="flex items-center justify-between gap-2 pt-3 border-t">
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => archiveTodoList.mutate(list.id)}
-                          disabled={archiveTodoList.isPending}
-                          className="text-blue-600 hover:text-blue-700 border-blue-200 hover:border-blue-300"
-                        >
-                          <Archive className="w-4 h-4 mr-1" />
-                          Archive List
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleRemoveAllTasks(list.id)}
-                          disabled={removeAllTasksMutation.isPending}
-                          className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
-                        >
-                          <Trash2 className="w-4 h-4 mr-1" />
-                          Delete All
-                        </Button>
-                      </div>
-                    )}
 
                     {/* Footer Info */}
                     <div className="text-xs text-gray-500 pt-2 border-t">
