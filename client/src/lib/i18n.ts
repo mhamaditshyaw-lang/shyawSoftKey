@@ -74,7 +74,6 @@ const resources = {
       login: "Login",
       register: "Register",
       welcomeBackTitle: "Welcome Back",
-      signInToSystem: "Sign in to Administration Shyaw System",
       createAccount: "Create Account",
       joinSystem: "Join Administration Shyaw System",
       firstName: "First Name",

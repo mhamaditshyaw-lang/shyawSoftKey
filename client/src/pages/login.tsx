@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, User, Lock } from "lucide-react";
+import { CheckCircle, User, Lock, Building2 } from "lucide-react";
 import shyawLogo from "@assets/shyaw_1757849330148.png";
 
 export default function LoginPage() {
@@ -111,7 +111,6 @@ export default function LoginPage() {
                 </div>
               </div>
               <CardTitle className="text-2xl sm:text-3xl text-indigo-800 font-bold">{t("welcomeBackTitle")}</CardTitle>
-              <CardDescription className="text-indigo-600 text-base">{t("signInToSystem")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <form onSubmit={handleLogin} className="space-y-6">
