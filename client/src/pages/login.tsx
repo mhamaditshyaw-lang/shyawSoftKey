@@ -73,24 +73,6 @@ export default function LoginPage() {
             </div>
           </div>
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-indigo-100 bg-clip-text text-transparent">{t("systemTitle")}</h1>
-          <p className="text-xl text-indigo-100 mb-2">{t("professionalPlatform")}</p>
-          <p className="text-indigo-200">{t("secureManagement")}</p>
-          
-          {/* Feature highlights */}
-          <div className="mt-8 space-y-3 text-left max-w-sm">
-            <div className="flex items-center space-x-3 text-green-100">
-              <CheckCircle className="w-5 h-5 text-green-300" />
-              <span>{t("secureRoleAccess")}</span>
-            </div>
-            <div className="flex items-center space-x-3 text-green-100">
-              <CheckCircle className="w-5 h-5 text-green-300" />
-              <span>{t("taskProjectManagement")}</span>
-            </div>
-            <div className="flex items-center space-x-3 text-green-100">
-              <CheckCircle className="w-5 h-5 text-green-300" />
-              <span>{t("realtimeNotifications")}</span>
-            </div>
-          </div>
         </div>
       </div>
 
