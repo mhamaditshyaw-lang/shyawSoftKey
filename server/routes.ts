@@ -834,7 +834,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         storage.getInterviewStats(),
       ]);
 
+      // Flatten the stats into a single object for the dashboard
       res.json({
+        // User stats
+        totalUsers: userStats.totalUsers || 0,
+        activeUsers: userStats.activeUsers || 0,
+        pendingUsers: userStats.pendingUsers || 0,
+        
+        // Todo stats
+        totalTodos: todoStats.totalTodos || 0,
+        completedTodos: todoStats.completedTodos || 0,
+        pendingTodos: todoStats.pendingTodos || 0,
+        
+        // Interview stats
+        totalRequests: interviewStats.totalRequests || 0,
+        pendingRequests: interviewStats.pendingRequests || 0,
+        approvedRequests: interviewStats.approvedRequests || 0,
+        
+        // Keep original nested structure for compatibility
         users: userStats,
         todos: todoStats,
         interviews: interviewStats,
