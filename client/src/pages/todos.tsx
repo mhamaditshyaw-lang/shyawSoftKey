@@ -86,12 +86,24 @@ export default function TodosPage() {
   const [editedTitle, setEditedTitle] = useState("");
 
   // Fetch todos data
-  const { data: todosData, isLoading } = useQuery({
+  const { data: todosData, isLoading, error } = useQuery({
     queryKey: ["/api/todos"],
     queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/todos");
-      return response.json();
+      try {
+        const response = await authenticatedRequest("GET", "/api/todos");
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        const data = await response.json();
+        console.log("Todos data fetched:", data);
+        return data;
+      } catch (error) {
+        console.error("Error fetching todos:", error);
+        throw error;
+      }
     },
+    retry: 3,
+    retryDelay: 1000,
   });
 
 
@@ -125,6 +137,11 @@ export default function TodosPage() {
 
   // Filter todos based on criteria
   const todoLists: TodoList[] = todosData?.todoLists || [];
+  
+  // Debug empty data
+  if (todoLists.length === 0 && todosData) {
+    console.log("No todo lists found in data:", todosData);
+  }
   
   const filteredTodoLists = todoLists.filter((list: TodoList) => {
     // Search filter
@@ -515,16 +532,40 @@ export default function TodosPage() {
 
   if (isLoading) {
     return (
-      <div className="animate-pulse space-y-6">
-        <div className="h-8 bg-gray-200 rounded w-64"></div>
-        <div className="grid gap-6">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-48 bg-gray-200 rounded-xl"></div>
-          ))}
+      <DashboardLayout>
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 bg-gray-200 rounded w-64"></div>
+          <div className="grid gap-6">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="h-48 bg-gray-200 rounded-xl"></div>
+            ))}
+          </div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="text-center py-12">
+          <div className="text-red-500 mb-4">
+            <h2 className="text-xl font-semibold">Error Loading Todos</h2>
+            <p className="text-sm mt-2">{error.message || "Failed to load todo data"}</p>
+          </div>
+          <Button onClick={() => window.location.reload()}>
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Retry
+          </Button>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Debug logging
+  console.log("Todos render - user:", user);
+  console.log("Todos render - todosData:", todosData);
+  console.log("Todos render - todoLists:", todoLists);
 
   return (
     <DashboardLayout>
