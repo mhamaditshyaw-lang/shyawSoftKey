@@ -15,7 +15,7 @@ export function setAuthHeaders(): HeadersInit {
 }
 
 export async function authenticatedRequest(method: string, url: string, body?: any) {
-  const token = localStorage.getItem('auth_token');
+  const token = localStorage.getItem('token');
 
   if (!token) {
     console.error('No authentication token found');
@@ -47,7 +47,7 @@ export async function authenticatedRequest(method: string, url: string, body?: a
 
     if (response.status === 401) {
       console.error('Authentication failed, removing token');
-      localStorage.removeItem('auth_token');
+      localStorage.removeItem('token');
       window.location.href = '/login';
       throw new Error('Authentication failed');
     }
