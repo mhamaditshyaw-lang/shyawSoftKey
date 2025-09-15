@@ -140,8 +140,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ user: userWithoutPassword });
   });
 
-  // User management routes (Admin and Manager can view)
-  app.get("/api/users", authenticateToken, requireRole(['admin', 'manager', 'office', 'office_team']), async (req, res) => {
+  // User management routes (Admin only can view all users)
+  app.get("/api/users", authenticateToken, requireRole(['admin']), async (req, res) => {
     try {
       const users = await storage.getAllUsers();
       const usersWithoutPasswords = users.map(({ password, ...user }) => user);
