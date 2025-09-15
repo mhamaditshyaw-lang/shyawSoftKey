@@ -42,6 +42,10 @@ export const users = pgTable("users", {
   lastName: text("last_name").notNull(),
   role: roleEnum("role").notNull().default("security"),
   status: statusEnum("status").notNull().default("pending"),
+  permissions: jsonb("permissions").default({}),
+  department: text("department"),
+  position: text("position"),
+  phoneNumber: text("phone_number"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   lastActiveAt: timestamp("last_active_at"),
 });
@@ -68,9 +72,27 @@ export const todoItems = pgTable("todo_items", {
   isCompleted: boolean("is_completed").notNull().default(false),
   priority: priorityEnum("priority").notNull().default("medium"),
   dueDate: timestamp("due_date"),
+  reminderDate: timestamp("reminder_date"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   completedAt: timestamp("completed_at"),
+});
+
+// Reminders table
+export const reminders = pgTable("reminders", {
+  id: serial("id").primaryKey(),
+  todoItemId: integer("todo_item_id").references(() => todoItems.id, {
+    onDelete: "cascade"
+  }),
+  reminderDate: timestamp("reminder_date").notNull(),
+  message: text("message"),
+  title: text("title"),
+  itemText: text("item_text"),
+  itemData: jsonb("item_data"),
+  isCompleted: boolean("is_completed").notNull().default(false),
+  notificationSent: boolean("notification_sent").notNull().default(false),
+  createdById: integer("created_by_id").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // Interview Requests table
@@ -180,10 +202,18 @@ export const todoListsRelations = relations(todoLists, ({ one, many }) => ({
   items: many(todoItems),
 }));
 
-export const todoItemsRelations = relations(todoItems, ({ one }) => ({
+export const todoItemsRelations = relations(todoItems, ({ one, many }) => ({
   todoList: one(todoLists, {
     fields: [todoItems.todoListId],
     references: [todoLists.id],
+  }),
+  reminders: many(reminders),
+}));
+
+export const remindersRelations = relations(reminders, ({ one }) => ({
+  todoItem: one(todoItems, {
+    fields: [reminders.todoItemId],
+    references: [todoItems.id],
   }),
 }));
 
@@ -262,6 +292,11 @@ export const insertTodoItemSchema = createInsertSchema(todoItems, {
   completedAt: true,
 });
 
+export const insertReminderSchema = createInsertSchema(reminders).omit({
+  id: true,
+  createdAt: true,
+});
+
 export const insertInterviewRequestSchema = createInsertSchema(interviewRequests, {
   candidateEmail: z.string().optional().or(z.literal("")),
   description: z.string().optional().or(z.literal("")),
@@ -332,6 +367,8 @@ export type TodoList = typeof todoLists.$inferSelect;
 export type InsertTodoList = z.infer<typeof insertTodoListSchema>;
 export type TodoItem = typeof todoItems.$inferSelect;
 export type InsertTodoItem = z.infer<typeof insertTodoItemSchema>;
+export type Reminder = typeof reminders.$inferSelect;
+export type InsertReminder = z.infer<typeof insertReminderSchema>;
 export type InterviewRequest = typeof interviewRequests.$inferSelect;
 export type InsertInterviewRequest = z.infer<typeof insertInterviewRequestSchema>;
 export type OperationalData = typeof operationalData.$inferSelect;
