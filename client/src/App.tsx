@@ -54,12 +54,6 @@ function Router() {
   return (
     <Switch>
       <Route path="/login" component={LoginPage} />
-      <Route path="/">
-        <ProtectedRoute>
-          <ModernDashboard />
-        </ProtectedRoute>
-      </Route>
-
       <Route path="/interviews">
         <ProtectedRoute>
           <InterviewsPage />
@@ -144,6 +138,11 @@ function Router() {
       <Route path="/multilingual-demo">
         <ProtectedRoute>
           <MultilingualDemoPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/">
+        <ProtectedRoute>
+          <ModernDashboard />
         </ProtectedRoute>
       </Route>
       <Route component={NotFound} />
