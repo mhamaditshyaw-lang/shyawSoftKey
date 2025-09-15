@@ -9,6 +9,22 @@ import { Request, Response, NextFunction } from "express";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
+// Helper function to sanitize user objects by removing sensitive data
+function toPublicUser(user: any) {
+  if (!user) return null;
+  const { password, ...publicUser } = user;
+  return publicUser;
+}
+
+// Helper function to sanitize todo lists with user relations
+function sanitizeTodoLists(todoLists: any[]) {
+  return todoLists.map(todo => ({
+    ...todo,
+    createdBy: toPublicUser(todo.createdBy),
+    assignedTo: toPublicUser(todo.assignedTo)
+  }));
+}
+
 interface AuthRequest extends Request {
   user?: {
     id: number;
@@ -308,7 +324,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Manager, security, and other roles only see their own todos
         todoLists = await storage.getTodoListsByUser(req.user?.id || 0);
       }
-      res.json({ todoLists });
+      // Sanitize user data to remove passwords and other sensitive information
+      const sanitizedTodoLists = sanitizeTodoLists(todoLists);
+      res.json({ todoLists: sanitizedTodoLists });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
