@@ -7,7 +7,13 @@ import jwt from "jsonwebtoken";
 import { insertUserSchema, loginSchema, insertTodoListSchema, insertTodoItemSchema, insertInterviewRequestSchema, changePasswordSchema, updateUserPasswordSchema, insertReminderSchema } from "@shared/schema";
 import { Request, Response, NextFunction } from "express";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  throw new Error(
+    "JWT_SECRET environment variable is required. Please set a secure JWT secret."
+  );
+}
 
 // Helper function to sanitize user objects by removing sensitive data
 function toPublicUser(user: any) {
@@ -16,13 +22,19 @@ function toPublicUser(user: any) {
   return publicUser;
 }
 
-// Helper function to sanitize todo lists with user relations
-function sanitizeTodoLists(todoLists: any[]) {
-  return todoLists.map(todo => ({
+// Helper function to sanitize a single todo with user relations
+function sanitizeTodoList(todo: any) {
+  if (!todo) return null;
+  return {
     ...todo,
     createdBy: toPublicUser(todo.createdBy),
     assignedTo: toPublicUser(todo.assignedTo)
-  }));
+  };
+}
+
+// Helper function to sanitize todo lists with user relations
+function sanitizeTodoLists(todoLists: any[]) {
+  return todoLists.map(todo => sanitizeTodoList(todo));
 }
 
 interface AuthRequest extends Request {
@@ -202,10 +214,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/users/:id", authenticateToken, requireRole(['admin', 'manager']), async (req: AuthRequest, res) => {
     try {
       const id = parseInt(req.params.id);
-      const updates = req.body;
+      const isAdmin = req.user?.role === 'admin';
+      
+      // Define allowed fields based on role
+      const allowedFields = isAdmin 
+        ? ['firstName', 'lastName', 'email', 'role', 'status', 'permissions', 'department', 'position', 'phoneNumber']
+        : ['firstName', 'lastName', 'department', 'position', 'phoneNumber']; // managers can only update profile fields
 
-      if (updates.password) {
-        updates.password = await bcrypt.hash(updates.password, 12);
+      // Filter updates to only allowed fields
+      const updates: any = {};
+      for (const field of allowedFields) {
+        if (req.body[field] !== undefined) {
+          updates[field] = req.body[field];
+        }
+      }
+
+      // Only allow password updates for admin or self
+      if (req.body.password) {
+        if (isAdmin || req.user?.id === id) {
+          updates.password = await bcrypt.hash(req.body.password, 12);
+        } else {
+          return res.status(403).json({ message: "Only admins can change other users' passwords" });
+        }
+      }
+
+      // Prevent any unauthorized field updates
+      if (Object.keys(updates).length === 0) {
+        return res.status(400).json({ message: "No valid fields to update" });
       }
 
       const user = await storage.updateUser(id, updates);
@@ -354,7 +389,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         );
       }
 
-      res.status(201).json({ todoList: fullTodoList });
+      res.status(201).json({ todoList: sanitizeTodoList(fullTodoList) });
     } catch (error: any) {
       res.status(400).json({ message: error.message });
     }
@@ -523,7 +558,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Todo list not found" });
       }
 
-      res.json({ todoList });
+      res.json({ todoList: sanitizeTodoList(todoList) });
     } catch (error: any) {
       console.error("Error updating todo list:", error);
       if (error.name === 'ZodError') {
