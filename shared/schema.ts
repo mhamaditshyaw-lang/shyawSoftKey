@@ -83,6 +83,17 @@ export const interviewRequests = pgTable("interview_requests", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const interviewComments = pgTable("interview_comments", {
+  id: serial("id").primaryKey(),
+  interviewRequestId: integer("interview_request_id").references(() => interviewRequests.id, {
+    onDelete: "cascade"
+  }).notNull(),
+  authorId: integer("author_id").references(() => users.id).notNull(),
+  comment: text("comment").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   createdTodoLists: many(todoLists, { relationName: "created_by" }),
@@ -124,7 +135,7 @@ export const remindersRelations = relations(reminders, ({ one }) => ({
   }),
 }));
 
-export const interviewRequestsRelations = relations(interviewRequests, ({ one }) => ({
+export const interviewRequestsRelations = relations(interviewRequests, ({ one, many }) => ({
   requestedBy: one(users, {
     fields: [interviewRequests.requestedById],
     references: [users.id],
@@ -134,6 +145,18 @@ export const interviewRequestsRelations = relations(interviewRequests, ({ one })
     fields: [interviewRequests.managerId],
     references: [users.id],
     relationName: "manager",
+  }),
+  comments: many(interviewComments),
+}));
+
+export const interviewCommentsRelations = relations(interviewComments, ({ one }) => ({
+  interviewRequest: one(interviewRequests, {
+    fields: [interviewComments.interviewRequestId],
+    references: [interviewRequests.id],
+  }),
+  author: one(users, {
+    fields: [interviewComments.authorId],
+    references: [users.id],
   }),
 }));
 
@@ -187,6 +210,14 @@ export const insertReminderSchema = createInsertSchema(reminders, {
   createdAt: true,
 });
 
+export const insertInterviewCommentSchema = createInsertSchema(interviewComments, {
+  comment: z.string().min(1, "Comment is required"),
+}).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 
 export const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -221,6 +252,8 @@ export type Reminder = typeof reminders.$inferSelect;
 export type InsertReminder = z.infer<typeof insertReminderSchema>;
 export type InterviewRequest = typeof interviewRequests.$inferSelect;
 export type InsertInterviewRequest = z.infer<typeof insertInterviewRequestSchema>;
+export type InterviewComment = typeof interviewComments.$inferSelect;
+export type InsertInterviewComment = z.infer<typeof insertInterviewCommentSchema>;
 export type LoginCredentials = z.infer<typeof loginSchema>;
 export type ChangePasswordData = z.infer<typeof changePasswordSchema>;
 export type UpdateUserPasswordData = z.infer<typeof updateUserPasswordSchema>;

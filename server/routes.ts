@@ -4,7 +4,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { insertUserSchema, loginSchema, insertTodoListSchema, insertTodoItemSchema, insertInterviewRequestSchema, changePasswordSchema, updateUserPasswordSchema, insertReminderSchema } from "@shared/schema";
+import { insertUserSchema, loginSchema, insertTodoListSchema, insertTodoItemSchema, insertInterviewRequestSchema, changePasswordSchema, updateUserPasswordSchema, insertReminderSchema, insertInterviewCommentSchema } from "@shared/schema";
 import { Request, Response, NextFunction } from "express";
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -1024,6 +1024,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error deleting feedback type:", error);
       res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Interview comments routes
+  app.get("/api/interviews/:id/comments", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const interviewId = parseInt(req.params.id);
+      const comments = await storage.getInterviewComments(interviewId);
+      res.json({ comments });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/interviews/:id/comments", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const interviewId = parseInt(req.params.id);
+      const commentData = insertInterviewCommentSchema.parse({
+        ...req.body,
+        interviewRequestId: interviewId,
+        authorId: req.user!.id,
+      });
+
+      const comment = await storage.createInterviewComment(commentData);
+      res.status(201).json({ comment });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
     }
   });
 

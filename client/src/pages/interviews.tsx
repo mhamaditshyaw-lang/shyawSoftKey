@@ -13,6 +13,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Clock, Check, X, Edit, Calendar, Plus, Archive, Search, RefreshCw, Filter, User, MapPin, CheckCircle2, XCircle } from "lucide-react";
 import InterviewRequestModal from "@/components/modals/interview-request-modal";
+import ViewInterviewDetailsModal from "@/components/modals/view-interview-details-modal";
 import { getRelativeTime } from "@/lib/utils";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useTranslation } from "react-i18next";
@@ -441,11 +442,10 @@ export default function InterviewsPage() {
                     <Button 
                       variant="outline"
                       onClick={() => {
-                        toast({
-                          title: "Interview Details",
-                          description: `${request.position} - ${request.candidateName} (${request.status})`,
-                        });
+                        setSelectedRequest(request);
+                        setShowDetailsModal(true);
                       }}
+                      data-testid={`button-view-details-${request.id}`}
                     >
                       <Calendar className="w-4 h-4 mr-2" />
                       View Details
@@ -501,6 +501,14 @@ export default function InterviewsPage() {
         open={showRequestModal} 
         onOpenChange={setShowRequestModal} 
       />
+
+      {selectedRequest && (
+        <ViewInterviewDetailsModal
+          open={showDetailsModal}
+          onOpenChange={setShowDetailsModal}
+          interview={selectedRequest}
+        />
+      )}
     </div>
     </DashboardLayout>
   );

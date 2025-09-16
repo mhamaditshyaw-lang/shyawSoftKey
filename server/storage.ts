@@ -4,6 +4,7 @@ import {
   todoItems, 
   reminders,
   interviewRequests,
+  interviewComments,
   operationalData,
   type User, 
   type InsertUser,
@@ -14,7 +15,9 @@ import {
   type Reminder,
   type InsertReminder,
   type InterviewRequest,
-  type InsertInterviewRequest
+  type InsertInterviewRequest,
+  type InterviewComment,
+  type InsertInterviewComment
 } from "@shared/schema";
 
 import {
@@ -65,6 +68,10 @@ export interface IStorage {
   getInterviewRequestsByUser(userId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;
   createInterviewRequest(request: InsertInterviewRequest): Promise<InterviewRequest>;
   updateInterviewRequest(id: number, updates: Partial<InterviewRequest>): Promise<InterviewRequest | undefined>;
+
+  // Interview comment methods
+  getInterviewComments(interviewRequestId: number): Promise<(InterviewComment & { author: User })[]>;
+  createInterviewComment(comment: InsertInterviewComment): Promise<InterviewComment>;
   
   // Analytics methods
   getUserStats(): Promise<{ totalUsers: number; activeUsers: number; pendingUsers: number }>;
@@ -399,6 +406,53 @@ export class DatabaseStorage implements IStorage {
       .where(eq(interviewRequests.id, id))
       .returning();
     return request || undefined;
+  }
+
+  // Interview comment methods
+  async getInterviewComments(interviewRequestId: number): Promise<(InterviewComment & { author: User })[]> {
+    return await executeWithRetry(async () => {
+      const result = await db
+        .select({
+          id: interviewComments.id,
+          content: interviewComments.content,
+          interviewRequestId: interviewComments.interviewRequestId,
+          authorId: interviewComments.authorId,
+          createdAt: interviewComments.createdAt,
+          author: {
+            id: users.id,
+            username: users.username,
+            email: users.email,
+            role: users.role,
+            password: users.password,
+            firstName: users.firstName,
+            lastName: users.lastName,
+            department: users.department,
+            position: users.position,
+            phoneNumber: users.phoneNumber,
+            address: users.address,
+            dateOfBirth: users.dateOfBirth,
+            emergencyContact: users.emergencyContact,
+            createdAt: users.createdAt,
+            updatedAt: users.updatedAt,
+          }
+        })
+        .from(interviewComments)
+        .innerJoin(users, eq(interviewComments.authorId, users.id))
+        .where(eq(interviewComments.interviewRequestId, interviewRequestId))
+        .orderBy(desc(interviewComments.createdAt));
+      
+      return result;
+    });
+  }
+
+  async createInterviewComment(comment: InsertInterviewComment): Promise<InterviewComment> {
+    return await executeWithRetry(async () => {
+      const [newComment] = await db
+        .insert(interviewComments)
+        .values(comment)
+        .returning();
+      return newComment;
+    });
   }
 
   async getUserStats(): Promise<{ totalUsers: number; activeUsers: number; pendingUsers: number }> {
