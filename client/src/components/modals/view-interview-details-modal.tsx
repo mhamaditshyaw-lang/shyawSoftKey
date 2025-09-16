@@ -67,7 +67,7 @@ export default function ViewInterviewDetailsModal({
 
   // Fetch comments for this interview
   const { data: commentsData, isLoading: commentsLoading } = useQuery({
-    queryKey: ['/api/interviews', interview.id, 'comments'],
+    queryKey: [`/api/interviews/${interview.id}/comments`],
     enabled: open,
   });
 
@@ -81,7 +81,7 @@ export default function ViewInterviewDetailsModal({
     onSuccess: () => {
       setCommentText("");
       queryClient.invalidateQueries({
-        queryKey: ['/api/interviews', interview.id, 'comments']
+        queryKey: [`/api/interviews/${interview.id}/comments`]
       });
       toast({
         title: "Comment Added",
