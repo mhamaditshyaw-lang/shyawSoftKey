@@ -27,7 +27,7 @@ export default function InterviewDetailsModal({ open, onOpenChange, request }: I
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto" data-testid="dialog-interview-details">
+      <DialogContent className="sm:max-w-lg" data-testid="dialog-interview-details">
         <DialogHeader>
           <DialogTitle>Interview Details</DialogTitle>
           <DialogDescription>
@@ -35,7 +35,7 @@ export default function InterviewDetailsModal({ open, onOpenChange, request }: I
           </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-6">
+        <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
           {/* Header with position and status */}
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-gray-900">{request.position}</h3>
