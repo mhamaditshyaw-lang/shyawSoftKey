@@ -125,7 +125,6 @@ export default function EditArchiveModal({ open, onOpenChange, archivedItem }: E
                 <Label htmlFor="employeeName">Employee Name</Label>
                 <Input
                   id="employeeName"
-                  placeholder="John Doe"
                   value={formData.employeeName}
                   onChange={(e) => setFormData({ ...formData, employeeName: e.target.value })}
                   required
@@ -156,8 +155,7 @@ export default function EditArchiveModal({ open, onOpenChange, archivedItem }: E
                 </div>
                 <Textarea
                   id="description"
-                  placeholder="Write a new description for this employee review - include outcomes, feedback, performance notes, recommendations, and any other important information..."
-                  value={formData.description}
+                      value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={6}
                   required

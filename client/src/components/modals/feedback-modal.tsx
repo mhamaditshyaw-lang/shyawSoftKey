@@ -239,7 +239,6 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
             <Label htmlFor="title">Title</Label>
             <Input
               id="title"
-              placeholder="Brief summary of your feedback"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               required
@@ -270,7 +269,6 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
             </div>
             <Textarea
               id="description"
-              placeholder="Type your feedback here...\n\nUse the buttons above to add:\n• Lists for organizing points\n• Checklists for tasks\n• Reminders for follow-ups"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={6}
@@ -335,7 +333,6 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
               <Label htmlFor="type-name">Type Name</Label>
               <Input
                 id="type-name"
-                placeholder="Enter type name (e.g., performance_review)"
                 value={newTypeData.name}
                 onChange={(e) => setNewTypeData({...newTypeData, name: e.target.value})}
               />
@@ -344,7 +341,6 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
               <Label htmlFor="display-name">Display Name</Label>
               <Input
                 id="display-name"
-                placeholder="Enter display name (e.g., Performance Review)"
                 value={newTypeData.displayName}
                 onChange={(e) => setNewTypeData({...newTypeData, displayName: e.target.value})}
               />
@@ -353,7 +349,6 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
               <Label htmlFor="type-description">Description (Optional)</Label>
               <Textarea
                 id="type-description"
-                placeholder="Describe when this feedback type should be used..."
                 value={newTypeData.description}
                 onChange={(e) => setNewTypeData({...newTypeData, description: e.target.value})}
                 rows={3}
@@ -392,7 +387,6 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
               <Label htmlFor="list-title-input">List Title</Label>
               <Input
                 id="list-title-input"
-                placeholder="Enter list title..."
                 value={listTitle}
                 onChange={(e) => setListTitle(e.target.value)}
               />
@@ -498,7 +492,6 @@ export default function FeedbackModal({ open, onOpenChange, interviews }: Feedba
               <Label htmlFor="reminder-text-input">Reminder Text</Label>
               <Input
                 id="reminder-text-input"
-                placeholder="Enter reminder description..."
                 value={reminderText}
                 onChange={(e) => setReminderText(e.target.value)}
               />

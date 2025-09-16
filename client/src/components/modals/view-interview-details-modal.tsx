@@ -247,7 +247,6 @@ export default function ViewInterviewDetailsModal({
                   {/* Add Comment */}
                   <div className="space-y-3">
                     <Textarea
-                      placeholder="Add a comment..."
                       value={commentText}
                       onChange={(e) => setCommentText(e.target.value)}
                       className="min-h-[80px]"

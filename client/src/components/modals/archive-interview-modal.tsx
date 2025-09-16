@@ -138,7 +138,6 @@ export default function ArchiveInterviewModal({ open, onOpenChange, interview }:
                 <Input
                   id="actualDuration"
                   type="number"
-                  placeholder="60"
                   value={formData.actualDuration}
                   onChange={(e) => setFormData({ ...formData, actualDuration: e.target.value })}
                   required
@@ -162,7 +161,6 @@ export default function ArchiveInterviewModal({ open, onOpenChange, interview }:
                 <Label htmlFor="interviewerName">Primary Interviewer Name</Label>
                 <Input
                   id="interviewerName"
-                  placeholder="John Smith"
                   value={formData.interviewerName}
                   onChange={(e) => setFormData({ ...formData, interviewerName: e.target.value })}
                   required
@@ -172,7 +170,6 @@ export default function ArchiveInterviewModal({ open, onOpenChange, interview }:
                 <Label htmlFor="interviewerRole">Interviewer Role</Label>
                 <Input
                   id="interviewerRole"
-                  placeholder="Technical Lead"
                   value={formData.interviewerRole}
                   onChange={(e) => setFormData({ ...formData, interviewerRole: e.target.value })}
                 />
@@ -199,7 +196,7 @@ export default function ArchiveInterviewModal({ open, onOpenChange, interview }:
                 <Label htmlFor="candidateRating">Overall Rating (1-10)</Label>
                 <Select value={formData.candidateRating} onValueChange={(value) => setFormData({ ...formData, candidateRating: value })}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select rating" />
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(rating => (
@@ -212,7 +209,7 @@ export default function ArchiveInterviewModal({ open, onOpenChange, interview }:
                 <Label htmlFor="experienceLevel">Experience Level</Label>
                 <Select value={formData.experienceLevel} onValueChange={(value) => setFormData({ ...formData, experienceLevel: value })}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select experience level" />
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="junior">Junior (0-2 years)</SelectItem>
@@ -226,7 +223,6 @@ export default function ArchiveInterviewModal({ open, onOpenChange, interview }:
                 <Label htmlFor="technicalSkills">Technical Skills Assessment</Label>
                 <Textarea
                   id="technicalSkills"
-                  placeholder="Assess technical competencies, knowledge of tools, problem-solving ability..."
                   value={formData.technicalSkills}
                   onChange={(e) => setFormData({ ...formData, technicalSkills: e.target.value })}
                   rows={3}
@@ -236,7 +232,6 @@ export default function ArchiveInterviewModal({ open, onOpenChange, interview }:
                 <Label htmlFor="communicationSkills">Communication & Soft Skills</Label>
                 <Textarea
                   id="communicationSkills"
-                  placeholder="Evaluate communication style, teamwork, leadership potential..."
                   value={formData.communicationSkills}
                   onChange={(e) => setFormData({ ...formData, communicationSkills: e.target.value })}
                   rows={3}
@@ -246,7 +241,6 @@ export default function ArchiveInterviewModal({ open, onOpenChange, interview }:
                 <Label htmlFor="strengths">Key Strengths</Label>
                 <Textarea
                   id="strengths"
-                  placeholder="List candidate's main strengths and positive points..."
                   value={formData.strengths}
                   onChange={(e) => setFormData({ ...formData, strengths: e.target.value })}
                   rows={2}
@@ -256,7 +250,6 @@ export default function ArchiveInterviewModal({ open, onOpenChange, interview }:
                 <Label htmlFor="weaknesses">Areas for Improvement</Label>
                 <Textarea
                   id="weaknesses"
-                  placeholder="Note areas where candidate could improve..."
                   value={formData.weaknesses}
                   onChange={(e) => setFormData({ ...formData, weaknesses: e.target.value })}
                   rows={2}
@@ -291,7 +284,6 @@ export default function ArchiveInterviewModal({ open, onOpenChange, interview }:
                 <Label htmlFor="salary">Proposed Salary (if hired)</Label>
                 <Input
                   id="salary"
-                  placeholder="$50,000"
                   value={formData.salary}
                   onChange={(e) => setFormData({ ...formData, salary: e.target.value })}
                 />
@@ -320,7 +312,6 @@ export default function ArchiveInterviewModal({ open, onOpenChange, interview }:
                 <Label htmlFor="recommendations">Recommendations & Comments</Label>
                 <Textarea
                   id="recommendations"
-                  placeholder="Overall recommendations, hiring decision rationale, additional comments..."
                   value={formData.recommendations}
                   onChange={(e) => setFormData({ ...formData, recommendations: e.target.value })}
                   rows={3}
@@ -332,7 +323,6 @@ export default function ArchiveInterviewModal({ open, onOpenChange, interview }:
                   <Label htmlFor="followUpNotes">Follow-up Notes</Label>
                   <Textarea
                     id="followUpNotes"
-                    placeholder="Describe what follow-up actions are needed..."
                     value={formData.followUpNotes}
                     onChange={(e) => setFormData({ ...formData, followUpNotes: e.target.value })}
                     rows={2}
@@ -344,7 +334,6 @@ export default function ArchiveInterviewModal({ open, onOpenChange, interview }:
                 <Label htmlFor="notes">Additional Notes</Label>
                 <Textarea
                   id="notes"
-                  placeholder="Any other important information about the interview..."
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   rows={3}

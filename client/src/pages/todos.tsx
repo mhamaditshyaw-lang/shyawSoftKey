@@ -725,7 +725,6 @@ export default function TodosPage() {
                   <Label htmlFor="title">List Title</Label>
                   <Input
                     id="title"
-                    placeholder="e.g., Morning Tasks, Project Work"
                     value={newListTitle}
                     onChange={(e) => setNewListTitle(e.target.value)}
                   />
@@ -734,7 +733,6 @@ export default function TodosPage() {
                   <Label htmlFor="description">Description</Label>
                   <Textarea
                     id="description"
-                    placeholder="Brief description of this task list"
                     value={newListDescription}
                     onChange={(e) => setNewListDescription(e.target.value)}
                   />
@@ -814,7 +812,6 @@ export default function TodosPage() {
                   <Label htmlFor="reminder-message">Message (Optional)</Label>
                   <Textarea
                     id="reminder-message"
-                    placeholder="Add a reminder message..."
                     value={reminderMessage}
                     onChange={(e) => setReminderMessage(e.target.value)}
                     rows={3}
@@ -1077,7 +1074,6 @@ export default function TodosPage() {
                     {/* Add New Item */}
                     <div className="flex gap-2 mt-4 pt-3 border-t">
                       <Input
-                        placeholder="Add new task..."
                         value={newItemText}
                         onChange={(e) => setNewItemText(e.target.value)}
                         onKeyDown={(e) => {

@@ -105,7 +105,6 @@ export default function ModifyInterviewModal({ open, onOpenChange, request }: Mo
             <Label htmlFor="position">Position</Label>
             <Input
               id="position"
-              placeholder="e.g., Marketing Manager"
               value={formData.position}
               onChange={(e) => setFormData({ ...formData, position: e.target.value })}
               required
@@ -117,7 +116,6 @@ export default function ModifyInterviewModal({ open, onOpenChange, request }: Mo
               <Label htmlFor="candidateName">Candidate Name</Label>
               <Input
                 id="candidateName"
-                placeholder="John Doe"
                 value={formData.candidateName}
                 onChange={(e) => setFormData({ ...formData, candidateName: e.target.value })}
                 required
@@ -128,7 +126,6 @@ export default function ModifyInterviewModal({ open, onOpenChange, request }: Mo
               <Input
                 id="candidateEmail"
                 type="email"
-                placeholder="john@example.com"
                 value={formData.candidateEmail}
                 onChange={(e) => setFormData({ ...formData, candidateEmail: e.target.value })}
               />
@@ -139,7 +136,7 @@ export default function ModifyInterviewModal({ open, onOpenChange, request }: Mo
             <Label htmlFor="managerId">Assign to Manager (Optional)</Label>
             <Select value={formData.managerId} onValueChange={(value) => setFormData({ ...formData, managerId: value })}>
               <SelectTrigger>
-                <SelectValue placeholder="Select manager to assign" />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">No specific manager</SelectItem>
@@ -184,7 +181,6 @@ export default function ModifyInterviewModal({ open, onOpenChange, request }: Mo
             <Label htmlFor="description">Interview Details (Optional)</Label>
             <Textarea
               id="description"
-              placeholder="Describe the interview requirements, skills to assess, etc."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={3}

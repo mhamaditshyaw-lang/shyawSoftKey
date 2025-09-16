@@ -103,7 +103,6 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
             <Label htmlFor="position">Review Type / Position</Label>
             <Input
               id="position"
-              placeholder="e.g., Performance Review, Role Change to Manager"
               value={formData.position}
               onChange={(e) => setFormData({ ...formData, position: e.target.value })}
               required
@@ -115,7 +114,6 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
               <Label htmlFor="candidateName">Employee Name</Label>
               <Input
                 id="candidateName"
-                placeholder="John Doe"
                 value={formData.candidateName}
                 onChange={(e) => setFormData({ ...formData, candidateName: e.target.value })}
                 required
@@ -126,7 +124,6 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
               <Input
                 id="candidateEmail"
                 type="email"
-                placeholder="john@company.com"
                 value={formData.candidateEmail}
                 onChange={(e) => setFormData({ ...formData, candidateEmail: e.target.value })}
               />
@@ -137,7 +134,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
             <Label htmlFor="managerId">Assign to Manager (Optional)</Label>
             <Select value={formData.managerId} onValueChange={(value) => setFormData({ ...formData, managerId: value })}>
               <SelectTrigger>
-                <SelectValue placeholder="Select manager to assign" />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">No specific manager</SelectItem>
@@ -185,7 +182,6 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
             <Label htmlFor="description">Review Details (Optional)</Label>
             <Textarea
               id="description"
-              placeholder="Describe the review purpose, areas to evaluate, performance goals, etc."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={3}
