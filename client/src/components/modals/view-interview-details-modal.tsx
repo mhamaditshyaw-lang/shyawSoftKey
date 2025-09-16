@@ -141,7 +141,7 @@ export default function ViewInterviewDetailsModal({
         </DialogHeader>
 
         <div className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full">
+          <ScrollArea className="h-[400px] border-2 border-blue-200 rounded-md bg-blue-50/30 p-2" data-testid="scrollable-interview-content">
             <div className="space-y-6 pr-4">
               {/* Interview Information */}
               <Card>
