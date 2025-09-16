@@ -63,7 +63,7 @@ export default function LoginPage() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-l from-teal-400/10 to-transparent rounded-full -translate-y-32 translate-x-32 animate-pulse"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-r from-teal-400/10 to-transparent rounded-full translate-y-24 -translate-x-24 animate-bounce"></div>
         <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-teal-300/5 rounded-full animate-pulse"></div>
-        
+
         <div className="text-center text-white relative z-10">
           {/* Shyaw Logo */}
           <div className="flex justify-center mb-6">
@@ -71,7 +71,7 @@ export default function LoginPage() {
               <img src={shyawLogo} alt="Shyaw Logo" className="h-28 w-auto hover:scale-105 transition-transform duration-300" />
             </div>
           </div>
-          
+
         </div>
       </div>
 
@@ -81,7 +81,7 @@ export default function LoginPage() {
         <div className="absolute top-4 right-4 z-10">
           <LanguageSwitcher />
         </div>
-        
+
         <div className="w-full max-w-md">
           <Card className="border-indigo-100 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/95 backdrop-blur-sm">
             <CardHeader className="text-center space-y-4 pb-6">
