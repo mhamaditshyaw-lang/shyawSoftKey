@@ -27,7 +27,7 @@ export default function InterviewDetailsModal({ open, onOpenChange, request }: I
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto" data-testid="dialog-interview-details">
         <DialogHeader>
           <DialogTitle>Interview Details</DialogTitle>
           <DialogDescription>
