@@ -35,7 +35,7 @@ export default function InterviewDetailsModal({ open, onOpenChange, request }: I
           </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-6 max-h-[50vh] overflow-y-scroll border border-gray-100 rounded-md p-4 bg-gray-50/30" data-testid="scrollable-content">
+        <div className="space-y-6 h-[300px] overflow-y-scroll border-2 border-blue-200 rounded-md p-4 bg-blue-50/50" style={{scrollbarWidth: 'auto'}} data-testid="scrollable-content">
           {/* Header with position and status */}
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-gray-900">{request.position}</h3>
