@@ -414,26 +414,16 @@ export class DatabaseStorage implements IStorage {
       const result = await db
         .select({
           id: interviewComments.id,
-          content: interviewComments.content,
+          comment: interviewComments.comment,
           interviewRequestId: interviewComments.interviewRequestId,
           authorId: interviewComments.authorId,
           createdAt: interviewComments.createdAt,
           author: {
             id: users.id,
             username: users.username,
-            email: users.email,
             role: users.role,
-            password: users.password,
             firstName: users.firstName,
             lastName: users.lastName,
-            department: users.department,
-            position: users.position,
-            phoneNumber: users.phoneNumber,
-            address: users.address,
-            dateOfBirth: users.dateOfBirth,
-            emergencyContact: users.emergencyContact,
-            createdAt: users.createdAt,
-            updatedAt: users.updatedAt,
           }
         })
         .from(interviewComments)
@@ -441,7 +431,7 @@ export class DatabaseStorage implements IStorage {
         .where(eq(interviewComments.interviewRequestId, interviewRequestId))
         .orderBy(desc(interviewComments.createdAt));
       
-      return result;
+      return result as any;
     });
   }
 

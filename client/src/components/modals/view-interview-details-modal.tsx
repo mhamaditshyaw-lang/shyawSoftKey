@@ -16,9 +16,11 @@ import { useToast } from "@/hooks/use-toast";
 interface InterviewRequest {
   id: number;
   position: string;
+  candidateName: string;
+  candidateEmail?: string;
   status: string;
-  requestDate: string;
-  interviewDate?: string;
+  proposedDateTime: string;
+  duration: number;
   requestedBy: {
     id: number;
     username: string;
@@ -32,13 +34,13 @@ interface InterviewRequest {
     firstName?: string;
     lastName?: string;
   };
-  notes?: string;
+  description?: string;
   createdAt: string;
 }
 
 interface Comment {
   id: number;
-  content: string;
+  comment: string;
   createdAt: string;
   author: {
     id: number;
@@ -73,8 +75,8 @@ export default function ViewInterviewDetailsModal({
 
   // Mutation for adding new comment
   const addCommentMutation = useMutation({
-    mutationFn: async (content: string) => {
-      return await apiRequest('POST', `/api/interviews/${interview.id}/comments`, { content });
+    mutationFn: async (comment: string) => {
+      return await apiRequest('POST', `/api/interviews/${interview.id}/comments`, { comment });
     },
     onSuccess: () => {
       setCommentText("");
@@ -163,18 +165,21 @@ export default function ViewInterviewDetailsModal({
                         <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                         <span className="text-sm font-medium text-muted-foreground">Request Date:</span>
                         <span className="text-sm">
-                          {format(new Date(interview.requestDate), "MMM dd, yyyy")}
+                          {format(new Date(interview.createdAt), "MMM dd, yyyy")}
                         </span>
                       </div>
-                      {interview.interviewDate && (
-                        <div className="flex items-center gap-2">
-                          <ClockIcon className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm font-medium text-muted-foreground">Interview Date:</span>
-                          <span className="text-sm">
-                            {format(new Date(interview.interviewDate), "MMM dd, yyyy 'at' h:mm a")}
-                          </span>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-2">
+                        <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm font-medium text-muted-foreground">Proposed Date/Time:</span>
+                        <span className="text-sm">
+                          {format(new Date(interview.proposedDateTime), "MMM dd, yyyy 'at' h:mm a")}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm font-medium text-muted-foreground">Duration:</span>
+                        <span className="text-sm">{interview.duration} minutes</span>
+                      </div>
                     </div>
                     
                     <div className="space-y-2">
@@ -192,6 +197,7 @@ export default function ViewInterviewDetailsModal({
                           </Badge>
                         </div>
                       </div>
+                    </div>
                       {interview.manager && (
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium text-muted-foreground">Manager:</span>
@@ -206,12 +212,21 @@ export default function ViewInterviewDetailsModal({
                         </div>
                       )}
                     </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-muted-foreground">Candidate:</span>
+                      <span className="text-sm">{interview.candidateName}</span>
+                      {interview.candidateEmail && (
+                        <span className="text-sm text-muted-foreground">({interview.candidateEmail})</span>
+                      )}
+                    </div>
                   </div>
                   
-                  {interview.notes && (
+                  {interview.description && (
                     <div className="space-y-2">
-                      <span className="text-sm font-medium text-muted-foreground">Notes:</span>
-                      <div className="text-sm p-3 bg-muted rounded-md">{interview.notes}</div>
+                      <span className="text-sm font-medium text-muted-foreground">Description:</span>
+                      <div className="text-sm p-3 bg-muted rounded-md">{interview.description}</div>
                     </div>
                   )}
                 </CardContent>
@@ -287,7 +302,7 @@ export default function ViewInterviewDetailsModal({
                               </span>
                             </div>
                             <div className="text-sm bg-muted p-3 rounded-md">
-                              {comment.content}
+                              {comment.comment}
                             </div>
                           </div>
                         </div>

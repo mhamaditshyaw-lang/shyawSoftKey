@@ -1042,7 +1042,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const interviewId = parseInt(req.params.id);
       const commentData = insertInterviewCommentSchema.parse({
-        ...req.body,
+        comment: req.body.comment,
         interviewRequestId: interviewId,
         authorId: req.user!.id,
       });
