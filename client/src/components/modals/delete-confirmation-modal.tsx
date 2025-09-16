@@ -170,7 +170,6 @@ export function DeleteConfirmationModal({
               id="confirm-text"
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
-              placeholder="Type DELETE to confirm"
               className="border-red-300 focus:border-red-500 focus:ring-red-500"
             />
           </div>

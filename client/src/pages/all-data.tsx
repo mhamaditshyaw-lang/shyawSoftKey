@@ -437,7 +437,6 @@ export default function AllDataPage() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
                   id="search"
-                  placeholder="Search across all data..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -450,7 +449,7 @@ export default function AllDataPage() {
               <Label className="text-sm font-medium">Data Type</Label>
               <Select value={dataType} onValueChange={setDataType}>
                 <SelectTrigger>
-                  <SelectValue placeholder="All Types" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Types</SelectItem>
@@ -469,7 +468,7 @@ export default function AllDataPage() {
               <Label className="text-sm font-medium">Date Filter</Label>
               <Select value={dateFilter} onValueChange={setDateFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="All Dates" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="today">Today</SelectItem>

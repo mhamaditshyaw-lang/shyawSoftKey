@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
-import { useNotificationService } from "@/hooks/use-notification-service";
 import { authenticatedRequest } from "@/lib/auth";
 import { useLocation } from "wouter";
 import { getRelativeTime } from "@/lib/utils";
@@ -32,6 +31,7 @@ import {
   RefreshCw,
   Filter,
   ArrowRight,
+  ArrowUp,
   Server
 } from "lucide-react";
 import { HelpTooltip, FeatureTooltip, StatusTooltip } from "@/components/ui/help-tooltip";
@@ -451,7 +451,6 @@ export default function DashboardPage() {
                   <div className="relative">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-green-500" />
                     <Input
-                      placeholder="Search todos, interviews, or users..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10 border-green-200 focus:border-green-500 focus:ring-green-500"
@@ -768,8 +767,7 @@ export default function DashboardPage() {
                     <Button
                       variant="outline"
                       className="p-6 h-auto flex-col space-y-2 w-full border-2 border-green-200 hover:border-green-400 hover:bg-green-100 bg-white/80 text-green-700 hover:text-green-800 transition-all duration-300 shadow-sm hover:shadow-md"
-                      onClick={() => setLocation```text
-("/users")}
+                      onClick={() => setLocation("/users")}
                     >
                       <motion.div variants={iconVariants}>
                         <UserPlus className="w-8 h-8" />

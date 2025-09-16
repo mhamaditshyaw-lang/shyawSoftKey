@@ -72,6 +72,17 @@ interface UserPermissions {
   canEditInterviews?: boolean;
   canViewReports?: boolean;
   canManageNotifications?: boolean;
+  // Page visibility permissions
+  canViewDashboard?: boolean;
+  canViewUserManagement?: boolean;
+  canViewAllData?: boolean;
+  canViewAddEmployee?: boolean;
+  canViewSettings?: boolean;
+  // Component visibility permissions
+  canViewNavigation?: boolean;
+  canViewSidebar?: boolean;
+  canViewHeader?: boolean;
+  canAccessAdminTools?: boolean;
 }
 
 export default function UserManagement() {
@@ -143,7 +154,7 @@ export default function UserManagement() {
     },
   });
 
-  if (currentUser?.role !== "admin" && currentUser?.role !== "manager" && currentUser?.role !== "office_team") {
+  if (currentUser?.role !== "admin" && currentUser?.role !== "manager" && currentUser?.role !== "office") {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Card className="p-6">
@@ -276,7 +287,7 @@ export default function UserManagement() {
                       <Label htmlFor="role">Role</Label>
                       <Select name="role" required>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select role" />
+                          <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="admin">Admin</SelectItem>
@@ -340,7 +351,6 @@ export default function UserManagement() {
         <CardContent>
           <div className="flex gap-4 mb-6">
             <Input
-              placeholder="Search users..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="max-w-sm"
@@ -600,6 +610,17 @@ function PermissionsForm({
     canEditInterviews: "Edit Interviews",
     canViewReports: "View Reports",
     canManageNotifications: "Manage Notifications",
+    // Page visibility permissions
+    canViewDashboard: "Access Dashboard Page",
+    canViewUserManagement: "Access User Management Page",
+    canViewAllData: "Access All Data Page",
+    canViewAddEmployee: "Access Add Employee Page",
+    canViewSettings: "Access Settings Page",
+    // Component visibility permissions
+    canViewNavigation: "Show Navigation Menu",
+    canViewSidebar: "Show Sidebar",
+    canViewHeader: "Show Header Components",
+    canAccessAdminTools: "Access Admin Tools",
   };
 
   return (
@@ -613,19 +634,63 @@ function PermissionsForm({
           </div>
         </div>
         
-        <div className="space-y-3">
-          {Object.entries(permissionLabels).map(([key, label]) => (
-            <div key={key} className="flex items-center justify-between">
-              <Label htmlFor={key}>{label}</Label>
-              <Switch
-                id={key}
-                checked={permissions[key as keyof UserPermissions] || false}
-                onCheckedChange={(checked) => 
-                  handlePermissionChange(key as keyof UserPermissions, checked)
-                }
-              />
+        <div className="space-y-6">
+          {/* Data Permissions */}
+          <div>
+            <h4 className="font-medium text-sm text-gray-700 mb-3">Data Access Permissions</h4>
+            <div className="space-y-3">
+              {['canViewUsers', 'canEditUsers', 'canDeleteUsers', 'canViewTodos', 'canEditTodos', 'canViewInterviews', 'canEditInterviews', 'canViewReports', 'canManageNotifications'].map((key) => (
+                <div key={key} className="flex items-center justify-between">
+                  <Label htmlFor={key}>{permissionLabels[key as keyof typeof permissionLabels]}</Label>
+                  <Switch
+                    id={key}
+                    checked={permissions[key as keyof UserPermissions] || false}
+                    onCheckedChange={(checked) => 
+                      handlePermissionChange(key as keyof UserPermissions, checked)
+                    }
+                  />
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Page Access Permissions */}
+          <div>
+            <h4 className="font-medium text-sm text-gray-700 mb-3">Page Access Permissions</h4>
+            <div className="space-y-3">
+              {['canViewDashboard', 'canViewUserManagement', 'canViewAllData', 'canViewAddEmployee', 'canViewSettings'].map((key) => (
+                <div key={key} className="flex items-center justify-between">
+                  <Label htmlFor={key}>{permissionLabels[key as keyof typeof permissionLabels]}</Label>
+                  <Switch
+                    id={key}
+                    checked={permissions[key as keyof UserPermissions] || false}
+                    onCheckedChange={(checked) => 
+                      handlePermissionChange(key as keyof UserPermissions, checked)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Component Visibility Permissions */}
+          <div>
+            <h4 className="font-medium text-sm text-gray-700 mb-3">Component Visibility Permissions</h4>
+            <div className="space-y-3">
+              {['canViewNavigation', 'canViewSidebar', 'canViewHeader', 'canAccessAdminTools'].map((key) => (
+                <div key={key} className="flex items-center justify-between">
+                  <Label htmlFor={key}>{permissionLabels[key as keyof typeof permissionLabels]}</Label>
+                  <Switch
+                    id={key}
+                    checked={permissions[key as keyof UserPermissions] || false}
+                    onCheckedChange={(checked) => 
+                      handlePermissionChange(key as keyof UserPermissions, checked)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       
