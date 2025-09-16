@@ -1,0 +1,65 @@
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+7:57:03 AM [express] serving on port 5000
+Starting reminder notification service...
+Checking for due reminders...
+Reminder notification service started successfully
+Found 1 pending reminders for user admin
+Failed to create device notification: error: invalid input value for enum device_notification_type: "reminder"
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async Function.createNotification (/home/runner/workspace/server/device-notification-service.ts:11:37)
+    at async Function.createUserNotification (/home/runner/workspace/server/device-notification-service.ts:61:12)
+    at async Function.sendReminderNotification (/home/runner/workspace/server/reminder-notification-service.ts:119:5)
+    at async Function.checkAndSendReminders (/home/runner/workspace/server/reminder-notification-service.ts:89:15) {
+  length: 152,
+  severity: 'ERROR',
+  code: '22P02',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: "unnamed portal parameter $2 = '...'",
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'enum.c',
+  line: '129',
+  routine: 'enum_in'
+}
+Failed to send notification for reminder 1: error: invalid input value for enum device_notification_type: "reminder"
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async Function.createNotification (/home/runner/workspace/server/device-notification-service.ts:11:37)
+    at async Function.createUserNotification (/home/runner/workspace/server/device-notification-service.ts:61:12)
+    at async Function.sendReminderNotification (/home/runner/workspace/server/reminder-notification-service.ts:119:5)
+    at async Function.checkAndSendReminders (/home/runner/workspace/server/reminder-notification-service.ts:89:15) {
+  length: 152,
+  severity: 'ERROR',
+  code: '22P02',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: "unnamed portal parameter $2 = '...'",
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'enum.c',
+  line: '129',
+  routine: 'enum_in'
+}
+Browserslist: browsers data (caniuse-lite) is 11 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Reminder check complete

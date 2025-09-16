@@ -11,7 +11,7 @@ export class DeviceNotificationService {
       const [createdNotification] = await db.insert(deviceNotifications).values(notification).returning();
       
       // Send device notification if supported
-      if (createdNotification && !notification.isSentToDevice) {
+      if (createdNotification && !createdNotification.isSentToDevice) {
         await this.sendDeviceNotification(createdNotification);
       }
       

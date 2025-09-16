@@ -118,7 +118,7 @@ export class ReminderNotificationService {
 
     await DeviceNotificationService.createUserNotification(
       userId,
-      "reminder",
+      "task_reminder",
       `📅 ${title}`,
       message,
       "normal",
