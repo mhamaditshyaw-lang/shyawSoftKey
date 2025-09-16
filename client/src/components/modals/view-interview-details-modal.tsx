@@ -181,7 +181,7 @@ export default function ViewInterviewDetailsModal({
                         <span className="text-sm">{interview.duration} minutes</span>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium text-muted-foreground">Requested by:</span>
@@ -212,7 +212,7 @@ export default function ViewInterviewDetailsModal({
                         </div>
                       )}
                     </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-muted-foreground">Candidate:</span>
@@ -222,7 +222,7 @@ export default function ViewInterviewDetailsModal({
                       )}
                     </div>
                   </div>
-                  
+
                   {interview.description && (
                     <div className="space-y-2">
                       <span className="text-sm font-medium text-muted-foreground">Description:</span>
@@ -237,76 +237,70 @@ export default function ViewInterviewDetailsModal({
               {/* Comments Section */}
               <Card>
                 <CardHeader className="pb-3">
-                  <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
                     <MessageSquare className="h-5 w-5" />
-                    <h3 className="text-lg font-semibold">Comments</h3>
-                    <Badge variant="secondary">{comments.length}</Badge>
-                  </div>
+                    Comments
+                    {comments.length > 0 && (
+                      <Badge variant="secondary" className="ml-2">
+                        {comments.length}
+                      </Badge>
+                    )}
+                  </h3>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Add Comment */}
-                  <div className="space-y-3">
-                    <Textarea
-                      value={commentText}
-                      onChange={(e) => setCommentText(e.target.value)}
-                      className="min-h-[80px]"
-                      data-testid="textarea-comment"
-                    />
-                    <div className="flex justify-end">
-                      <Button
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="space-y-3 max-h-48 overflow-y-auto">
+                      {commentsLoading ? (
+                        <div className="text-sm text-muted-foreground">Loading comments...</div>
+                      ) : comments.length > 0 ? (
+                        comments.map((comment: Comment) => (
+                          <div key={comment.id} className="border-l-2 border-blue-200 pl-4 py-2 bg-gray-50 rounded-r-md">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Avatar className="h-6 w-6">
+                                <AvatarFallback className="text-xs">
+                                  {comment.author.firstName?.[0] || comment.author.username[0]}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span className="text-sm font-medium">
+                                {comment.author.firstName && comment.author.lastName 
+                                  ? `${comment.author.firstName} ${comment.author.lastName}`
+                                  : comment.author.username}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {format(new Date(comment.createdAt), "MMM dd, h:mm a")}
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-700">{comment.comment}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-6">
+                          <MessageSquare className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                          <p className="text-sm text-muted-foreground">No comments yet</p>
+                          <p className="text-xs text-muted-foreground">Be the first to add a comment!</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <Separator />
+
+                    <div className="space-y-3">
+                      <Textarea
+                        placeholder="Add a comment..."
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        className="min-h-20"
+                      />
+                      <Button 
                         onClick={handleAddComment}
                         disabled={!commentText.trim() || addCommentMutation.isPending}
+                        className="w-full"
                         size="sm"
-                        className="gap-2"
-                        data-testid="button-add-comment"
                       >
-                        <Send className="h-4 w-4" />
+                        <Send className="h-4 w-4 mr-2" />
                         {addCommentMutation.isPending ? "Adding..." : "Add Comment"}
                       </Button>
                     </div>
-                  </div>
-
-                  <Separator />
-
-                  {/* Comments List */}
-                  <div className="space-y-4">
-                    {commentsLoading ? (
-                      <div className="text-center text-muted-foreground py-4">
-                        Loading comments...
-                      </div>
-                    ) : comments.length === 0 ? (
-                      <div className="text-center text-muted-foreground py-8">
-                        <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                        <p>No comments yet</p>
-                        <p className="text-sm">Be the first to add a comment!</p>
-                      </div>
-                    ) : (
-                      comments.map((comment: Comment) => (
-                        <div key={comment.id} className="flex gap-3" data-testid={`comment-${comment.id}`}>
-                          <Avatar className="h-8 w-8">
-                            <AvatarFallback className="text-xs">
-                              {getInitials(comment.author)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 space-y-2">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium">
-                                {formatUserName(comment.author)}
-                              </span>
-                              <Badge variant="outline" className="text-xs">
-                                {comment.author.role}
-                              </Badge>
-                              <span className="text-xs text-muted-foreground">
-                                {format(new Date(comment.createdAt), "MMM dd, yyyy 'at' h:mm a")}
-                              </span>
-                            </div>
-                            <div className="text-sm bg-muted p-3 rounded-md">
-                              {comment.comment}
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )}
                   </div>
                 </CardContent>
               </Card>
