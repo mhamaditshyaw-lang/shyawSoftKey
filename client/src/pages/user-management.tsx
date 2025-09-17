@@ -110,6 +110,7 @@ export default function UserManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRole, setSelectedRole] = useState<string>("all");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [editFormData, setEditFormData] = useState<Partial<User>>({});
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
   const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
@@ -225,8 +226,8 @@ export default function UserManagement() {
       firstName: formData.get("firstName") as string,
       lastName: formData.get("lastName") as string,
       email: formData.get("email") as string,
-      role: formData.get("role") as string,
-      status: formData.get("status") as string,
+      role: selectedUser.role, // Use the role from selectedUser state
+      status: selectedUser.status, // Use the status from selectedUser state
       department: formData.get("department") as string,
       position: formData.get("position") as string,
       phoneNumber: formData.get("phoneNumber") as string,
@@ -476,7 +477,12 @@ export default function UserManagement() {
       </Card>
 
       {/* Edit User Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+      <Dialog open={isEditDialogOpen} onOpenChange={(open) => {
+        setIsEditDialogOpen(open);
+        if (!open) {
+          setEditFormData({});
+        }
+      }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
@@ -484,7 +490,26 @@ export default function UserManagement() {
           {selectedUser && (
             <form onSubmit={(e) => {
               e.preventDefault();
-              handleUpdateUser(new FormData(e.target as HTMLFormElement));
+              const formData = new FormData(e.target as HTMLFormElement);
+              const userData: any = {
+                id: selectedUser.id,
+                firstName: formData.get("firstName") as string,
+                lastName: formData.get("lastName") as string,
+                email: formData.get("email") as string,
+                role: editFormData.role || selectedUser.role,
+                status: editFormData.status || selectedUser.status,
+                department: formData.get("department") as string,
+                position: formData.get("position") as string,
+                phoneNumber: formData.get("phoneNumber") as string,
+              };
+
+              // Only include password if it's provided and current user is admin
+              const password = formData.get("password") as string;
+              if (password && password.trim() && currentUser?.role === "admin") {
+                userData.password = password;
+              }
+
+              updateUserMutation.mutate(userData);
             }}>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -522,7 +547,10 @@ export default function UserManagement() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="role">Role</Label>
-                    <Select name="role" defaultValue={selectedUser.role}>
+                    <Select 
+                      value={editFormData.role || selectedUser.role} 
+                      onValueChange={(value) => setEditFormData(prev => ({ ...prev, role: value }))}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a role" />
                       </SelectTrigger>
@@ -538,7 +566,10 @@ export default function UserManagement() {
                   </div>
                   <div>
                     <Label htmlFor="status">Status</Label>
-                    <Select name="status" defaultValue={selectedUser.status}>
+                    <Select 
+                      value={editFormData.status || selectedUser.status} 
+                      onValueChange={(value) => setEditFormData(prev => ({ ...prev, status: value }))}
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
