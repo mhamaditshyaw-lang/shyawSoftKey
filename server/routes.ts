@@ -439,10 +439,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/todos/items/:id", authenticateToken, async (req, res) => {
+  app.patch("/api/todos/items/:id", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const id = parseInt(req.params.id);
       const updates = req.body;
+
+      // Get the todo item first to check authorization
+      const existingItem = await storage.getTodoItem(id);
+      if (!existingItem) {
+        return res.status(404).json({ message: "Todo item not found" });
+      }
+
+      // Get the todo list to check ownership for office users
+      const todoList = await storage.getTodoList(existingItem.todoListId);
+      if (!todoList) {
+        return res.status(404).json({ message: "Associated todo list not found" });
+      }
+
+      // Authorization: Office users can only complete/update tasks in lists they own or are assigned to
+      if (req.user?.role === 'office' || req.user?.role === 'office_team') {
+        const isAuthorized = todoList.createdById === req.user?.id ||
+                            todoList.assignedToId === req.user?.id;
+        
+        if (!isAuthorized) {
+          return res.status(403).json({ message: "Not authorized to update tasks in this todo list" });
+        }
+      }
 
       const todoItem = await storage.updateTodoItem(id, updates);
       if (!todoItem) {
@@ -456,11 +478,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Delete todo item
-  app.delete("/api/todos/items/:id", authenticateToken, async (req, res) => {
+  app.delete("/api/todos/items/:id", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const id = parseInt(req.params.id);
-      const success = await storage.deleteTodoItem(id);
+      
+      // Get the todo item first to check authorization
+      const existingItem = await storage.getTodoItem(id);
+      if (!existingItem) {
+        return res.status(404).json({ message: "Todo item not found" });
+      }
 
+      // Get the todo list to check ownership for office users
+      const todoList = await storage.getTodoList(existingItem.todoListId);
+      if (!todoList) {
+        return res.status(404).json({ message: "Associated todo list not found" });
+      }
+
+      // Authorization: Office users can only delete tasks in lists they own or are assigned to
+      if (req.user?.role === 'office' || req.user?.role === 'office_team') {
+        const isAuthorized = todoList.createdById === req.user?.id ||
+                            todoList.assignedToId === req.user?.id;
+        
+        if (!isAuthorized) {
+          return res.status(403).json({ message: "Not authorized to delete tasks in this todo list" });
+        }
+      }
+
+      const success = await storage.deleteTodoItem(id);
       if (!success) {
         return res.status(404).json({ message: "Todo item not found" });
       }
