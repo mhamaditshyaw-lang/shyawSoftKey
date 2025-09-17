@@ -195,9 +195,9 @@ export default function UserManagement() {
       user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesRole = selectedRole === "all" || user.role === selectedRole;
-    
+
     return matchesSearch && matchesRole;
   });
 
@@ -219,7 +219,7 @@ export default function UserManagement() {
 
   const handleUpdateUser = (formData: FormData) => {
     if (!selectedUser) return;
-    
+
     const userData: any = {
       id: selectedUser.id,
       firstName: formData.get("firstName") as string,
@@ -231,19 +231,19 @@ export default function UserManagement() {
       position: formData.get("position") as string,
       phoneNumber: formData.get("phoneNumber") as string,
     };
-    
+
     // Only include password if it's provided and current user is admin
     const password = formData.get("password") as string;
     if (password && password.trim() && currentUser?.role === "admin") {
       userData.password = password;
     }
-    
+
     updateUserMutation.mutate(userData);
   };
 
   const handleUpdatePermissions = (permissions: UserPermissions) => {
     if (!selectedUser) return;
-    
+
     updateUserMutation.mutate({
       id: selectedUser.id,
       permissions,
@@ -263,7 +263,7 @@ export default function UserManagement() {
           <h1 className="text-3xl font-bold">User Management</h1>
           <p className="text-gray-600">Manage users, roles, and permissions</p>
         </div>
-        
+
         {currentUser?.role === "admin" && (
           <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
             <DialogTrigger asChild>
@@ -291,22 +291,22 @@ export default function UserManagement() {
                       <Input id="lastName" name="lastName" required />
                     </div>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="username">Username</Label>
                     <Input id="username" name="username" required />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="email">Email</Label>
                     <Input id="email" name="email" type="email" required />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="password">Password</Label>
                     <Input id="password" name="password" type="password" required />
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="role">Role</Label>
@@ -319,6 +319,8 @@ export default function UserManagement() {
                           <SelectItem value="manager">Manager</SelectItem>
                           <SelectItem value="security">Security</SelectItem>
                           <SelectItem value="office">Office</SelectItem>
+                          <SelectItem value="office_team">Office Team</SelectItem>
+                          <SelectItem value="secretary">Secretary</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -336,7 +338,7 @@ export default function UserManagement() {
                       </Select>
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="department">Department</Label>
@@ -347,13 +349,13 @@ export default function UserManagement() {
                       <Input id="position" name="position" />
                     </div>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="phoneNumber">Phone Number</Label>
                     <Input id="phoneNumber" name="phoneNumber" />
                   </div>
                 </div>
-                
+
                 <DialogFooter className="mt-6">
                   <Button type="submit" disabled={addUserMutation.isPending}>
                     {addUserMutation.isPending ? "Adding..." : "Add User"}
@@ -390,6 +392,8 @@ export default function UserManagement() {
                 <SelectItem value="manager">Manager</SelectItem>
                 <SelectItem value="security">Security</SelectItem>
                 <SelectItem value="office">Office</SelectItem>
+                <SelectItem value="office_team">Office Team</SelectItem>
+                <SelectItem value="secretary">Secretary</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -503,7 +507,7 @@ export default function UserManagement() {
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="email">Email</Label>
                   <Input 
@@ -514,7 +518,7 @@ export default function UserManagement() {
                     required 
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="role">Role</Label>
@@ -528,6 +532,7 @@ export default function UserManagement() {
                         <SelectItem value="security">Security</SelectItem>
                         <SelectItem value="office">Office</SelectItem>
                         <SelectItem value="office_team">Office Team</SelectItem>
+                        <SelectItem value="secretary">Secretary</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -545,7 +550,7 @@ export default function UserManagement() {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="department">Department</Label>
@@ -564,7 +569,7 @@ export default function UserManagement() {
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="phoneNumber">Phone Number</Label>
                   <Input 
@@ -573,20 +578,18 @@ export default function UserManagement() {
                     defaultValue={selectedUser.phoneNumber || ""}
                   />
                 </div>
-                
-                {currentUser?.role === "admin" && (
-                  <div>
-                    <Label htmlFor="password">New Password (Leave empty to keep current)</Label>
-                    <Input 
-                      id="password" 
-                      name="password" 
-                      type="password"
-                      placeholder="Enter new password to change"
-                    />
-                  </div>
-                )}
+
+                <div>
+                  <Label htmlFor="password">New Password (Leave empty to keep current)</Label>
+                  <Input 
+                    id="password" 
+                    name="password" 
+                    type="password"
+                    placeholder="Enter new password to change"
+                  />
+                </div>
               </div>
-              
+
               <DialogFooter className="mt-6">
                 <Button type="submit" disabled={updateUserMutation.isPending}>
                   {updateUserMutation.isPending ? "Updating..." : "Update User"}
@@ -671,7 +674,7 @@ function PermissionsForm({
             <p className="text-sm text-gray-600">@{user.username} • {user.role}</p>
           </div>
         </div>
-        
+
         <div className="space-y-6">
           {/* Data Permissions */}
           <div>
@@ -731,7 +734,7 @@ function PermissionsForm({
           </div>
         </div>
       </div>
-      
+
       <DialogFooter className="mt-6">
         <Button type="submit" disabled={isLoading}>
           {isLoading ? "Saving..." : "Save Permissions"}
