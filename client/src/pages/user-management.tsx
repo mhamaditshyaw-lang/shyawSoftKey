@@ -54,6 +54,24 @@ const roleColors = {
   manager: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
   security: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
   office: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
+  office_team: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200",
+};
+
+const formatRoleName = (role: string) => {
+  switch (role) {
+    case 'office_team':
+      return 'Office Team';
+    case 'admin':
+      return 'Admin';
+    case 'manager':
+      return 'Manager';
+    case 'security':
+      return 'Security';
+    case 'office':
+      return 'Office';
+    default:
+      return role;
+  }
 };
 
 const statusColors = {
@@ -202,7 +220,7 @@ export default function UserManagement() {
   const handleUpdateUser = (formData: FormData) => {
     if (!selectedUser) return;
     
-    const userData = {
+    const userData: any = {
       id: selectedUser.id,
       firstName: formData.get("firstName") as string,
       lastName: formData.get("lastName") as string,
@@ -213,6 +231,13 @@ export default function UserManagement() {
       position: formData.get("position") as string,
       phoneNumber: formData.get("phoneNumber") as string,
     };
+    
+    // Only include password if it's provided and current user is admin
+    const password = formData.get("password") as string;
+    if (password && password.trim() && currentUser?.role === "admin") {
+      userData.password = password;
+    }
+    
     updateUserMutation.mutate(userData);
   };
 
@@ -395,7 +420,7 @@ export default function UserManagement() {
                     <TableCell>{user.email}</TableCell>
                     <TableCell>
                       <Badge className={roleColors[user.role as keyof typeof roleColors]}>
-                        {user.role}
+                        {formatRoleName(user.role)}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -502,6 +527,7 @@ export default function UserManagement() {
                         <SelectItem value="manager">Manager</SelectItem>
                         <SelectItem value="security">Security</SelectItem>
                         <SelectItem value="office">Office</SelectItem>
+                        <SelectItem value="office_team">Office Team</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -547,6 +573,18 @@ export default function UserManagement() {
                     defaultValue={selectedUser.phoneNumber || ""}
                   />
                 </div>
+                
+                {currentUser?.role === "admin" && (
+                  <div>
+                    <Label htmlFor="password">New Password (Leave empty to keep current)</Label>
+                    <Input 
+                      id="password" 
+                      name="password" 
+                      type="password"
+                      placeholder="Enter new password to change"
+                    />
+                  </div>
+                )}
               </div>
               
               <DialogFooter className="mt-6">
