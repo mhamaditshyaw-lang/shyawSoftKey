@@ -35,13 +35,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { ChangePasswordModal } from "@/components/modals/change-password-modal";
-import { 
-  Users, 
-  Edit, 
-  Trash2, 
-  Plus, 
-  Shield, 
-  Eye, 
+import {
+  Users,
+  Edit,
+  Trash2,
+  Plus,
+  Shield,
+  Eye,
   Settings,
   Phone,
   Mail,
@@ -145,7 +145,7 @@ export default function UserManagement() {
 
   // Update user mutation
   const updateUserMutation = useMutation({
-    mutationFn: ({ id, ...userData }: any) => 
+    mutationFn: ({ id, ...userData }: any) =>
       apiRequest(`/api/users/${id}`, "PATCH", userData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
@@ -196,7 +196,7 @@ export default function UserManagement() {
 
   const users = usersData?.users || [];
   const filteredUsers = users.filter((user) => {
-    const matchesSearch = 
+    const matchesSearch =
       user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -453,28 +453,32 @@ export default function UserManagement() {
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedUser(user);
-                            setIsPasswordDialogOpen(true);
-                          }}
-                          title="Change Password"
-                        >
-                          <Key className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedUser(user);
-                            setIsRoleDialogOpen(true);
-                          }}
-                          title="Change Role"
-                        >
-                          <UserCog className="h-4 w-4" />
-                        </Button>
+                        {(currentUser?.role === "admin" || currentUser?.role === "manager") && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setIsPasswordDialogOpen(true);
+                            }}
+                            title="Change Password"
+                          >
+                            <Key className="h-4 w-4" />
+                          </Button>
+                        )}
+                        {currentUser?.role === "admin" && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setIsRoleDialogOpen(true);
+                            }}
+                            title="Change Role"
+                          >
+                            <UserCog className="h-4 w-4" />
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="sm"
@@ -545,40 +549,40 @@ export default function UserManagement() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="firstName">First Name</Label>
-                    <Input 
-                      id="firstName" 
-                      name="firstName" 
+                    <Input
+                      id="firstName"
+                      name="firstName"
                       defaultValue={selectedUser.firstName}
-                      required 
+                      required
                     />
                   </div>
                   <div>
                     <Label htmlFor="lastName">Last Name</Label>
-                    <Input 
-                      id="lastName" 
-                      name="lastName" 
+                    <Input
+                      id="lastName"
+                      name="lastName"
                       defaultValue={selectedUser.lastName}
-                      required 
+                      required
                     />
                   </div>
                 </div>
 
                 <div>
                   <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email" 
-                    name="email" 
-                    type="email" 
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
                     defaultValue={selectedUser.email}
-                    required 
+                    required
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="role">Role</Label>
-                    <Select 
-                      value={editFormData.role || selectedUser.role} 
+                    <Select
+                      value={editFormData.role || selectedUser.role}
                       onValueChange={(value) => setEditFormData(prev => ({ ...prev, role: value }))}
                     >
                       <SelectTrigger>
@@ -596,8 +600,8 @@ export default function UserManagement() {
                   </div>
                   <div>
                     <Label htmlFor="status">Status</Label>
-                    <Select 
-                      value={editFormData.status || selectedUser.status} 
+                    <Select
+                      value={editFormData.status || selectedUser.status}
                       onValueChange={(value) => setEditFormData(prev => ({ ...prev, status: value }))}
                     >
                       <SelectTrigger>
@@ -615,17 +619,17 @@ export default function UserManagement() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="department">Department</Label>
-                    <Input 
-                      id="department" 
-                      name="department" 
+                    <Input
+                      id="department"
+                      name="department"
                       defaultValue={selectedUser.department || ""}
                     />
                   </div>
                   <div>
                     <Label htmlFor="position">Position</Label>
-                    <Input 
-                      id="position" 
-                      name="position" 
+                    <Input
+                      id="position"
+                      name="position"
                       defaultValue={selectedUser.position || ""}
                     />
                   </div>
@@ -633,9 +637,9 @@ export default function UserManagement() {
 
                 <div>
                   <Label htmlFor="phoneNumber">Phone Number</Label>
-                  <Input 
-                    id="phoneNumber" 
-                    name="phoneNumber" 
+                  <Input
+                    id="phoneNumber"
+                    name="phoneNumber"
                     defaultValue={selectedUser.phoneNumber || ""}
                   />
                 </div>
@@ -644,9 +648,9 @@ export default function UserManagement() {
                   <Label htmlFor="password" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                     Set New Password
                   </Label>
-                  <Input 
-                    id="password" 
-                    name="password" 
+                  <Input
+                    id="password"
+                    name="password"
                     type="password"
                     placeholder="Leave empty to keep current password"
                     className="mt-1 bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600"
@@ -674,7 +678,7 @@ export default function UserManagement() {
             <DialogTitle>Manage Permissions</DialogTitle>
           </DialogHeader>
           {selectedUser && (
-            <PermissionsForm 
+            <PermissionsForm
               user={selectedUser}
               onSave={handleUpdatePermissions}
               isLoading={updateUserMutation.isPending}
@@ -707,7 +711,7 @@ export default function UserManagement() {
               e.preventDefault();
               const formData = new FormData(e.target as HTMLFormElement);
               const newRole = formData.get("role") as string;
-              
+
               updateUserMutation.mutate({
                 id: selectedUser.id,
                 role: newRole,
@@ -745,7 +749,7 @@ export default function UserManagement() {
 
                 <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg">
                   <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                    <strong>Warning:</strong> Changing a user's role will update their access permissions. 
+                    <strong>Warning:</strong> Changing a user's role will update their access permissions.
                     Make sure this change is authorized.
                   </p>
                 </div>
@@ -771,12 +775,12 @@ export default function UserManagement() {
   );
 }
 
-function PermissionsForm({ 
-  user, 
-  onSave, 
-  isLoading 
-}: { 
-  user: User; 
+function PermissionsForm({
+  user,
+  onSave,
+  isLoading
+}: {
+  user: User;
   onSave: (permissions: UserPermissions) => void;
   isLoading: boolean;
 }) {
@@ -838,7 +842,7 @@ function PermissionsForm({
                   <Switch
                     id={key}
                     checked={permissions[key as keyof UserPermissions] || false}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked) =>
                       handlePermissionChange(key as keyof UserPermissions, checked)
                     }
                   />
@@ -857,7 +861,7 @@ function PermissionsForm({
                   <Switch
                     id={key}
                     checked={permissions[key as keyof UserPermissions] || false}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked) =>
                       handlePermissionChange(key as keyof UserPermissions, checked)
                     }
                   />
@@ -876,7 +880,7 @@ function PermissionsForm({
                   <Switch
                     id={key}
                     checked={permissions[key as keyof UserPermissions] || false}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked) =>
                       handlePermissionChange(key as keyof UserPermissions, checked)
                     }
                   />
