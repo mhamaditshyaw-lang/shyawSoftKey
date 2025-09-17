@@ -34,6 +34,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { ChangePasswordModal } from "@/components/modals/change-password-modal";
 import { 
   Users, 
   Edit, 
@@ -45,7 +46,9 @@ import {
   Phone,
   Mail,
   Building,
-  UserCheck
+  UserCheck,
+  Key,
+  UserCog
 } from "lucide-react";
 import type { User } from "@shared/schema";
 
@@ -114,6 +117,8 @@ export default function UserManagement() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
   const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
 
   // Fetch users
   const { data: usersData, isLoading } = useQuery<{ users: User[] }>({
@@ -436,7 +441,7 @@ export default function UserManagement() {
                     <TableCell>{user.department || "-"}</TableCell>
                     <TableCell>{user.position || "-"}</TableCell>
                     <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex justify-end gap-1">
                         <Button
                           variant="ghost"
                           size="sm"
@@ -444,6 +449,7 @@ export default function UserManagement() {
                             setSelectedUser(user);
                             setIsEditDialogOpen(true);
                           }}
+                          title="Edit User"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -452,8 +458,31 @@ export default function UserManagement() {
                           size="sm"
                           onClick={() => {
                             setSelectedUser(user);
+                            setIsPasswordDialogOpen(true);
+                          }}
+                          title="Change Password"
+                        >
+                          <Key className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setIsRoleDialogOpen(true);
+                          }}
+                          title="Change Role"
+                        >
+                          <UserCog className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedUser(user);
                             setIsPermissionsDialogOpen(true);
                           }}
+                          title="Manage Permissions"
                         >
                           <Settings className="h-4 w-4" />
                         </Button>
@@ -462,6 +491,7 @@ export default function UserManagement() {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteUser(user.id)}
+                            title="Delete User"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -649,6 +679,91 @@ export default function UserManagement() {
               onSave={handleUpdatePermissions}
               isLoading={updateUserMutation.isPending}
             />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Change Password Modal */}
+      {selectedUser && (
+        <ChangePasswordModal
+          open={isPasswordDialogOpen}
+          onOpenChange={setIsPasswordDialogOpen}
+          userId={selectedUser.id}
+          username={selectedUser.username}
+        />
+      )}
+
+      {/* Change Role Dialog */}
+      <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserCog className="h-5 w-5" />
+              Change User Role
+            </DialogTitle>
+          </DialogHeader>
+          {selectedUser && (
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target as HTMLFormElement);
+              const newRole = formData.get("role") as string;
+              
+              updateUserMutation.mutate({
+                id: selectedUser.id,
+                role: newRole,
+              });
+              setIsRoleDialogOpen(false);
+            }}>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full">
+                    <UserCheck className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-medium">{selectedUser.firstName} {selectedUser.lastName}</p>
+                    <p className="text-sm text-gray-600">@{selectedUser.username}</p>
+                    <p className="text-xs text-gray-500">Current role: <span className="font-medium">{formatRoleName(selectedUser.role)}</span></p>
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="role">New Role</Label>
+                  <Select name="role" defaultValue={selectedUser.role} required>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="manager">Manager</SelectItem>
+                      <SelectItem value="security">Security</SelectItem>
+                      <SelectItem value="office">Office</SelectItem>
+                      <SelectItem value="office_team">Office Team</SelectItem>
+                      <SelectItem value="secretary">Secretary</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg">
+                  <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                    <strong>Warning:</strong> Changing a user's role will update their access permissions. 
+                    Make sure this change is authorized.
+                  </p>
+                </div>
+              </div>
+
+              <DialogFooter className="mt-6">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsRoleDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={updateUserMutation.isPending}>
+                  {updateUserMutation.isPending ? "Updating..." : "Change Role"}
+                </Button>
+              </DialogFooter>
+            </form>
           )}
         </DialogContent>
       </Dialog>
