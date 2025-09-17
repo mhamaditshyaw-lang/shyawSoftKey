@@ -524,7 +524,7 @@ export default function UserManagement() {
                     <Label htmlFor="role">Role</Label>
                     <Select name="role" defaultValue={selectedUser.role}>
                       <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue placeholder="Select a role" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="admin">Admin</SelectItem>
@@ -580,13 +580,19 @@ export default function UserManagement() {
                 </div>
 
                 <div>
-                  <Label htmlFor="password">New Password (Leave empty to keep current)</Label>
+                  <Label htmlFor="password" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    Set New Password
+                  </Label>
                   <Input 
                     id="password" 
                     name="password" 
                     type="password"
-                    placeholder="Enter new password to change"
+                    placeholder="Leave empty to keep current password"
+                    className="mt-1 bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600"
                   />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Only enter a password if you want to change it
+                  </p>
                 </div>
               </div>
 
