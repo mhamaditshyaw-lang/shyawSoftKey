@@ -154,7 +154,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         user: userWithoutPassword 
       });
     } catch (error: any) {
-      res.status(400).json({ message: error.message });
+      console.error('Login error:', error);
+      if (error.message?.includes('endpoint has been disabled')) {
+        return res.status(503).json({ 
+          message: "Database connection issue. Please wait a moment and try again." 
+        });
+      }
+      res.status(400).json({ message: error.message || "Login failed" });
     }
   });
 
