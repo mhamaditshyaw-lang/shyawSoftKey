@@ -50,12 +50,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
-      {/* Mobile Header with Logo - Only visible on mobile */}
-      <div className="lg:hidden w-full p-4 flex items-center justify-center" style={{ backgroundColor: '#3c2446' }}>
-        <div className="flex items-center space-x-3">
-          <img src={shyawLogo} alt="Shyaw Logo" className="h-20 w-auto" />
-        </div>
-      </div>
 
       {/* Left Panel - Product Image */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
