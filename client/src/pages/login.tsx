@@ -62,21 +62,21 @@ export default function LoginPage() {
         >
           {/* Overlay for brand consistency */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent"></div>
-          
-          {/* Logo positioned on the image */}
-          <div className="absolute top-8 left-8 z-10">
-            <div className="p-3 bg-white/90 rounded-lg backdrop-blur-sm shadow-lg">
-              <img src={shyawLogo} alt="Shyaw Logo" className="h-16 w-auto" />
-            </div>
-          </div>
         </div>
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-gray-50 relative min-h-0">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 bg-gray-50 relative min-h-0">
         {/* Language Switcher */}
         <div className="absolute top-4 right-4 z-10">
           <LanguageSwitcher />
+        </div>
+
+        {/* Logo at top of form - Desktop only */}
+        <div className="hidden lg:block mb-8">
+          <div className="p-3 bg-white rounded-lg shadow-lg">
+            <img src={shyawLogo} alt="Shyaw Logo" className="h-16 w-auto" />
+          </div>
         </div>
 
         <div className="w-full max-w-md">
