@@ -161,7 +161,7 @@ export default function AddUserPage() {
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     required
                   />
-                  <p className="text-sm text-gray-600 mt-1">Example: user@company.com</p>
+                  <p className="text-sm text-gray-600 mt-1">Use a valid work email address for the user</p>
                 </div>
 
                 <div className="space-y-2">
@@ -176,7 +176,7 @@ export default function AddUserPage() {
                     onChange={(e) => handleInputChange("password", e.target.value)}
                     required
                   />
-                  <p className="text-sm text-gray-600 mt-1">{t("createStrongPassword")}</p>
+                  <p className="text-sm text-gray-600 mt-1">Password should be at least 6 characters long</p>
                 </div>
 
                 <div className="space-y-2">

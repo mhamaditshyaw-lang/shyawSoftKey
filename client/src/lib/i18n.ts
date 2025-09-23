@@ -353,6 +353,12 @@ const resources = {
       passwordChangedSuccessfully: "Password changed successfully",
       passwordChangeError: "Error changing password",
       
+      // Form Guidance
+      workEmailGuidance: "Use a valid work email address for the user",
+      passwordMinLengthGuidance: "Password should be at least 6 characters long",
+      usernameGuidance: "Username must be at least 3 characters and unique",
+      emailFormatGuidance: "Enter a valid email address format"
+      
 
     }
   },
@@ -908,6 +914,12 @@ const resources = {
       passwordsDoNotMatch: "وشەی تێپەڕەکان یەکناگرنەوە",
       passwordChangedSuccessfully: "وشەی تێپەڕ بە سەرکەوتوویی گۆڕدرا",
       passwordChangeError: "هەڵە لە گۆڕینی وشەی تێپەڕ",
+      
+      // Form Guidance 
+      workEmailGuidance: "ناونیشانی ئیمەیڵی کاری دروست بەکاربهێنە بۆ بەکارهێنەر",
+      passwordMinLengthGuidance: "وشەی نهێنی دەبێت لانیکەم ٦ پیت بێت",
+      usernameGuidance: "ناوی بەکارهێنەر دەبێت لانیکەم ٣ پیت بێت و جیاواز بێت",
+      emailFormatGuidance: "فۆرماتی دروستی ناونیشانی ئیمەیڵ بنووسە"
       
 
     }
