@@ -661,27 +661,29 @@ export default function ArchivePage() {
                         </h4>
                         <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
                           <div className="space-y-4">
-                            <div>
-                              <Label className="text-sm font-medium text-emerald-700">Report Description</Label>
+                            <div className="space-y-2">
+                              <Label className="text-sm font-medium text-emerald-700" htmlFor={`report-desc-${item.id}`}>{t("reportDescriptionLabel")}</Label>
                               <Textarea
-                                placeholder="Enter detailed interview report, feedback, or additional notes..."
+                                id={`report-desc-${item.id}`}
                                 value={newReports[item.id]?.description || ""}
                                 onChange={(e) => updateNewReport(item.id, "description", e.target.value)}
                                 className="mt-1 border-emerald-200 focus:border-emerald-500"
                                 rows={4}
                               />
+                              <p className="text-sm text-emerald-600">{t("reportDescriptionGuidance")}</p>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <Label className="text-sm font-medium text-emerald-700">Performance Rating</Label>
+                              <div className="space-y-2">
+                                <Label className="text-sm font-medium text-emerald-700" htmlFor={`rating-${item.id}`}>{t("performanceRatingLabel")}</Label>
                                 <Select 
                                   value={newReports[item.id]?.rating || ""} 
                                   onValueChange={(value) => updateNewReport(item.id, "rating", value)}
                                 >
                                   <SelectTrigger className="border-emerald-200">
-                                    <SelectValue placeholder="Select rating" />
+                                    <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
+                                    <SelectItem value="" disabled>{t("selectRating")}</SelectItem>
                                     <SelectItem value="excellent">Excellent (5/5)</SelectItem>
                                     <SelectItem value="good">Good (4/5)</SelectItem>
                                     <SelectItem value="average">Average (3/5)</SelectItem>
@@ -689,6 +691,7 @@ export default function ArchivePage() {
                                     <SelectItem value="poor">Poor (1/5)</SelectItem>
                                   </SelectContent>
                                 </Select>
+                                <p className="text-sm text-emerald-600">{t("ratingGuidance")}</p>
                               </div>
                               <div className="flex items-end">
                                 <Button

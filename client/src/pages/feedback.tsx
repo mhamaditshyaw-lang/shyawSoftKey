@@ -521,15 +521,19 @@ export default function FeedbackPage() {
                 {/* Add Comment Section */}
                 <Card className="bg-blue-50 border-blue-200">
                   <CardContent className="p-4">
-                    <h5 className="font-medium mb-3">Add New Comment</h5>
+                    <h5 className="font-medium mb-3">{t("addCommentLabel")}</h5>
                     <div className="space-y-3">
-                      <textarea 
-                        className="w-full p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Add your comment here..."
-                        value={detailComment}
-                        onChange={(e) => setDetailComment(e.target.value)}
-                        rows={3}
-                      />
+                      <div className="space-y-2">
+                        <Label htmlFor="detail-comment">{t("addCommentLabel")}</Label>
+                        <textarea 
+                          id="detail-comment"
+                          className="w-full p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          value={detailComment}
+                          onChange={(e) => setDetailComment(e.target.value)}
+                          rows={3}
+                        />
+                        <p className="text-sm text-gray-600">{t("commentGuidance")}</p>
+                      </div>
                       <div className="flex justify-end space-x-2">
                         <Button variant="outline" size="sm" onClick={() => setDetailComment("")}>Cancel</Button>
                         <Button 
@@ -614,14 +618,15 @@ export default function FeedbackPage() {
                 {/* Add Comment */}
                 <div className="border-t pt-4 mt-4">
                   <div className="space-y-3">
-                    <Label>Add Comment</Label>
+                    <Label htmlFor="new-comment">{t("addCommentLabel")}</Label>
                     <textarea 
+                      id="new-comment"
                       className="w-full p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Type your comment here..."
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
                       rows={3}
                     />
+                    <p className="text-sm text-gray-600">{t("commentGuidance")}</p>
                     <div className="flex justify-end space-x-2">
                       <Button variant="outline" size="sm" onClick={() => {
                         setShowCommentsModal(false);
@@ -673,14 +678,14 @@ export default function FeedbackPage() {
             <DialogTitle>Add New Feedback Type</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="type-name">Type Name</Label>
               <Input
                 id="type-name"
-                placeholder="Enter type name"
                 value={newTypeName}
                 onChange={(e) => setNewTypeName(e.target.value)}
               />
+              <p className="text-sm text-gray-600">{t("typeNameGuidance")}</p>
             </div>
           </div>
           <div className="flex justify-end space-x-3 pt-4">

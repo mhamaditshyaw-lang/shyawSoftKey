@@ -583,7 +583,7 @@ export default function UserManagement() {
                     <Label htmlFor="role">Role</Label>
                     <Select
                       value={editFormData.role || selectedUser.role}
-                      onValueChange={(value) => setEditFormData(prev => ({ ...prev, role: value }))}
+                      onValueChange={(value) => setEditFormData(prev => ({ ...prev, role: value as User['role'] }))}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -602,7 +602,7 @@ export default function UserManagement() {
                     <Label htmlFor="status">Status</Label>
                     <Select
                       value={editFormData.status || selectedUser.status}
-                      onValueChange={(value) => setEditFormData(prev => ({ ...prev, status: value }))}
+                      onValueChange={(value) => setEditFormData(prev => ({ ...prev, status: value as User['status'] }))}
                     >
                       <SelectTrigger>
                         <SelectValue />

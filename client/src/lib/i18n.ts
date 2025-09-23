@@ -357,7 +357,30 @@ const resources = {
       workEmailGuidance: "Use a valid work email address for the user",
       passwordMinLengthGuidance: "Password should be at least 6 characters long",
       usernameGuidance: "Username must be at least 3 characters and unique",
-      emailFormatGuidance: "Enter a valid email address format"
+      emailFormatGuidance: "Enter a valid email address format",
+      addCommentLabel: "Add Comment",
+      commentGuidance: "Share your thoughts or feedback here",
+      typeNameGuidance: "Choose a descriptive name for this feedback type",
+      reportDescriptionLabel: "Report Description", 
+      reportDescriptionGuidance: "Provide detailed interview feedback and evaluation notes",
+      performanceRatingLabel: "Performance Rating",
+      ratingGuidance: "Select the candidate's overall performance rating",
+      todoTitleGuidance: "Choose a clear and descriptive title for this task",
+      todoDescriptionGuidance: "Provide additional details about what needs to be done",
+      createTodoList: "Create Todo List",
+      listName: "List Name", 
+      todoDescription: "Description",
+      assignToUser: "Assign to User (Optional)",
+      noAssignment: "No assignment",
+      todoPriority: "Priority",
+      selectRating: "Select rating",
+      todoCreateDescription: "Create a new todo list and optionally assign it to a team member.",
+      creating: "Creating...",
+      createTodoListAction: "Create Todo List",
+      priorityLow: "Low",
+      priorityMedium: "Medium", 
+      priorityHigh: "High",
+      priorityUrgent: "Urgent"
       
 
     }
@@ -919,7 +942,30 @@ const resources = {
       workEmailGuidance: "ناونیشانی ئیمەیڵی کاری دروست بەکاربهێنە بۆ بەکارهێنەر",
       passwordMinLengthGuidance: "وشەی نهێنی دەبێت لانیکەم ٦ پیت بێت",
       usernameGuidance: "ناوی بەکارهێنەر دەبێت لانیکەم ٣ پیت بێت و جیاواز بێت",
-      emailFormatGuidance: "فۆرماتی دروستی ناونیشانی ئیمەیڵ بنووسە"
+      emailFormatGuidance: "فۆرماتی دروستی ناونیشانی ئیمەیڵ بنووسە",
+      addCommentLabel: "سەرنج زیادکردن",
+      commentGuidance: "بیرۆکە یان ڕەخنەکانت لێرە بنووسە",
+      typeNameGuidance: "ناوی وەسفکار بۆ ئەم جۆرە فیدباکە هەڵبژێرە",
+      reportDescriptionLabel: "وەسفی ڕاپۆرت",
+      reportDescriptionGuidance: "ڕەخنەی ورد و تێبینییەکانی هەڵسەنگاندن دابنێ",
+      performanceRatingLabel: "پلەی ئەدا",
+      ratingGuidance: "پلەی گشتی ئەدای کاندیدەکە هەڵبژێرە",
+      todoTitleGuidance: "ناوێکی ڕوون و وەسفکار بۆ ئەم ئەرکە هەڵبژێرە",
+      todoDescriptionGuidance: "وردەکاری زیاتر دەربارەی ئەوەی دەبێت بکرێت دابنێ",
+      createTodoList: "لیستی کارەکان دروستکردن",
+      listName: "ناوی لیست",
+      todoDescription: "وەسف",
+      assignToUser: "بۆ بەکارهێنەر دیاریکردن (ئیختیاری)",
+      noAssignment: "هیچ دیاریکردنێک",
+      todoPriority: "پێشینە",
+      selectRating: "پلە هەڵبژێرە",
+      todoCreateDescription: "لیستی کارەکانی نوێ دروست بکە و بە دڵخوازی بۆ ئەندامی تیم دیاریبکە.",
+      creating: "دروستکردن...",
+      createTodoListAction: "لیستی کارەکان دروست بکە",
+      priorityLow: "نزم",
+      priorityMedium: "ناوەند",
+      priorityHigh: "بەرز", 
+      priorityUrgent: "پەلە"
       
 
     }

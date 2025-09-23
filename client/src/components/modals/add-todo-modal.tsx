@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ interface AddTodoModalProps {
 }
 
 export default function AddTodoModal({ open, onOpenChange }: AddTodoModalProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [formData, setFormData] = useState({
     title: "",
@@ -78,44 +80,44 @@ export default function AddTodoModal({ open, onOpenChange }: AddTodoModalProps) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Create Todo List</DialogTitle>
+          <DialogTitle>{t("createTodoList")}</DialogTitle>
           <DialogDescription>
-            Create a new todo list and optionally assign it to a team member.
+            {t("todoCreateDescription")}
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">List Name</Label>
+            <Label htmlFor="title">{t("listName")}</Label>
             <Input
               id="title"
-              placeholder="e.g., Q4 Marketing Campaign"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               required
             />
+            <p className="text-sm text-gray-600">{t("todoTitleGuidance")}</p>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t("todoDescription")}</Label>
             <Textarea
               id="description"
-              placeholder="Brief description of this todo list..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={3}
             />
+            <p className="text-sm text-gray-600">{t("todoDescriptionGuidance")}</p>
           </div>
           
           {user?.role === "admin" && users.length > 0 && (
             <div className="space-y-2">
-              <Label htmlFor="assignedToId">Assign to User (Optional)</Label>
+              <Label htmlFor="assignedToId">{t("assignToUser")}</Label>
               <Select value={formData.assignedToId} onValueChange={(value) => setFormData({ ...formData, assignedToId: value })}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select user to assign" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">No assignment</SelectItem>
+                  <SelectItem value="none">{t("noAssignment")}</SelectItem>
                   {users.map((user: any) => (
                     <SelectItem key={user.id} value={user.id.toString()}>
                       {user.firstName} {user.lastName} ({user.role})
@@ -127,16 +129,16 @@ export default function AddTodoModal({ open, onOpenChange }: AddTodoModalProps) 
           )}
           
           <div className="space-y-2">
-            <Label htmlFor="priority">Priority</Label>
+            <Label htmlFor="priority">{t("todoPriority")}</Label>
             <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="high">High</SelectItem>
-                <SelectItem value="urgent">Urgent</SelectItem>
+                <SelectItem value="low">{t("priorityLow")}</SelectItem>
+                <SelectItem value="medium">{t("priorityMedium")}</SelectItem>
+                <SelectItem value="high">{t("priorityHigh")}</SelectItem>
+                <SelectItem value="urgent">{t("priorityUrgent")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -148,10 +150,10 @@ export default function AddTodoModal({ open, onOpenChange }: AddTodoModalProps) 
               onClick={() => onOpenChange(false)}
               disabled={createTodoMutation.isPending}
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button type="submit" disabled={createTodoMutation.isPending}>
-              {createTodoMutation.isPending ? "Creating..." : "Create Todo List"}
+              {createTodoMutation.isPending ? t("creating") : t("createTodoListAction")}
             </Button>
           </div>
         </form>
