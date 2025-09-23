@@ -187,12 +187,12 @@
 
 @layer base {
   :root {
-    /* Dashboard Color System - Light Mode (Default) */
-    --primary: 217 91% 60%; /* #2563EB - blue-600 */
+    /* Dashboard Color System - Light Mode (Custom Shyaw Brand) */
+    --primary: 286 42% 20%; /* #3c2446 - Custom brand color */
     --primary-foreground: 0 0% 100%;
     --secondary: 215 25% 27%; /* #374151 - gray-700 */
     --secondary-foreground: 210 20% 95%;
-    --accent: 160 84% 39%; /* #10B981 - emerald-500 */
+    --accent: 286 42% 25%; /* Slightly lighter variant of brand color */
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%; /* #DC2626 - red-600 */
     --destructive-foreground: 0 0% 100%;
@@ -200,7 +200,7 @@
     --muted-foreground: 215 25% 27%;
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 217 91% 60%;
+    --ring: 286 42% 20%; /* Same as primary for consistency */
     --background: 0 0% 100%; /* Pure white for better light mode */
     --foreground: 220 39% 11%; /* #111827 */
     --card: 0 0% 100%;
@@ -208,22 +208,22 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 39% 11%;
 
-    /* Material Design Brand Colors */
-    --md-primary: #6200EE;
-    --md-primary-variant: #3700B3;
-    --md-secondary: #03DAC6;
+    /* Shyaw Brand Colors */
+    --md-primary: #3c2446;
+    --md-primary-variant: #2d1833;
+    --md-secondary: #a8556a;
     --md-background: #FFFFFF;
     --md-surface: #FFFFFF;
     --md-error: #B00020;
     --md-on-primary: #FFFFFF;
-    --md-on-secondary: #000000;
+    --md-on-secondary: #FFFFFF;
     --md-on-background: #000000;
     --md-on-surface: #000000;
     --md-on-error: #FFFFFF;
     
-    /* Material Design Gradients */
-    --gradient-primary: linear-gradient(135deg, #6200EE 0%, #3700B3 100%);
-    --gradient-secondary: linear-gradient(135deg, #03DAC6 0%, #018786 100%);
+    /* Shyaw Brand Gradients */
+    --gradient-primary: linear-gradient(135deg, #3c2446 0%, #2d1833 100%);
+    --gradient-secondary: linear-gradient(135deg, #a8556a 0%, #8b4a5e 100%);
     --gradient-surface: linear-gradient(135deg, #FFFFFF 0%, #F5F5F5 100%);
     
     /* Shadows */
@@ -239,15 +239,15 @@
     /* Border Radius */
     --radius: 0.75rem;
     
-    /* Material Design Sidebar Colors */
+    /* Shyaw Brand Sidebar Colors */
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 222 84% 5%;
-    --sidebar-primary: 248 100% 47%;
+    --sidebar-primary: 286 42% 20%; /* Shyaw brand color */
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 210 40% 96%;
     --sidebar-accent-foreground: 222 84% 5%;
     --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 248 100% 47%;
+    --sidebar-ring: 286 42% 20%;
   }
 
   .dark {
