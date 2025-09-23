@@ -116,7 +116,6 @@ export function ChangePasswordModal({ open, onOpenChange, userId, username }: Ch
                       <Input
                         {...field}
                         type={showCurrentPassword ? "text" : "password"}
-                        placeholder="Enter current password"
                       />
                       <Button
                         type="button"
@@ -149,7 +148,6 @@ export function ChangePasswordModal({ open, onOpenChange, userId, username }: Ch
                       <Input
                         {...field}
                         type={showNewPassword ? "text" : "password"}
-                        placeholder="Enter new password"
                       />
                       <Button
                         type="button"
@@ -182,7 +180,6 @@ export function ChangePasswordModal({ open, onOpenChange, userId, username }: Ch
                       <Input
                         {...field}
                         type={showConfirmPassword ? "text" : "password"}
-                        placeholder="Confirm new password"
                       />
                       <Button
                         type="button"

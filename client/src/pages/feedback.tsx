@@ -240,17 +240,17 @@ export default function FeedbackPage() {
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
-                    placeholder="Search feedback by title, description, or author..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
+                    aria-label="Search feedback by title, description, or author"
                   />
                 </div>
               </div>
               <div className="flex gap-2 w-full md:w-auto">
                 <Select value={typeFilter} onValueChange={setTypeFilter}>
                   <SelectTrigger className="w-full md:w-48">
-                    <SelectValue placeholder="All Types" />
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Types</SelectItem>

@@ -586,7 +586,7 @@ export default function UserManagement() {
                       onValueChange={(value) => setEditFormData(prev => ({ ...prev, role: value }))}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a role" />
+                        <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="admin">Admin</SelectItem>
@@ -652,7 +652,6 @@ export default function UserManagement() {
                     id="password"
                     name="password"
                     type="password"
-                    placeholder="Leave empty to keep current password"
                     className="mt-1 bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">

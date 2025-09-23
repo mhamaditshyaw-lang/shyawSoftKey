@@ -109,7 +109,6 @@ export default function LoginPage() {
                   <Input
                     id="username"
                     type="text"
-                    placeholder={t("enterUsername")}
                     value={loginForm.username}
                     onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
                     className="h-12 border-gray-300 focus:border-[#3c2446] focus:ring-[#3c2446] transition-all duration-300 text-base"
@@ -130,7 +129,6 @@ export default function LoginPage() {
                   <Input
                     id="password"
                     type="password"
-                    placeholder={t("enterPassword")}
                     value={loginForm.password}
                     onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                     className="h-12 border-gray-300 focus:border-[#3c2446] focus:ring-[#3c2446] transition-all duration-300 text-base"

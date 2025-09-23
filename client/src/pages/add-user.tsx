@@ -118,7 +118,6 @@ export default function AddUserPage() {
                   <Input
                     id="firstName"
                     type="text"
-                    placeholder="Enter first name"
                     value={formData.firstName}
                     onChange={(e) => handleInputChange("firstName", e.target.value)}
                     required
@@ -130,7 +129,6 @@ export default function AddUserPage() {
                   <Input
                     id="lastName"
                     type="text"
-                    placeholder="Enter last name"
                     value={formData.lastName}
                     onChange={(e) => handleInputChange("lastName", e.target.value)}
                     required
@@ -145,7 +143,6 @@ export default function AddUserPage() {
                   <Input
                     id="username"
                     type="text"
-                    placeholder={t("enterUsername")}
                     value={formData.username}
                     onChange={(e) => handleInputChange("username", e.target.value)}
                     required
@@ -160,11 +157,11 @@ export default function AddUserPage() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="user@company.com"
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     required
                   />
+                  <p className="text-sm text-gray-600 mt-1">Example: user@company.com</p>
                 </div>
 
                 <div className="space-y-2">
@@ -175,18 +172,18 @@ export default function AddUserPage() {
                   <Input
                     id="password"
                     type="password"
-                    placeholder={t("createStrongPassword")}
                     value={formData.password}
                     onChange={(e) => handleInputChange("password", e.target.value)}
                     required
                   />
+                  <p className="text-sm text-gray-600 mt-1">{t("createStrongPassword")}</p>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="role">{t("role")}</Label>
                   <Select value={formData.role} onValueChange={(value) => handleInputChange("role", value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder={t("selectRoleRequest")} />
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="admin">{t("admin")}</SelectItem>

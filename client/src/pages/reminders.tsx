@@ -307,7 +307,6 @@ export default function RemindersPage() {
                           id="reminderTitle"
                           value={newReminderTitle}
                           onChange={(e) => setNewReminderTitle(e.target.value)}
-                          placeholder="Reminder title..."
                           data-testid="input-reminder-title"
                         />
                       </div>
@@ -328,7 +327,6 @@ export default function RemindersPage() {
                           id="reminderMessage"
                           value={newReminderMessage}
                           onChange={(e) => setNewReminderMessage(e.target.value)}
-                          placeholder="Additional reminder message..."
                           rows={3}
                           data-testid="input-reminder-message"
                         />

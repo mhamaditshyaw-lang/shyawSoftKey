@@ -223,9 +223,9 @@ export default function UsersPage() {
                 shortcut="Type to search"
               >
                 <Input
-                  placeholder="Search employees..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  aria-label="Search employees"
                 />
               </FeatureTooltip>
             </div>
@@ -235,7 +235,7 @@ export default function UsersPage() {
             >
               <Select value={roleFilter} onValueChange={setRoleFilter}>
                 <SelectTrigger className="w-32">
-                  <SelectValue placeholder="All Roles" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Roles</SelectItem>
@@ -255,7 +255,7 @@ export default function UsersPage() {
             >
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-32">
-                  <SelectValue placeholder="All Status" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Status</SelectItem>
@@ -466,9 +466,9 @@ export default function UsersPage() {
                   type="password"
                   value={editingUser.password || ''}
                   onChange={(e) => setEditingUser({...editingUser, password: e.target.value})}
-                  placeholder="Leave blank to keep current password"
                   className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
                 />
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Leave blank to keep current password</p>
               </div>
 
               <div>

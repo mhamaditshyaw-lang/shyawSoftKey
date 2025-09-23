@@ -128,7 +128,6 @@ export default function AddEmployeePage() {
                         <FormLabel>{t("firstName")}</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder={t("enterFirstName")}
                             {...field}
                             className="bg-white dark:bg-dashboard-card-dark"
                           />
@@ -145,7 +144,6 @@ export default function AddEmployeePage() {
                         <FormLabel>{t("lastName")}</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder={t("enterLastName")}
                             {...field}
                             className="bg-white dark:bg-dashboard-card-dark"
                           />
@@ -164,7 +162,6 @@ export default function AddEmployeePage() {
                       <FormLabel>{t("username")}</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder={t("enterUsername")}
                           {...field}
                           className="bg-white dark:bg-dashboard-card-dark"
                         />
@@ -186,7 +183,6 @@ export default function AddEmployeePage() {
                       <FormControl>
                         <Input
                           type="email"
-                          placeholder={t("enterEmail")}
                           {...field}
                           className="bg-white dark:bg-dashboard-card-dark"
                         />
@@ -206,7 +202,6 @@ export default function AddEmployeePage() {
                         <FormControl>
                           <Input
                             type="password"
-                            placeholder={t("enterPassword")}
                             {...field}
                             className="bg-white dark:bg-dashboard-card-dark"
                           />
@@ -227,7 +222,6 @@ export default function AddEmployeePage() {
                         <FormControl>
                           <Input
                             type="password"
-                            placeholder={t("confirmPassword")}
                             {...field}
                             className="bg-white dark:bg-dashboard-card-dark"
                           />
@@ -248,7 +242,7 @@ export default function AddEmployeePage() {
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger className="bg-white dark:bg-dashboard-card-dark">
-                              <SelectValue placeholder={t("selectRole")} />
+                              <SelectValue />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -276,7 +270,7 @@ export default function AddEmployeePage() {
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger className="bg-white dark:bg-dashboard-card-dark">
-                              <SelectValue placeholder={t("selectStatus")} />
+                              <SelectValue />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>

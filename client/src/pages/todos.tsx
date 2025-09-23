@@ -587,10 +587,10 @@ export default function TodosPage() {
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
-                    placeholder={t("searchPlaceholder")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
+                    aria-label={t("searchPlaceholder")}
                   />
                 </div>
               </div>
