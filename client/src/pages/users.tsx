@@ -137,7 +137,7 @@ export default function UsersPage() {
   };
 
   const handleEditUser = (user: any) => {
-    setEditingUser(user);
+    setEditingUser({...user, password: ''}); // Clear password field for new entry
   };
 
   const handleDeleteUser = (user: any) => {
@@ -147,15 +147,22 @@ export default function UsersPage() {
   const handleUpdateUser = () => {
     if (!editingUser) return;
 
+    const updates: any = {
+      firstName: editingUser.firstName,
+      lastName: editingUser.lastName,
+      email: editingUser.email,
+      role: editingUser.role,
+      status: editingUser.status
+    };
+
+    // Include password only if it's provided (not empty)
+    if (editingUser.password && editingUser.password.trim() !== '') {
+      updates.password = editingUser.password;
+    }
+
     updateUserMutation.mutate({
       id: editingUser.id,
-      updates: {
-        firstName: editingUser.firstName,
-        lastName: editingUser.lastName,
-        email: editingUser.email,
-        role: editingUser.role,
-        status: editingUser.status
-      }
+      updates: updates
     });
   };
 
@@ -448,6 +455,18 @@ export default function UsersPage() {
                   type="email"
                   value={editingUser.email}
                   onChange={(e) => setEditingUser({...editingUser, email: e.target.value})}
+                  className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="newPassword" className="text-gray-700 dark:text-gray-300">New Password (optional)</Label>
+                <Input
+                  id="newPassword"
+                  type="password"
+                  value={editingUser.password || ''}
+                  onChange={(e) => setEditingUser({...editingUser, password: e.target.value})}
+                  placeholder="Leave blank to keep current password"
                   className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
                 />
               </div>
