@@ -74,8 +74,8 @@ export default function LoginPage() {
 
         {/* Logo at top of form - Desktop only */}
         <div className="hidden lg:block mb-8">
-          <div className="p-3 bg-white rounded-lg shadow-lg">
-            <img src={shyawLogo} alt="Shyaw Logo" className="h-16 w-auto" />
+          <div className="p-4 bg-white rounded-lg shadow-lg">
+            <img src={shyawLogo} alt="Shyaw Logo" className="h-24 w-auto" />
           </div>
         </div>
 
@@ -84,8 +84,8 @@ export default function LoginPage() {
             <CardHeader className="text-center space-y-4 pb-6">
               {/* Mobile Logo in form - only visible on mobile */}
               <div className="lg:hidden flex justify-center">
-                <div className="p-2 bg-white rounded-full shadow-lg">
-                  <img src={shyawLogo} alt="Shyaw Logo" className="w-24 h-auto" />
+                <div className="p-3 bg-white rounded-full shadow-lg">
+                  <img src={shyawLogo} alt="Shyaw Logo" className="w-32 h-auto" />
                 </div>
               </div>
               <CardTitle 
