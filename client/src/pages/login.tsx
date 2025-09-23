@@ -74,8 +74,8 @@ export default function LoginPage() {
 
         {/* Logo at top of form - Desktop only */}
         <div className="hidden lg:block mb-8">
-          <div className="p-4 bg-white rounded-lg shadow-lg">
-            <img src={shyawLogo} alt="Shyaw Logo" className="h-24 w-auto" />
+          <div className="p-6 bg-white rounded-lg shadow-lg">
+            <img src={shyawLogo} alt="Shyaw Logo" className="h-32 w-auto" />
           </div>
         </div>
 
