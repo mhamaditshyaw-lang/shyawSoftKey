@@ -381,7 +381,7 @@ export default function MetricsPage() {
       await authenticatedRequest("POST", "/api/operational-data", {
         type: 'yesterdayLoading',
         data: {
-          'Vehicle 1 (Tons)': yesterdayLoadingData.load1,
+          'head insert name': yesterdayLoadingData.load1,
           'Vehicle 2 (Tons)': yesterdayLoadingData.load2,
           'Vehicle 3 (Tons)': yesterdayLoadingData.load3,
         },
