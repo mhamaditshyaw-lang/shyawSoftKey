@@ -39,6 +39,7 @@ import {
   Undo2,
   CheckSquare,
 } from "lucide-react";
+import { Checkbox } from "./ui/checkbox";
 
 interface TodoItem {
   id: number;
@@ -137,12 +138,12 @@ export default function TodosPage() {
 
   // Filter todos based on criteria
   const todoLists: TodoList[] = todosData?.todoLists || [];
-  
+
   // Debug empty data
   if (todoLists.length === 0 && todosData) {
     console.log("No todo lists found in data:", todosData);
   }
-  
+
   const filteredTodoLists = todoLists.filter((list: TodoList) => {
     // Search filter
     const matchesSearch = searchTerm === "" || 
@@ -231,13 +232,13 @@ export default function TodosPage() {
       try {
         const response = await authenticatedRequest("POST", "/api/todos/items", data);
         console.log("Response status:", response.status);
-        
+
         if (!response.ok) {
           const errorText = await response.text();
           console.error("Error response:", errorText);
           throw new Error(errorText || 'Failed to add task');
         }
-        
+
         const result = await response.json();
         console.log("Success response:", result);
         return result;
@@ -311,7 +312,7 @@ export default function TodosPage() {
 
   const handleCreateTodoList = () => {
     if (!newListTitle.trim()) return;
-    
+
     createTodoListMutation.mutate({
       title: newListTitle,
       description: newListDescription,
@@ -321,7 +322,7 @@ export default function TodosPage() {
 
   const handleCreateReminder = () => {
     if (!selectedItemForReminder || !reminderDate) return;
-    
+
     // Find the list that contains this item for context
     let listContext = null;
     for (const list of todoLists) {
@@ -330,7 +331,7 @@ export default function TodosPage() {
         break;
       }
     }
-    
+
     createReminderMutation.mutate({
       todoItemId: selectedItemForReminder.id,
       reminderDate: reminderDate,
@@ -358,9 +359,9 @@ export default function TodosPage() {
       });
       return;
     }
-    
+
     console.log("Adding todo item to list:", todoListId, "with text:", newItemText.trim());
-    
+
     addTodoItemMutation.mutate({
       todoListId,
       text: newItemText.trim(),
@@ -874,7 +875,7 @@ export default function TodosPage() {
           {filteredTodoLists.map((list: TodoList, index: number) => {
             const completionPercentage = getCompletionPercentage(list.items);
             const isCompleted = completionPercentage === 100;
-            
+
             return (
               <motion.div
                 key={list.id}
@@ -975,7 +976,7 @@ export default function TodosPage() {
                         )}
                       </div>
                     </div>
-                    
+
                     {/* Progress Bar */}
                     <div className="mt-3">
                       <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
@@ -992,7 +993,7 @@ export default function TodosPage() {
                       </div>
                     </div>
                   </CardHeader>
-                  
+
                   <CardContent className="space-y-3">
                     {/* Todo Items */}
                     <AnimatePresence>
@@ -1070,7 +1071,7 @@ export default function TodosPage() {
                         </motion.div>
                       ))}
                     </AnimatePresence>
-                    
+
                     {/* Add New Item */}
                     <div className="flex gap-2 mt-4 pt-3 border-t">
                       <Input
@@ -1098,7 +1099,7 @@ export default function TodosPage() {
                         )}
                       </Button>
                     </div>
-                    
+
 
                     {/* Footer Info */}
                     <div className="text-xs text-gray-500 pt-2 border-t">
@@ -1112,7 +1113,7 @@ export default function TodosPage() {
                           {new Date(list.createdAt).toLocaleDateString()}
                         </span>
                       </div>
-                      
+
 
                     </div>
                   </CardContent>
