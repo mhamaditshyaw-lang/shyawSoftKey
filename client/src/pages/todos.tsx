@@ -72,6 +72,7 @@ export default function TodosPage() {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [userFilter, setUserFilter] = useState("all");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingList, setEditingList] = useState<TodoList | null>(null);
   const [newListTitle, setNewListTitle] = useState("");
@@ -183,7 +184,15 @@ export default function TodosPage() {
       matchesStatus = list.items.some(item => !item.isCompleted);
     }
 
-    return matchesSearch && matchesDate && matchesPriority && matchesStatus;
+    // User filter
+    let matchesUser = true;
+    if (userFilter !== "all") {
+      const createdByName = list.createdBy ? `${list.createdBy.firstName} ${list.createdBy.lastName}` : '';
+      const assignedToName = list.assignedTo ? `${list.assignedTo.firstName} ${list.assignedTo.lastName}` : '';
+      matchesUser = createdByName === userFilter || assignedToName === userFilter;
+    }
+
+    return matchesSearch && matchesDate && matchesPriority && matchesStatus && matchesUser;
   });
 
   // Auto-refresh effect
@@ -608,7 +617,7 @@ export default function TodosPage() {
             </div>
 
             {/* Filter Controls */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 bg-gray-50 p-4 rounded-lg border">
+            <div className="grid grid-cols-1 md:grid-cols-6 gap-4 bg-gray-50 p-4 rounded-lg border">
               <div className="space-y-2">
                 <Label htmlFor="date-filter" className="text-sm font-medium flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
@@ -673,6 +682,31 @@ export default function TodosPage() {
                     <SelectItem value="all">{t("status")}</SelectItem>
                     <SelectItem value="pending">{t("pending")}</SelectItem>
                     <SelectItem value="completed">{t("completed")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  {t("filterByUser")}
+                </Label>
+                <Select value={userFilter} onValueChange={setUserFilter}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Users</SelectItem>
+                    {Array.from(new Set(
+                      todoLists.flatMap(list => [
+                        list.createdBy ? `${list.createdBy.firstName} ${list.createdBy.lastName}` : '',
+                        list.assignedTo ? `${list.assignedTo.firstName} ${list.assignedTo.lastName}` : ''
+                      ]).filter(name => name !== '')
+                    )).map(userName => (
+                      <SelectItem key={userName} value={userName}>
+                        {userName}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
