@@ -205,8 +205,11 @@ export default function RemindersPage() {
       return;
     }
 
+    // Convert datetime-local string to ISO string for the API
+    const reminderDateTime = new Date(newReminderDate).toISOString();
+
     createReminderMutation.mutate({
-      reminderDate: newReminderDate,
+      reminderDate: reminderDateTime,
       message: newReminderMessage.trim() || undefined,
       title: newReminderTitle.trim() || undefined,
       itemText: newReminderTitle.trim() || newReminderMessage.trim() || undefined,
@@ -319,6 +322,7 @@ export default function RemindersPage() {
                           onChange={(e) => setNewReminderDate(e.target.value)}
                           min={getCurrentDateTime()}
                           data-testid="input-reminder-date"
+                          required
                         />
                       </div>
                       <div>
