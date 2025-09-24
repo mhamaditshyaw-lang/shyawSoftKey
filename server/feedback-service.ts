@@ -34,13 +34,39 @@ export class FeedbackService {
         updatedAt: feedback.updatedAt,
         submittedBy: {
           id: users.id,
-          firstName: users.first_name,
-          lastName: users.last_name,
+          firstName: users.firstName,
+          lastName: users.lastName,
           email: users.email,
         },
       })
       .from(feedback)
       .leftJoin(users, eq(feedback.submittedById, users.id))
+      .orderBy(desc(feedback.createdAt));
+
+    return feedbackList;
+  }
+
+  static async getFeedbackByUser(userId: number): Promise<any[]> {
+    const feedbackList = await db
+      .select({
+        id: feedback.id,
+        type: feedback.type,
+        title: feedback.title,
+        description: feedback.description,
+        rating: feedback.rating,
+        relatedInterviewId: feedback.relatedInterviewId,
+        createdAt: feedback.createdAt,
+        updatedAt: feedback.updatedAt,
+        submittedBy: {
+          id: users.id,
+          firstName: users.firstName,
+          lastName: users.lastName,
+          email: users.email,
+        },
+      })
+      .from(feedback)
+      .leftJoin(users, eq(feedback.submittedById, users.id))
+      .where(eq(feedback.submittedById, userId))
       .orderBy(desc(feedback.createdAt));
 
     return feedbackList;
@@ -79,8 +105,8 @@ export class FeedbackService {
         archivedAt: archivedItems.archivedAt,
         archivedBy: {
           id: users.id,
-          firstName: users.first_name,
-          lastName: users.last_name,
+          firstName: users.firstName,
+          lastName: users.lastName,
           email: users.email,
         },
       })
@@ -170,8 +196,8 @@ export class FeedbackService {
         createdAt: feedbackTypes.createdAt,
         createdBy: {
           id: users.id,
-          firstName: users.first_name,
-          lastName: users.last_name,
+          firstName: users.firstName,
+          lastName: users.lastName,
         },
       })
       .from(feedbackTypes)

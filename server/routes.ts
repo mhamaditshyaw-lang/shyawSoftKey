@@ -55,7 +55,7 @@ async function authenticateToken(req: AuthRequest, res: Response, next: NextFunc
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, JWT_SECRET!) as any;
     const user = await storage.getUser(decoded.id);
 
     if (!user) {
@@ -144,7 +144,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const token = jwt.sign(
         { id: user.id, username: user.username, role: user.role },
-        JWT_SECRET,
+        JWT_SECRET!,
         { expiresIn: '24h' }
       );
 
@@ -1066,10 +1066,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/feedback-types/:id", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
     try {
       const id = parseInt(req.params.id);
-      const success = await storage.deleteFeedbackType(id);
-      if (!success) {
-        return res.status(404).json({ message: "Feedback Type not found" });
-      }
+      await storage.deleteFeedbackType(id);
+      // deleteFeedbackType always succeeds (soft delete), so no need to check success
       res.json({ success: true });
     } catch (error: any) {
       console.error("Error deleting feedback type:", error);
