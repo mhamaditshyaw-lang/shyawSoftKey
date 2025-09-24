@@ -652,6 +652,54 @@ export class DatabaseStorage implements IStorage {
     await FeedbackService.deleteFeedbackType(typeId);
   }
 
+  async getAllFeedback(): Promise<any[]> {
+    try {
+      const { FeedbackService } = await import("./feedback-service");
+      const feedback = await FeedbackService.getAllFeedback();
+      console.log("Storage getAllFeedback result:", feedback?.length || 0, "items");
+      return feedback;
+    } catch (error) {
+      console.error("Storage getAllFeedback error:", error);
+      throw error;
+    }
+  }
+
+  async getFeedbackByUser(userId: number): Promise<any[]> {
+    try {
+      const { FeedbackService } = await import("./feedback-service");
+      const feedback = await FeedbackService.getFeedbackByUser(userId);
+      console.log("Storage getFeedbackByUser result for user", userId, ":", feedback?.length || 0, "items");
+      return feedback;
+    } catch (error) {
+      console.error("Storage getFeedbackByUser error:", error);
+      throw error;
+    }
+  }
+
+  async createFeedback(feedbackData: any): Promise<any> {
+    try {
+      const { FeedbackService } = await import("./feedback-service");
+      const feedback = await FeedbackService.createFeedback(feedbackData);
+      console.log("Storage createFeedback result:", feedback);
+      return feedback;
+    } catch (error) {
+      console.error("Storage createFeedback error:", error);
+      throw error;
+    }
+  }
+
+  async deleteFeedback(feedbackId: number): Promise<boolean> {
+    try {
+      const { FeedbackService } = await import("./feedback-service");
+      const result = await FeedbackService.deleteFeedback(feedbackId);
+      console.log("Storage deleteFeedback result for id", feedbackId, ":", result);
+      return result;
+    } catch (error) {
+      console.error("Storage deleteFeedback error:", error);
+      return false;
+    }
+  }
+
 
   async createOperationalData(data: any): Promise<any> {
     const [entry] = await db

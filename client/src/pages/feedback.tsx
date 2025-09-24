@@ -66,12 +66,17 @@ export default function FeedbackPage() {
   };
 
 
-  const { data: feedbackData, isLoading } = useQuery({
+  const { data: feedbackData, isLoading, error } = useQuery({
     queryKey: ["/api/feedback"],
     queryFn: async () => {
       const response = await authenticatedRequest("GET", "/api/feedback");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       return await response.json();
     },
+    refetchOnWindowFocus: false,
+    retry: 3,
   });
 
   const { data: interviewsData } = useQuery({
@@ -93,6 +98,12 @@ export default function FeedbackPage() {
   const feedbackList = feedbackData?.feedback || [];
   const interviews = interviewsData?.requests || [];
   const feedbackTypes = feedbackTypesData?.feedbackTypes || [];
+
+  // Debug logging
+  console.log("Feedback data:", feedbackData);
+  console.log("Feedback list:", feedbackList);
+  console.log("Loading state:", isLoading);
+  console.log("Error state:", error);
 
   // Date filtering functions
   const isToday = (date: string): boolean => {
@@ -215,6 +226,24 @@ export default function FeedbackPage() {
           ))}
         </div>
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="p-6">
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="text-lg font-medium text-red-600 mb-2">Error Loading Feedback</h3>
+              <p className="text-gray-600">{error.message}</p>
+              <pre className="mt-4 p-4 bg-gray-100 rounded text-sm overflow-auto">
+                {JSON.stringify(error, null, 2)}
+              </pre>
+            </CardContent>
+          </Card>
+        </div>
+      </DashboardLayout>
     );
   }
 

@@ -994,16 +994,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Feedback routes
   app.get("/api/feedback", authenticateToken, async (req: AuthRequest, res) => {
     try {
+      console.log("Fetching feedback for user:", req.user?.id, "role:", req.user?.role);
       let feedback;
       if (req.user?.role === 'security') {
         // Security role can only see their own feedback
         feedback = await storage.getFeedbackByUser(req.user?.id || 0);
+        console.log("Security user feedback:", feedback);
       } else {
         // All other roles can see all feedback
         feedback = await storage.getAllFeedback();
+        console.log("All feedback:", feedback);
       }
+      console.log("Returning feedback count:", feedback?.length || 0);
       res.json({ feedback });
     } catch (error: any) {
+      console.error("Error fetching feedback:", error);
       res.status(500).json({ message: error.message });
     }
   });
