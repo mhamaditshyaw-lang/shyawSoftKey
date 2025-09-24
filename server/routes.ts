@@ -645,14 +645,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/reminders", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const reminderData = insertReminderSchema.parse({
+      // Clean the data before validation
+      const cleanedData = {
         ...req.body,
         createdById: req.user?.id || 0,
-      });
+      };
 
+      // Handle todoItemId - if it's null or undefined, don't include it
+      if (cleanedData.todoItemId === null || cleanedData.todoItemId === undefined) {
+        delete cleanedData.todoItemId;
+      }
+
+      console.log("Creating reminder with data:", cleanedData);
+
+      const reminderData = insertReminderSchema.parse(cleanedData);
       const reminder = await storage.createReminder(reminderData);
+      
+      console.log("Reminder created successfully:", reminder);
       res.status(201).json({ reminder });
     } catch (error: any) {
+      console.error("Reminder creation error:", error);
+      if (error.issues) {
+        console.error("Validation issues:", error.issues);
+      }
       res.status(400).json({ message: error.message });
     }
   });

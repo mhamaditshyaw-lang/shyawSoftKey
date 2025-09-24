@@ -292,7 +292,12 @@ export const insertTodoItemSchema = createInsertSchema(todoItems, {
   completedAt: true,
 });
 
-export const insertReminderSchema = createInsertSchema(reminders).omit({
+export const insertReminderSchema = createInsertSchema(reminders, {
+  reminderDate: z.string().datetime().or(z.date()).transform(val => 
+    typeof val === 'string' ? val : val.toISOString()
+  ),
+  todoItemId: z.number().optional().nullable(),
+}).omit({
   id: true,
   createdAt: true,
 });
