@@ -48,24 +48,27 @@ export default function RemindersPage() {
   const [newReminderTitle, setNewReminderTitle] = useState("");
 
   // Fetch all reminders
-  const { data: remindersData, isLoading } = useQuery({
+  const { data: remindersData, isLoading, refetch: refetchReminders } = useQuery({
     queryKey: ["/api/reminders"],
     queryFn: async () => {
       const response = await authenticatedRequest("GET", "/api/reminders");
       return response.json();
     },
+    enabled: !!user, // Only fetch when user is authenticated
+    staleTime: 0, // Always consider data stale to ensure fresh data
+    refetchOnWindowFocus: true,
   });
 
   // Fetch today's reminders
-  const { data: todayRemindersData } = useQuery({
+  const { data: todayRemindersData, refetch: refetchTodayReminders } = useQuery({
     queryKey: ["/api/reminders/today"],
     queryFn: async () => {
       const response = await authenticatedRequest("GET", "/api/reminders/today");
       return response.json();
     },
-    refetchOnWindowFocus: false,
-    staleTime: 30000, // 30 seconds
     enabled: !!user, // Only fetch when user is authenticated
+    staleTime: 0, // Always consider data stale to ensure fresh data
+    refetchOnWindowFocus: true,
   });
 
   // Update reminder mutation
@@ -74,9 +77,9 @@ export default function RemindersPage() {
       const response = await authenticatedRequest("PATCH", `/api/reminders/${data.id}`, { isCompleted: data.isCompleted });
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/reminders/today"] });
+    onSuccess: async () => {
+      await refetchReminders();
+      await refetchTodayReminders();
       toast({
         title: "Success",
         description: "Reminder updated successfully!",
@@ -97,9 +100,9 @@ export default function RemindersPage() {
       const response = await authenticatedRequest("DELETE", `/api/reminders/${id}`);
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/reminders/today"] });
+    onSuccess: async () => {
+      await refetchReminders();
+      await refetchTodayReminders();
       toast({
         title: "Success",
         description: "Reminder deleted successfully!",
@@ -126,9 +129,15 @@ export default function RemindersPage() {
       });
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/reminders/today"] });
+    onSuccess: async () => {
+      // Force refresh all reminder queries
+      await queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/reminders/today"] });
+      
+      // Also refetch to ensure immediate update
+      await queryClient.refetchQueries({ queryKey: ["/api/reminders"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/reminders/today"] });
+      
       setShowCreateDialog(false);
       setNewReminderDate("");
       setNewReminderMessage("");
@@ -139,6 +148,7 @@ export default function RemindersPage() {
       });
     },
     onError: (error: any) => {
+      console.error("Create reminder error:", error);
       toast({
         title: "Error",
         description: error.message || "Failed to create reminder",
@@ -358,9 +368,13 @@ export default function RemindersPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
-                    queryClient.invalidateQueries({ queryKey: ["/api/reminders/today"] });
+                  onClick={async () => {
+                    await refetchReminders();
+                    await refetchTodayReminders();
+                    toast({
+                      title: "Success",
+                      description: "Reminders refreshed!",
+                    });
                   }}
                   data-testid="button-refresh"
                 >
