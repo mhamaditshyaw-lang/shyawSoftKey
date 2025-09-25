@@ -511,17 +511,19 @@ export default function InternalUserManagementPage() {
 
           {/* Permissions Dialog */}
           <Dialog open={isPermissionsDialogOpen} onOpenChange={setIsPermissionsDialogOpen}>
-            <DialogContent className="max-w-lg">
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
               <DialogHeader>
                 <DialogTitle>Manage Permissions</DialogTitle>
               </DialogHeader>
-              {selectedUser && (
-                <PermissionsForm
-                  user={selectedUser}
-                  onSave={handleUpdatePermissions}
-                  isLoading={updateUserMutation.isPending}
-                />
-              )}
+              <div className="flex-1 overflow-y-auto">
+                {selectedUser && (
+                  <PermissionsForm
+                    user={selectedUser}
+                    onSave={handleUpdatePermissions}
+                    isLoading={updateUserMutation.isPending}
+                  />
+                )}
+              </div>
             </DialogContent>
           </Dialog>
         </div>
@@ -605,34 +607,38 @@ function PermissionsForm({
 
           <TabsContent value="pages" className="space-y-3">
             <h4 className="font-medium text-sm text-gray-700 mb-3">Page Access Permissions</h4>
-            {pagePermissions.map((perm) => (
-              <div key={perm.key} className="flex items-center justify-between">
-                <Label htmlFor={perm.key}>{perm.label}</Label>
-                <Switch
-                  id={perm.key}
-                  checked={permissions[perm.key as keyof UserPermissions] || false}
-                  onCheckedChange={(checked) =>
-                    handlePermissionChange(perm.key as keyof UserPermissions, checked)
-                  }
-                />
-              </div>
-            ))}
+            <div className="max-h-80 overflow-y-auto space-y-3 pr-2">
+              {pagePermissions.map((perm) => (
+                <div key={perm.key} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                  <Label htmlFor={perm.key} className="cursor-pointer text-sm">{perm.label}</Label>
+                  <Switch
+                    id={perm.key}
+                    checked={permissions[perm.key as keyof UserPermissions] || false}
+                    onCheckedChange={(checked) =>
+                      handlePermissionChange(perm.key as keyof UserPermissions, checked)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
           </TabsContent>
 
           <TabsContent value="data" className="space-y-3">
             <h4 className="font-medium text-sm text-gray-700 mb-3">Data Access Permissions</h4>
-            {dataPermissions.map((perm) => (
-              <div key={perm.key} className="flex items-center justify-between">
-                <Label htmlFor={perm.key}>{perm.label}</Label>
-                <Switch
-                  id={perm.key}
-                  checked={permissions[perm.key as keyof UserPermissions] || false}
-                  onCheckedChange={(checked) =>
-                    handlePermissionChange(perm.key as keyof UserPermissions, checked)
-                  }
-                />
-              </div>
-            ))}
+            <div className="max-h-80 overflow-y-auto space-y-3 pr-2">
+              {dataPermissions.map((perm) => (
+                <div key={perm.key} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                  <Label htmlFor={perm.key} className="cursor-pointer text-sm">{perm.label}</Label>
+                  <Switch
+                    id={perm.key}
+                    checked={permissions[perm.key as keyof UserPermissions] || false}
+                    onCheckedChange={(checked) =>
+                      handlePermissionChange(perm.key as keyof UserPermissions, checked)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
           </TabsContent>
         </Tabs>
       </div>
