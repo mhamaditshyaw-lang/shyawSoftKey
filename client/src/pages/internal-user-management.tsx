@@ -180,16 +180,27 @@ export default function InternalUserManagementPage() {
   if (currentUser?.role !== "admin" && currentUser?.role !== "manager") {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <Card className="p-6">
-            <CardContent className="text-center">
-              <Shield className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-              <h3 className="text-lg font-semibold mb-2">Access Denied</h3>
-              <p className="text-gray-600">
-                You don't have permission to access user management.
-              </p>
-            </CardContent>
-          </Card>
+        <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+          <div className="flex items-center justify-center min-h-[400px] p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-red-200 dark:border-red-700 p-8 max-w-md w-full">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <Shield className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
+                  Access Restricted
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed mb-6">
+                  You don't have permission to access internal user management. Please contact your administrator.
+                </p>
+                <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-2xl border border-red-200 dark:border-red-800">
+                  <p className="text-sm text-red-700 dark:text-red-300 font-medium">
+                    Required Role: Admin or Manager
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </DashboardLayout>
     );
@@ -229,21 +240,41 @@ export default function InternalUserManagementPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Internal User Management</h1>
-            <p className="text-gray-600">Manage user accounts, roles, and permissions</p>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <div className="space-y-8 p-6 max-w-7xl mx-auto">
+          {/* Enhanced Header Section */}
+          <div className="relative overflow-hidden bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700">
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-red-500/10 to-pink-500/10" />
+            <div className="relative p-8">
+              <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg">
+                      <UserCheck className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 via-red-600 to-pink-600 bg-clip-text text-transparent">
+                        Internal User Management
+                      </h1>
+                      <p className="text-gray-600 dark:text-gray-300 text-lg">
+                        Advanced user accounts, roles, and permissions management
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-          {currentUser?.role === "admin" && (
-            <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add User
-                </Button>
-              </DialogTrigger>
+                {currentUser?.role === "admin" && (
+                  <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        size="lg" 
+                        className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl px-6"
+                        data-testid="button-add-internal-user"
+                      >
+                        <Plus className="h-5 w-5 mr-2" />
+                        Add Internal User
+                      </Button>
+                    </DialogTrigger>
               <DialogContent className="max-w-md">
                 <DialogHeader>
                   <DialogTitle>Add New User</DialogTitle>
