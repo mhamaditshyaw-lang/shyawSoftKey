@@ -244,7 +244,20 @@ export default function InternalUserManagementPage() {
   };
 
   const handleUpdatePermissions = (permissions: UserPermissions) => {
-    if (!selectedUser) return;
+    if (!selectedUser) {
+      console.error("No selected user");
+      return;
+    }
+    if (!selectedUser.id) {
+      console.error("Selected user has no ID:", selectedUser);
+      toast({
+        title: "Error",
+        description: "User ID is missing. Please try refreshing the page.",
+        variant: "destructive",
+      });
+      return;
+    }
+    console.log("Updating permissions for user:", selectedUser.id, permissions);
     updateUserMutation.mutate({
       id: selectedUser.id,
       permissions,
@@ -482,6 +495,7 @@ export default function InternalUserManagementPage() {
                               variant="ghost"
                               size="sm"
                               onClick={() => {
+                                console.log("Setting selected user:", user);
                                 setSelectedUser(user);
                                 setIsPermissionsDialogOpen(true);
                               }}
