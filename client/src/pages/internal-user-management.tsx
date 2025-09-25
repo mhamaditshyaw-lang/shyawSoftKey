@@ -72,6 +72,26 @@ interface UserPermissions {
   canViewSidebar?: boolean;
   canViewHeader?: boolean;
   canAccessAdminTools?: boolean;
+  // All page access permissions
+  canAccessModernDashboard?: boolean;
+  canAccessInterviews?: boolean;
+  canAccessTodos?: boolean;
+  canAccessReminders?: boolean;
+  canAccessUsersPage?: boolean;
+  canAccessEmployeeManagement?: boolean;
+  canAccessAddEmployee?: boolean;
+  canAccessFeedback?: boolean;
+  canAccessArchive?: boolean;
+  canAccessMetrics?: boolean;
+  canAccessMultilingualDemo?: boolean;
+  canAccessDataView?: boolean;
+  canAccessAllData?: boolean;
+  canAccessUserActivity?: boolean;
+  canAccessReports?: boolean;
+  canAccessNotificationTest?: boolean;
+  canAccessNotificationManagement?: boolean;
+  canAccessInternalUserManagement?: boolean;
+  canAccessUserSettings?: boolean;
 }
 
 const roleColors = {
@@ -533,14 +553,26 @@ function PermissionsForm({
   };
 
   const pagePermissions = [
-    { key: "canViewDashboard", label: "Access Dashboard Page" },
+    { key: "canAccessModernDashboard", label: "Access Modern Dashboard" },
+    { key: "canAccessInterviews", label: "Access Interviews Page" },
+    { key: "canAccessTodos", label: "Access Todos Page" },
+    { key: "canAccessReminders", label: "Access Reminders Page" },
+    { key: "canAccessUsersPage", label: "Access Users Page" },
     { key: "canViewUserManagement", label: "Access User Management Page" },
-    { key: "canViewAllData", label: "Access All Data Page" },
-    { key: "canViewAddEmployee", label: "Access Add Employee Page" },
-    { key: "canViewReminders", label: "Access Reminders Page" },
-    { key: "canViewFeedback", label: "Access Feedback Page" },
-    { key: "canViewArchive", label: "Access Archive Page" },
-    { key: "canViewSettings", label: "Access Settings Page" },
+    { key: "canAccessEmployeeManagement", label: "Access Employee Management Page" },
+    { key: "canAccessAddEmployee", label: "Access Add Employee Page" },
+    { key: "canAccessFeedback", label: "Access Feedback Page" },
+    { key: "canAccessArchive", label: "Access Archive Page" },
+    { key: "canAccessMetrics", label: "Access Metrics Page" },
+    { key: "canAccessMultilingualDemo", label: "Access Multilingual Demo Page" },
+    { key: "canAccessDataView", label: "Access Data View Page" },
+    { key: "canAccessAllData", label: "Access All Data Dashboard" },
+    { key: "canAccessUserActivity", label: "Access User Activity Page" },
+    { key: "canAccessReports", label: "Access Reports Page" },
+    { key: "canAccessNotificationTest", label: "Access Notification Test Page" },
+    { key: "canAccessNotificationManagement", label: "Access Notification Management Page" },
+    { key: "canAccessInternalUserManagement", label: "Access Internal User Management Page" },
+    { key: "canAccessUserSettings", label: "Access User Settings Page" },
   ];
 
   const dataPermissions = [
