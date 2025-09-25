@@ -289,8 +289,8 @@ export default function UserManagement() {
               {currentUser?.role === "admin" && (
                 <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button 
-                      size="lg" 
+                    <Button
+                      size="lg"
                       className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl px-6"
                       data-testid="button-add-user"
                     >
@@ -439,207 +439,207 @@ export default function UserManagement() {
         )}
       </div>
 
-        {/* Enhanced Users Table */}
-        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Users className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Active Users</h2>
-                  <p className="text-gray-600 dark:text-gray-300">Total: {filteredUsers.length} users</p>
-                </div>
+      {/* Enhanced Users Table */}
+      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <Users className="h-5 w-5 text-white" />
               </div>
-              <Badge className="text-sm px-4 py-2 bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900 dark:to-blue-900 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700 rounded-full">
-                {isLoading ? 'Loading...' : `${filteredUsers.length} Results`}
-              </Badge>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Active Users</h2>
+                <p className="text-gray-600 dark:text-gray-300">Total: {filteredUsers.length} users</p>
+              </div>
             </div>
+            <Badge className="text-sm px-4 py-2 bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900 dark:to-blue-900 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700 rounded-full">
+              {isLoading ? 'Loading...' : `${filteredUsers.length} Results`}
+            </Badge>
           </div>
-
-          {isLoading ? (
-            <div className="text-center py-12">
-              <div className="inline-flex items-center space-x-2">
-                <div className="w-6 h-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full animate-pulse" />
-                <span className="text-lg text-gray-600 dark:text-gray-300">Loading users...</span>
-              </div>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">
-                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100 py-4">
-                      <div className="flex items-center space-x-2">
-                        <UserCheck className="h-4 w-4" />
-                        <span>Name</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100">Username</TableHead>
-                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100">
-                      <div className="flex items-center space-x-2">
-                        <Mail className="h-4 w-4" />
-                        <span>Email</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100">
-                      <div className="flex items-center space-x-2">
-                        <Shield className="h-4 w-4" />
-                        <span>Role</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100">Status</TableHead>
-                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100">
-                      <div className="flex items-center space-x-2">
-                        <Building className="h-4 w-4" />
-                        <span>Department</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100">Position</TableHead>
-                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100 text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredUsers.map((user, index) => (
-                    <TableRow 
-                      key={user.id} 
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 border-gray-200 dark:border-gray-600"
-                      data-testid={`row-user-${user.id}`}
-                    >
-                      <TableCell className="font-medium py-4">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-2xl flex items-center justify-center text-white font-semibold text-sm shadow-md">
-                            {user.firstName?.[0]}{user.lastName?.[0]}
-                          </div>
-                          <div>
-                            <div className="font-semibold text-gray-900 dark:text-gray-100">
-                              {user.firstName} {user.lastName}
-                            </div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                              ID: {user.id}
-                            </div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <span className="font-mono text-sm bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg">
-                            @{user.username}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <Mail className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm">{user.email}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={`${roleColors[user.role as keyof typeof roleColors]} px-3 py-1 rounded-full font-medium shadow-sm`}>
-                          {formatRoleName(user.role)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <div className={`w-2 h-2 rounded-full ${user.status === 'active' ? 'bg-green-400' : user.status === 'inactive' ? 'bg-gray-400' : 'bg-yellow-400'}`} />
-                          <Badge className={`${statusColors[user.status as keyof typeof statusColors]} px-3 py-1 rounded-full font-medium`}>
-                            {user.status}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm">
-                          {user.department || "Not set"}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm text-gray-600 dark:text-gray-300">
-                          {user.position || "Not set"}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setIsEditDialogOpen(true);
-                            }}
-                            title="Edit User"
-                            className="hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900 dark:hover:text-blue-300 rounded-xl transition-colors"
-                            data-testid={`button-edit-${user.id}`}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          {(currentUser?.role === "admin" || currentUser?.role === "manager") && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setSelectedUser(user);
-                                setIsPasswordDialogOpen(true);
-                              }}
-                              title="Change Password"
-                              className="hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-orange-900 dark:hover:text-orange-300 rounded-xl transition-colors"
-                              data-testid={`button-password-${user.id}`}
-                            >
-                              <Key className="h-4 w-4" />
-                            </Button>
-                          )}
-                          {currentUser?.role === "admin" && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setSelectedUser(user);
-                                setIsRoleDialogOpen(true);
-                              }}
-                              title="Change Role"
-                              className="hover:bg-purple-50 hover:text-purple-600 dark:hover:bg-purple-900 dark:hover:text-purple-300 rounded-xl transition-colors"
-                              data-testid={`button-role-${user.id}`}
-                            >
-                              <UserCog className="h-4 w-4" />
-                            </Button>
-                          )}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setIsPermissionsDialogOpen(true);
-                            }}
-                            title="Manage Permissions"
-                            className="hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900 dark:hover:text-green-300 rounded-xl transition-colors"
-                            data-testid={`button-permissions-${user.id}`}
-                          >
-                            <Settings className="h-4 w-4" />
-                          </Button>
-                          {currentUser?.role === "admin" && user.id !== currentUser.id && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeleteUser(user.id)}
-                              title="Delete User"
-                              className="hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900 dark:hover:text-red-300 rounded-xl transition-colors"
-                              data-testid={`button-delete-${user.id}`}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
         </div>
 
-        {/* Edit User Dialog */}
-        <Dialog open={isEditDialogOpen} onOpenChange={(open) => {
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="inline-flex items-center space-x-2">
+              <div className="w-6 h-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full animate-pulse" />
+              <span className="text-lg text-gray-600 dark:text-gray-300">Loading users...</span>
+            </div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <TableHead className="font-semibold text-gray-900 dark:text-gray-100 py-4">
+                    <div className="flex items-center space-x-2">
+                      <UserCheck className="h-4 w-4" />
+                      <span>Name</span>
+                    </div>
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-900 dark:text-gray-100">Username</TableHead>
+                  <TableHead className="font-semibold text-gray-900 dark:text-gray-100">
+                    <div className="flex items-center space-x-2">
+                      <Mail className="h-4 w-4" />
+                      <span>Email</span>
+                    </div>
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-900 dark:text-gray-100">
+                    <div className="flex items-center space-x-2">
+                      <Shield className="h-4 w-4" />
+                      <span>Role</span>
+                    </div>
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-900 dark:text-gray-100">Status</TableHead>
+                  <TableHead className="font-semibold text-gray-900 dark:text-gray-100">
+                    <div className="flex items-center space-x-2">
+                      <Building className="h-4 w-4" />
+                      <span>Department</span>
+                    </div>
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-900 dark:text-gray-100">Position</TableHead>
+                  <TableHead className="font-semibold text-gray-900 dark:text-gray-100 text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredUsers.map((user, index) => (
+                  <TableRow
+                    key={user.id}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 border-gray-200 dark:border-gray-600"
+                    data-testid={`row-user-${user.id}`}
+                  >
+                    <TableCell className="font-medium py-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-2xl flex items-center justify-center text-white font-semibold text-sm shadow-md">
+                          {user.firstName?.[0]}{user.lastName?.[0]}
+                        </div>
+                        <div>
+                          <div className="font-semibold text-gray-900 dark:text-gray-100">
+                            {user.firstName} {user.lastName}
+                          </div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                            ID: {user.id}
+                          </div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <span className="font-mono text-sm bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg">
+                          @{user.username}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Mail className="h-4 w-4 text-gray-400" />
+                        <span className="text-sm">{user.email}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={`${roleColors[user.role as keyof typeof roleColors]} px-3 py-1 rounded-full font-medium shadow-sm`}>
+                        {formatRoleName(user.role)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <div className={`w-2 h-2 rounded-full ${user.status === 'active' ? 'bg-green-400' : user.status === 'inactive' ? 'bg-gray-400' : 'bg-yellow-400'}`} />
+                        <Badge className={`${statusColors[user.status as keyof typeof statusColors]} px-3 py-1 rounded-full font-medium`}>
+                          {user.status}
+                        </Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm">
+                        {user.department || "Not set"}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                        {user.position || "Not set"}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setIsEditDialogOpen(true);
+                          }}
+                          title="Edit User"
+                          className="hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900 dark:hover:text-blue-300 rounded-xl transition-colors"
+                          data-testid={`button-edit-${user.id}`}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        {(currentUser?.role === "admin" || currentUser?.role === "manager") && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setIsPasswordDialogOpen(true);
+                            }}
+                            title="Change Password"
+                            className="hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-orange-900 dark:hover:text-orange-300 rounded-xl transition-colors"
+                            data-testid={`button-password-${user.id}`}
+                          >
+                            <Key className="h-4 w-4" />
+                          </Button>
+                        )}
+                        {currentUser?.role === "admin" && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setIsRoleDialogOpen(true);
+                            }}
+                            title="Change Role"
+                            className="hover:bg-purple-50 hover:text-purple-600 dark:hover:bg-purple-900 dark:hover:text-purple-300 rounded-xl transition-colors"
+                            data-testid={`button-role-${user.id}`}
+                          >
+                            <UserCog className="h-4 w-4" />
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setIsPermissionsDialogOpen(true);
+                          }}
+                          title="Manage Permissions"
+                          className="hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900 dark:hover:text-green-300 rounded-xl transition-colors"
+                          data-testid={`button-permissions-${user.id}`}
+                        >
+                          <Settings className="h-4 w-4" />
+                        </Button>
+                        {currentUser?.role === "admin" && user.id !== currentUser.id && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteUser(user.id)}
+                            title="Delete User"
+                            className="hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900 dark:hover:text-red-300 rounded-xl transition-colors"
+                            data-testid={`button-delete-${user.id}`}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </div>
+
+      {/* Edit User Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={(open) => {
         setIsEditDialogOpen(open);
         if (!open) {
           setEditFormData({});

@@ -298,8 +298,8 @@ export default function InternalUserManagementPage() {
                 {currentUser?.role === "admin" && (
                   <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button 
-                        size="lg" 
+                      <Button
+                        size="lg"
                         className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl px-6"
                         data-testid="button-add-internal-user"
                       >
