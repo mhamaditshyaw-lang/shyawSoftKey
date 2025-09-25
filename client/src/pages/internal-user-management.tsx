@@ -164,8 +164,10 @@ export default function InternalUserManagementPage() {
 
   // Update user mutation
   const updateUserMutation = useMutation({
-    mutationFn: ({ id, ...userData }: any) =>
-      apiRequest(`/api/users/${id}`, "PATCH", userData),
+    mutationFn: (data: any) => {
+      const { id, ...userData } = data;
+      return apiRequest(`/api/users/${id}`, "PATCH", userData);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
       toast({ title: "Success", description: "User updated successfully" });
