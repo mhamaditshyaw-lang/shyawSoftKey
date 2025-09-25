@@ -184,24 +184,28 @@ export default function NavigationBar() {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-16 z-40">
+    <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 sticky top-16 z-40 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14">
-          {/* Logo/Brand Section */}
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-md">
-              <Building2 className="h-4 w-4 text-white" />
+        <div className="flex items-center justify-between h-16">
+          {/* Enhanced Logo/Brand Section */}
+          <div className="flex items-center space-x-4">
+            <div className="relative flex items-center justify-center w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <Building2 className="h-5 w-5 text-white" />
+              <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-xl" />
             </div>
             <div className="hidden sm:block">
-              <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Navigation</h2>
+              <h2 className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                Quick Access
+              </h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Navigate efficiently</p>
             </div>
           </div>
 
-          {/* Navigation Items */}
-          <div className="relative flex-1">
+          {/* Enhanced Navigation Items */}
+          <div className="relative flex-1 mx-4">
             <div 
               ref={desktopScrollRef}
-              className="flex items-center space-x-1 overflow-x-auto overflow-y-hidden scrollbar-hide scroll-smooth touch-scroll focus:outline-none"
+              className="flex items-center space-x-2 overflow-x-auto overflow-y-hidden scrollbar-hide scroll-smooth touch-scroll focus:outline-none py-2"
               style={{
                 WebkitOverflowScrolling: 'touch',
                 scrollbarWidth: 'none',
@@ -220,93 +224,108 @@ export default function NavigationBar() {
                     onClick={() => handleNavigation(item.href)}
                     onMouseEnter={() => setHoveredItem(item.id)}
                     onMouseLeave={() => setHoveredItem(null)}
+                    data-testid={`nav-${item.id}`}
                     className={`
-                      relative flex items-center space-x-2 px-3 py-2 rounded-xl transition-all duration-300 group
+                      relative flex items-center space-x-3 px-4 py-2.5 rounded-2xl transition-all duration-300 group min-w-fit
                       ${isItemActive 
-                        ? `bg-gradient-to-r ${item.color} text-white shadow-lg scale-105` 
-                        : 'hover:bg-gray-50 dark:hover:bg-gray-800 hover:scale-105'
+                        ? `bg-gradient-to-r ${item.color} text-white shadow-lg shadow-purple-500/25 scale-105 border border-white/20` 
+                        : 'hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-700 hover:scale-102 border border-transparent hover:border-gray-200 dark:hover:border-gray-600'
                       }
-                      ${isHovered ? 'shadow-md' : ''}
+                      ${isHovered ? 'shadow-lg' : 'shadow-sm'}
                     `}
                   >
-                    {/* Icon with animation */}
+                    {/* Enhanced Icon with glassmorphism */}
                     <div className={`
-                      flex items-center justify-center w-6 h-6 rounded-lg transition-all duration-300
+                      relative flex items-center justify-center w-8 h-8 rounded-xl transition-all duration-300
                       ${isItemActive 
-                        ? 'bg-white/20 text-white' 
-                        : `bg-gradient-to-r ${item.color} text-white opacity-80 group-hover:opacity-100`
+                        ? 'bg-white/20 text-white backdrop-blur-sm' 
+                        : `bg-gradient-to-br ${item.color} text-white opacity-90 group-hover:opacity-100 shadow-sm`
                       }
-                      ${isHovered ? 'scale-110 rotate-3' : ''}
+                      ${isHovered ? 'scale-110 rotate-6 shadow-md' : ''}
                     `}>
                       <item.icon className="h-4 w-4" />
+                      {isItemActive && (
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-xl" />
+                      )}
                     </div>
 
-                    {/* Text content */}
+                    {/* Enhanced Text content */}
                     <div className="hidden lg:flex flex-col items-start min-w-0">
                       <span className={`
-                        text-xs font-medium truncate
+                        text-sm font-semibold truncate
                         ${isItemActive ? 'text-white' : 'text-gray-900 dark:text-white'}
                       `}>
                         {item.title}
                       </span>
                       {item.subtitle && (
                         <span className={`
-                          text-xs opacity-70 truncate
-                          ${isItemActive ? 'text-white' : 'text-gray-600 dark:text-gray-400'}
+                          text-xs opacity-75 truncate
+                          ${isItemActive ? 'text-white/90' : 'text-gray-500 dark:text-gray-400'}
                         `}>
                           {item.subtitle}
                         </span>
                       )}
                     </div>
 
-                    {/* Badge */}
+                    {/* Enhanced Badge */}
                     {item.badge && (
                       <Badge 
                         variant="secondary" 
-                        className="ml-2 text-xs bg-white/20 text-white border-white/30"
+                        className={`ml-2 text-xs px-2 py-1 rounded-full ${
+                          isItemActive 
+                            ? 'bg-white/20 text-white border-white/30 backdrop-blur-sm' 
+                            : 'bg-gray-100 text-gray-600 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
+                        }`}
                       >
                         {item.badge}
                       </Badge>
                     )}
 
-                    {/* Active indicator */}
+                    {/* Enhanced Active indicator */}
                     {isItemActive && (
-                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full animate-pulse" />
+                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white rounded-full animate-pulse shadow-lg" />
                     )}
 
-                    {/* Hover arrow */}
+                    {/* Enhanced Hover effect */}
                     {isHovered && !isItemActive && (
-                      <ChevronRight className="h-3 w-3 text-gray-400 transition-all duration-300 animate-pulse" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent rounded-2xl animate-pulse" />
                     )}
                   </Button>
                 );
               })}
             </div>
+            
+            {/* Gradient fade edges for better UX */}
+            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-gray-900 to-transparent pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-gray-900 to-transparent pointer-events-none" />
           </div>
 
-          {/* User role indicator */}
-          <div className="flex items-center space-x-2">
-            <Badge 
-              variant="outline" 
-              className="hidden sm:flex text-xs px-2 py-1 bg-gradient-to-r from-green-50 to-blue-50 border-green-200"
-            >
-              {user?.role ? `${user.role.charAt(0).toUpperCase()}${user.role.slice(1)} View` : 'Guest View'}
-            </Badge>
+          {/* Enhanced User role indicator */}
+          <div className="flex items-center space-x-3">
+            <div className="hidden sm:flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              <Badge 
+                variant="outline" 
+                className="text-xs px-3 py-1.5 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950 dark:to-purple-950 border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-medium rounded-full shadow-sm"
+              >
+                {user?.role ? `${user.role.charAt(0).toUpperCase()}${user.role.slice(1)} Access` : 'Guest Mode'}
+              </Badge>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Mobile scrollable navigation */}
-      <div className="lg:hidden border-t border-gray-200 dark:border-gray-700">
+      {/* Enhanced Mobile scrollable navigation */}
+      <div className="lg:hidden border-t border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-gray-50/50 to-white/50 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm">
         <div 
           ref={mobileScrollRef}
-          className="flex items-center space-x-1 p-2 overflow-x-auto overflow-y-hidden scrollbar-hide scroll-smooth touch-scroll focus:outline-none"
+          className="flex items-center space-x-2 p-3 overflow-x-auto overflow-y-hidden scrollbar-hide scroll-smooth touch-scroll focus:outline-none"
           style={{
             WebkitOverflowScrolling: 'touch',
             scrollbarWidth: 'none',
             msOverflowStyle: 'none'
           }}
-          title="Use mouse wheel or swipe to scroll horizontally"
+          title="Swipe to scroll horizontally"
         >
           {filteredItems.map((item) => {
             const isItemActive = isActive(item.href);
@@ -317,29 +336,36 @@ export default function NavigationBar() {
                 variant="ghost"
                 size="sm"
                 onClick={() => handleNavigation(item.href)}
+                data-testid={`mobile-nav-${item.id}`}
                 className={`
-                  flex-shrink-0 flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-300
+                  flex-shrink-0 flex flex-col items-center space-y-2 p-3 rounded-2xl transition-all duration-300 min-w-fit
                   ${isItemActive 
-                    ? `bg-gradient-to-r ${item.color} text-white shadow-md` 
-                    : 'hover:bg-gray-50 dark:hover:bg-gray-800'
+                    ? `bg-gradient-to-br ${item.color} text-white shadow-lg shadow-purple-500/20 scale-105 border border-white/20` 
+                    : 'hover:bg-white/80 dark:hover:bg-gray-700/80 hover:scale-105 border border-transparent hover:border-gray-200 dark:hover:border-gray-600 backdrop-blur-sm'
                   }
                 `}
               >
                 <div className={`
-                  flex items-center justify-center w-6 h-6 rounded-md transition-all duration-300
+                  relative flex items-center justify-center w-8 h-8 rounded-xl transition-all duration-300 shadow-sm
                   ${isItemActive 
-                    ? 'bg-white/20 text-white' 
-                    : `bg-gradient-to-r ${item.color} text-white opacity-80`
+                    ? 'bg-white/20 text-white backdrop-blur-sm' 
+                    : `bg-gradient-to-br ${item.color} text-white opacity-90`
                   }
                 `}>
                   <item.icon className="h-4 w-4" />
+                  {isItemActive && (
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-xl" />
+                  )}
                 </div>
                 <span className={`
-                  text-xs font-medium truncate max-w-16
+                  text-xs font-semibold truncate max-w-20
                   ${isItemActive ? 'text-white' : 'text-gray-700 dark:text-gray-300'}
                 `}>
                   {item.title.split(' ')[0]}
                 </span>
+                {isItemActive && (
+                  <div className="absolute -bottom-0.5 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                )}
               </Button>
             );
           })}

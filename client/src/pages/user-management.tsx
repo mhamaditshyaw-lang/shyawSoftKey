@@ -263,21 +263,87 @@ export default function UserManagement() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">User Management</h1>
-          <p className="text-gray-600">Manage users, roles, and permissions</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="space-y-8 p-6 max-w-7xl mx-auto">
+        {/* Enhanced Header Section */}
+        <div className="relative overflow-hidden bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700">
+          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10" />
+          <div className="relative p-8">
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <Users className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      User Management
+                    </h1>
+                    <p className="text-gray-600 dark:text-gray-300 text-lg">
+                      Manage users, roles, and permissions with advanced controls
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {currentUser?.role === "admin" && (
+                <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button 
+                      size="lg" 
+                      className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl px-6"
+                      data-testid="button-add-user"
+                    >
+                      <Plus className="h-5 w-5 mr-2" />
+                      Add New User
+                    </Button>
+                  </DialogTrigger>
+                </Dialog>
+              )}
+            </div>
+          </div>
         </div>
 
+        {/* Enhanced Search and Filter Section */}
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="md:col-span-2">
+              <div className="relative">
+                <Input
+                  placeholder="Search users by name, username, or email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 pr-4 py-3 rounded-2xl border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:bg-white dark:focus:bg-gray-600 transition-colors duration-200"
+                  data-testid="input-search-users"
+                />
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                  <div className="w-5 h-5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <Eye className="h-3 w-3 text-white" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <Select value={selectedRole} onValueChange={setSelectedRole}>
+                <SelectTrigger className="rounded-2xl border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 py-3" data-testid="select-role-filter">
+                  <SelectValue placeholder="Filter by role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="manager">Manager</SelectItem>
+                  <SelectItem value="security">Security</SelectItem>
+                  <SelectItem value="office">Office</SelectItem>
+                  <SelectItem value="office_team">Office Team</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+
+        {/* Add User Dialog Content */}
         {currentUser?.role === "admin" && (
           <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add User
-              </Button>
-            </DialogTrigger>
             <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>Add New User</DialogTitle>
@@ -373,145 +439,207 @@ export default function UserManagement() {
         )}
       </div>
 
-      {/* Search and Filter */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            Users ({filteredUsers.length})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4 mb-6">
-            <Input
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="max-w-sm"
-            />
-            <Select value={selectedRole} onValueChange={setSelectedRole}>
-              <SelectTrigger className="max-w-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="manager">Manager</SelectItem>
-                <SelectItem value="security">Security</SelectItem>
-                <SelectItem value="office">Office</SelectItem>
-                <SelectItem value="office_team">Office Team</SelectItem>
-                <SelectItem value="secretary">Secretary</SelectItem>
-              </SelectContent>
-            </Select>
+        {/* Enhanced Users Table */}
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Users className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Active Users</h2>
+                  <p className="text-gray-600 dark:text-gray-300">Total: {filteredUsers.length} users</p>
+                </div>
+              </div>
+              <Badge className="text-sm px-4 py-2 bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900 dark:to-blue-900 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700 rounded-full">
+                {isLoading ? 'Loading...' : `${filteredUsers.length} Results`}
+              </Badge>
+            </div>
           </div>
 
           {isLoading ? (
-            <div className="text-center py-8">Loading users...</div>
+            <div className="text-center py-12">
+              <div className="inline-flex items-center space-x-2">
+                <div className="w-6 h-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full animate-pulse" />
+                <span className="text-lg text-gray-600 dark:text-gray-300">Loading users...</span>
+              </div>
+            </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Username</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Department</TableHead>
-                  <TableHead>Position</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredUsers.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">
-                      {user.firstName} {user.lastName}
-                    </TableCell>
-                    <TableCell>{user.username}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>
-                      <Badge className={roleColors[user.role as keyof typeof roleColors]}>
-                        {formatRoleName(user.role)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={statusColors[user.status as keyof typeof statusColors]}>
-                        {user.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{user.department || "-"}</TableCell>
-                    <TableCell>{user.position || "-"}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedUser(user);
-                            setIsEditDialogOpen(true);
-                          }}
-                          title="Edit User"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        {(currentUser?.role === "admin" || currentUser?.role === "manager") && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setIsPasswordDialogOpen(true);
-                            }}
-                            title="Change Password"
-                          >
-                            <Key className="h-4 w-4" />
-                          </Button>
-                        )}
-                        {currentUser?.role === "admin" && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setIsRoleDialogOpen(true);
-                            }}
-                            title="Change Role"
-                          >
-                            <UserCog className="h-4 w-4" />
-                          </Button>
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedUser(user);
-                            setIsPermissionsDialogOpen(true);
-                          }}
-                          title="Manage Permissions"
-                        >
-                          <Settings className="h-4 w-4" />
-                        </Button>
-                        {currentUser?.role === "admin" && user.id !== currentUser.id && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteUser(user.id)}
-                            title="Delete User"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        )}
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">
+                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100 py-4">
+                      <div className="flex items-center space-x-2">
+                        <UserCheck className="h-4 w-4" />
+                        <span>Name</span>
                       </div>
-                    </TableCell>
+                    </TableHead>
+                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100">Username</TableHead>
+                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100">
+                      <div className="flex items-center space-x-2">
+                        <Mail className="h-4 w-4" />
+                        <span>Email</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100">
+                      <div className="flex items-center space-x-2">
+                        <Shield className="h-4 w-4" />
+                        <span>Role</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100">Status</TableHead>
+                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100">
+                      <div className="flex items-center space-x-2">
+                        <Building className="h-4 w-4" />
+                        <span>Department</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100">Position</TableHead>
+                    <TableHead className="font-semibold text-gray-900 dark:text-gray-100 text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredUsers.map((user, index) => (
+                    <TableRow 
+                      key={user.id} 
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 border-gray-200 dark:border-gray-600"
+                      data-testid={`row-user-${user.id}`}
+                    >
+                      <TableCell className="font-medium py-4">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-2xl flex items-center justify-center text-white font-semibold text-sm shadow-md">
+                            {user.firstName?.[0]}{user.lastName?.[0]}
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900 dark:text-gray-100">
+                              {user.firstName} {user.lastName}
+                            </div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                              ID: {user.id}
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <span className="font-mono text-sm bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg">
+                            @{user.username}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <Mail className="h-4 w-4 text-gray-400" />
+                          <span className="text-sm">{user.email}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={`${roleColors[user.role as keyof typeof roleColors]} px-3 py-1 rounded-full font-medium shadow-sm`}>
+                          {formatRoleName(user.role)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <div className={`w-2 h-2 rounded-full ${user.status === 'active' ? 'bg-green-400' : user.status === 'inactive' ? 'bg-gray-400' : 'bg-yellow-400'}`} />
+                          <Badge className={`${statusColors[user.status as keyof typeof statusColors]} px-3 py-1 rounded-full font-medium`}>
+                            {user.status}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm">
+                          {user.department || "Not set"}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">
+                          {user.position || "Not set"}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setIsEditDialogOpen(true);
+                            }}
+                            title="Edit User"
+                            className="hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900 dark:hover:text-blue-300 rounded-xl transition-colors"
+                            data-testid={`button-edit-${user.id}`}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          {(currentUser?.role === "admin" || currentUser?.role === "manager") && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedUser(user);
+                                setIsPasswordDialogOpen(true);
+                              }}
+                              title="Change Password"
+                              className="hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-orange-900 dark:hover:text-orange-300 rounded-xl transition-colors"
+                              data-testid={`button-password-${user.id}`}
+                            >
+                              <Key className="h-4 w-4" />
+                            </Button>
+                          )}
+                          {currentUser?.role === "admin" && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedUser(user);
+                                setIsRoleDialogOpen(true);
+                              }}
+                              title="Change Role"
+                              className="hover:bg-purple-50 hover:text-purple-600 dark:hover:bg-purple-900 dark:hover:text-purple-300 rounded-xl transition-colors"
+                              data-testid={`button-role-${user.id}`}
+                            >
+                              <UserCog className="h-4 w-4" />
+                            </Button>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setIsPermissionsDialogOpen(true);
+                            }}
+                            title="Manage Permissions"
+                            className="hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900 dark:hover:text-green-300 rounded-xl transition-colors"
+                            data-testid={`button-permissions-${user.id}`}
+                          >
+                            <Settings className="h-4 w-4" />
+                          </Button>
+                          {currentUser?.role === "admin" && user.id !== currentUser.id && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteUser(user.id)}
+                              title="Delete User"
+                              className="hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900 dark:hover:text-red-300 rounded-xl transition-colors"
+                              data-testid={`button-delete-${user.id}`}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Edit User Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={(open) => {
+        {/* Edit User Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={(open) => {
         setIsEditDialogOpen(open);
         if (!open) {
           setEditFormData({});
