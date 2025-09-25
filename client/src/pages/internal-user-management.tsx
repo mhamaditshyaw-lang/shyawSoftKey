@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
@@ -275,234 +274,237 @@ export default function InternalUserManagementPage() {
                         Add Internal User
                       </Button>
                     </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Add New User</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleAddUser}>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input
-                          id="firstName"
-                          value={newUserData.firstName}
-                          onChange={(e) => setNewUserData({...newUserData, firstName: e.target.value})}
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input
-                          id="lastName"
-                          value={newUserData.lastName}
-                          onChange={(e) => setNewUserData({...newUserData, lastName: e.target.value})}
-                          required
-                        />
-                      </div>
-                    </div>
+                    <DialogContent className="max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Add New User</DialogTitle>
+                      </DialogHeader>
+                      <form onSubmit={handleAddUser}>
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="firstName">First Name</Label>
+                              <Input
+                                id="firstName"
+                                value={newUserData.firstName}
+                                onChange={(e) => setNewUserData({...newUserData, firstName: e.target.value})}
+                                required
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="lastName">Last Name</Label>
+                              <Input
+                                id="lastName"
+                                value={newUserData.lastName}
+                                onChange={(e) => setNewUserData({...newUserData, lastName: e.target.value})}
+                                required
+                              />
+                            </div>
+                          </div>
 
-                    <div>
-                      <Label htmlFor="username">Username</Label>
-                      <Input
-                        id="username"
-                        value={newUserData.username}
-                        onChange={(e) => setNewUserData({...newUserData, username: e.target.value})}
-                        required
-                      />
-                    </div>
+                          <div>
+                            <Label htmlFor="username">Username</Label>
+                            <Input
+                              id="username"
+                              value={newUserData.username}
+                              onChange={(e) => setNewUserData({...newUserData, username: e.target.value})}
+                              required
+                            />
+                          </div>
 
-                    <div>
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={newUserData.email}
-                        onChange={(e) => setNewUserData({...newUserData, email: e.target.value})}
-                        required
-                      />
-                    </div>
+                          <div>
+                            <Label htmlFor="email">Email</Label>
+                            <Input
+                              id="email"
+                              type="email"
+                              value={newUserData.email}
+                              onChange={(e) => setNewUserData({...newUserData, email: e.target.value})}
+                              required
+                            />
+                          </div>
 
-                    <div>
-                      <Label htmlFor="password">Password</Label>
-                      <Input
-                        id="password"
-                        type="password"
-                        value={newUserData.password}
-                        onChange={(e) => setNewUserData({...newUserData, password: e.target.value})}
-                        required
-                      />
-                    </div>
+                          <div>
+                            <Label htmlFor="password">Password</Label>
+                            <Input
+                              id="password"
+                              type="password"
+                              value={newUserData.password}
+                              onChange={(e) => setNewUserData({...newUserData, password: e.target.value})}
+                              required
+                            />
+                          </div>
 
-                    <div>
-                      <Label htmlFor="role">Role</Label>
-                      <Select
-                        value={newUserData.role}
-                        onValueChange={(value) => setNewUserData({...newUserData, role: value})}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="admin">Admin</SelectItem>
-                          <SelectItem value="manager">Manager</SelectItem>
-                          <SelectItem value="security">Security</SelectItem>
-                          <SelectItem value="office">Office</SelectItem>
-                          <SelectItem value="office_team">Office Team</SelectItem>
-                          <SelectItem value="secretary">Secretary</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                          <div>
+                            <Label htmlFor="role">Role</Label>
+                            <Select
+                              value={newUserData.role}
+                              onValueChange={(value) => setNewUserData({...newUserData, role: value})}
+                            >
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="admin">Admin</SelectItem>
+                                <SelectItem value="manager">Manager</SelectItem>
+                                <SelectItem value="security">Security</SelectItem>
+                                <SelectItem value="office">Office</SelectItem>
+                                <SelectItem value="office_team">Office Team</SelectItem>
+                                <SelectItem value="secretary">Secretary</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="department">Department</Label>
-                        <Input
-                          id="department"
-                          value={newUserData.department}
-                          onChange={(e) => setNewUserData({...newUserData, department: e.target.value})}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="position">Position</Label>
-                        <Input
-                          id="position"
-                          value={newUserData.position}
-                          onChange={(e) => setNewUserData({...newUserData, position: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                  </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="department">Department</Label>
+                              <Input
+                                id="department"
+                                value={newUserData.department}
+                                onChange={(e) => setNewUserData({...newUserData, department: e.target.value})}
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="position">Position</Label>
+                              <Input
+                                id="position"
+                                value={newUserData.position}
+                                onChange={(e) => setNewUserData({...newUserData, position: e.target.value})}
+                              />
+                            </div>
+                          </div>
+                        </div>
 
-                  <DialogFooter className="mt-6">
-                    <Button type="submit" disabled={addUserMutation.isPending}>
-                      {addUserMutation.isPending ? "Adding..." : "Add User"}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
-          )}
-        </div>
-
-        {/* Search and Filter */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Users ({filteredUsers.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-4 mb-6">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Search users..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Select value={selectedRole} onValueChange={setSelectedRole}>
-                <SelectTrigger className="w-48">
-                  <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Roles</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="manager">Manager</SelectItem>
-                  <SelectItem value="security">Security</SelectItem>
-                  <SelectItem value="office">Office</SelectItem>
-                  <SelectItem value="office_team">Office Team</SelectItem>
-                  <SelectItem value="secretary">Secretary</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {isLoading ? (
-              <div className="text-center py-8">Loading users...</div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Username</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Department</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredUsers.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell className="font-medium">
-                        {user.firstName} {user.lastName}
-                      </TableCell>
-                      <TableCell>{user.username}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>
-                        <Badge className={roleColors[user.role as keyof typeof roleColors]}>
-                          {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={statusColors[user.status as keyof typeof statusColors]}>
-                          {user.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{user.department || "-"}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setIsPermissionsDialogOpen(true);
-                            }}
-                            title="Manage Permissions"
-                          >
-                            <Settings className="h-4 w-4" />
+                        <DialogFooter className="mt-6">
+                          <Button type="submit" disabled={addUserMutation.isPending}>
+                            {addUserMutation.isPending ? "Adding..." : "Add User"}
                           </Button>
-                          {currentUser?.role === "admin" && user.id !== currentUser.id && (
+                        </DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Search and Filter */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Users ({filteredUsers.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-4 mb-6">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    placeholder="Search users..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <Select value={selectedRole} onValueChange={setSelectedRole}>
+                  <SelectTrigger className="w-48">
+                    <Filter className="h-4 w-4 mr-2" />
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Roles</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="manager">Manager</SelectItem>
+                    <SelectItem value="security">Security</SelectItem>
+                    <SelectItem value="office">Office</SelectItem>
+                    <SelectItem value="office_team">Office Team</SelectItem>
+                    <SelectItem value="secretary">Secretary</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {isLoading ? (
+                <div className="text-center py-8">Loading users...</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Username</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Department</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredUsers.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell className="font-medium">
+                          {user.firstName} {user.lastName}
+                        </TableCell>
+                        <TableCell>{user.username}</TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>
+                          <Badge className={roleColors[user.role as keyof typeof roleColors]}>
+                            {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={statusColors[user.status as keyof typeof statusColors]}>
+                            {user.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{user.department || "-"}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-1">
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleDeleteUser(user.id)}
-                              title="Delete User"
+                              onClick={() => {
+                                setSelectedUser(user);
+                                setIsPermissionsDialogOpen(true);
+                              }}
+                              title="Manage Permissions"
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Settings className="h-4 w-4" />
                             </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+                            {currentUser?.role === "admin" && user.id !== currentUser.id && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteUser(user.id)}
+                                title="Delete User"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
 
-        {/* Permissions Dialog */}
-        <Dialog open={isPermissionsDialogOpen} onOpenChange={setIsPermissionsDialogOpen}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Manage Permissions</DialogTitle>
-            </DialogHeader>
-            {selectedUser && (
-              <PermissionsForm
-                user={selectedUser}
-                onSave={handleUpdatePermissions}
-                isLoading={updateUserMutation.isPending}
-              />
-            )}
-          </DialogContent>
-        </Dialog>
+          {/* Permissions Dialog */}
+          <Dialog open={isPermissionsDialogOpen} onOpenChange={setIsPermissionsDialogOpen}>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Manage Permissions</DialogTitle>
+              </DialogHeader>
+              {selectedUser && (
+                <PermissionsForm
+                  user={selectedUser}
+                  onSave={handleUpdatePermissions}
+                  isLoading={updateUserMutation.isPending}
+                />
+              )}
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
     </DashboardLayout>
   );

@@ -354,21 +354,4 @@ export default function UserSettingsPage() {
       </div>
     </DashboardLayout>
   );
-                              onCheckedChange={(checked) =>
-                                handlePermissionChange(permission.key as keyof UserPermissions, checked)
-                              }
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-    </DashboardLayout>
-  );
 }
