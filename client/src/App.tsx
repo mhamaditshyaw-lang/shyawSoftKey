@@ -31,6 +31,8 @@ import NotificationManagementPage from "@/pages/notification-management";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/header";
 import SlidingSidebarMenu from "@/components/navigation/sliding-sidebar-menu";
+import UserSettingsPage from "@/pages/user-settings";
+import InternalUserManagementPage from "@/pages/internal-user-management";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -140,6 +142,8 @@ function Router() {
           <MultilingualDemoPage />
         </ProtectedRoute>
       </Route>
+      <Route path="/user-settings" component={UserSettingsPage} />
+      <Route path="/internal-user-management" component={InternalUserManagementPage} />
       <Route path="/">
         <ProtectedRoute>
           <ModernDashboard />

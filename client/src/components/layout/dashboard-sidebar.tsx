@@ -18,13 +18,25 @@ import {
   Plus,
   Building2,
   Activity,
-  Bell
+  Bell,
+  UserCog
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslation } from "react-i18next";
+
+// Assuming SidebarMenuButton is defined elsewhere and imported
+// For the sake of completeness, let's define a placeholder if it's not provided.
+// If SidebarMenuButton is a component you have, ensure it's imported correctly.
+const SidebarMenuButton = ({ children, asChild }) => {
+  if (asChild) {
+    return <>{children}</>;
+  }
+  return <button>{children}</button>;
+};
+
 
 interface SidebarProps {
   isCollapsed?: boolean;
@@ -52,7 +64,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       badge: null,
       roles: ["admin", "manager", "office", "office_team"]
     },
-    
+
     {
       title: t("todos"),
       href: "/todos",
@@ -211,6 +223,34 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
             </Link>
           );
         })}
+
+        {/* User Management - Admin/Manager only */}
+        {(user?.role === "admin" || user?.role === "manager") && (
+          <SidebarMenuButton asChild>
+            <Link href="/user-management" className="flex items-center gap-3">
+              <Users className="h-4 w-4" />
+              <span>User Management</span>
+            </Link>
+          </SidebarMenuButton>
+        )}
+
+        {/* Internal User Management - Admin/Manager only */}
+        {(user?.role === "admin" || user?.role === "manager") && (
+          <SidebarMenuButton asChild>
+            <Link href="/internal-user-management" className="flex items-center gap-3">
+              <UserCog className="h-4 w-4" />
+              <span>Internal Users</span>
+            </Link>
+          </SidebarMenuButton>
+        )}
+
+        {/* User Settings */}
+        <SidebarMenuButton asChild>
+          <Link href="/user-settings" className="flex items-center gap-3">
+            <Settings className="h-4 w-4" />
+            <span>Settings</span>
+          </Link>
+        </SidebarMenuButton>
       </nav>
 
       {/* User Info */}
