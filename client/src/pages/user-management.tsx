@@ -252,7 +252,22 @@ export default function UserManagement() {
   };
 
   const handleUpdatePermissions = (permissions: UserPermissions) => {
-    if (!selectedUser) return;
+    if (!selectedUser) {
+      toast({
+        title: "Error",
+        description: "No user selected. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!selectedUser.id) {
+      toast({
+        title: "Error",
+        description: "User ID is missing. Please refresh the page and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     updateUserMutation.mutate({
       id: selectedUser.id,

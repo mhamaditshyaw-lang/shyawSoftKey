@@ -231,7 +231,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updates: any = {};
       for (const field of allowedFields) {
         if (req.body[field] !== undefined) {
-          updates[field] = req.body[field];
+          // Handle permissions as JSON string if it's an object
+          if (field === 'permissions' && typeof req.body[field] === 'object') {
+            updates[field] = JSON.stringify(req.body[field]);
+          } else {
+            updates[field] = req.body[field];
+          }
         }
       }
 
@@ -249,6 +254,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No valid fields to update" });
       }
 
+      console.log('Updating user with ID:', id, 'Updates:', updates);
+
       const user = await storage.updateUser(id, updates);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -257,6 +264,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { password, ...userWithoutPassword } = user;
       res.json({ user: userWithoutPassword });
     } catch (error: any) {
+      console.error('Error updating user:', error);
       res.status(400).json({ message: error.message });
     }
   });

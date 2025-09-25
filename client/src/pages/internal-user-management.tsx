@@ -248,13 +248,18 @@ export default function InternalUserManagementPage() {
   const handleUpdatePermissions = (permissions: UserPermissions) => {
     if (!selectedUser) {
       console.error("No selected user");
+      toast({
+        title: "Error",
+        description: "No user selected. Please try again.",
+        variant: "destructive",
+      });
       return;
     }
     if (!selectedUser.id) {
       console.error("Selected user has no ID:", selectedUser);
       toast({
         title: "Error",
-        description: "User ID is missing. Please try refreshing the page.",
+        description: "User ID is missing. Please refresh the page and try again.",
         variant: "destructive",
       });
       return;
