@@ -421,7 +421,7 @@ const resources = {
       admin: "بەڕێوەبەر",
       manager: "مانەجەر",
       security: "ئاسایش",
-
+      employee: "کارمەند",
       
       // Status
       active: "چالاک",
@@ -508,7 +508,8 @@ const resources = {
       // Time
       today: "ئەمڕۆ",
       yesterday: "دوێنێ",
-
+      thisWeek: "ئەم هەفتەیە",
+      thisMonth: "ئەم مانگە",
       custom: "دیاریکراو",
       dateRange: "مەودای بەروار",
       
@@ -527,6 +528,7 @@ const resources = {
       listTitle: "سەردێڕی لیست",
       listDescription: "وەسفی لیست",
       taskTitle: "سەردێڕی ئەرک",
+      taskName: "ناوی ئەرک",
       taskDescription: "وەسفی ئەرک",
       markComplete: "نیشانکردن وەک تەواو",
       markIncomplete: "نیشانکردن وەک ناتەواو",
@@ -616,6 +618,12 @@ const resources = {
       generalFeedback: "فیدباکی گشتی",
       bugReport: "ڕاپۆرتی هەڵە",
       featureRequest: "داواکردنی تایبەتمەندی",
+      addNewType: "زیادکردنی جۆری نوێ",
+      addNewFeedbackType: "زیادکردنی جۆری فیدباکی نوێ",
+      typeName: "ناوی جۆر",
+      enterTypeName: "ناوی جۆر بنووسە",
+      addedSuccessfully: "بە سەرکەوتوویی زیادکرا",
+      addType: "جۆر زیادبکە",
       
       // Archive Page
       archivePage: "پەڕەی ئەرشیف",
@@ -653,6 +661,13 @@ const resources = {
       employeeManagement: "بەڕێوەبردنی کارمەندان",
       manageEmployeeAccountsDesc: "بەڕێوەبردنی کارمەندانی ناوخۆیی و ڕۆڵەکانیان لە کۆمپانیا",
       addEmployee: "زیادکردنی کارمەندی نوێ",
+      addNewEmployee: "زیادکردنی کارمەندی نوێ",
+      employeeDirectory: "لیستی کارمەندان",
+      personalInformation: "زانیاری کەسی",
+      accountInformation: "زانیاری هەژمار",
+      employmentInformation: "زانیاری کارکردن",
+      emergencyContact: "پەیوەندی فریاکەوتن",
+      additionalInformation: "زانیاری زیادە",
       items: "بابەت",
       total: "کۆ",
       filtered: "پاڵاوتنکراو",
@@ -905,6 +920,7 @@ const resources = {
       searchPlaceholder: "گەڕان...",
       noResultsFound: "هیچ ئەنجامێک نەدۆزرایەوە",
       loadingData: "بارکردنی داتا...",
+      selectAll: "هەموو هەڵبژێرە",
       selectAllItems: "هەموو بابەتەکان هەڵبژێرە",
       clearSelection: "پاکردنەوەی هەڵبژاردە",
       
