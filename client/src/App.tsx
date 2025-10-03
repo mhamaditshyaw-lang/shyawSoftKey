@@ -33,8 +33,6 @@ import NotificationManagementPage from "@/pages/notification-management";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/header";
 import SlidingSidebarMenu from "@/components/navigation/sliding-sidebar-menu";
-import UserSettingsPage from "@/pages/user-settings";
-import InternalUserManagementPage from "@/pages/internal-user-management";
 import PageAccessManagement from "@/pages/page-access-management";
 
 interface ProtectedRouteProps {
@@ -95,11 +93,7 @@ function Router() {
           <UsersPage />
         </ProtectedRoute>
       </Route>
-      <Route path="/user-management">
-        <ProtectedRoute requiredPermission="canViewUserManagement">
-          <UserManagementPage />
-        </ProtectedRoute>
-      </Route>
+      
       <Route path="/employee-management">
         <ProtectedRoute requiredPermission="canViewEmployeeManagement">
           <EmployeeManagementPage />
@@ -161,16 +155,7 @@ function Router() {
           <MultilingualDemoPage />
         </ProtectedRoute>
       </Route>
-      <Route path="/user-settings">
-        <ProtectedRoute requiredPermission="canViewSettings">
-          <UserSettingsPage />
-        </ProtectedRoute>
-      </Route>
-      <Route path="/internal-user-management">
-        <ProtectedRoute>
-          <InternalUserManagementPage />
-        </ProtectedRoute>
-      </Route>
+      
       <Route path="/page-access-management">
         <ProtectedRoute>
           <PageAccessManagement />

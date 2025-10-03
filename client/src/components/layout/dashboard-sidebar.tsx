@@ -220,44 +220,6 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
           );
         })}
 
-        {hasPermission("/user-management") && (
-          <Link href="/user-management">
-            <Button
-              variant={isActive("/user-management") ? "default" : "ghost"}
-              size="sm"
-              className={cn(
-                "w-full justify-start gap-3 transition-all duration-200",
-                isActive("/user-management")
-                  ? "bg-dashboard-primary text-white shadow-lg hover:bg-dashboard-primary/90"
-                  : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
-                isCollapsed && "justify-center px-2"
-              )}
-            >
-              <Users className={cn("h-5 w-5", isActive("/user-management") && "text-white")} />
-              {!isCollapsed && <span className="flex-1 text-left">User Management</span>}
-            </Button>
-          </Link>
-        )}
-
-        {isAdmin && (
-          <Link href="/internal-user-management">
-            <Button
-              variant={isActive("/internal-user-management") ? "default" : "ghost"}
-              size="sm"
-              className={cn(
-                "w-full justify-start gap-3 transition-all duration-200",
-                isActive("/internal-user-management")
-                  ? "bg-dashboard-primary text-white shadow-lg hover:bg-dashboard-primary/90"
-                  : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
-                isCollapsed && "justify-center px-2"
-              )}
-            >
-              <UserCog className={cn("h-5 w-5", isActive("/internal-user-management") && "text-white")} />
-              {!isCollapsed && <span className="flex-1 text-left">Internal Users</span>}
-            </Button>
-          </Link>
-        )}
-
         {isAdmin && (
           <Link href="/page-access-management">
             <Button
@@ -273,25 +235,6 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
             >
               <Shield className={cn("h-5 w-5", isActive("/page-access-management") && "text-white")} />
               {!isCollapsed && <span className="flex-1 text-left">Page Access Management</span>}
-            </Button>
-          </Link>
-        )}
-
-        {hasPermission("/user-settings") && (
-          <Link href="/user-settings">
-            <Button
-              variant={isActive("/user-settings") ? "default" : "ghost"}
-              size="sm"
-              className={cn(
-                "w-full justify-start gap-3 transition-all duration-200",
-                isActive("/user-settings")
-                  ? "bg-dashboard-primary text-white shadow-lg hover:bg-dashboard-primary/90"
-                  : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
-                isCollapsed && "justify-center px-2"
-              )}
-            >
-              <Settings className={cn("h-5 w-5", isActive("/user-settings") && "text-white")} />
-              {!isCollapsed && <span className="flex-1 text-left">Settings</span>}
             </Button>
           </Link>
         )}
