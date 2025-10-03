@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -82,6 +83,7 @@ const getNotificationColor = (type: string) => {
 export default function NotificationManagement() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
@@ -98,14 +100,14 @@ export default function NotificationManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/device-notifications'] });
       toast({
-        title: "Success",
-        description: "Notification marked as read",
+        title: t('success'),
+        description: t('notificationMarkedAsRead'),
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to mark notification as read",
+        title: t('error'),
+        description: error.message || t('failedToMarkNotificationAsRead'),
         variant: "destructive",
       });
     }
@@ -117,14 +119,14 @@ export default function NotificationManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/device-notifications'] });
       toast({
-        title: "Success",
-        description: "All notifications marked as read",
+        title: t('success'),
+        description: t('allNotificationsMarkedAsRead'),
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to mark all notifications as read",
+        title: t('error'),
+        description: error.message || t('failedToMarkAllNotificationsAsRead'),
         variant: "destructive",
       });
     }
@@ -136,14 +138,14 @@ export default function NotificationManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/device-notifications'] });
       toast({
-        title: "Success",
-        description: "Notification deleted",
+        title: t('success'),
+        description: t('notificationDeleted'),
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to delete notification",
+        title: t('error'),
+        description: error.message || t('failedToDeleteNotification'),
         variant: "destructive",
       });
     }
@@ -168,8 +170,8 @@ export default function NotificationManagement() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <Bell className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
-          <p className="text-gray-600">You need to be logged in to view notifications.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('accessDenied')}</h2>
+          <p className="text-gray-600">{t('needToBeLoggedInToViewNotifications')}</p>
         </div>
       </div>
     );
@@ -186,13 +188,13 @@ export default function NotificationManagement() {
                 <Bell className="w-6 h-6 text-indigo-600" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Notification Management</h1>
-                <p className="text-gray-600">Manage all your system notifications</p>
+                <h1 className="text-2xl font-bold text-gray-900">{t('notificationManagement')}</h1>
+                <p className="text-gray-600">{t('manageAllYourSystemNotifications')}</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
               <Badge variant="outline" className="text-sm">
-                {unreadCount} Unread
+                {t('unreadCount', { count: unreadCount })}
               </Badge>
               <Button
                 variant="outline"
@@ -201,7 +203,7 @@ export default function NotificationManagement() {
                 disabled={isLoading}
               >
                 <RefreshCw className={cn("w-4 h-4 mr-2", isLoading && "animate-spin")} />
-                Refresh
+                {t('refresh')}
               </Button>
             </div>
           </div>
@@ -213,7 +215,7 @@ export default function NotificationManagement() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total</p>
+                  <p className="text-sm text-gray-600">{t('total')}</p>
                   <p className="text-2xl font-bold text-gray-900">{notifications.length}</p>
                 </div>
                 <Bell className="w-8 h-8 text-gray-400" />
@@ -225,7 +227,7 @@ export default function NotificationManagement() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Unread</p>
+                  <p className="text-sm text-gray-600">{t('unread')}</p>
                   <p className="text-2xl font-bold text-red-600">{unreadCount}</p>
                 </div>
                 <BellOff className="w-8 h-8 text-red-400" />
@@ -237,7 +239,7 @@ export default function NotificationManagement() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Read</p>
+                  <p className="text-sm text-gray-600">{t('read')}</p>
                   <p className="text-2xl font-bold text-green-600">{notifications.length - unreadCount}</p>
                 </div>
                 <CheckCircle className="w-8 h-8 text-green-400" />
@@ -249,7 +251,7 @@ export default function NotificationManagement() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Types</p>
+                  <p className="text-sm text-gray-600">{t('types')}</p>
                   <p className="text-2xl font-bold text-blue-600">{notificationTypes.length}</p>
                 </div>
                 <Settings className="w-8 h-8 text-blue-400" />
@@ -263,12 +265,12 @@ export default function NotificationManagement() {
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
-                <Label htmlFor="search">Search Notifications</Label>
+                <Label htmlFor="search">{t('searchNotifications')}</Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                   <Input
                     id="search"
-                    placeholder="Search by title or message..."
+                    placeholder={t('searchByTitleOrMessage')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -277,33 +279,33 @@ export default function NotificationManagement() {
               </div>
               
               <div>
-                <Label htmlFor="type-filter">Filter by Type</Label>
+                <Label htmlFor="type-filter">{t('filterByType')}</Label>
                 <select
                   id="type-filter"
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
-                  <option value="all">All Types</option>
+                  <option value="all">{t('allTypes')}</option>
                   {notificationTypes.map(type => (
                     <option key={type} value={type}>
-                      {type.replace('_', ' ').toUpperCase()}
+                      {t(`enums.notificationType.${type}`, type.replace('_', ' ').toUpperCase())}
                     </option>
                   ))}
                 </select>
               </div>
               
               <div>
-                <Label htmlFor="status-filter">Filter by Status</Label>
+                <Label htmlFor="status-filter">{t('filterByStatus')}</Label>
                 <select
                   id="status-filter"
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
-                  <option value="all">All Status</option>
-                  <option value="unread">Unread</option>
-                  <option value="read">Read</option>
+                  <option value="all">{t('allStatus')}</option>
+                  <option value="unread">{t('unread')}</option>
+                  <option value="read">{t('read')}</option>
                 </select>
               </div>
               
@@ -314,7 +316,7 @@ export default function NotificationManagement() {
                   className="w-full"
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  Mark All Read
+                  {t('markAllRead')}
                 </Button>
               </div>
             </div>
@@ -326,17 +328,17 @@ export default function NotificationManagement() {
           {isLoading ? (
             <div className="text-center py-8">
               <RefreshCw className="w-8 h-8 animate-spin text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">Loading notifications...</p>
+              <p className="text-gray-600">{t('loadingNotifications')}</p>
             </div>
           ) : filteredNotifications.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
                 <Bell className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No Notifications Found</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('noNotificationsFound')}</h3>
                 <p className="text-gray-600">
                   {searchTerm || filterType !== "all" || filterStatus !== "all" 
-                    ? "No notifications match your current filters." 
-                    : "You don't have any notifications yet."}
+                    ? t('noNotificationsMatchFilters')
+                    : t('noNotificationsYet')}
                 </p>
               </CardContent>
             </Card>
@@ -363,11 +365,11 @@ export default function NotificationManagement() {
                           </h3>
                           {!notification.isRead && (
                             <Badge variant="secondary" className="text-xs">
-                              New
+                              {t('new')}
                             </Badge>
                           )}
                           <Badge variant="outline" className="text-xs">
-                            {notification.type.replace('_', ' ')}
+                            {t(`enums.notificationType.${notification.type}`, notification.type.replace('_', ' '))}
                           </Badge>
                         </div>
                         
@@ -379,7 +381,7 @@ export default function NotificationManagement() {
                           </span>
                           {notification.relatedItemType && (
                             <span>
-                              Related to: {notification.relatedItemType}
+                              {t('relatedTo', { type: notification.relatedItemType })}
                             </span>
                           )}
                         </div>

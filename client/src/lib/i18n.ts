@@ -645,6 +645,14 @@ const resources = {
           todo: "Todo",
           feedback: "Feedback",
           user: "User"
+        },
+        notificationType: {
+          user_created: "User Created",
+          interview_request: "Interview Request",
+          interview_status: "Interview Status",
+          todo_assigned: "Todo Assigned",
+          todo_completed: "Todo Completed",
+          system: "System"
         }
       }
 
@@ -1489,6 +1497,14 @@ const resources = {
           todo: "ئەرک",
           feedback: "فیدباک",
           user: "بەکارهێنەر"
+        },
+        notificationType: {
+          user_created: "بەکارهێنەر دروستکرا",
+          interview_request: "داواکاری کۆبوونەوە",
+          interview_status: "باری کۆبوونەوە",
+          todo_assigned: "ئەرک دیاریکرا",
+          todo_completed: "ئەرک تەواوکرا",
+          system: "سیستەم"
         }
       }
 
