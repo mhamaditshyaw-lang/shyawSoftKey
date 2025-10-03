@@ -4,7 +4,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { insertUserSchema, loginSchema, insertTodoListSchema, insertTodoItemSchema, insertInterviewRequestSchema, changePasswordSchema, updateUserPasswordSchema, insertReminderSchema, insertInterviewCommentSchema } from "@shared/schema";
+import { insertUserSchema, loginSchema, insertTodoListSchema, insertTodoItemSchema, insertInterviewRequestSchema, changePasswordSchema, updateUserPasswordSchema, insertReminderSchema, insertInterviewCommentSchema, PAGE_PERMISSIONS } from "@shared/schema";
 import { Request, Response, NextFunction } from "express";
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -358,6 +358,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ message: "User deleted successfully" });
     } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Page access management routes
+  app.get("/api/users/:id/page-access", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+
+      // Check if user exists
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const pageAccess = await storage.getUserPageAccess(userId);
+      res.json({ pageAccess });
+    } catch (error: any) {
+      console.error("Error getting user page access:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.put("/api/users/:id/page-access", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const { pagePermissions } = req.body;
+
+      // Check if user exists
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Validate pagePermissions is an object
+      if (!pagePermissions || typeof pagePermissions !== 'object') {
+        return res.status(400).json({ message: "pagePermissions must be an object" });
+      }
+
+      const updatedUser = await storage.updateUserPageAccess(userId, pagePermissions);
+      const { password, ...userWithoutPassword } = updatedUser;
+      res.json({ user: userWithoutPassword });
+    } catch (error: any) {
+      console.error("Error updating user page access:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/pages/available", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+    try {
+      const pages = Object.entries(PAGE_PERMISSIONS).map(([path, permission]) => ({
+        path,
+        permission,
+        label: path === '/' ? 'Dashboard' : path.split('/').pop()?.split('-').map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ') || path
+      }));
+
+      res.json({ pages });
+    } catch (error: any) {
+      console.error("Error getting available pages:", error);
       res.status(500).json({ message: error.message });
     }
   });
