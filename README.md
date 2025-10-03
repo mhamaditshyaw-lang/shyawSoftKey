@@ -21,6 +21,14 @@ Before installing, make sure you have the following installed on your local comp
 
 ## Local Installation
 
+📋 **For detailed local installation instructions, see [LOCAL_INSTALLATION.md](LOCAL_INSTALLATION.md)**
+
+The application can be accessed at:
+- **Local Network**: http://192.168.70.10:5000
+- **Localhost**: http://localhost:5000
+
+### Quick Start
+
 ### 1. Clone the Repository
 
 ```bash
@@ -39,17 +47,24 @@ npm install
 #### Create PostgreSQL Database
 
 1. Start PostgreSQL service on your computer
-2. Create a new database:
+2. Create a new database and set password:
 
-```sql
--- Connect to PostgreSQL as superuser
-createdb shyaw_admin
+```bash
+# Connect to PostgreSQL
+psql -U postgres
 ```
 
-Or using PostgreSQL command line:
-```bash
-psql -U postgres
+```sql
+-- Set postgres password
+ALTER USER postgres WITH PASSWORD 'Hama10Kurd$$';
+
+-- Create database
 CREATE DATABASE shyaw_admin;
+
+-- Grant privileges
+GRANT ALL PRIVILEGES ON DATABASE shyaw_admin TO postgres;
+
+-- Exit
 \q
 ```
 
@@ -61,24 +76,27 @@ Create a `.env` file in the root directory:
 cp .env.example .env
 ```
 
-Edit the `.env` file with your database credentials:
+The `.env` file should contain:
 
 ```env
-# Database Configuration
-DATABASE_URL=postgresql://username:password@localhost:5432/shyaw_admin
-
-# JWT Secret (change this to a secure random string)
-JWT_SECRET=your-super-secret-jwt-key-here
-
 # Server Configuration
 NODE_ENV=development
 PORT=5000
+
+# Database Configuration
+DATABASE_URL=postgresql://postgres:Hama10Kurd$$@localhost:5432/shyaw_admin
+
+# JWT Secret
+JWT_SECRET=shyaw-admin-jwt-secret-key-2024-secure
+
+# Session Secret
+SESSION_SECRET=shyaw-admin-session-secret-2024
 ```
 
-**Important**: Replace the database URL with your actual PostgreSQL credentials:
-- `username`: Your PostgreSQL username
-- `password`: Your PostgreSQL password
-- `shyaw_admin`: Your database name
+**Database Configuration:**
+- Database name: `shyaw_admin`
+- Database password: `Hama10Kurd$$`
+- PostgreSQL user: `postgres`
 
 ### 4. Database Migration
 
@@ -118,8 +136,10 @@ npm run dev
 ```
 
 The application will be available at:
-- **Frontend**: http://localhost:5000
-- **API**: http://localhost:5000/api
+- **Frontend**: http://localhost:5000 or http://192.168.70.10:5000
+- **API**: http://localhost:5000/api or http://192.168.70.10:5000/api
+
+**Note**: To access via 192.168.70.10, you need to configure your network adapter with this static IP address. See [LOCAL_INSTALLATION.md](LOCAL_INSTALLATION.md) for detailed network configuration steps.
 
 ## Production Deployment
 
