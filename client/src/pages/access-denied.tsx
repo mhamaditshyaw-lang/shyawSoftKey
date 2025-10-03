@@ -6,6 +6,14 @@ import { ShieldAlert } from "lucide-react";
 export default function AccessDenied() {
   const [, setLocation] = useLocation();
 
+  const handleGoBack = () => {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      setLocation("/");
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-dashboard-bg-light dark:bg-dashboard-bg-dark p-4">
       <Card className="w-full max-w-md">
@@ -27,7 +35,7 @@ export default function AccessDenied() {
             Go to Dashboard
           </Button>
           <Button 
-            onClick={() => window.history.back()}
+            onClick={handleGoBack}
             variant="outline"
             className="w-full"
             data-testid="button-go-back"
