@@ -473,7 +473,104 @@ const resources = {
       shortTitleTracking: "Tracking",
       shortTitleManagement: "Management",
       shortTitleAnalytics: "Analytics",
-      shortTitleArchive: "Archive"
+      shortTitleArchive: "Archive",
+
+      // All Data Page
+      operationalData: "Operational Data",
+      iceCream: "Ice Cream",
+      albany: "Albany",
+      day: "Day",
+      nightShift: "Night",
+      interviewItem: "Interview",
+      todoItem: "Todo",
+      archivedItem: "Archived",
+      candidateName: "Candidate",
+      submittedBy: "Submitted By",
+      itemId: "Item ID",
+      itemType: "Item Type",
+      autoRefresh: "Auto Refresh",
+      allTypes: "All Types",
+      allPriorities: "All Priorities",
+      allStatuses: "All Statuses",
+      allUsers: "All Users",
+      operationalType: "Operational",
+      urgentPriority: "Urgent",
+      inProgressStatus: "In Progress",
+      createdDate: "Created Date",
+      
+      // Notification Management
+      notificationManagement: "Notification Management",
+      userCreatedNotif: "User Created",
+      interviewRequestNotif: "Interview Request",
+      interviewStatusNotif: "Interview Status",
+      todoAssignedNotif: "Task Assigned",
+      todoCompletedNotif: "Task Completed",
+      systemNotif: "System",
+      failedToMarkAsRead: "Failed to mark notification as read",
+      failedToMarkAllAsRead: "Failed to mark all notifications as read",
+      failedToDeleteNotification: "Failed to delete notification",
+      readNotifications: "Read",
+      unreadNotifications: "Unread",
+      typeFilter: "Type Filter",
+      statusFilter: "Status Filter",
+      markAllAsRead: "Mark All as Read",
+      youNeedToBeLoggedIn: "You need to be logged in to view notifications.",
+      
+      // Notification Test
+      deviceNotificationTestPage: "Device Notification Testing",
+      permissionRequiredTitle: "Permission Required",
+      missingInformationTitle: "Missing Information",
+      customNotificationTitle: "Custom Notification Sent",
+      systemAlertType: "System Alert",
+      taskReminderType: "Task Reminder",
+      userActivityType: "User Activity",
+      securityAlertType: "Security Alert",
+      maintenanceNoticeType: "Maintenance Notice",
+      deadlineWarningType: "Deadline Warning",
+      achievementType: "Achievement",
+      generalType: "General",
+      notificationTitleField: "Notification Title",
+      notificationMessageField: "Notification Message",
+      notificationTypeSelect: "Notification Type",
+      notificationPrioritySelect: "Notification Priority",
+      sendNotificationButton: "Send Notification",
+      
+      // Page Access Management
+      pageAccessManagement: "Page Access Management",
+      onlyAdminsCanManage: "You don't have permission to access page access management. Only administrators can manage user page access.",
+      selectUserToView: "Select User",
+      availablePages: "Available Pages",
+      saveChanges: "Save Changes",
+      selectUserToManage: "Select a user to manage their page access",
+      
+      // Reminders
+      remindersPage: "Reminders",
+      createReminder: "Create Reminder",
+      reminderDateField: "Reminder Date",
+      reminderMessageField: "Reminder Message",
+      reminderTitleField: "Reminder Title",
+      itemText: "Item Text",
+      setReminder: "Set Reminder",
+      upcomingReminders: "Upcoming",
+      overdueReminders: "Overdue",
+      allReminders: "All",
+      noRemindersFound: "No reminders found",
+      
+      // 404 Page
+      pageNotFound: "404 Page Not Found",
+      didYouForgetToAddPage: "Did you forget to add the page to the router?",
+      
+      // General/Common
+      weekFilter: "Week",
+      monthFilter: "Month",
+      selectDate: "Select Date",
+      fromLabel: "From",
+      toLabel: "To",
+      typeLabel: "Type",
+      ratingLabel: "Rating",
+      messageLabel: "Message",
+      officeRole: "Office",
+      disabledStatus: "Disabled"
 
     }
   },
@@ -1167,7 +1264,88 @@ const resources = {
       shortTitleTracking: "بەدواداچوون",
       shortTitleManagement: "بەڕێوەبەری",
       shortTitleAnalytics: "شیکاری",
-      shortTitleArchive: "ئەرشیف"
+      shortTitleArchive: "ئەرشیف",
+
+      // All Data Page - additional keys not already defined
+      interviewItem: "کۆبوونەوە",
+      archivedItem: "ئەرشیفکراو",
+      operationalType: "کارکردن",
+      urgentPriority: "پەلە",
+      inProgressStatus: "لە بەردەوامدا",
+      
+      // Notification Management
+      notificationManagement: "بەڕێوەبردنی ئاگادارکردنەوە",
+      userCreatedNotif: "بەکارهێنەر دروستکرا",
+      interviewRequestNotif: "داواکاری کۆبوونەوە",
+      interviewStatusNotif: "دۆخی کۆبوونەوە",
+      todoAssignedNotif: "ئەرک دیاریکرا",
+      todoCompletedNotif: "ئەرک تەواوبوو",
+      systemNotif: "سیستەم",
+      failedToMarkAsRead: "نیشانکردنی وەک خوێندراوە سەرکەوتوو نەبوو",
+      failedToMarkAllAsRead: "نیشانکردنی هەموو وەک خوێندراوە سەرکەوتوو نەبوو",
+      failedToDeleteNotification: "سڕینەوەی ئاگادارکردنەوە سەرکەوتوو نەبوو",
+      readNotifications: "خوێندراوە",
+      unreadNotifications: "نەخوێندراوە",
+      typeFilter: "پاڵاوتنی جۆر",
+      statusFilter: "پاڵاوتنی دۆخ",
+      markAllAsRead: "هەموو وەک خوێندراوە نیشان بکە",
+      youNeedToBeLoggedIn: "پێویستە چووبیتە ژوورەوە بۆ بینینی ئاگادارکردنەوەکان.",
+      
+      // Notification Test
+      deviceNotificationTestPage: "تاقیکردنەوەی ئاگادارکردنەوەی ئامێر",
+      permissionRequiredTitle: "مۆڵەت پێویستە",
+      missingInformationTitle: "زانیاری نەتەواوە",
+      customNotificationTitle: "ئاگادارکردنەوەی تایبەت نێردرا",
+      systemAlertType: "ئاگادارکردنەوەی سیستەم",
+      taskReminderType: "بیرخستنەوەی ئەرک",
+      userActivityType: "چالاکی بەکارهێنەر",
+      securityAlertType: "ئاگادارکردنەوەی ئاسایش",
+      maintenanceNoticeType: "ئاگاداری چاککردنەوە",
+      deadlineWarningType: "ئاگاداری کاتی کۆتایی",
+      achievementType: "دەستکەوت",
+      generalType: "گشتی",
+      notificationTitleField: "سەردێڕی ئاگادارکردنەوە",
+      notificationMessageField: "پەیامی ئاگادارکردنەوە",
+      notificationTypeSelect: "جۆری ئاگادارکردنەوە",
+      notificationPrioritySelect: "گرنگی ئاگادارکردنەوە",
+      sendNotificationButton: "ناردنی ئاگادارکردنەوە",
+      
+      // Page Access Management
+      pageAccessManagement: "بەڕێوەبردنی دەستگەیشتنی پەڕە",
+      onlyAdminsCanManage: "مۆڵەتت نییە بۆ دەستگەیشتن بە بەڕێوەبردنی دەستگەیشتنی پەڕە. تەنها بەڕێوەبەران دەتوانن دەستگەیشتنی پەڕەی بەکارهێنەران بەڕێوە ببەن.",
+      selectUserToView: "بەکارهێنەر هەڵبژێرە",
+      availablePages: "پەڕە بەردەستەکان",
+      saveChanges: "پاشەکەوتکردنی گۆڕانکارییەکان",
+      selectUserToManage: "بەکارهێنەرێک هەڵبژێرە بۆ بەڕێوەبردنی دەستگەیشتنی پەڕەکانی",
+      
+      // Reminders
+      remindersPage: "بیرخستنەوەکان",
+      createReminder: "دروستکردنی بیرخستنەوە",
+      reminderDateField: "بەرواری بیرخستنەوە",
+      reminderMessageField: "پەیامی بیرخستنەوە",
+      reminderTitleField: "سەردێڕی بیرخستنەوە",
+      itemText: "دەقی بابەت",
+      setReminder: "دانانی بیرخستنەوە",
+      upcomingReminders: "داهاتوو",
+      overdueReminders: "درەنگکەوتوو",
+      allReminders: "هەموو",
+      noRemindersFound: "هیچ بیرخستنەوەیەک نەدۆزرایەوە",
+      
+      // 404 Page
+      pageNotFound: "٤٠٤ پەڕە نەدۆزرایەوە",
+      didYouForgetToAddPage: "ئایا لەبیرت چووە پەڕەکە زیاد بکەیت بۆ ڕووتەرەکە؟",
+      
+      // General/Common
+      weekFilter: "هەفتە",
+      monthFilter: "مانگ",
+      selectDate: "بەروار هەڵبژێرە",
+      fromLabel: "لە",
+      toLabel: "بۆ",
+      typeLabel: "جۆر",
+      ratingLabel: "پلەدان",
+      messageLabel: "پەیام",
+      officeRole: "ئۆفیس",
+      disabledStatus: "ناچالاککراو"
 
     }
   }
