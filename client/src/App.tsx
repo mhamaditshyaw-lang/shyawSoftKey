@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,8 +7,10 @@ import { DeviceNotificationProvider } from "@/hooks/use-device-notifications";
 
 import { ThemeProvider } from "@/hooks/use-theme";
 import { queryClient } from "./lib/queryClient";
+import { PAGE_PERMISSIONS, type PermissionKey } from "@shared/schema";
 import LoginPage from "@/pages/login";
 import ModernDashboard from "@/pages/modern-dashboard";
+import AccessDenied from "@/pages/access-denied";
 
 import InterviewsPage from "@/pages/interviews";
 import TodosPage from "@/pages/todos";
@@ -35,8 +37,14 @@ import UserSettingsPage from "@/pages/user-settings";
 import InternalUserManagementPage from "@/pages/internal-user-management";
 import PageAccessManagement from "@/pages/page-access-management";
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  requiredPermission?: PermissionKey;
+}
+
+function ProtectedRoute({ children, requiredPermission }: ProtectedRouteProps) {
   const { user, isLoading } = useAuth();
+  const [location] = useLocation();
 
   if (isLoading) {
     return (
@@ -50,6 +58,16 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <LoginPage />;
   }
 
+  if (requiredPermission) {
+    const isAdmin = user.role === 'admin';
+    const userPermissions = user.permissions as Record<string, boolean> || {};
+    const hasPermission = userPermissions[requiredPermission] === true;
+
+    if (!isAdmin && !hasPermission) {
+      return <AccessDenied />;
+    }
+  }
+
   return <>{children}</>;
 }
 
@@ -58,17 +76,17 @@ function Router() {
     <Switch>
       <Route path="/login" component={LoginPage} />
       <Route path="/interviews">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewInterviews">
           <InterviewsPage />
         </ProtectedRoute>
       </Route>
       <Route path="/todos">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewTodos">
           <TodosPage />
         </ProtectedRoute>
       </Route>
       <Route path="/reminders">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewReminders">
           <RemindersPage />
         </ProtectedRoute>
       </Route>
@@ -78,53 +96,53 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/user-management">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewUserManagement">
           <UserManagementPage />
         </ProtectedRoute>
       </Route>
       <Route path="/employee-management">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewEmployeeManagement">
           <EmployeeManagementPage />
         </ProtectedRoute>
       </Route>
       <Route path="/add-employee">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewAddEmployee">
           <AddEmployeePage />
         </ProtectedRoute>
       </Route>
 
       <Route path="/feedback">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewFeedback">
           <FeedbackPage />
         </ProtectedRoute>
       </Route>
       <Route path="/archive">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewArchive">
           <ArchivePage />
         </ProtectedRoute>
       </Route>
       <Route path="/metrics">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewMetrics">
           <MetricsPage />
         </ProtectedRoute>
       </Route>
       <Route path="/data-view">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewDataView">
           <DataViewPage />
         </ProtectedRoute>
       </Route>
       <Route path="/all-data">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewAllData">
           <AllDataPage />
         </ProtectedRoute>
       </Route>
       <Route path="/user-activity">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewUserActivity">
           <UserActivityPage />
         </ProtectedRoute>
       </Route>
       <Route path="/reports">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewReports">
           <ReportsPage />
         </ProtectedRoute>
       </Route>
@@ -134,7 +152,7 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/notification-management">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewNotificationManagement">
           <NotificationManagementPage />
         </ProtectedRoute>
       </Route>
@@ -143,15 +161,23 @@ function Router() {
           <MultilingualDemoPage />
         </ProtectedRoute>
       </Route>
-      <Route path="/user-settings" component={UserSettingsPage} />
-      <Route path="/internal-user-management" component={InternalUserManagementPage} />
+      <Route path="/user-settings">
+        <ProtectedRoute requiredPermission="canViewSettings">
+          <UserSettingsPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/internal-user-management">
+        <ProtectedRoute>
+          <InternalUserManagementPage />
+        </ProtectedRoute>
+      </Route>
       <Route path="/page-access-management">
         <ProtectedRoute>
           <PageAccessManagement />
         </ProtectedRoute>
       </Route>
       <Route path="/">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewDashboard">
           <ModernDashboard />
         </ProtectedRoute>
       </Route>
