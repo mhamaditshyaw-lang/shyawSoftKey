@@ -2,6 +2,8 @@
 
 This guide will help you install and configure the Shyaw Administration System on your local computer.
 
+**Important**: The application has been configured to work with local PostgreSQL installations using the standard PostgreSQL driver (pg). This is different from cloud-hosted Neon databases.
+
 ## Network Configuration
 
 The application will be accessible at:

@@ -1,9 +1,7 @@
 
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import ws from "ws";
-
-neonConfig.webSocketConstructor = ws;
+import { drizzle } from 'drizzle-orm/node-postgres';
+import pkg from 'pg';
+const { Pool } = pkg;
 
 const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
@@ -11,7 +9,7 @@ if (!databaseUrl) {
 }
 
 const pool = new Pool({ connectionString: databaseUrl });
-const db = drizzle({ client: pool });
+const db = drizzle(pool);
 
 async function createInterviewCommentsTable() {
   try {

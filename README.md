@@ -248,9 +248,11 @@ GRANT ALL PRIVILEGES ON DATABASE shyaw_admin TO username;
 
 - **Frontend**: React 18, TypeScript, Tailwind CSS, shadcn/ui
 - **Backend**: Express.js, Node.js, TypeScript
-- **Database**: PostgreSQL with Drizzle ORM
+- **Database**: PostgreSQL (local) with Drizzle ORM and standard pg driver
 - **Authentication**: JWT with bcrypt
 - **Build Tools**: Vite (frontend), esbuild (backend)
+
+**Note**: The application uses the standard PostgreSQL driver (pg) for local installations.
 
 ## Support
 
