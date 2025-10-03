@@ -4,6 +4,7 @@ import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { useTranslation } from "react-i18next";
 
 interface DeviceNotificationPermission {
   permission: 'default' | 'granted' | 'denied';
@@ -31,6 +32,7 @@ const DeviceNotificationContext = createContext<DeviceNotificationContextType | 
 export function DeviceNotificationProvider({ children }: { children: ReactNode }) {
   const { user, token } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [permission, setPermission] = useState<DeviceNotificationPermission>({
     permission: 'default',
     supported: false
@@ -66,8 +68,8 @@ export function DeviceNotificationProvider({ children }: { children: ReactNode }
   const requestPermission = async (): Promise<boolean> => {
     if (!permission.supported) {
       toast({
-        title: "Not Supported",
-        description: "Device notifications are not supported in this browser.",
+        title: t("notSupported"),
+        description: t("deviceNotificationsNotSupported"),
         variant: "destructive",
       });
       return false;
@@ -79,14 +81,14 @@ export function DeviceNotificationProvider({ children }: { children: ReactNode }
       
       if (result === 'granted') {
         toast({
-          title: "Success!",
-          description: "Device notifications enabled successfully.",
+          title: t("success"),
+          description: t("deviceNotificationsEnabled"),
         });
         return true;
       } else {
         toast({
-          title: "Permission Denied",
-          description: "Please enable notifications in your browser settings.",
+          title: t("permissionDenied"),
+          description: t("enableNotificationsInBrowser"),
           variant: "destructive",
         });
         return false;
@@ -94,8 +96,8 @@ export function DeviceNotificationProvider({ children }: { children: ReactNode }
     } catch (error) {
       console.error('Error requesting notification permission:', error);
       toast({
-        title: "Error",
-        description: "Failed to request notification permission.",
+        title: t("error"),
+        description: t("failedToRequestPermission"),
         variant: "destructive",
       });
       return false;
@@ -138,16 +140,16 @@ export function DeviceNotificationProvider({ children }: { children: ReactNode }
       await authenticatedRequest("POST", "/api/device-notifications/test");
       
       toast({
-        title: "Test Sent",
-        description: "Test notification has been created.",
+        title: t("testSent"),
+        description: t("testNotificationCreated"),
       });
       
       // Refresh notifications
       queryClient.invalidateQueries({ queryKey: ["/api/device-notifications"] });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to send test notification.",
+        title: t("error"),
+        description: t("failedToSendTestNotification"),
         variant: "destructive",
       });
     }
@@ -189,7 +191,7 @@ export function DeviceNotificationProvider({ children }: { children: ReactNode }
   // Listen for new notifications and show device notifications
   useEffect(() => {
     if (notifications.length > 0) {
-      const unreadNotifications = notifications.filter(n => !n.isRead);
+      const unreadNotifications = notifications.filter((n: any) => !n.isRead);
       
       if (unreadNotifications.length > 0) {
         const latestNotification = unreadNotifications[0];
