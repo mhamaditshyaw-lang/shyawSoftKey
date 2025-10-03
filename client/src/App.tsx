@@ -177,7 +177,7 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/">
-        <ProtectedRoute requiredPermission="canViewDashboard">
+        <ProtectedRoute>
           <ModernDashboard />
         </ProtectedRoute>
       </Route>
