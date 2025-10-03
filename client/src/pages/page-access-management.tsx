@@ -14,7 +14,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Shield, Save, Users, Lock } from "lucide-react";
+import { Shield, Save, Users, Lock, ArrowLeft } from "lucide-react";
+import { Link } from "wouter";
 import type { User } from "@shared/schema";
 
 interface Page {
@@ -137,6 +138,16 @@ export default function PageAccessManagement() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="space-y-8 p-6 max-w-5xl mx-auto">
+        {/* Back Button */}
+        <div>
+          <Link href="/">
+            <Button variant="outline" size="sm">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Dashboard
+            </Button>
+          </Link>
+        </div>
+
         {/* Header Section */}
         <div className="relative overflow-hidden bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700">
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10" />
