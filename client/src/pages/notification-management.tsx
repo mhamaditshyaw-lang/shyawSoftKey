@@ -94,10 +94,7 @@ export default function NotificationManagement() {
 
   const markAsReadMutation = useMutation({
     mutationFn: (notificationId: number) => 
-      apiRequest(`/api/device-notifications/${notificationId}`, {
-        method: 'PATCH',
-        body: { isRead: true }
-      }),
+      apiRequest('PATCH', `/api/device-notifications/${notificationId}`, { isRead: true }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/device-notifications'] });
       toast({
@@ -116,9 +113,7 @@ export default function NotificationManagement() {
 
   const markAllAsReadMutation = useMutation({
     mutationFn: () => 
-      apiRequest('/api/device-notifications/mark-all-read', {
-        method: 'PATCH'
-      }),
+      apiRequest('PATCH', '/api/device-notifications/mark-all-read'),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/device-notifications'] });
       toast({
@@ -137,9 +132,7 @@ export default function NotificationManagement() {
 
   const deleteNotificationMutation = useMutation({
     mutationFn: (notificationId: number) => 
-      apiRequest(`/api/device-notifications/${notificationId}`, {
-        method: 'DELETE'
-      }),
+      apiRequest('DELETE', `/api/device-notifications/${notificationId}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/device-notifications'] });
       toast({

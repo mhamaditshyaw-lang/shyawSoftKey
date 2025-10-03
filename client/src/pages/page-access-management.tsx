@@ -63,7 +63,7 @@ export default function PageAccessManagement() {
   // Update page access mutation
   const updatePageAccessMutation = useMutation({
     mutationFn: (data: { userId: string; pagePermissions: Record<string, boolean> }) =>
-      apiRequest(`/api/users/${data.userId}/page-access`, "PUT", {
+      apiRequest("PUT", `/api/users/${data.userId}/page-access`, {
         pagePermissions: data.pagePermissions,
       }),
     onSuccess: () => {
