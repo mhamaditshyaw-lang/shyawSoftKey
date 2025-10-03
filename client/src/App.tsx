@@ -33,6 +33,7 @@ import Header from "@/components/layout/header";
 import SlidingSidebarMenu from "@/components/navigation/sliding-sidebar-menu";
 import UserSettingsPage from "@/pages/user-settings";
 import InternalUserManagementPage from "@/pages/internal-user-management";
+import PageAccessManagement from "@/pages/page-access-management";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -144,6 +145,11 @@ function Router() {
       </Route>
       <Route path="/user-settings" component={UserSettingsPage} />
       <Route path="/internal-user-management" component={InternalUserManagementPage} />
+      <Route path="/page-access-management">
+        <ProtectedRoute>
+          <PageAccessManagement />
+        </ProtectedRoute>
+      </Route>
       <Route path="/">
         <ProtectedRoute>
           <ModernDashboard />
