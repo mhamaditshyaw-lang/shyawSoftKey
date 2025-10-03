@@ -2,16 +2,14 @@ import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ShieldAlert } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function AccessDenied() {
   const [, setLocation] = useLocation();
+  const { user } = useAuth();
 
   const handleGoBack = () => {
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      setLocation("/");
-    }
+    setLocation("/");
   };
 
   return (
