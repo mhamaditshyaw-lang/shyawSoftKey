@@ -13,7 +13,7 @@ export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   max: 10, // Maximum number of connections
   idleTimeoutMillis: 30000, // Close idle connections after 30 seconds
-  connectionTimeoutMillis: 5000, // Connection timeout
+  connectionTimeoutMillis: 30000, // Connection timeout (increased for Neon database wake-up)
 });
 
 // Add connection error handling

@@ -19,8 +19,10 @@ export class ReminderNotificationService {
     console.log("Starting reminder notification service...");
     this.isRunning = true;
 
-    // Run immediately on start
-    this.checkAndSendReminders();
+    // Delay the first check by 10 seconds to allow database connection to be established
+    setTimeout(() => {
+      this.checkAndSendReminders();
+    }, 10000);
 
     // Then run every hour
     this.intervalId = setInterval(() => {
