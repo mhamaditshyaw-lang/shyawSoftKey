@@ -12,9 +12,11 @@ import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { Database, Search, RefreshCw, Filter, Download, Calendar, User, MessageSquare, Archive, CheckSquare } from "lucide-react";
 import { getRelativeTime } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 export default function AllDataPage() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState("all");
   const [customDate, setCustomDate] = useState("");
@@ -23,6 +25,15 @@ export default function AllDataPage() {
   const [userFilter, setUserFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+
+  // Helper to translate dynamic enum values with fallback
+  const translateDynamicValue = (namespace: string, value: string | undefined): string => {
+    if (!value) return t('unknown');
+    const key = `enums.${namespace}.${value}`;
+    const translated = t(key);
+    // Return translated value if found, otherwise return unknown instead of raw value
+    return translated !== key ? translated : t('unknown');
+  };
 
   // Fetch all data from different endpoints
   const { data: operationalData } = useQuery({
@@ -84,52 +95,52 @@ export default function AllDataPage() {
     ...(operationalData?.entries || []).map((item: any) => ({
       ...item,
       type: "operational",
-      title: "Operational Data",
-      description: `Ice Cream: ${item.dayIceCream || 0}/${item.nightIceCream || 0} | Albany: ${item.dayAlbany || 0}/${item.nightAlbany || 0}`,
+      title: t('operationalData'),
+      description: `${t('iceCream')}: ${item.dayIceCream || 0}/${item.nightIceCream || 0} | ${t('albany')}: ${item.dayAlbany || 0}/${item.nightAlbany || 0}`,
     })),
     ...(interviewsData?.requests || []).map((item: any) => ({
       ...item,
       type: "interview",
-      title: `Interview: ${item.position}`,
-      description: `Employee: ${item.candidateName} | Status: ${item.status}`,
-      userName: item.candidateName || 'Unknown',
-      userRole: 'candidate',
+      title: t('interviewPosition', { position: item.position }),
+      description: `${t('employee')}: ${item.candidateName} | ${t('statusLabel')}: ${translateDynamicValue('status', item.status || 'pending')}`,
+      userName: item.candidateName || t('unknown'),
+      userRole: t('candidate'),
       priority: item.status === 'urgent' ? 'high' : 'medium',
       status: item.status || 'pending',
     })),
     ...(todosData?.todoLists || []).map((item: any) => ({
       ...item,
       type: "todo",
-      title: `Todo: ${item.title}`,
-      description: `${item.items?.length || 0} tasks | Priority: ${item.priority}`,
-      userName: item.assignedTo ? `${item.assignedTo.firstName} ${item.assignedTo.lastName}` : (item.createdBy ? `${item.createdBy.firstName} ${item.createdBy.lastName}` : 'Unknown'),
-      userRole: item.assignedTo?.role || item.createdBy?.role || 'Unknown',
+      title: t('todoList', { title: item.title }),
+      description: `${t('tasksCount', { count: item.items?.length || 0 })} | ${t('priority')}: ${item.priority ? t(`enums.priority.${item.priority}`) : t('unknown')}`,
+      userName: item.assignedTo ? `${item.assignedTo.firstName} ${item.assignedTo.lastName}` : (item.createdBy ? `${item.createdBy.firstName} ${item.createdBy.lastName}` : t('unknown')),
+      userRole: item.assignedTo?.role ? t(`enums.role.${item.assignedTo.role}`) : (item.createdBy?.role ? t(`enums.role.${item.createdBy.role}`) : t('unknown')),
       priority: item.priority,
       status: item.items?.every((i: any) => i.isCompleted) ? 'completed' : (item.items?.some((i: any) => i.isCompleted) ? 'in-progress' : 'pending'),
     })),
     ...(feedbackData?.feedback || []).map((item: any) => ({
       ...item,
       type: "feedback",
-      title: `Feedback: ${item.type}`,
-      description: `Rating: ${item.rating}/5 | ${item.title || item.message?.substring(0, 50) || 'No description'}...`,
-      userName: item.submittedBy ? `${item.submittedBy.firstName} ${item.submittedBy.lastName}` : 'Unknown',
-      userRole: item.submittedBy?.role || 'Unknown',
+      title: `${t('feedback')}: ${translateDynamicValue('feedbackType', item.type)}`,
+      description: `${t('ratingOutOf5', { rating: item.rating })} | ${item.title || item.message?.substring(0, 50) || t('noDescription')}...`,
+      userName: item.submittedBy ? `${item.submittedBy.firstName} ${item.submittedBy.lastName}` : t('unknown'),
+      userRole: item.submittedBy?.role ? translateDynamicValue('role', item.submittedBy.role) : t('unknown'),
       priority: item.rating >= 4 ? 'high' : item.rating >= 3 ? 'medium' : 'low',
       status: item.rating ? 'completed' : 'pending',
     })),
     ...(archiveData?.archivedItems || []).map((item: any) => ({
       ...item,
       type: "archive",
-      title: `Archived: ${item.itemType}`,
-      description: `Reason: ${item.reason} | ID: ${item.itemId}`,
+      title: `${t('archived')}: ${translateDynamicValue('archiveItemType', item.itemType)}`,
+      description: `${t('reasonLabel')}: ${item.reason} | ${t('itemId')}: ${item.itemId}`,
     })),
     ...(usersData?.users || []).map((item: any) => ({
       ...item,
       type: "user",
-      title: `User: ${item.username}`,
-      description: `${item.firstName} ${item.lastName} | Role: ${item.role}`,
+      title: t('userUsername', { username: item.username }),
+      description: `${item.firstName} ${item.lastName} | ${t('role')}: ${item.role ? t(`enums.role.${item.role}`) : t('unknown')}`,
       userName: `${item.firstName} ${item.lastName}`,
-      userRole: item.role,
+      userRole: item.role ? t(`enums.role.${item.role}`) : t('unknown'),
       priority: item.role === 'admin' ? 'high' : item.role === 'manager' ? 'medium' : 'low',
       status: 'active',
     })),
@@ -234,13 +245,13 @@ export default function AllDataPage() {
   // Export data function
   const exportData = () => {
     const csvContent = [
-      ["Type", "Title", "Description", "Created Date", "Status"],
+      [t('csvHeaders.type'), t('csvHeaders.title'), t('csvHeaders.description'), t('csvHeaders.createdDate'), t('csvHeaders.status')],
       ...filteredData.map((item: any) => [
-        item.type,
+        t(`enums.dataType.${item.type}`) || item.type,
         item.title,
         item.description,
         new Date(item.createdAt || item.updatedAt || new Date()).toLocaleDateString(),
-        item.status || item.role || "N/A"
+        item.status ? translateDynamicValue('status', item.status) : (item.role ? translateDynamicValue('role', item.role) : t('naValue'))
       ])
     ].map(row => row.join(",")).join("\n");
 
@@ -323,8 +334,8 @@ export default function AllDataPage() {
       <div className="mb-6 md:mb-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">All Data Dashboard</h2>
-            <p className="text-sm md:text-base text-gray-600">Comprehensive view of all system data with advanced filtering</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{t('allDataDashboard')}</h2>
+            <p className="text-sm md:text-base text-gray-600">{t('allDataDashboardDesc')}</p>
           </div>
           <div className="flex space-x-3">
             <Button
@@ -332,14 +343,14 @@ export default function AllDataPage() {
               variant="outline"
             >
               <Download className="w-4 h-4 mr-2" />
-              Export CSV
+              {t('exportCsv')}
             </Button>
             <Button
               onClick={() => queryClient.invalidateQueries()}
               variant="outline"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
-              Refresh All
+              {t('refreshAll')}
             </Button>
           </div>
         </div>
@@ -351,7 +362,7 @@ export default function AllDataPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-100 text-xs font-medium">Operational</p>
+                <p className="text-blue-100 text-xs font-medium">{t('operational')}</p>
                 <p className="text-2xl font-bold">{operationalData?.entries?.length || 0}</p>
               </div>
               <Database className="w-8 h-8 text-blue-200" />
@@ -363,7 +374,7 @@ export default function AllDataPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-100 text-xs font-medium">Interviews</p>
+                <p className="text-green-100 text-xs font-medium">{t('interviews')}</p>
                 <p className="text-2xl font-bold">{interviewsData?.requests?.length || 0}</p>
               </div>
               <User className="w-8 h-8 text-green-200" />
@@ -375,7 +386,7 @@ export default function AllDataPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-yellow-100 text-xs font-medium">Todos</p>
+                <p className="text-yellow-100 text-xs font-medium">{t('todos')}</p>
                 <p className="text-2xl font-bold">{todosData?.todoLists?.length || 0}</p>
               </div>
               <CheckSquare className="w-8 h-8 text-yellow-200" />
@@ -387,7 +398,7 @@ export default function AllDataPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-purple-100 text-xs font-medium">Feedback</p>
+                <p className="text-purple-100 text-xs font-medium">{t('feedback')}</p>
                 <p className="text-2xl font-bold">{feedbackData?.feedback?.length || 0}</p>
               </div>
               <MessageSquare className="w-8 h-8 text-purple-200" />
@@ -399,7 +410,7 @@ export default function AllDataPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-100 text-xs font-medium">Archive</p>
+                <p className="text-gray-100 text-xs font-medium">{t('archive')}</p>
                 <p className="text-2xl font-bold">{archiveData?.archivedItems?.length || 0}</p>
               </div>
               <Archive className="w-8 h-8 text-gray-200" />
@@ -411,7 +422,7 @@ export default function AllDataPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-red-100 text-xs font-medium">Users</p>
+                <p className="text-red-100 text-xs font-medium">{t('users')}</p>
                 <p className="text-2xl font-bold">{usersData?.users?.length || 0}</p>
               </div>
               <User className="w-8 h-8 text-red-200" />
@@ -425,14 +436,14 @@ export default function AllDataPage() {
         <CardHeader>
           <CardTitle className="flex items-center text-lg">
             <Filter className="w-5 h-5 mr-2 text-blue-600" />
-            Advanced Filters & Search
+            {t('advancedFilters')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4">
             {/* Search Input */}
             <div className="space-y-2">
-              <Label htmlFor="search" className="text-sm font-medium">Search All Data</Label>
+              <Label htmlFor="search" className="text-sm font-medium">{t('searchAllData')}</Label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
@@ -446,36 +457,36 @@ export default function AllDataPage() {
 
             {/* Data Type Filter */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Data Type</Label>
+              <Label className="text-sm font-medium">{t('dataType')}</Label>
               <Select value={dataType} onValueChange={setDataType}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="operational">Operational Data</SelectItem>
-                  <SelectItem value="interview">Interviews</SelectItem>
-                  <SelectItem value="todo">Todo Lists</SelectItem>
-                  <SelectItem value="feedback">Feedback</SelectItem>
-                  <SelectItem value="archive">Archived Items</SelectItem>
-                  <SelectItem value="user">Users</SelectItem>
+                  <SelectItem value="all">{t('allTypes')}</SelectItem>
+                  <SelectItem value="operational">{t('operationalData')}</SelectItem>
+                  <SelectItem value="interview">{t('interviews')}</SelectItem>
+                  <SelectItem value="todo">{t('todoLists')}</SelectItem>
+                  <SelectItem value="feedback">{t('feedback')}</SelectItem>
+                  <SelectItem value="archive">{t('archivedItems')}</SelectItem>
+                  <SelectItem value="user">{t('users')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Date Filter */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Date Filter</Label>
+              <Label className="text-sm font-medium">{t('dateFilter')}</Label>
               <Select value={dateFilter} onValueChange={setDateFilter}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="today">Today</SelectItem>
-                  <SelectItem value="week">This Week</SelectItem>
-                  <SelectItem value="month">This Month</SelectItem>
-                  <SelectItem value="custom">Custom Date</SelectItem>
-                  <SelectItem value="all">All Dates</SelectItem>
+                  <SelectItem value="today">{t('today')}</SelectItem>
+                  <SelectItem value="week">{t('thisWeek')}</SelectItem>
+                  <SelectItem value="month">{t('thisMonth')}</SelectItem>
+                  <SelectItem value="custom">{t('customDate')}</SelectItem>
+                  <SelectItem value="all">{t('allDates')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -483,7 +494,7 @@ export default function AllDataPage() {
             {/* Custom Date */}
             {dateFilter === "custom" && (
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Select Date</Label>
+                <Label className="text-sm font-medium">{t('selectDate')}</Label>
                 <Input
                   type="date"
                   value={customDate}
@@ -494,13 +505,13 @@ export default function AllDataPage() {
 
             {/* User Filter */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Filter by User</Label>
+              <Label className="text-sm font-medium">{t('filterByUser')}</Label>
               <Select value={userFilter} onValueChange={setUserFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="All Users" />
+                  <SelectValue placeholder={t('allUsers')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Users</SelectItem>
+                  <SelectItem value="all">{t('allUsers')}</SelectItem>
                   {uniqueUsers.map((userName) => (
                     <SelectItem key={userName} value={userName}>{userName}</SelectItem>
                   ))}
@@ -510,47 +521,47 @@ export default function AllDataPage() {
 
             {/* Priority Filter */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Filter by Priority</Label>
+              <Label className="text-sm font-medium">{t('filterByPriority')}</Label>
               <Select value={priorityFilter} onValueChange={setPriorityFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="All Priorities" />
+                  <SelectValue placeholder={t('allPriorities')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Priorities</SelectItem>
-                  <SelectItem value="high">High Priority</SelectItem>
-                  <SelectItem value="medium">Medium Priority</SelectItem>
-                  <SelectItem value="low">Low Priority</SelectItem>
+                  <SelectItem value="all">{t('allPriorities')}</SelectItem>
+                  <SelectItem value="high">{t('highPriority')}</SelectItem>
+                  <SelectItem value="medium">{t('mediumPriority')}</SelectItem>
+                  <SelectItem value="low">{t('lowPriority')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Status Filter */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Filter by Status</Label>
+              <Label className="text-sm font-medium">{t('filterByStatus')}</Label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="All Statuses" />
+                  <SelectValue placeholder={t('allStatuses')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="all">{t('allStatuses')}</SelectItem>
+                  <SelectItem value="pending">{t('pending')}</SelectItem>
+                  <SelectItem value="in-progress">{t('inProgressStatus')}</SelectItem>
+                  <SelectItem value="completed">{t('completed')}</SelectItem>
+                  <SelectItem value="active">{t('active')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Auto Refresh */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Auto Refresh</Label>
+              <Label className="text-sm font-medium">{t('autoRefresh')}</Label>
               <div className="flex items-center space-x-2">
                 <Switch
                   checked={autoRefresh}
                   onCheckedChange={setAutoRefresh}
                 />
                 <span className="text-sm text-gray-600">
-                  {autoRefresh ? "Every 30s" : "Off"}
+                  {autoRefresh ? t('every30s') : t('off')}
                 </span>
               </div>
             </div>
@@ -560,13 +571,13 @@ export default function AllDataPage() {
           <div className="mt-4 pt-4 border-t border-blue-200">
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">
-                Showing {filteredData.length} of {allData.length} total records
-                {dataType !== "all" && ` • Type: ${dataType}`}
-                {userFilter !== "all" && ` • User: ${userFilter}`}
-                {priorityFilter !== "all" && ` • Priority: ${priorityFilter}`}
-                {statusFilter !== "all" && ` • Status: ${statusFilter}`}
-                {dateFilter !== "all" && ` • Date: ${dateFilter === "custom" ? customDate : dateFilter}`}
-                {searchTerm && ` • Search: "${searchTerm}"`}
+                {t('showing')} {filteredData.length} {t('of')} {allData.length} {t('totalRecords')}
+                {dataType !== "all" && ` • ${t('type')}: ${dataType}`}
+                {userFilter !== "all" && ` • ${t('user')}: ${userFilter}`}
+                {priorityFilter !== "all" && ` • ${t('priority')}: ${priorityFilter}`}
+                {statusFilter !== "all" && ` • ${t('status')}: ${statusFilter}`}
+                {dateFilter !== "all" && ` • ${t('date')}: ${dateFilter === "custom" ? customDate : dateFilter}`}
+                {searchTerm && ` • ${t('search')}: "${searchTerm}"`}
               </span>
               {(searchTerm || dateFilter !== "all" || dataType !== "all" || userFilter !== "all" || priorityFilter !== "all" || statusFilter !== "all") && (
                 <Button
@@ -583,7 +594,7 @@ export default function AllDataPage() {
                   }}
                   className="text-blue-600 hover:text-blue-800"
                 >
-                  Clear Filters
+                  {t('clearFilters')}
                 </Button>
               )}
             </div>
@@ -596,18 +607,18 @@ export default function AllDataPage() {
         <CardHeader>
           <CardTitle className="flex items-center">
             <Database className="w-5 h-5 mr-2" />
-            All System Data
+            {t('allSystemData')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {filteredData.length === 0 ? (
             <div className="text-center py-12">
               <Database className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No data found</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">{t('noDataFound')}</h3>
               <p className="text-gray-500">
                 {searchTerm || dateFilter !== "all" || dataType !== "all"
-                  ? "No data matches your current filters."
-                  : "No data available in the system."}
+                  ? t('noDataMatchesFilters')
+                  : t('noDataAvailable')}
               </p>
             </div>
           ) : (
@@ -620,16 +631,16 @@ export default function AllDataPage() {
                         {getTypeIcon(item.type)}
                         <h3 className="font-medium text-gray-900">{item.title}</h3>
                         <Badge className={getTypeBadgeColor(item.type)}>
-                          {item.type}
+                          {translateDynamicValue('dataType', item.type)}
                         </Badge>
                         {item.status && (
                           <Badge className={getStatusBadgeColor(item.status)}>
-                            {item.status}
+                            {translateDynamicValue('status', item.status)}
                           </Badge>
                         )}
                         {item.priority && (
                           <Badge className={getPriorityBadgeColor(item.priority)}>
-                            {item.priority} priority
+                            {translateDynamicValue('priority', item.priority)} {t('priority')}
                           </Badge>
                         )}
                       </div>

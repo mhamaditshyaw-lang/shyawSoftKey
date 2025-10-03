@@ -570,7 +570,83 @@ const resources = {
       ratingLabel: "Rating",
       messageLabel: "Message",
       officeRole: "Office",
-      disabledStatus: "Disabled"
+      disabledStatus: "Disabled",
+      
+      // Additional All Data Page keys
+      allDataDashboardDesc: "Comprehensive view of all system data with advanced filtering",
+      interview: "Interview",
+      interviewPosition: "Interview: {{position}}",
+      employee: "Employee",
+      statusLabel: "Status",
+      todoList: "Todo: {{title}}",
+      tasksCount: "{{count}} tasks",
+      feedbackRating: "Feedback: {{type}}",
+      ratingOutOf5: "Rating: {{rating}}/5",
+      archivedItemType: "Archived: {{itemType}}",
+      reasonLabel: "Reason",
+      userUsername: "User: {{username}}",
+      unknown: "Unknown",
+      noDescription: "No description",
+      candidate: "Candidate",
+      naValue: "N/A",
+      allSystemData: "All System Data",
+      noDataFound: "No data found",
+      noDataMatchesFilters: "No data matches your current filters.",
+      noDataAvailable: "No data available in the system.",
+      archived: "Archived",
+      csvHeaders: {
+        type: "Type",
+        title: "Title", 
+        description: "Description",
+        createdDate: "Created Date",
+        status: "Status"
+      },
+      
+      // Enum translations
+      enums: {
+        priority: {
+          high: "High",
+          medium: "Medium",
+          low: "Low"
+        },
+        status: {
+          pending: "Pending",
+          "in-progress": "In Progress",
+          inProgress: "In Progress",
+          completed: "Completed",
+          active: "Active",
+          urgent: "Urgent"
+        },
+        dataType: {
+          operational: "Operational",
+          interview: "Interview",
+          todo: "Todo",
+          feedback: "Feedback",
+          archive: "Archive",
+          user: "User"
+        },
+        role: {
+          admin: "Admin",
+          manager: "Manager",
+          employee: "Employee",
+          user: "User",
+          security: "Security"
+        },
+        feedbackType: {
+          suggestion: "Suggestion",
+          bug: "Bug",
+          complaint: "Complaint",
+          praise: "Praise",
+          feature: "Feature Request",
+          other: "Other"
+        },
+        archiveItemType: {
+          interview: "Interview",
+          todo: "Todo",
+          feedback: "Feedback",
+          user: "User"
+        }
+      }
 
     }
   },
@@ -1265,13 +1341,6 @@ const resources = {
       shortTitleManagement: "بەڕێوەبەری",
       shortTitleAnalytics: "شیکاری",
       shortTitleArchive: "ئەرشیف",
-
-      // All Data Page - additional keys not already defined
-      interviewItem: "کۆبوونەوە",
-      archivedItem: "ئەرشیفکراو",
-      operationalType: "کارکردن",
-      urgentPriority: "پەلە",
-      inProgressStatus: "لە بەردەوامدا",
       
       // Notification Management
       notificationManagement: "بەڕێوەبردنی ئاگادارکردنەوە",
@@ -1345,7 +1414,83 @@ const resources = {
       ratingLabel: "پلەدان",
       messageLabel: "پەیام",
       officeRole: "ئۆفیس",
-      disabledStatus: "ناچالاککراو"
+      disabledStatus: "ناچالاککراو",
+      
+      // Additional All Data Page keys
+      allDataDashboardDesc: "بینینی گشتگیری هەموو داتاکانی سیستەم لەگەڵ پاڵاوتنی پێشکەوتوو",
+      interview: "کۆبوونەوە",
+      interviewPosition: "کۆبوونەوە: {{position}}",
+      employee: "کارمەند",
+      statusLabel: "دۆخ",
+      todoList: "ئەرک: {{title}}",
+      tasksCount: "{{count}} ئەرک",
+      feedbackRating: "فیدباک: {{type}}",
+      ratingOutOf5: "پلەدان: {{rating}}/٥",
+      archivedItemType: "ئەرشیفکراو: {{itemType}}",
+      reasonLabel: "هۆکار",
+      userUsername: "بەکارهێنەر: {{username}}",
+      unknown: "نەزانراو",
+      noDescription: "وەسف نییە",
+      candidate: "کاندید",
+      naValue: "نییە",
+      allSystemData: "هەموو داتاکانی سیستەم",
+      noDataFound: "هیچ داتایەک نەدۆزرایەوە",
+      noDataMatchesFilters: "هیچ داتایەک لەگەڵ پاڵاوتنەکانت ناگونجێت.",
+      noDataAvailable: "هیچ داتایەک لە سیستەمدا بەردەست نییە.",
+      archived: "ئەرشیفکراو",
+      csvHeaders: {
+        type: "جۆر",
+        title: "سەردێڕ", 
+        description: "وەسف",
+        createdDate: "بەرواری دروستکردن",
+        status: "دۆخ"
+      },
+      
+      // Enum translations
+      enums: {
+        priority: {
+          high: "بەرز",
+          medium: "ناوەند",
+          low: "نزم"
+        },
+        status: {
+          pending: "چاوەڕوان",
+          "in-progress": "لە بەردەوامدا",
+          inProgress: "لە بەردەوامدا",
+          completed: "تەواو",
+          active: "چالاک",
+          urgent: "پەلە"
+        },
+        dataType: {
+          operational: "کارکردن",
+          interview: "کۆبوونەوە",
+          todo: "ئەرک",
+          feedback: "فیدباک",
+          archive: "ئەرشیف",
+          user: "بەکارهێنەر"
+        },
+        role: {
+          admin: "بەڕێوەبەر",
+          manager: "سەرۆک",
+          employee: "کارمەند",
+          user: "بەکارهێنەر",
+          security: "پاراستن"
+        },
+        feedbackType: {
+          suggestion: "پێشنیار",
+          bug: "هەڵە",
+          complaint: "گلەیی",
+          praise: "ستایش",
+          feature: "داواکاری تایبەتمەندی",
+          other: "دیکە"
+        },
+        archiveItemType: {
+          interview: "کۆبوونەوە",
+          todo: "ئەرک",
+          feedback: "فیدباک",
+          user: "بەکارهێنەر"
+        }
+      }
 
     }
   }
