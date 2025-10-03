@@ -256,7 +256,6 @@ const resources = {
       uploads: "Uploads",
       
       // Page titles and navigation
-      userManagementPage: "User Management",
       todoManagementPage: "Task Management",
       interviewsPage: "Meetings",
       reportsPage: "Reports",

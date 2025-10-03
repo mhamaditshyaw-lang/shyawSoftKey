@@ -18,8 +18,7 @@ import {
   Plus,
   Building2,
   Activity,
-  Bell,
-  UserCog
+  Bell
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
