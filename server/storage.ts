@@ -41,6 +41,8 @@ export interface IStorage {
   deleteUser(id: number): Promise<boolean>;
   getAllUsers(): Promise<User[]>;
   getUsersByRole(role: string): Promise<User[]>;
+  updateUserPageAccess(userId: number, pagePermissions: Record<string, boolean>): Promise<User>;
+  getUserPageAccess(userId: number): Promise<Record<string, boolean>>;
   
   // Todo methods
   getTodoLists(): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]>;
@@ -200,6 +202,56 @@ export class DatabaseStorage implements IStorage {
 
   async getUsersByRole(role: string): Promise<User[]> {
     return await db.select().from(users).where(eq(users.role, role as any));
+  }
+
+  async updateUserPageAccess(userId: number, pagePermissions: Record<string, boolean>): Promise<User> {
+    return await executeWithRetry(async () => {
+      const user = await this.getUser(userId);
+      if (!user) {
+        throw new Error(`User with id ${userId} not found`);
+      }
+
+      const currentPermissions = (user.permissions as Record<string, any>) || {};
+      const updatedPermissions = {
+        ...currentPermissions,
+        ...pagePermissions,
+      };
+
+      const [updatedUser] = await db
+        .update(users)
+        .set({ 
+          permissions: updatedPermissions,
+          lastActiveAt: new Date()
+        })
+        .where(eq(users.id, userId))
+        .returning();
+
+      if (!updatedUser) {
+        throw new Error(`Failed to update user ${userId}`);
+      }
+
+      return updatedUser;
+    });
+  }
+
+  async getUserPageAccess(userId: number): Promise<Record<string, boolean>> {
+    return await executeWithRetry(async () => {
+      const user = await this.getUser(userId);
+      if (!user) {
+        return {};
+      }
+
+      const permissions = (user.permissions as Record<string, any>) || {};
+      
+      const pagePermissions: Record<string, boolean> = {};
+      Object.keys(permissions).forEach(key => {
+        if (key.startsWith('canView')) {
+          pagePermissions[key] = Boolean(permissions[key]);
+        }
+      });
+
+      return pagePermissions;
+    });
   }
 
   async getTodoLists(): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]> {
@@ -591,26 +643,6 @@ export class DatabaseStorage implements IStorage {
   }
 
 
-
-  async createFeedback(feedbackData: any): Promise<any> {
-    const { FeedbackService } = await import("./feedback-service");
-    return await FeedbackService.createFeedback(feedbackData);
-  }
-
-  async getAllFeedback(): Promise<any[]> {
-    const { FeedbackService } = await import("./feedback-service");
-    return await FeedbackService.getAllFeedback();
-  }
-
-  async getFeedbackByUser(userId: number): Promise<any[]> {
-    const { FeedbackService } = await import("./feedback-service");
-    return await FeedbackService.getFeedbackByUser(userId);
-  }
-
-  async deleteFeedback(feedbackId: number): Promise<boolean> {
-    const { FeedbackService } = await import("./feedback-service");
-    return await FeedbackService.deleteFeedback(feedbackId);
-  }
 
   async archiveItem(itemType: string, itemId: number, itemData: any, archivedById: number, reason?: string): Promise<any> {
     const { FeedbackService } = await import("./feedback-service");

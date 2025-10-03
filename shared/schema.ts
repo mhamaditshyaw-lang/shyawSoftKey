@@ -241,6 +241,30 @@ export const updateUserPasswordSchema = z.object({
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain at least one uppercase letter, one lowercase letter, and one number"),
 });
 
+// Page Access Management - Maps application pages to permission keys
+export const PAGE_PERMISSIONS = {
+  "/": "canViewDashboard",
+  "/user-management": "canViewUserManagement",
+  "/todos": "canViewTodos",
+  "/reminders": "canViewReminders",
+  "/interviews": "canViewInterviews",
+  "/feedback": "canViewFeedback",
+  "/archive": "canViewArchive",
+  "/all-data": "canViewAllData",
+  "/add-employee": "canViewAddEmployee",
+  "/reports": "canViewReports",
+  "/metrics": "canViewMetrics",
+  "/user-activity": "canViewUserActivity",
+  "/data-view": "canViewDataView",
+  "/employee-management": "canViewEmployeeManagement",
+  "/notification-management": "canViewNotificationManagement",
+  "/user-settings": "canViewSettings",
+} as const;
+
+export type PagePath = keyof typeof PAGE_PERMISSIONS;
+export type PermissionKey = typeof PAGE_PERMISSIONS[PagePath];
+export type PagePermissions = Record<string, boolean>;
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
