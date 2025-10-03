@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
+import { PAGE_PERMISSIONS } from "@shared/schema";
 import { 
   Home, 
   Users, 
@@ -24,7 +25,6 @@ interface NavigationItem {
   subtitle: string;
   icon: any;
   href: string;
-  roles?: string[];
   badge?: string;
   color: string;
 }
@@ -35,6 +35,18 @@ export default function NavigationBar() {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const desktopScrollRef = useRef<HTMLDivElement>(null);
   const mobileScrollRef = useRef<HTMLDivElement>(null);
+  
+  const isAdmin = user?.role === 'admin';
+  
+  const hasPermission = (href: string): boolean => {
+    if (isAdmin) return true;
+    
+    const permissionKey = PAGE_PERMISSIONS[href as keyof typeof PAGE_PERMISSIONS];
+    if (!permissionKey) return false;
+    
+    const permissions = user?.permissions as Record<string, boolean> | undefined;
+    return permissions?.[permissionKey] === true;
+  };
 
   // Enhanced wheel scrolling with proper event handling
   useEffect(() => {
@@ -139,7 +151,6 @@ export default function NavigationBar() {
       subtitle: "Administration",
       icon: Users,
       href: "/users",
-      roles: ["admin"],
       color: "from-red-500 to-red-600"
     },
     {
@@ -156,7 +167,6 @@ export default function NavigationBar() {
       subtitle: "Analytics",
       icon: BarChart3,
       href: "/reports",
-      roles: ["admin", "manager"],
       color: "from-indigo-500 to-indigo-600"
     },
     {
@@ -165,14 +175,11 @@ export default function NavigationBar() {
       subtitle: "Historical Data",
       icon: Archive,
       href: "/archive",
-      roles: ["admin", "manager"],
       color: "from-gray-500 to-gray-600"
     }
   ];
 
-  const filteredItems = navigationItems.filter(item => 
-    !item.roles || item.roles.includes(user?.role || '')
-  );
+  const filteredItems = navigationItems.filter(item => hasPermission(item.href));
 
   const isActive = (href: string) => {
     if (href === "/") return location === "/";

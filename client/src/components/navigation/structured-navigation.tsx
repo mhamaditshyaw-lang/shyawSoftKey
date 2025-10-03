@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import { PAGE_PERMISSIONS } from "@shared/schema";
 import {
   Home,
   Users,
@@ -32,7 +33,6 @@ interface NavigationItem {
   title?: string;
   icon?: React.ReactNode;
   children?: NavigationItem[];
-  roles?: string[];
 }
 
 type Navigation = NavigationItem[];
@@ -47,7 +47,6 @@ const NAVIGATION: Navigation = [
     title: 'Dashboard',
     icon: <Home className="w-5 h-5" />,
   },
-
   {
     segment: 'todos',
     title: 'Task Management',
@@ -79,7 +78,6 @@ const NAVIGATION: Navigation = [
         segment: 'archive',
         title: 'Completed Reviews',
         icon: <Archive className="w-4 h-4" />,
-        roles: ['admin', 'manager'],
       },
     ],
   },
@@ -97,7 +95,6 @@ const NAVIGATION: Navigation = [
         segment: 'all-data',
         title: 'All Data Dashboard',
         icon: <Activity className="w-4 h-4" />,
-        roles: ['admin', 'manager'],
       },
     ],
   },
@@ -112,7 +109,6 @@ const NAVIGATION: Navigation = [
     segment: 'reports',
     title: 'Management Reports',
     icon: <BarChart3 className="w-5 h-5" />,
-    roles: ['admin', 'manager'],
     children: [
       {
         segment: 'reports',
@@ -142,6 +138,19 @@ export default function StructuredNavigation({ className }: StructuredNavigation
   const { user } = useAuth();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  
+  const isAdmin = user?.role === 'admin';
+  
+  const hasPermission = (segment: string): boolean => {
+    if (isAdmin) return true;
+    
+    const href = segment === '' ? '/' : `/${segment}`;
+    const permissionKey = PAGE_PERMISSIONS[href as keyof typeof PAGE_PERMISSIONS];
+    if (!permissionKey) return false;
+    
+    const permissions = user?.permissions as Record<string, boolean> | undefined;
+    return permissions?.[permissionKey] === true;
+  };
 
   // Enhanced scrolling with mouse wheel and keyboard support
   useEffect(() => {
@@ -189,8 +198,9 @@ export default function StructuredNavigation({ className }: StructuredNavigation
   };
 
   const hasAccess = (item: NavigationItem) => {
-    if (!item.roles) return true;
-    return user && item.roles.includes(user.role);
+    if (item.kind === 'header' || item.kind === 'divider') return true;
+    if (!item.segment) return true;
+    return hasPermission(item.segment);
   };
 
   const isActive = (segment: string) => {

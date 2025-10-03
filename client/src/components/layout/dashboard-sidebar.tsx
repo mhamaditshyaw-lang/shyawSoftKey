@@ -26,11 +26,10 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslation } from "react-i18next";
+import { PAGE_PERMISSIONS } from "@shared/schema";
 
-// Assuming SidebarMenuButton is defined elsewhere and imported
-// For the sake of completeness, let's define a placeholder if it's not provided.
-// If SidebarMenuButton is a component you have, ensure it's imported correctly.
-const SidebarMenuButton = ({ children, asChild }) => {
+// Placeholder component (not used anymore, kept for compatibility)
+const SidebarMenuButton = ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => {
   if (asChild) {
     return <>{children}</>;
   }
@@ -48,6 +47,18 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
   const [location] = useLocation();
   const { user } = useAuth();
   const { t } = useTranslation();
+  
+  const isAdmin = user?.role === 'admin';
+  
+  const hasPermission = (href: string): boolean => {
+    if (isAdmin) return true;
+    
+    const permissionKey = PAGE_PERMISSIONS[href as keyof typeof PAGE_PERMISSIONS];
+    if (!permissionKey) return false;
+    
+    const permissions = user?.permissions as Record<string, boolean> | undefined;
+    return permissions?.[permissionKey] === true;
+  };
 
   const navigationItems = [
     {
@@ -55,91 +66,76 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       href: "/",
       icon: Home,
       badge: null,
-      roles: ["admin", "manager", "security", "office", "secretary", "office_team"]
     },
     {
       title: t("users"),
       href: "/users",
       icon: Users,
       badge: null,
-      roles: ["admin", "manager", "office", "office_team"]
     },
-
     {
       title: t("todos"),
       href: "/todos",
       icon: CheckSquare,
       badge: null,
-      roles: ["admin", "manager", "security", "office", "secretary", "office_team"]
     },
     {
       title: "Reminders",
       href: "/reminders",
       icon: Bell,
       badge: null,
-      roles: ["admin", "manager", "security", "office", "secretary", "office_team"]
     },
     {
       title: t("interviews"),
       href: "/interviews",
       icon: UserCheck,
       badge: null,
-      roles: ["admin", "manager", "security", "office", "secretary", "office_team"]
     },
     {
       title: t("reports"),
       href: "/reports",
       icon: BarChart3,
       badge: null,
-      roles: ["admin", "manager", "office", "office_team"]
     },
     {
       title: t("feedback"),
       href: "/feedback",
       icon: MessageSquare,
       badge: null,
-      roles: ["admin", "manager", "security", "secretary", "office_team"]
     },
     {
       title: t("archive"),
       href: "/archive",
       icon: Archive,
       badge: null,
-      roles: ["admin", "manager", "office", "office_team"]
     },
     {
       title: "Daily Operations",
       href: "/metrics",
       icon: BarChart3,
       badge: "Data Entry",
-      roles: ["admin", "manager", "security", "office", "secretary", "office_team"]
     },
     {
       title: "Data View",
       href: "/data-view",
       icon: Database,
       badge: null,
-      roles: ["admin", "manager", "security", "office", "office_team"]
     },
     {
       title: t("allData"),
       href: "/all-data",
       icon: Shield,
       badge: null,
-      roles: ["admin"]
     },
     {
       title: "User Activity",
       href: "/user-activity",
       icon: Activity,
       badge: "Tracking",
-      roles: ["admin", "manager", "office", "office_team"]
     }
   ];
 
-  const filteredItems = navigationItems.filter(item => 
-    item.roles.includes(user?.role || "")
-  );
+  const filteredItems = navigationItems.filter(item => hasPermission(item.href));
 
   const isActive = (href: string) => {
     if (href === "/") {
@@ -224,33 +220,81 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
           );
         })}
 
-        {/* User Management - Admin/Manager only */}
-        {(user?.role === "admin" || user?.role === "manager") && (
-          <SidebarMenuButton asChild>
-            <Link href="/user-management" className="flex items-center gap-3">
-              <Users className="h-4 w-4" />
-              <span>User Management</span>
-            </Link>
-          </SidebarMenuButton>
-        )}
-
-        {/* Internal User Management - Admin/Manager only */}
-        {(user?.role === "admin" || user?.role === "manager") && (
-          <SidebarMenuButton asChild>
-            <Link href="/internal-user-management" className="flex items-center gap-3">
-              <UserCog className="h-4 w-4" />
-              <span>Internal Users</span>
-            </Link>
-          </SidebarMenuButton>
-        )}
-
-        {/* User Settings */}
-        <SidebarMenuButton asChild>
-          <Link href="/user-settings" className="flex items-center gap-3">
-            <Settings className="h-4 w-4" />
-            <span>Settings</span>
+        {hasPermission("/user-management") && (
+          <Link href="/user-management">
+            <Button
+              variant={isActive("/user-management") ? "default" : "ghost"}
+              size="sm"
+              className={cn(
+                "w-full justify-start gap-3 transition-all duration-200",
+                isActive("/user-management")
+                  ? "bg-dashboard-primary text-white shadow-lg hover:bg-dashboard-primary/90"
+                  : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
+                isCollapsed && "justify-center px-2"
+              )}
+            >
+              <Users className={cn("h-5 w-5", isActive("/user-management") && "text-white")} />
+              {!isCollapsed && <span className="flex-1 text-left">User Management</span>}
+            </Button>
           </Link>
-        </SidebarMenuButton>
+        )}
+
+        {isAdmin && (
+          <Link href="/internal-user-management">
+            <Button
+              variant={isActive("/internal-user-management") ? "default" : "ghost"}
+              size="sm"
+              className={cn(
+                "w-full justify-start gap-3 transition-all duration-200",
+                isActive("/internal-user-management")
+                  ? "bg-dashboard-primary text-white shadow-lg hover:bg-dashboard-primary/90"
+                  : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
+                isCollapsed && "justify-center px-2"
+              )}
+            >
+              <UserCog className={cn("h-5 w-5", isActive("/internal-user-management") && "text-white")} />
+              {!isCollapsed && <span className="flex-1 text-left">Internal Users</span>}
+            </Button>
+          </Link>
+        )}
+
+        {isAdmin && (
+          <Link href="/page-access-management">
+            <Button
+              variant={isActive("/page-access-management") ? "default" : "ghost"}
+              size="sm"
+              className={cn(
+                "w-full justify-start gap-3 transition-all duration-200",
+                isActive("/page-access-management")
+                  ? "bg-dashboard-primary text-white shadow-lg hover:bg-dashboard-primary/90"
+                  : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
+                isCollapsed && "justify-center px-2"
+              )}
+            >
+              <Shield className={cn("h-5 w-5", isActive("/page-access-management") && "text-white")} />
+              {!isCollapsed && <span className="flex-1 text-left">Page Access Management</span>}
+            </Button>
+          </Link>
+        )}
+
+        {hasPermission("/user-settings") && (
+          <Link href="/user-settings">
+            <Button
+              variant={isActive("/user-settings") ? "default" : "ghost"}
+              size="sm"
+              className={cn(
+                "w-full justify-start gap-3 transition-all duration-200",
+                isActive("/user-settings")
+                  ? "bg-dashboard-primary text-white shadow-lg hover:bg-dashboard-primary/90"
+                  : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
+                isCollapsed && "justify-center px-2"
+              )}
+            >
+              <Settings className={cn("h-5 w-5", isActive("/user-settings") && "text-white")} />
+              {!isCollapsed && <span className="flex-1 text-left">Settings</span>}
+            </Button>
+          </Link>
+        )}
       </nav>
 
       {/* User Info */}
