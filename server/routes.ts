@@ -1067,7 +1067,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/interviews", authenticateToken, requireRole(['security', 'admin', 'manager', 'office', 'office_team']), async (req: AuthRequest, res) => {
+  app.post("/api/interviews", authenticateToken, attachUserScope, requireRole(['security', 'admin', 'manager', 'office', 'office_team']), async (req: AuthRequest, res) => {
     try {
       // Transform the data before validation
       const transformedData = {
@@ -1081,8 +1081,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         description: req.body.description && req.body.description.trim() !== "" ? req.body.description : undefined,
       };
 
-
       const requestData = insertInterviewRequestSchema.parse(transformedData);
+
+      // Verify managerId is in accessible scope (for non-admin roles)
+      if (req.user?.role !== 'admin' && requestData.managerId) {
+        assertUserInScope(requestData.managerId, req.accessibleUserIds!);
+      }
+
       const request = await storage.createInterviewRequest(requestData);
 
       // Send device notification about new interview request
@@ -1111,14 +1116,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/interviews/:id", authenticateToken, requireRole(['manager', 'admin', 'office', 'office_team']), async (req, res) => {
+  app.patch("/api/interviews/:id", authenticateToken, attachUserScope, requireRole(['manager', 'admin', 'office', 'office_team']), async (req: AuthRequest, res) => {
     try {
       const id = parseInt(req.params.id);
       const updates = req.body;
 
-      // Get original request to get requestedById
-      const allRequests = await storage.getInterviewRequests();
-      const original = allRequests.find(r => r.id === id);
+      // Verify interview is in accessible scope (for non-admin roles)
+      if (req.user?.role !== 'admin') {
+        await assertInterviewInScope(id, req.accessibleUserIds!);
+      }
+
+      // Get original request for notification purposes
+      const original = await storage.getInterviewRequest(id);
+      if (!original) {
+        return res.status(404).json({ message: "Interview request not found" });
+      }
 
       const request = await storage.updateInterviewRequest(id, updates);
       if (!request) {
@@ -1126,7 +1138,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Send device notification if status changed
-      if (updates.status && original && (updates.status === 'approved' || updates.status === 'rejected')) {
+      if (updates.status && (updates.status === 'approved' || updates.status === 'rejected')) {
         const { DeviceNotificationService } = await import("./device-notification-service");
         await DeviceNotificationService.createUserNotification(
           original.requestedBy.id,
