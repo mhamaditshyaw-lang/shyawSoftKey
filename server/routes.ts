@@ -601,12 +601,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/todos", authenticateToken, async (req: AuthRequest, res) => {
+  app.post("/api/todos", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const todoData = insertTodoListSchema.parse({
         ...req.body,
         createdById: req.user?.id || 0,
       });
+
+      // Verify assignedToId is in accessible scope (for non-admin roles)
+      if (req.user?.role !== 'admin' && todoData.assignedToId) {
+        assertUserInScope(todoData.assignedToId, req.accessibleUserIds!);
+      }
 
       const todoList = await storage.createTodoList(todoData);
       const fullTodoList = await storage.getTodoList(todoList.id);
@@ -629,7 +634,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/todos/items", authenticateToken, async (req: AuthRequest, res) => {
+  app.post("/api/todos/items", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const { todoListId, text, priority } = req.body;
       console.log("Creating todo item with data:", { todoListId, text, priority, user: req.user?.id });
@@ -637,6 +642,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate input
       if (!todoListId || !text || !text.trim()) {
         return res.status(400).json({ message: "Todo list ID and task text are required" });
+      }
+
+      // Verify todoList is in accessible scope (for non-admin roles)
+      if (req.user?.role !== 'admin') {
+        await assertTodoListInScope(parseInt(todoListId), req.accessibleUserIds!);
       }
 
       const itemData = {
@@ -658,9 +668,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/todos/:id/items", authenticateToken, async (req: AuthRequest, res) => {
+  app.post("/api/todos/:id/items", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const todoListId = parseInt(req.params.id);
+      
+      // Verify todoList is in accessible scope (for non-admin roles)
+      if (req.user?.role !== 'admin') {
+        await assertTodoListInScope(todoListId, req.accessibleUserIds!);
+      }
+
       const itemData = insertTodoItemSchema.parse({
         ...req.body,
         todoListId,
@@ -673,31 +689,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/todos/items/:id", authenticateToken, async (req: AuthRequest, res) => {
+  app.patch("/api/todos/items/:id", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const id = parseInt(req.params.id);
       const updates = req.body;
 
-      // Get the todo item first to check authorization
-      const existingItem = await storage.getTodoItem(id);
-      if (!existingItem) {
-        return res.status(404).json({ message: "Todo item not found" });
-      }
-
-      // Get the todo list to check ownership for office users
-      const todoList = await storage.getTodoList(existingItem.todoListId);
-      if (!todoList) {
-        return res.status(404).json({ message: "Associated todo list not found" });
-      }
-
-      // Authorization: Office users can only complete/update tasks in lists they own or are assigned to
-      if (req.user?.role === 'office' || req.user?.role === 'office_team') {
-        const isAuthorized = todoList.createdById === req.user?.id ||
-                            todoList.assignedToId === req.user?.id;
-        
-        if (!isAuthorized) {
-          return res.status(403).json({ message: "Not authorized to update tasks in this todo list" });
-        }
+      // Verify todo item is in accessible scope (for non-admin roles)
+      if (req.user?.role !== 'admin') {
+        await assertTodoItemInScope(id, req.accessibleUserIds!);
       }
 
       const todoItem = await storage.updateTodoItem(id, updates);
@@ -712,30 +711,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Delete todo item
-  app.delete("/api/todos/items/:id", authenticateToken, async (req: AuthRequest, res) => {
+  app.delete("/api/todos/items/:id", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const id = parseInt(req.params.id);
       
-      // Get the todo item first to check authorization
-      const existingItem = await storage.getTodoItem(id);
-      if (!existingItem) {
-        return res.status(404).json({ message: "Todo item not found" });
-      }
-
-      // Get the todo list to check ownership for office users
-      const todoList = await storage.getTodoList(existingItem.todoListId);
-      if (!todoList) {
-        return res.status(404).json({ message: "Associated todo list not found" });
-      }
-
-      // Authorization: Office users can only delete tasks in lists they own or are assigned to
-      if (req.user?.role === 'office' || req.user?.role === 'office_team') {
-        const isAuthorized = todoList.createdById === req.user?.id ||
-                            todoList.assignedToId === req.user?.id;
-        
-        if (!isAuthorized) {
-          return res.status(403).json({ message: "Not authorized to delete tasks in this todo list" });
-        }
+      // Verify todo item is in accessible scope (for non-admin roles)
+      if (req.user?.role !== 'admin') {
+        await assertTodoItemInScope(id, req.accessibleUserIds!);
       }
 
       const success = await storage.deleteTodoItem(id);
@@ -751,9 +733,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Delete all tasks in a todo list
-  app.delete("/api/todos/:id/items", authenticateToken, async (req, res) => {
+  app.delete("/api/todos/:id/items", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const todoListId = parseInt(req.params.id);
+      
+      // Verify todoList is in accessible scope (for non-admin roles)
+      if (req.user?.role !== 'admin') {
+        await assertTodoListInScope(todoListId, req.accessibleUserIds!);
+      }
+
       const success = await storage.deleteAllTodoItems(todoListId);
 
       if (!success) {
@@ -768,24 +756,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Delete entire todo list
-  app.delete("/api/todos/:id", authenticateToken, async (req: AuthRequest, res) => {
+  app.delete("/api/todos/:id", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const todoListId = parseInt(req.params.id);
       
-      // Check if the todo list exists and get its details for authorization
-      const existingList = await storage.getTodoList(todoListId);
-      if (!existingList) {
-        return res.status(404).json({ message: "Todo list not found" });
-      }
-
-      // Authorization: Allow deletion if user is admin/office or owns/is assigned to the list
-      const isAuthorized = req.user?.role === 'admin' || 
-                          req.user?.role === 'office' ||
-                          existingList.createdById === req.user?.id ||
-                          existingList.assignedToId === req.user?.id;
-
-      if (!isAuthorized) {
-        return res.status(403).json({ message: "Not authorized to delete this todo list" });
+      // Verify todoList is in accessible scope (for non-admin roles)
+      if (req.user?.role !== 'admin') {
+        await assertTodoListInScope(todoListId, req.accessibleUserIds!);
       }
 
       const success = await storage.deleteTodoList(todoListId);
@@ -801,24 +778,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update todo list
-  app.patch("/api/todos/:id", authenticateToken, async (req: AuthRequest, res) => {
+  app.patch("/api/todos/:id", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const todoListId = parseInt(req.params.id);
       
-      // Check if the todo list exists and get its details for authorization
-      const existingList = await storage.getTodoList(todoListId);
-      if (!existingList) {
-        return res.status(404).json({ message: "Todo list not found" });
-      }
-
-      // Authorization: Allow updates if user is admin/office or owns/is assigned to the list
-      const isAuthorized = req.user?.role === 'admin' || 
-                          req.user?.role === 'office' ||
-                          existingList.createdById === req.user?.id ||
-                          existingList.assignedToId === req.user?.id;
-
-      if (!isAuthorized) {
-        return res.status(403).json({ message: "Not authorized to update this todo list" });
+      // Verify todoList is in accessible scope (for non-admin roles)
+      if (req.user?.role !== 'admin') {
+        await assertTodoListInScope(todoListId, req.accessibleUserIds!);
       }
 
       // Validate updates with Zod - only allow specific fields
@@ -830,6 +796,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }).partial();
 
       const validatedUpdates = updateTodoListSchema.parse(req.body);
+
+      // If assignedToId is being updated, verify it's in accessible scope
+      if (req.user?.role !== 'admin' && validatedUpdates.assignedToId) {
+        assertUserInScope(validatedUpdates.assignedToId, req.accessibleUserIds!);
+      }
 
       const todoList = await storage.updateTodoList(todoListId, validatedUpdates);
       if (!todoList) {
