@@ -73,6 +73,12 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       badge: null,
     },
     {
+      title: "Department Management",
+      href: "/department-management",
+      icon: Building2,
+      badge: null,
+    },
+    {
       title: t("todos"),
       href: "/todos",
       icon: CheckSquare,
