@@ -26,9 +26,12 @@ export default function DepartmentManagementPage() {
   const { toast } = useToast();
   const [showCreateDept, setShowCreateDept] = useState(false);
   const [showAddEmployee, setShowAddEmployee] = useState(false);
+  const [showEditEmployee, setShowEditEmployee] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
   const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null);
   const [newDeptName, setNewDeptName] = useState("");
   const [newDeptManagerId, setNewDeptManagerId] = useState("");
+  const [editDepartment, setEditDepartment] = useState("");
   
   const [employeeForm, setEmployeeForm] = useState({
     firstName: "",
@@ -104,16 +107,42 @@ export default function DepartmentManagementPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
       toast({
         title: "Success",
-        description: "Department created successfully",
+        description: "User updated successfully",
       });
       setShowCreateDept(false);
+      setShowEditEmployee(false);
       setNewDeptName("");
       setNewDeptManagerId("");
+      setSelectedEmployee(null);
     },
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to create department",
+        description: error.message || "Failed to update user",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: number) => {
+      const response = await authenticatedRequest("DELETE", `/api/users/${userId}`);
+      if (!response.ok) {
+        throw new Error("Failed to delete user");
+      }
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      toast({
+        title: "Success",
+        description: "User deleted successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete user",
         variant: "destructive",
       });
     },
@@ -177,6 +206,40 @@ export default function DepartmentManagementPage() {
       ...employeeForm,
       managerId: employeeForm.managerId ? parseInt(employeeForm.managerId) : null
     });
+  };
+
+  const handleEditEmployee = (employee: any) => {
+    setSelectedEmployee(employee);
+    setEditDepartment(employee.department || "");
+    setShowEditEmployee(true);
+  };
+
+  const handleUpdateEmployeeDepartment = () => {
+    if (!selectedEmployee) return;
+
+    updateUserMutation.mutate({
+      id: selectedEmployee.id,
+      updates: {
+        department: editDepartment || null
+      }
+    });
+  };
+
+  const handleRemoveFromDepartment = (employee: any) => {
+    if (confirm(`Remove ${employee.firstName} ${employee.lastName} from their department?`)) {
+      updateUserMutation.mutate({
+        id: employee.id,
+        updates: {
+          department: null
+        }
+      });
+    }
+  };
+
+  const handleDeleteEmployee = (employee: any) => {
+    if (confirm(`Are you sure you want to delete ${employee.firstName} ${employee.lastName}? This action cannot be undone.`)) {
+      deleteUserMutation.mutate(employee.id);
+    }
   };
 
   if (isLoading) {
@@ -255,7 +318,7 @@ export default function DepartmentManagementPage() {
                       {dept.employees.map((emp: any) => (
                         <div 
                           key={emp.id}
-                          className="flex items-center space-x-2 p-2 rounded-md bg-gray-50 dark:bg-gray-800"
+                          className="flex items-center space-x-2 p-2 rounded-md bg-gray-50 dark:bg-gray-800 group"
                         >
                           <Avatar className="h-6 w-6">
                             <AvatarFallback className="text-xs">
@@ -273,6 +336,26 @@ export default function DepartmentManagementPage() {
                           <Badge variant={emp.role === 'manager' ? 'default' : 'secondary'} className="text-xs">
                             {emp.role}
                           </Badge>
+                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditEmployee(emp)}
+                              className="h-6 w-6 p-0"
+                              data-testid={`button-edit-employee-${emp.id}`}
+                            >
+                              <Edit className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteEmployee(emp)}
+                              className="h-6 w-6 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                              data-testid={`button-delete-employee-${emp.id}`}
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -495,6 +578,59 @@ export default function DepartmentManagementPage() {
                 data-testid="button-add-employee"
               >
                 {createEmployeeMutation.isPending ? "Creating..." : "Add Employee"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Employee Department Dialog */}
+        <Dialog open={showEditEmployee} onOpenChange={setShowEditEmployee}>
+          <DialogContent className="bg-white dark:bg-dashboard-card-dark">
+            <DialogHeader>
+              <DialogTitle>Edit Employee Department</DialogTitle>
+              <DialogDescription>
+                Change the department assignment for {selectedEmployee?.firstName} {selectedEmployee?.lastName}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="editDepartment">Department</Label>
+                <Select value={editDepartment} onValueChange={setEditDepartment}>
+                  <SelectTrigger id="editDepartment" data-testid="select-edit-department">
+                    <SelectValue placeholder="Select department or leave unassigned" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="unassigned">Unassigned</SelectItem>
+                    {Object.keys(departments).filter(d => d !== "Unassigned").map((deptName) => (
+                      <SelectItem key={deptName} value={deptName}>
+                        {deptName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Current: {selectedEmployee?.department || "Unassigned"}
+                </p>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button 
+                variant="outline" 
+                onClick={() => handleRemoveFromDepartment(selectedEmployee)}
+                className="mr-auto"
+                data-testid="button-remove-from-department"
+              >
+                Remove from Department
+              </Button>
+              <Button variant="outline" onClick={() => setShowEditEmployee(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleUpdateEmployeeDepartment}
+                disabled={updateUserMutation.isPending}
+                data-testid="button-update-department"
+              >
+                {updateUserMutation.isPending ? "Updating..." : "Update Department"}
               </Button>
             </DialogFooter>
           </DialogContent>
