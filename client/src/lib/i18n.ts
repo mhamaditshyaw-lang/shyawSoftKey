@@ -17,7 +17,7 @@ const resources = {
       archive: "Archive",
       allData: "All Data",
       dataView: "Data View",
-      
+
       // Common actions
       add: "Add",
       edit: "Edit",
@@ -36,13 +36,13 @@ const resources = {
       back: "Back",
       next: "Next",
       previous: "Previous",
-      
+
       // User roles
       admin: "Admin",
       manager: "Manager",
       security: "Security",
       employee: "Employee",
-      
+
       // Status
       active: "Active",
       inactive: "Inactive",
@@ -50,7 +50,7 @@ const resources = {
       completed: "Completed",
       approved: "Approved",
       rejected: "Rejected",
-      
+
       // Dashboard
       welcomeBack: "Welcome back",
       totalUsers: "Total Users",
@@ -67,7 +67,7 @@ const resources = {
       bookEmployeeEvaluation: "Book employee evaluation",
       analyticsAndInsights: "Analytics and insights",
       operationalDataView: "Operational data view",
-      
+
       // Login & Authentication
       signIn: "Sign In",
       signOut: "Sign Out",
@@ -94,7 +94,7 @@ const resources = {
       taskProjectManagement: "Task & Project Management",
       realtimeNotifications: "Real-time Notifications",
       selectRoleRequest: "Select role to request",
-      
+
       // Forms
       username: "Username",
       email: "Email",
@@ -111,7 +111,7 @@ const resources = {
       status: "Status",
       assignedTo: "Assigned To",
       createdBy: "Created By",
-      
+
       // Messages
       success: "Success",
       error: "Error",
@@ -123,7 +123,7 @@ const resources = {
       registrationSuccessful: "Registration Successful",
       accountCreatedPending: "Your account has been created and is pending admin approval.",
       registrationFailed: "Registration failed",
-      
+
       // Time
       today: "Today",
       yesterday: "Yesterday",
@@ -131,13 +131,13 @@ const resources = {
       thisMonth: "This Month",
       custom: "Custom",
       dateRange: "Date Range",
-      
+
       // Settings
       language: "Language",
       theme: "Theme",
       darkMode: "Dark Mode",
       lightMode: "Light Mode",
-      
+
       // Data and Statistics
       totalFeedback: "Total Feedback",
       filtered: "Filtered",
@@ -146,12 +146,12 @@ const resources = {
       averageRating: "Average Rating",
       responseRate: "Response Rate",
       trendAnalysis: "Trend Analysis",
-      
+
       // Page Menu
       noPages: "No pages available for your role",
       noPagesMatch: "No pages match",
       searchPages: "Search pages...",
-      
+
       // General UI
       allPages: "All Pages",
       mainCategory: "Main",
@@ -161,15 +161,15 @@ const resources = {
       analyticsCategory: "Analytics",
       dataCategory: "Data",
       reportsCategory: "Reports",
-      
+
       // Employee Reviews & Evaluations
       employeeReviews: "Employee Reviews & Evaluations",
       manageEmployeeEvaluations: "Manage employee evaluations, performance reviews, and role changes",
-      
+
       // Daily Task Management
       dailyTaskManagement: "Daily Task Management",
       organizeTrackTasks: "Organize and track daily tasks with smart prioritization",
-      
+
       // Feedback & Reviews
       feedbackReviews: "Feedback & Reviews",
       systemFeedbackReviews: "System feedback, reviews, and user suggestions",
@@ -180,15 +180,15 @@ const resources = {
       feedbackType: "Feedback type",
       addedSuccessfully: "added successfully",
       addType: "Add Type",
-      
+
       // Employee Tracking
       employeeTracking: "Employee Tracking",
       trackEmployeeAttendance: "Track employee attendance, operations, and performance metrics",
-      
+
       // Daily Operations Dashboard
       backToDashboard: "Back to Dashboard",
       dailyOperationsDashboard: "Daily Operations Dashboard",
-      
+
       // Data View Page
       dataViewAnalytics: "Data View & Analytics",
       viewFilterAnalyzeData: "View, filter, and analyze your operational data",
@@ -227,7 +227,7 @@ const resources = {
       enterVehicleLoadingData: "Enter vehicle loading data",
       saveData: "Save Data",
       clearForm: "Clear Form",
-      
+
       // Field labels
       totalEmployeesToday: "Total employees today",
       permanentEmployees: "Permanent employees",
@@ -248,7 +248,7 @@ const resources = {
       nightAlbanyTons: "Night - Albany / Tons",
       dayDoTons: "Day - Do / Tons",
       nightDoTons: "Night - Do / Tons",
-      
+
       // Statistics
       totalSum: "Total Sum",
       average: "Average",
@@ -263,29 +263,29 @@ const resources = {
       totalStaff: "Total Staff",
       largestShift: "Largest Shift",
       smallestShift: "Smallest Shift",
-      
+
       // Quick Actions
       fillSampleData: "Fill Sample Data",
       generateRandom: "Generate Random",
-      
+
       // Button texts
       saveOperationsData: "Save Operations Data",
       saveStaffCountData: "Save Staff Count Data",
       saveProductionData: "Save Production Data",
       saveLoadingData: "Save Loading Data",
       clearAll: "Clear All",
-      
+
       // Statistics titles
       operationsStatistics: "Operations Statistics",
       staffCountStatistics: "Staff Count Statistics",
       productionStatistics: "Production Statistics",
       loadingStatistics: "Loading Statistics",
-      
+
       // Data Entry titles
       staffCountDataEntry: "Staff Count Data Entry",
       productionDataEntry: "Production Data Entry",
       loadingDataEntry: "Loading Data Entry",
-      
+
       // Calculated totals and labels
       calculatedTotals: "Calculated Totals",
       totalIceCreamCartons: "Total Ice cream / Cartons",
@@ -309,19 +309,19 @@ const resources = {
       fewestVehicles: "Fewest Vehicles",
       vehicleCategoriesCompleted: "Vehicle Categories Completed",
       loadingQuickActions: "Loading Quick Actions",
-      
+
       // Management Reports
       managementReports: "Management Reports",
       comprehensiveAnalytics: "Comprehensive analytics and performance insights",
-      
+
       // Archive Management
       archiveManagement: "Archive Management",
       manageArchivedItems: "Manage archived items and historical data",
-      
+
       // All Data Dashboard
       allDataDashboard: "All Data Dashboard",
       comprehensiveDataView: "Comprehensive data view and system administration",
-      
+
       // Employee Management
       employeeManagement: "Employee Management",
       addNewEmployee: "Add New Employee",
@@ -331,13 +331,13 @@ const resources = {
       employmentInformation: "Employment Information",
       emergencyContact: "Emergency Contact",
       additionalInformation: "Additional Information",
-      
+
       // Daily List Management
       newDailyList: "New Daily List",
       dailyListInformation: "Daily List Information",
       taskItems: "Task Items",
       addItem: "Add Item",
-      
+
       // Additional UI components
       actions: "Actions",
       settings: "Settings",
@@ -379,7 +379,7 @@ const resources = {
       audio: "Audio",
       downloads: "Downloads",
       uploads: "Uploads",
-      
+
       // Page titles and navigation
       todoManagementPage: "Task Management",
       interviewsPage: "Meetings",
@@ -388,7 +388,7 @@ const resources = {
       archivePage: "Archive",
       dataViewPage: "Data View",
       allDataPage: "All Data",
-      
+
       // Form labels and placeholders
       enterFirstName: "Enter first name",
       enterLastName: "Enter last name",
@@ -397,32 +397,32 @@ const resources = {
       phoneNumber: "Phone Number",
       address: "Address",
       department: "Department",
-      position: "Position",
+      jobPosition: "Position",
       hireDate: "Hire Date",
       salary: "Salary",
-      
+
       // Table headers
       fullName: "Full Name",
       createdAt: "Created At",
       lastLogin: "Last Login",
-      
+
       // Status and actions
       enabled: "Enabled",
       disabled: "Disabled",
       verify: "Verify",
       suspend: "Suspend",
-      
+
       // Messages and notifications
       userAddedSuccessfully: "User added successfully",
       userUpdatedSuccessfully: "User updated successfully",
       userDeletedSuccessfully: "User deleted successfully",
       confirmDeleteUser: "Are you sure you want to delete this user?",
-      
+
       // Dashboard stats
       totalEmployees: "Total Employees",
       totalProjects: "Total Projects",
       totalDepartments: "Total Departments",
-      
+
       // Interview/Meeting management
       scheduleInterview: "Schedule Meeting",
       interviewDate: "Meeting Date",
@@ -430,7 +430,7 @@ const resources = {
       interviewer: "Interviewer",
       interviewee: "Interviewee",
       interviewNotes: "Meeting Notes",
-      
+
       // Daily tasks
       taskName: "Task Name",
       taskDescription: "Task Description",
@@ -440,31 +440,31 @@ const resources = {
       high: "High",
       medium: "Medium",
       low: "Low",
-      
+
       // Common UI elements
       searchPlaceholder: "Search...",
       noResultsFound: "No results found",
       loadingData: "Loading data...",
       selectAll: "Select All",
       clearSelection: "Clear Selection",
-      
+
       // Time and dates
       morning: "Morning",
       afternoon: "Afternoon",
       evening: "Evening",
       night: "Night",
-      
+
       // File operations
       uploadFile: "Upload File",
       downloadFile: "Download File",
       deleteFile: "Delete File",
-      
+
       // Permissions
       viewPermission: "View Permission",
       editPermission: "Edit Permission",
       deletePermission: "Delete Permission",
       createPermission: "Create Permission",
-      
+
       // Change Password Modal
       changePassword: "Change Password",
       currentPassword: "Current Password",
@@ -476,7 +476,7 @@ const resources = {
       passwordsDoNotMatch: "Passwords do not match",
       passwordChangedSuccessfully: "Password changed successfully",
       passwordChangeError: "Error changing password",
-      
+
       // Form Guidance
       workEmailGuidance: "Use a valid work email address for the user",
       passwordMinLengthGuidance: "Password should be at least 6 characters long",
@@ -485,14 +485,14 @@ const resources = {
       addCommentLabel: "Add Comment",
       commentGuidance: "Share your thoughts or feedback here",
       typeNameGuidance: "Choose a descriptive name for this feedback type",
-      reportDescriptionLabel: "Report Description", 
+      reportDescriptionLabel: "Report Description",
       reportDescriptionGuidance: "Provide detailed interview feedback and evaluation notes",
       performanceRatingLabel: "Performance Rating",
       ratingGuidance: "Select the candidate's overall performance rating",
       todoTitleGuidance: "Choose a clear and descriptive title for this task",
       todoDescriptionGuidance: "Provide additional details about what needs to be done",
       createTodoList: "Create Todo List",
-      listName: "List Name", 
+      listName: "List Name",
       todoDescription: "Description",
       assignToUser: "Assign to User (Optional)",
       noAssignment: "No assignment",
@@ -502,10 +502,10 @@ const resources = {
       creating: "Creating...",
       createTodoListAction: "Create Todo List",
       priorityLow: "Low",
-      priorityMedium: "Medium", 
+      priorityMedium: "Medium",
       priorityHigh: "High",
       priorityUrgent: "Urgent",
-      
+
       // Toast Notifications
       notSupported: "Not Supported",
       deviceNotificationsNotSupported: "Device notifications are not supported in this browser.",
@@ -563,13 +563,13 @@ const resources = {
       feedbackSubmittedSuccessfully: "Feedback submitted successfully",
       newDescriptionEntryAdded: "New description entry added successfully",
       failedToAddFeedbackType: "Failed to add feedback type",
-      
+
       // Access Denied Page
       accessDenied: "Access Denied",
       noPermissionMessage: "You don't have permission to access this page. Please contact your administrator if you believe this is an error.",
       goToDashboard: "Go to Dashboard",
       goBack: "Go Back",
-      
+
       // Navigation Subtitles
       overviewSubtitle: "Overview",
       evaluationsSubtitle: "Evaluations",
@@ -581,7 +581,7 @@ const resources = {
       dataViewSubtitle: "Data View",
       analyticsSubtitle: "Analytics",
       historicalDataSubtitle: "Historical Data",
-      
+
       // Navigation Categories
       mainNavigation: "Main Navigation",
       analyticsAndReports: "Analytics & Reports",
@@ -594,7 +594,7 @@ const resources = {
       dataEntry: "Data Entry",
       tracking: "Tracking",
       manageRemindersNotifications: "Manage your task reminders and notifications",
-      
+
       // User Activity Page
       userActivityDashboard: "User Activity Dashboard",
       trackMonitorActivities: "Track and monitor all user activities across the system",
@@ -611,7 +611,7 @@ const resources = {
       activityDetails: "Activity Details",
       userRole: "User Role",
       activityDescription: "Description",
-      
+
       // Additional UI Text
       shortTitleHome: "Home",
       shortTitleReviews: "Reviews",
@@ -644,7 +644,7 @@ const resources = {
       urgentPriority: "Urgent",
       inProgressStatus: "In Progress",
       createdDate: "Created Date",
-      
+
       // Notification Management
       notificationManagement: "Notification Management",
       userCreatedNotif: "User Created",
@@ -662,7 +662,7 @@ const resources = {
       statusFilter: "Status Filter",
       markAllAsRead: "Mark All as Read",
       youNeedToBeLoggedIn: "You need to be logged in to view notifications.",
-      
+
       // Notification Test
       deviceNotificationTestPage: "Device Notification Testing",
       deviceNotificationTestCenter: "Device Notification Test Center",
@@ -719,7 +719,7 @@ const resources = {
       insufficientPermissions: "Insufficient permissions",
       reminderNotificationTitle: "Reminder",
       reminderDueToday: "You have a reminder due today",
-      
+
       // Page Access Management
       pageAccessManagement: "Page Access Management",
       onlyAdminsCanManage: "You don't have permission to access page access management. Only administrators can manage user page access.",
@@ -727,7 +727,7 @@ const resources = {
       availablePages: "Available Pages",
       saveChanges: "Save Changes",
       selectUserToManage: "Select a user to manage their page access",
-      
+
       // Reminders
       remindersPage: "Reminders",
       createReminder: "Create Reminder",
@@ -740,11 +740,11 @@ const resources = {
       overdueReminders: "Overdue",
       allReminders: "All",
       noRemindersFound: "No reminders found",
-      
+
       // 404 Page
       pageNotFound: "404 Page Not Found",
       didYouForgetToAddPage: "Did you forget to add the page to the router?",
-      
+
       // General/Common
       weekFilter: "Week",
       monthFilter: "Month",
@@ -756,7 +756,7 @@ const resources = {
       messageLabel: "Message",
       officeRole: "Office",
       disabledStatus: "Disabled",
-      
+
       // Additional All Data Page keys
       allDataDashboardDesc: "Comprehensive view of all system data with advanced filtering",
       interviewPosition: "Interview: {{position}}",
@@ -772,12 +772,12 @@ const resources = {
       noDataAvailable: "No data available in the system.",
       csvHeaders: {
         type: "Type",
-        title: "Title", 
+        title: "Title",
         description: "Description",
         createdDate: "Created Date",
         status: "Status"
       },
-      
+
       // Enum translations
       enums: {
         priority: {
@@ -847,7 +847,7 @@ const resources = {
       archive: "ئەرشیف",
       allData: "هەموو داتاکان",
       dataView: "بینینی داتا",
-      
+
       // Common actions
       add: "زیادکردن",
       edit: "دەستکاریکردن",
@@ -866,13 +866,13 @@ const resources = {
       back: "گەڕانەوە",
       next: "دواتر",
       previous: "پێشوو",
-      
+
       // User roles
       admin: "بەڕێوەبەر",
       manager: "مانەجەر",
       security: "ئاسایش",
       employee: "کارمەند",
-      
+
       // Status
       active: "چالاک",
       inactive: "ناچالاک",
@@ -880,7 +880,7 @@ const resources = {
       completed: "تەواوبوو",
       approved: "پەسەندکراو",
       rejected: "ڕەتکراوەتەوە",
-      
+
       // Dashboard
       welcomeBack: "بەخێربێیتەوە",
       totalUsers: "کۆی بەکارهێنەران",
@@ -897,7 +897,7 @@ const resources = {
       bookEmployeeEvaluation: "ڕێکخستنی هەڵسەنگاندنی کارمەند",
       analyticsAndInsights: "شیکردنەوە و تێڕوانینەکان",
       operationalDataView: "بینینی داتای کارکردن",
-      
+
       // Login & Authentication
       signIn: "چوونە ژوور",
       signOut: "دەرچوون",
@@ -925,7 +925,7 @@ const resources = {
       taskProjectManagement: "بەڕێوەبەری ئەرک و پرۆژە",
       realtimeNotifications: "ئاگادارکردنەوەی کاتی ڕاستەقینە",
       selectRoleRequest: "ڕۆڵ هەڵبژێرە بۆ داواکردن",
-      
+
       // Forms
       username: "ناوی بەکارهێنەر",
       email: "ئیمەیڵ",
@@ -942,7 +942,7 @@ const resources = {
       status: "دۆخ",
       assignedTo: "دەستنیشانکراو بۆ",
       createdBy: "دروستکراوە لەلایەن",
-      
+
       // Messages
       success: "سەرکەوتوو",
       error: "هەڵە",
@@ -954,7 +954,7 @@ const resources = {
       registrationSuccessful: "تۆمارکردن سەرکەوتوو بوو",
       accountCreatedPending: "هەژمارەکەت دروست کرا و چاوەڕێی پەسەندکردنی بەڕێوەبەرە.",
       registrationFailed: "تۆمارکردن شکستی هێنا",
-      
+
       // Time
       today: "ئەمڕۆ",
       yesterday: "دوێنێ",
@@ -962,13 +962,13 @@ const resources = {
       thisMonth: "ئەم مانگە",
       custom: "دیاریکراو",
       dateRange: "مەودای بەروار",
-      
+
       // Settings
       language: "زمان",
       theme: "ڕووکار",
       darkMode: "دۆخی تاریک",
       lightMode: "دۆخی ڕووناک",
-      
+
       // Todos Page
       todoLists: "لیستی کارەکان",
       todoItems: "بابەتەکانی کار",
@@ -1005,7 +1005,7 @@ const resources = {
       noDueDate: "هیچ بەرواری کۆتایی نییە",
       overdue: "کۆتاهاتوو",
       dueSoon: "بەم زووانە کۆتادێت",
-      
+
       // Smart Recommendations
       smartRecommendations: "پێشنیارە زیربەکان",
       recommendedTasks: "ئەرکە پێشنیارکراوەکان",
@@ -1015,7 +1015,7 @@ const resources = {
       ageOfTask: "تەمەنی ئەرک",
       userPatterns: "نەخشەی بەکارهێنەر",
       intelligentPrioritization: "پێشینەگرتنی زیرەک",
-      
+
       // Time Management
       timeRemaining: "کاتی ماوە",
       timeSpent: "کاتی تێپەڕاندوو",
@@ -1024,7 +1024,7 @@ const resources = {
       deadline: "کۆتا",
       startTime: "کاتی دەستپێکردن",
       endTime: "کاتی کۆتایی",
-      
+
       // Statistics
       totalLists: "کۆی لیستەکان",
       totalTasks: "کۆی ئەرکەکان",
@@ -1032,7 +1032,7 @@ const resources = {
       averageTasksPerList: "تێکڕای ئەرک بۆ هەر لیست",
       tasksCompletedToday: "ئەرکی تەواوکراو ئەمڕۆ",
       tasksCreatedToday: "ئەرکی دروستکراو ئەمڕۆ",
-      
+
       // Employee Reviews & Evaluations
       employeeReviewsEvaluations: "کۆبوونەوە و هەڵسەنگاندنی کارمەندان",
       manageEmployeeEvaluationsDesc: "بەڕێوەبردنی کۆبوونەوەی کارمەندان، لێکۆڵینەوەی کارایی و گۆڕینی ڕۆڵ",
@@ -1045,7 +1045,7 @@ const resources = {
       scheduleInterview: "دانانی کۆبوونەوە",
       interviewRequests: "داواکاری کۆبوونەوەکان",
       noInterviewRequests: "هیچ داواکاری کۆبوونەوەیەک نییە",
-      
+
       // Reports Page
       managementReports: "ڕاپۆرتەکانی بەڕێوەبەری",
       systemAnalytics: "شیکردنەوەی سیستەم",
@@ -1056,8 +1056,8 @@ const resources = {
       chartAnalysis: "شیکردنەوەی چارت",
       trends: "ڕووداوەکان",
       insights: "تێگەیشتنەکان",
-      
-      // Feedback & Reviews Page  
+
+      // Feedback & Reviews Page
       feedbackAndReviews: "فیدباک و لێکۆڵینەوەکان",
       systemFeedback: "فیدباکی سیستەم",
       userReviews: "پێداچوونەوەی بەکارهێنەر",
@@ -1074,7 +1074,7 @@ const resources = {
       enterTypeName: "ناوی جۆر بنووسە",
       addedSuccessfully: "بە سەرکەوتوویی زیادکرا",
       addType: "جۆر زیادبکە",
-      
+
       // Archive Page
       archivePage: "پەڕەی ئەرشیف",
       archivedItems: "بابەتە ئەرشیفکراوەکان",
@@ -1084,7 +1084,7 @@ const resources = {
       archiveReason: "هۆکاری ئەرشیفکردن",
       restoreItem: "گەڕاندنەوەی بابەت",
       permanentDelete: "سڕینەوەی هەمیشەیی",
-      
+
       // Data Operations & Data View
       dataOperations: "کارەکانی داتا",
       dataViewSection: "بینینی داتا",
@@ -1099,14 +1099,14 @@ const resources = {
       dataRecords: "ڕیکۆردەکانی داتا",
       entryType: "جۆری تۆمار",
       entryDate: "بەرواری تۆمار",
-      
+
       // Common Data Terms
       createdDate: "بەرواری دروستکردن",
       lastModified: "دواین گۆڕانکاری",
       dataSource: "سەرچاوەی داتا",
       recordCount: "ژمارەی ڕیکۆرد",
       totalRecords: "کۆی ڕیکۆردەکان",
-      
+
       // Additional page translations needed
       employeeManagement: "بەڕێوەبردنی کارمەندان",
       manageEmployeeAccountsDesc: "بەڕێوەبردنی کارمەندانی ناوخۆیی و ڕۆڵەکانیان لە کۆمپانیا",
@@ -1122,7 +1122,7 @@ const resources = {
       total: "کۆ",
       filtered: "پاڵاوتنکراو",
       todayOnly: "تەنها ئەمڕۆ",
-      
+
       // Daily Operations page translations
       backToDashboard: "گەڕانەوە بۆ داشبۆرد",
       dailyOperationsDashboard: "داشبۆردی چالاکیەکانی ڕۆژانە",
@@ -1131,7 +1131,7 @@ const resources = {
       employeeAttendance: "ئامادەبوونی کارمەندان",
       enterEmployeeAttendance: "تۆماری ئامادەبوونی کارمەندان",
       enterDailyAttendanceData: "داتای ئامادەبوونی ڕۆژانە داخڵ بکە",
-      operationsDataEntry: "تۆماری داتای چالاکیەکان",  
+      operationsDataEntry: "تۆماری داتای چالاکیەکان",
       enterIceCreamProduction: "بەرهەمهێنانی بەستەڵەک، چالاکیەکانی ئالبانی، و چالاکیەکانی دۆ بە شیفت داخڵ بکە",
       staffCountTracking: "بەدواداچوونی ژمارەی کارمەندان",
       enterStaffCountData: "داتای ژمارەی کارمەندانی شیفت داخڵ بکە",
@@ -1141,7 +1141,7 @@ const resources = {
       enterVehicleLoadingData: "داتای بارکردنی ئۆتۆمبێل داخڵ بکە",
       saveData: "داتا پاشەکەوت بکە",
       clearForm: "فۆرم پاک بکەرەوە",
-      
+
       // Field labels
       totalEmployeesToday: "کۆی کارمەندانی ئەمڕۆ",
       permanentEmployees: "کارمەندانی هەمیشەیی",
@@ -1162,7 +1162,7 @@ const resources = {
       nightAlbanyTons: "شەو - ئالبانی / تۆن",
       dayDoTons: "ڕۆژ - دۆ / تۆن",
       nightDoTons: "شەو - دۆ / تۆن",
-      
+
       dayShift: "شیفتی ڕۆژ",
       nightShift: "شیفتی شەو",
       iceCream: "بەستەڵەک",
@@ -1171,7 +1171,7 @@ const resources = {
       cartons: "کارتۆن",
       tons: "تۆن",
       vehicle1: "ئۆتۆمبێل ١",
-      vehicle2: "ئۆتۆمبێل ٢", 
+      vehicle2: "ئۆتۆمبێل ٢",
       vehicle3: "ئۆتۆمبێل ٣",
       totalSum: "کۆی گشتی",
       average: "تێکڕا",
@@ -1186,29 +1186,29 @@ const resources = {
       totalStaff: "کۆی کارمەندان",
       largestShift: "گەورەترین شیفت",
       smallestShift: "بچووکترین شیفت",
-      
+
       // Quick Actions
       fillSampleData: "داتای نموونە داخڵ بکە",
       generateRandom: "درووستکردنی هەڕەمەکی",
-      
+
       // Button texts
       saveOperationsData: "پاشەکەوتی داتای چالاکیەکان",
       saveStaffCountData: "پاشەکەوتی داتای ژمارەی کارمەندان",
       saveProductionData: "پاشەکەوتی داتای بەرهەمهێنان",
       saveLoadingData: "پاشەکەوتی داتای بارکردن",
       clearAll: "پاککردنەوەی هەموو",
-      
+
       // Statistics titles
       operationsStatistics: "ئاماری چالاکیەکان",
       staffCountStatistics: "ئاماری ژمارەی کارمەندان",
       productionStatistics: "ئاماری بەرهەمهێنان",
       loadingStatistics: "ئاماری بارکردن",
-      
+
       // Data Entry titles
       staffCountDataEntry: "تۆماری داتای ژمارەی کارمەندان",
       productionDataEntry: "تۆماری داتای بەرهەمهێنان",
       loadingDataEntry: "تۆماری داتای بارکردن",
-      
+
       // Calculated totals and labels
       calculatedTotals: "کۆی حیسابکراو",
       totalIceCreamCartons: "کۆی بەستەڵەک / کارتۆن",
@@ -1232,7 +1232,7 @@ const resources = {
       fewestVehicles: "کەمترین ئۆتۆمبێل",
       vehicleCategoriesCompleted: "پۆلە ئۆتۆمبێلەکانی تەواوکراو",
       loadingQuickActions: "کردارە خێراکانی بارکردن",
-      
+
       // Data View & Analytics page translations
       dataViewAnalytics: "بینینی داتا و شیکاری",
       viewFilterAnalyzeData: "بینین، پاڵاوتن، و شیکردنەوەی داتای چالاکیەکانت",
@@ -1280,7 +1280,7 @@ const resources = {
       minimumValue: "کەمترین نرخ",
       disabled: "ناچالاک",
       allDataFilter: "هەموو داتاکان",
-      
+
       // Data and Statistics
       totalFeedback: "کۆی فیدباک",
       filteredData: "پاڵاوتراو",
@@ -1289,12 +1289,12 @@ const resources = {
       averageRating: "تێکڕای نرخاندن",
       responseRate: "ڕێژەی وەڵام",
       trendAnalysis: "شیکردنەوەی ڕەوت",
-      
+
       // Page Menu
       noPages: "هیچ پەڕەیەک بۆ ڕۆڵەکەت بەردەست نییە",
       noPagesMatch: "هیچ پەڕەیەک نەگونجا لەگەڵ",
       searchPages: "گەڕان لە پەڕەکان...",
-      
+
       // General UI
       allPages: "هەموو پەڕەکان",
       mainCategory: "سەرەکی",
@@ -1304,43 +1304,43 @@ const resources = {
       analyticsCategory: "شیکردنەوە",
       dataCategory: "داتا",
       reportsCategory: "ڕاپۆرتەکان",
-      
+
       // Employee Reviews & Evaluations
       employeeReviews: "کۆبوونەوەی کارمەندان",
       manageEmployeeEvaluations: "بەڕێوەبردنی کۆبوونەوەی کارمەندان، لێکۆڵینەوەی کارایی و گۆڕینی ڕۆڵ",
-      
+
       // Daily Task Management
       dailyTaskManagement: "بەڕێوەبردنی ئەرکەکانی ڕۆژانە",
       organizeTrackTasks: "ڕێکخستن و بەدواداچوونی ئەرکەکانی ڕۆژانە لەگەڵ پێشینەگرتنی زیرەک",
-      
+
       // Feedback & Reviews
       feedbackReviews: "فیدباک و لێکۆڵینەوەکان",
       systemFeedbackReviews: "فیدباکی سیستەم، لێکۆڵینەوەکان و پێشنیارەکانی بەکارهێنەر",
-      
+
       // Employee Tracking
       employeeTracking: "بەدواداچوونی کارمەند",
       trackEmployeePerformance: "بەدواداچوونی ئامادەبوونی کارمەند، کارەکان و پێوەری کارایی",
-      
+
       // Management Reports
       managementReportsSection: "ڕاپۆرتەکانی بەڕێوەبەری",
       comprehensiveAnalytics: "شیکردنەوەی تەواو و تێڕوانینی کارایی",
-      
+
       // Archive Management
       archiveManagementSection: "بەڕێوەبردنی ئەرشیف",
       manageArchivedItems: "بەڕێوەبردنی بابەتە ئەرشیفکراوەکان و داتای مێژوویی",
-      
+
       // All Data Dashboard
       allDataDashboardSection: "داشبۆردی هەموو داتاکان",
       comprehensiveDataView: "بینینی تەواوی داتا و بەڕێوەبەری سیستەم",
-      
 
-      
+
+
       // Daily List Management
       newDailyList: "لیستی ڕۆژانەی نوێ",
       dailyListInformation: "زانیاری لیستی ڕۆژانە",
       taskItems: "بابەتەکانی ئەرک",
       addItem: "زیادکردنی بابەت",
-      
+
       // Additional UI components
       actions: "کردارەکان",
       settings: "ڕێکخستنەکان",
@@ -1382,7 +1382,7 @@ const resources = {
       audio: "دەنگ",
       downloads: "داگرتنەکان",
       uploads: "بارکردنەکان",
-      
+
       // Page titles and navigation
       employeeManagementTitle: "بەڕێوەبردنی کارمەندان",
       addEmployeePage: "زیادکردنی کارمەندی نوێ",
@@ -1394,7 +1394,7 @@ const resources = {
       archivePageTitle: "ئەرشیف",
       dataViewPage: "بینینی داتا",
       allDataPage: "هەموو داتاکان",
-      
+
       // Form labels and placeholders
       enterFirstName: "ناوی یەکەم بنووسە",
       enterLastName: "ناوی دووەم بنووسە",
@@ -1406,29 +1406,29 @@ const resources = {
       jobPosition: "پۆست",
       hireDate: "بەرواری دامەزراندن",
       salary: "مووچە",
-      
+
       // Table headers
       fullName: "ناوی تەواو",
       createdAt: "دروستکراوە لە",
       lastLogin: "کۆتا چوونەژوور",
-      
+
       // Status and actions
       enabled: "چالاککراو",
       accountDisabled: "ناچالاککراو",
       verify: "دڵنیاکردنەوە",
       suspend: "ڕاگرتن",
-      
+
       // Messages and notifications
       userAddedSuccessfully: "بەکارهێنەر بە سەرکەوتوویی زیادکرا",
       userUpdatedSuccessfully: "بەکارهێنەر بە سەرکەوتوویی نوێکرایەوە",
       userDeletedSuccessfully: "بەکارهێنەر بە سەرکەوتوویی سڕایەوە",
       confirmDeleteUser: "دڵنیایت کە دەتەوێت ئەم بەکارهێنەرە بسڕیتەوە؟",
-      
+
       // Dashboard stats
       totalEmployees: "کۆی کارمەندان",
       totalProjects: "کۆی پرۆژەکان",
       totalDepartments: "کۆی بەشەکان",
-      
+
       // Interview/Meeting management
       scheduleInterviewMeeting: "دانانی کۆبوونەوە",
       interviewDate: "بەرواری کۆبوونەوە",
@@ -1436,7 +1436,7 @@ const resources = {
       interviewer: "کۆبوونەوەکار",
       interviewee: "کۆبوونەوەلێکراو",
       interviewNotes: "تێبینییەکانی کۆبوونەوە",
-      
+
       // Daily tasks
       dailyTaskName: "ناوی ئەرکی ڕۆژانە",
       dailyTaskDescription: "وەسفی ئەرکی ڕۆژانە",
@@ -1446,7 +1446,7 @@ const resources = {
       high: "بەرز",
       medium: "ناوەند",
       low: "نزم",
-      
+
       // Common UI elements
       searchPlaceholder: "گەڕان...",
       noResultsFound: "هیچ ئەنجامێک نەدۆزرایەوە",
@@ -1454,24 +1454,24 @@ const resources = {
       selectAll: "هەموو هەڵبژێرە",
       selectAllItems: "هەموو بابەتەکان هەڵبژێرە",
       clearSelection: "پاکردنەوەی هەڵبژاردە",
-      
+
       // Time and dates
       morning: "بەیانی",
       afternoon: "دوای نیوەڕۆ",
       evening: "ئێوارە",
       night: "شەو",
-      
+
       // File operations
       uploadFile: "بارکردنی فایل",
       downloadFile: "داگرتنی فایل",
       deleteFile: "سڕینەوەی فایل",
-      
+
       // Permissions
       viewPermission: "مۆڵەتی بینین",
       editPermission: "مۆڵەتی دەستکاری",
       deletePermission: "مۆڵەتی سڕینەوە",
       createPermission: "مۆڵەتی دروستکردن",
-      
+
       // Change Password Modal
       changePassword: "گۆڕینی وشەی تێپەڕ",
       currentPassword: "وشەی تێپەڕی ئێستا",
@@ -1483,8 +1483,8 @@ const resources = {
       passwordsDoNotMatch: "وشەی تێپەڕەکان یەکناگرنەوە",
       passwordChangedSuccessfully: "وشەی تێپەڕ بە سەرکەوتوویی گۆڕدرا",
       passwordChangeError: "هەڵە لە گۆڕینی وشەی تێپەڕ",
-      
-      // Form Guidance 
+
+      // Form Guidance
       workEmailGuidance: "ناونیشانی ئیمەیڵی کاری دروست بەکاربهێنە بۆ بەکارهێنەر",
       passwordMinLengthGuidance: "وشەی نهێنی دەبێت لانیکەم ٦ پیت بێت",
       usernameGuidance: "ناوی بەکارهێنەر دەبێت لانیکەم ٣ پیت بێت و جیاواز بێت",
@@ -1510,9 +1510,9 @@ const resources = {
       createTodoListAction: "لیستی کارەکان دروست بکە",
       priorityLow: "نزم",
       priorityMedium: "ناوەند",
-      priorityHigh: "بەرز", 
+      priorityHigh: "بەرز",
       priorityUrgent: "پەلە",
-      
+
       // Toast Notifications
       notSupported: "پشتگیری ناکرێت",
       deviceNotificationsNotSupported: "ئاگادارکردنەوەی ئامێر لەم وێبگەڕەدا پشتگیری ناکرێت.",
@@ -1570,13 +1570,13 @@ const resources = {
       feedbackSubmittedSuccessfully: "فیدباک بە سەرکەوتوویی نێردرا",
       newDescriptionEntryAdded: "تۆماری وەسفی نوێ بە سەرکەوتوویی زیادکرا",
       failedToAddFeedbackType: "زیادکردنی جۆری فیدباک سەرکەوتوو نەبوو",
-      
+
       // Access Denied Page
       accessDenied: "دەستگەیشتن ڕەتکرایەوە",
       noPermissionMessage: "مۆڵەتت نییە بۆ دەستگەیشتن بەم پەڕەیە. تکایە پەیوەندی بە بەڕێوەبەرەوە بکە ئەگەر پێتوایە ئەمە هەڵەیە.",
       goToDashboard: "بڕۆ بۆ داشبۆرد",
       goBack: "گەڕانەوە",
-      
+
       // Navigation Subtitles
       overviewSubtitle: "گشتی",
       evaluationsSubtitle: "هەڵسەنگاندنەکان",
@@ -1588,7 +1588,7 @@ const resources = {
       dataViewSubtitle: "بینینی داتا",
       analyticsSubtitle: "شیکاری",
       historicalDataSubtitle: "داتای مێژوویی",
-      
+
       // Navigation Categories
       mainNavigation: "ڕێنیشاندەری سەرەکی",
       analyticsAndReports: "شیکاری و ڕاپۆرتەکان",
@@ -1601,7 +1601,7 @@ const resources = {
       dataEntry: "تۆماری داتا",
       tracking: "بەدواداچوون",
       manageRemindersNotifications: "بەڕێوەبردنی بیرخستنەوە و ئاگادارکردنەوەکانت",
-      
+
       // User Activity Page
       userActivityDashboard: "داشبۆردی چالاکی بەکارهێنەر",
       trackMonitorActivities: "بەدواداچوون و چاودێریکردنی هەموو چالاکیەکانی بەکارهێنەران لە سیستەمدا",
@@ -1618,7 +1618,7 @@ const resources = {
       activityDetails: "وردەکاریەکانی چالاکی",
       userRole: "ڕۆڵی بەکارهێنەر",
       activityDescription: "وەسف",
-      
+
       // Additional UI Text
       shortTitleHome: "ماڵەوە",
       shortTitleReviews: "پێداچوونەوەکان",
@@ -1628,7 +1628,7 @@ const resources = {
       shortTitleManagement: "بەڕێوەبەری",
       shortTitleAnalytics: "شیکاری",
       shortTitleArchive: "ئەرشیف",
-      
+
       // Notification Management
       notificationManagement: "بەڕێوەبردنی ئاگادارکردنەوە",
       userCreatedNotif: "بەکارهێنەر دروستکرا",
@@ -1646,7 +1646,7 @@ const resources = {
       statusFilter: "پاڵاوتنی دۆخ",
       markAllAsRead: "هەموو وەک خوێندراوە نیشان بکە",
       youNeedToBeLoggedIn: "پێویستە چووبیتە ژوورەوە بۆ بینینی ئاگادارکردنەوەکان.",
-      
+
       // Notification Test
       deviceNotificationTestPage: "تاقیکردنەوەی ئاگادارکردنەوەی ئامێر",
       deviceNotificationTestCenter: "ناوەندی تاقیکردنەوەی ئاگادارکردنەوەی ئامێر",
@@ -1703,7 +1703,7 @@ const resources = {
       insufficientPermissions: "مۆڵەت بەسنییە",
       reminderNotificationTitle: "بیرخستنەوە",
       reminderDueToday: "بیرخستنەوەیەکت هەیە کە ئەمڕۆ دەگاتە کۆتایی",
-      
+
       // Page Access Management
       pageAccessManagement: "بەڕێوەبردنی دەستگەیشتنی پەڕە",
       onlyAdminsCanManage: "مۆڵەتت نییە بۆ دەستگەیشتن بە بەڕێوەبردنی دەستگەیشتنی پەڕە. تەنها بەڕێوەبەران دەتوانن دەستگەیشتنی پەڕەی بەکارهێنەران بەڕێوە ببەن.",
@@ -1711,7 +1711,7 @@ const resources = {
       availablePages: "پەڕە بەردەستەکان",
       saveChanges: "پاشەکەوتکردنی گۆڕانکارییەکان",
       selectUserToManage: "بەکارهێنەرێک هەڵبژێرە بۆ بەڕێوەبردنی دەستگەیشتنی پەڕەکانی",
-      
+
       // Reminders
       remindersPage: "بیرخستنەوەکان",
       createReminder: "دروستکردنی بیرخستنەوە",
@@ -1724,11 +1724,11 @@ const resources = {
       overdueReminders: "درەنگکەوتوو",
       allReminders: "هەموو",
       noRemindersFound: "هیچ بیرخستنەوەیەک نەدۆزرایەوە",
-      
+
       // 404 Page
       pageNotFound: "٤٠٤ پەڕە نەدۆزرایەوە",
       didYouForgetToAddPage: "ئایا لەبیرت چووە پەڕەکە زیاد بکەیت بۆ ڕووتەرەکە؟",
-      
+
       // General/Common
       weekFilter: "هەفتە",
       monthFilter: "مانگ",
@@ -1740,7 +1740,7 @@ const resources = {
       messageLabel: "پەیام",
       officeRole: "ئۆفیس",
       disabledStatus: "ناچالاککراو",
-      
+
       // Additional All Data Page keys
       allDataDashboardDesc: "بینینی گشتگیری هەموو داتاکانی سیستەم لەگەڵ پاڵاوتنی پێشکەوتوو",
       interviewPosition: "کۆبوونەوە: {{position}}",
@@ -1756,12 +1756,12 @@ const resources = {
       noDataAvailable: "هیچ داتایەک لە سیستەمدا بەردەست نییە.",
       csvHeaders: {
         type: "جۆر",
-        title: "سەردێڕ", 
+        title: "سەردێڕ",
         description: "وەسف",
         createdDate: "بەرواری دروستکردن",
         status: "دۆخ"
       },
-      
+
       // Enum translations
       enums: {
         priority: {
@@ -1830,7 +1830,7 @@ const resources = {
       archive: "الأرشيف",
       allData: "جميع البيانات",
       dataView: "عرض البيانات",
-      
+
       // Common actions
       add: "إضافة",
       edit: "تعديل",
@@ -1849,13 +1849,13 @@ const resources = {
       back: "رجوع",
       next: "التالي",
       previous: "السابق",
-      
+
       // User roles
       admin: "مدير",
       manager: "مدير",
       security: "أمن",
       employee: "موظف",
-      
+
       // Status
       active: "نشط",
       inactive: "غير نشط",
@@ -1863,7 +1863,7 @@ const resources = {
       completed: "مكتمل",
       approved: "موافق عليه",
       rejected: "مرفوض",
-      
+
       // Dashboard
       welcomeBack: "مرحباً بعودتك",
       totalUsers: "إجمالي المستخدمين",
@@ -1880,7 +1880,7 @@ const resources = {
       bookEmployeeEvaluation: "حجز تقييم موظف",
       analyticsAndInsights: "التحليلات والرؤى",
       operationalDataView: "عرض البيانات التشغيلية",
-      
+
       // Login & Authentication
       signIn: "تسجيل الدخول",
       signOut: "تسجيل الخروج",
@@ -1907,7 +1907,7 @@ const resources = {
       taskProjectManagement: "إدارة المهام والمشاريع",
       realtimeNotifications: "إشعارات في الوقت الفعلي",
       selectRoleRequest: "حدد الدور المطلوب",
-      
+
       // Forms
       username: "اسم المستخدم",
       email: "البريد الإلكتروني",
@@ -1924,7 +1924,7 @@ const resources = {
       status: "الحالة",
       assignedTo: "مكلف إلى",
       createdBy: "أنشأه",
-      
+
       // Messages
       success: "نجح",
       error: "خطأ",
@@ -1936,7 +1936,7 @@ const resources = {
       registrationSuccessful: "تم التسجيل بنجاح",
       accountCreatedPending: "تم إنشاء حسابك وهو في انتظار موافقة المدير.",
       registrationFailed: "فشل التسجيل",
-      
+
       // Time
       today: "اليوم",
       yesterday: "أمس",
@@ -1944,13 +1944,13 @@ const resources = {
       thisMonth: "هذا الشهر",
       custom: "مخصص",
       dateRange: "نطاق التاريخ",
-      
+
       // Settings
       language: "اللغة",
       theme: "المظهر",
       darkMode: "الوضع الداكن",
       lightMode: "الوضع الفاتح",
-      
+
       // Data and Statistics
       totalFeedback: "إجمالي التعليقات",
       filtered: "مفلتر",
@@ -1959,12 +1959,12 @@ const resources = {
       averageRating: "متوسط التقييم",
       responseRate: "معدل الاستجابة",
       trendAnalysis: "تحليل الاتجاه",
-      
+
       // Page Menu
       noPages: "لا توجد صفحات متاحة لدورك",
       noPagesMatch: "لا توجد صفحات مطابقة",
       searchPages: "البحث في الصفحات...",
-      
+
       // General UI
       allPages: "جميع الصفحات",
       mainCategory: "رئيسي",
@@ -1974,15 +1974,15 @@ const resources = {
       analyticsCategory: "التحليلات",
       dataCategory: "البيانات",
       reportsCategory: "التقارير",
-      
+
       // Employee Reviews & Evaluations
       employeeReviews: "تقييمات الموظفين",
       manageEmployeeEvaluations: "إدارة تقييمات الموظفين ومراجعات الأداء وتغييرات الأدوار",
-      
+
       // Daily Task Management
       dailyTaskManagement: "إدارة المهام اليومية",
       organizeTrackTasks: "تنظيم وتتبع المهام اليومية مع تحديد أولويات ذكية",
-      
+
       // Feedback & Reviews
       feedbackReviews: "التعليقات والمراجعات",
       systemFeedbackReviews: "ملاحظات النظام والمراجعات واقتراحات المستخدمين",
@@ -1993,15 +1993,15 @@ const resources = {
       feedbackType: "نوع التعليق",
       addedSuccessfully: "تمت الإضافة بنجاح",
       addType: "إضافة نوع",
-      
+
       // Employee Tracking
       employeeTracking: "تتبع الموظفين",
       trackEmployeeAttendance: "تتبع حضور الموظفين والعمليات ومقاييس الأداء",
-      
+
       // Daily Operations Dashboard
       backToDashboard: "العودة إلى لوحة التحكم",
       dailyOperationsDashboard: "لوحة العمليات اليومية",
-      
+
       // Data View Page - Primary translations requested by user
       dataViewAnalytics: "عرض البيانات والتحليلات",
       viewFilterAnalyzeData: "عرض البيانات التشغيلية وتصفيتها وتحليلها",
@@ -2040,7 +2040,7 @@ const resources = {
       enterVehicleLoadingData: "أدخل بيانات تحميل المركبات",
       saveData: "حفظ البيانات",
       clearForm: "مسح النموذج",
-      
+
       // Field labels
       totalEmployeesToday: "إجمالي الموظفين اليوم",
       permanentEmployees: "الموظفون الدائمون",
@@ -2065,7 +2065,7 @@ const resources = {
       nightAlbanyTons: "الليل - ألباني / طن",
       dayDoTons: "النهار - دو / طن",
       nightDoTons: "الليل - دو / طن",
-      
+
       dayShift: "وردية النهار",
       nightShift: "وردية الليل",
       iceCream: "آيس كريم",
@@ -2076,7 +2076,7 @@ const resources = {
       vehicle1: "مركبة ١",
       vehicle2: "مركبة ٢",
       vehicle3: "مركبة ٣",
-      
+
       // Statistics
       totalSum: "المجموع الكلي",
       average: "المتوسط",
@@ -2091,29 +2091,29 @@ const resources = {
       totalStaff: "إجمالي الموظفين",
       largestShift: "أكبر وردية",
       smallestShift: "أصغر وردية",
-      
+
       // Quick Actions
       fillSampleData: "ملء بيانات نموذجية",
       generateRandom: "توليد عشوائي",
-      
+
       // Button texts
       saveOperationsData: "حفظ بيانات العمليات",
       saveStaffCountData: "حفظ بيانات عدد الموظفين",
       saveProductionData: "حفظ بيانات الإنتاج",
       saveLoadingData: "حفظ بيانات التحميل",
       clearAll: "مسح الكل",
-      
+
       // Statistics titles
       operationsStatistics: "إحصائيات العمليات",
       staffCountStatistics: "إحصائيات عدد الموظفين",
       productionStatistics: "إحصائيات الإنتاج",
       loadingStatistics: "إحصائيات التحميل",
-      
+
       // Data Entry titles
       staffCountDataEntry: "إدخال بيانات عدد الموظفين",
       productionDataEntry: "إدخال بيانات الإنتاج",
       loadingDataEntry: "إدخال بيانات التحميل",
-      
+
       // Calculated totals and labels
       calculatedTotals: "المجاميع المحسوبة",
       totalIceCreamCartons: "إجمالي آيس كريم / كرتون",
@@ -2137,19 +2137,19 @@ const resources = {
       fewestVehicles: "أقل المركبات",
       vehicleCategoriesCompleted: "فئات المركبات المكتملة",
       loadingQuickActions: "إجراءات التحميل السريعة",
-      
+
       // Management Reports
       managementReports: "تقارير الإدارة",
       comprehensiveAnalytics: "تحليلات شاملة ورؤى الأداء",
-      
+
       // Archive Management
       archiveManagement: "إدارة الأرشيف",
       manageArchivedItems: "إدارة العناصر المؤرشفة والبيانات التاريخية",
-      
+
       // All Data Dashboard
       allDataDashboard: "لوحة جميع البيانات",
       comprehensiveDataView: "عرض بيانات شامل وإدارة النظام",
-      
+
       // Employee Management
       employeeManagement: "إدارة الموظفين",
       addNewEmployee: "إضافة موظف جديد",
@@ -2159,7 +2159,7 @@ const resources = {
       employmentInformation: "معلومات التوظيف",
       emergencyContact: "جهة اتصال الطوارئ",
       additionalInformation: "معلومات إضافية",
-      
+
       // Todos Page - Primary translations requested by user
       createNewList: "إنشاء قائمة جديدة",
       createNewTask: "إنشاء مهمة جديدة",
@@ -2194,7 +2194,7 @@ const resources = {
       noDueDate: "لا يوجد تاريخ استحقاق",
       overdue: "متأخر",
       dueSoon: "مستحق قريباً",
-      
+
       // Smart Recommendations
       smartRecommendations: "التوصيات الذكية",
       recommendedTasks: "المهام الموصى بها",
@@ -2204,7 +2204,7 @@ const resources = {
       ageOfTask: "عمر المهمة",
       userPatterns: "أنماط المستخدم",
       intelligentPrioritization: "تحديد أولويات ذكي",
-      
+
       // Time Management
       timeRemaining: "الوقت المتبقي",
       timeSpent: "الوقت المستغرق",
@@ -2213,7 +2213,7 @@ const resources = {
       deadline: "الموعد النهائي",
       startTime: "وقت البدء",
       endTime: "وقت الانتهاء",
-      
+
       // Todo Statistics
       totalLists: "إجمالي القوائم",
       totalTasks: "إجمالي المهام",
@@ -2221,13 +2221,13 @@ const resources = {
       averageTasksPerList: "متوسط المهام لكل قائمة",
       tasksCompletedToday: "المهام المكتملة اليوم",
       tasksCreatedToday: "المهام المنشأة اليوم",
-      
+
       // Daily List Management
       newDailyList: "قائمة يومية جديدة",
       dailyListInformation: "معلومات القائمة اليومية",
       taskItems: "عناصر المهمة",
       addItem: "إضافة عنصر",
-      
+
       // Additional UI components
       actions: "الإجراءات",
       settings: "الإعدادات",
@@ -2269,7 +2269,7 @@ const resources = {
       audio: "الصوت",
       downloads: "التنزيلات",
       uploads: "الرفوعات",
-      
+
       // Page titles and navigation
       todoManagementPage: "إدارة المهام",
       interviewsPage: "الاجتماعات",
@@ -2278,7 +2278,7 @@ const resources = {
       archivePage: "الأرشيف",
       dataViewPage: "عرض البيانات",
       allDataPage: "جميع البيانات",
-      
+
       // Form labels and placeholders
       enterFirstName: "أدخل الاسم الأول",
       enterLastName: "أدخل اسم العائلة",
@@ -2290,29 +2290,29 @@ const resources = {
       position: "المنصب",
       hireDate: "تاريخ التوظيف",
       salary: "الراتب",
-      
+
       // Table headers
       fullName: "الاسم الكامل",
       createdAt: "أُنشئ في",
       lastLogin: "آخر تسجيل دخول",
-      
+
       // Status and actions
       enabled: "مفعّل",
       disabled: "معطّل",
       verify: "تحقق",
       suspend: "تعليق",
-      
+
       // Messages and notifications
       userAddedSuccessfully: "تمت إضافة المستخدم بنجاح",
       userUpdatedSuccessfully: "تم تحديث المستخدم بنجاح",
       userDeletedSuccessfully: "تم حذف المستخدم بنجاح",
       confirmDeleteUser: "هل أنت متأكد أنك تريد حذف هذا المستخدم؟",
-      
+
       // Dashboard stats
       totalEmployees: "إجمالي الموظفين",
       totalProjects: "إجمالي المشاريع",
       totalDepartments: "إجمالي الأقسام",
-      
+
       // Interview/Meeting management
       scheduleInterview: "جدولة اجتماع",
       interviewDate: "تاريخ الاجتماع",
@@ -2320,7 +2320,7 @@ const resources = {
       interviewer: "المُحاور",
       interviewee: "المُحاوَر",
       interviewNotes: "ملاحظات الاجتماع",
-      
+
       // Daily tasks
       taskPriority: "أولوية المهمة",
       taskAssignee: "المكلف",
@@ -2328,31 +2328,31 @@ const resources = {
       high: "عالي",
       medium: "متوسط",
       low: "منخفض",
-      
+
       // Common UI elements
       searchPlaceholder: "البحث...",
       noResultsFound: "لم يتم العثور على نتائج",
       loadingData: "جاري تحميل البيانات...",
       selectAll: "تحديد الكل",
       clearSelection: "مسح التحديد",
-      
+
       // Time and dates
       morning: "صباحاً",
       afternoon: "بعد الظهر",
       evening: "مساءً",
       night: "ليلاً",
-      
+
       // File operations
       uploadFile: "رفع ملف",
       downloadFile: "تنزيل ملف",
       deleteFile: "حذف ملف",
-      
+
       // Permissions
       viewPermission: "إذن العرض",
       editPermission: "إذن التعديل",
       deletePermission: "إذن الحذف",
       createPermission: "إذن الإنشاء",
-      
+
       // Change Password Modal
       changePassword: "تغيير كلمة المرور",
       currentPassword: "كلمة المرور الحالية",
@@ -2364,7 +2364,7 @@ const resources = {
       passwordsDoNotMatch: "كلمات المرور غير متطابقة",
       passwordChangedSuccessfully: "تم تغيير كلمة المرور بنجاح",
       passwordChangeError: "خطأ في تغيير كلمة المرور",
-      
+
       // Form Guidance
       workEmailGuidance: "استخدم عنوان بريد إلكتروني عمل صالح للمستخدم",
       passwordMinLengthGuidance: "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
@@ -2393,7 +2393,7 @@ const resources = {
       priorityMedium: "متوسط",
       priorityHigh: "عالي",
       priorityUrgent: "عاجل",
-      
+
       // Toast Notifications
       notSupported: "غير مدعوم",
       deviceNotificationsNotSupported: "إشعارات الجهاز غير مدعومة في هذا المتصفح.",
@@ -2451,13 +2451,13 @@ const resources = {
       feedbackSubmittedSuccessfully: "تم إرسال التعليق بنجاح",
       newDescriptionEntryAdded: "تمت إضافة إدخال وصف جديد بنجاح",
       failedToAddFeedbackType: "فشل في إضافة نوع التعليق",
-      
+
       // Access Denied Page
       accessDenied: "تم رفض الوصول",
       noPermissionMessage: "ليس لديك إذن للوصول إلى هذه الصفحة. يرجى الاتصال بالمدير إذا كنت تعتقد أن هذا خطأ.",
       goToDashboard: "الذهاب إلى لوحة التحكم",
       goBack: "رجوع",
-      
+
       // Navigation Subtitles
       overviewSubtitle: "نظرة عامة",
       evaluationsSubtitle: "التقييمات",
@@ -2469,7 +2469,7 @@ const resources = {
       dataViewSubtitle: "عرض البيانات",
       analyticsSubtitle: "التحليلات",
       historicalDataSubtitle: "البيانات التاريخية",
-      
+
       // Navigation Categories
       mainNavigation: "التنقل الرئيسي",
       analyticsAndReports: "التحليلات والتقارير",
@@ -2477,7 +2477,7 @@ const resources = {
       notificationCenter: "مركز الإشعارات",
       mainItems: "العناصر الرئيسية",
       reminders: "التذكيرات",
-      
+
       // Additional translations for completeness
       items: "العناصر",
       todayOnly: "اليوم فقط",
@@ -2505,7 +2505,7 @@ const resources = {
       minimumValue: "القيمة الدنيا",
       allDataFilter: "جميع البيانات",
       filteredData: "مفلتر",
-      
+
       // Enums translations
       enums: {
         priority: {
@@ -2543,6 +2543,20 @@ const resources = {
           praise: "مدح",
           feature: "طلب ميزة",
           other: "آخر"
+        },
+        archiveItemType: {
+          interview: "اجتماع",
+          todo: "مهمة",
+          feedback: "تعليق",
+          user: "مستخدم"
+        },
+        notificationType: {
+          user_created: "تم إنشاء المستخدم",
+          interview_request: "طلب اجتماع",
+          interview_status: "حالة الاجتماع",
+          todo_assigned: "تم تعيين المهمة",
+          todo_completed: "تم إكمال المهمة",
+          system: "نظام"
         }
       }
     }
@@ -2556,7 +2570,7 @@ i18n
     resources,
     fallbackLng: 'en',
     debug: false,
-    
+
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage']
