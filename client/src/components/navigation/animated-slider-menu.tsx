@@ -22,7 +22,8 @@ import {
   Clock,
   BookOpen,
   Shield,
-  Target
+  Target,
+  Building2, // Added Building2 icon
 } from "lucide-react";
 
 interface NavigationItem {
@@ -136,6 +137,13 @@ const NAVIGATION: Navigation = [
     title: 'Feedback & Reviews',
     icon: <MessageSquare className="w-5 h-5" />,
   },
+  // Department Management added here
+  {
+    segment: 'departments',
+    title: 'Department Management',
+    icon: <Building2 className="w-5 h-5" />,
+    roles: ['admin'],
+  },
 ];
 
 interface AnimatedSliderMenuProps {
@@ -182,7 +190,7 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
     // Apply to both mobile and desktop scroll containers with retry logic
     const setupScrollHandlers = () => {
       const containers = [scrollContainerRef.current, desktopScrollRef.current].filter(Boolean);
-      
+
       containers.forEach(scrollElement => {
         if (scrollElement) {
           scrollElement.addEventListener('wheel', handleWheel, { passive: false });
@@ -292,9 +300,9 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
             <div className="animate-in slide-in-from-top-2 duration-300">
               {item.children?.map((child, childIndex) => {
                 if (!hasAccess(child)) return null;
-                
+
                 const childActive = child.segment && isActive(child.segment);
-                
+
                 return (
                   <Link key={childIndex} href={`/${child.segment}`}>
                     <div className={cn(
@@ -424,7 +432,7 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
               </div>
             </div>
           </div>
-          
+
           {/* Navigation Content */}
           <div 
             ref={desktopScrollRef}
@@ -449,7 +457,7 @@ export default function AnimatedSliderMenu({ className }: AnimatedSliderMenuProp
               ))}
             </nav>
           </div>
-          
+
           {/* Modern Footer */}
           <div className="p-4 border-t border-border">
             <div className="flex items-center justify-center space-x-2">
