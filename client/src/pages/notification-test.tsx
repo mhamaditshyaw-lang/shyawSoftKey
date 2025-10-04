@@ -12,8 +12,10 @@ import { useDeviceNotifications } from "@/hooks/use-device-notifications";
 import { useToast } from "@/hooks/use-toast";
 import { authenticatedRequest } from "@/lib/auth";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useTranslation } from "react-i18next";
 
 export default function NotificationTestPage() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { 
     permission, 
@@ -33,28 +35,28 @@ export default function NotificationTestPage() {
   });
 
   const notificationTypes = [
-    { value: "system_alert", label: "System Alert", icon: "⚠️" },
-    { value: "task_reminder", label: "Task Reminder", icon: "📋" },
-    { value: "user_activity", label: "User Activity", icon: "👤" },
-    { value: "security_alert", label: "Security Alert", icon: "🔒" },
-    { value: "maintenance_notice", label: "Maintenance Notice", icon: "🔧" },
-    { value: "deadline_warning", label: "Deadline Warning", icon: "⏰" },
-    { value: "achievement", label: "Achievement", icon: "🏆" },
-    { value: "general", label: "General", icon: "🔔" }
+    { value: "system_alert", label: t("systemAlertType"), icon: "⚠️" },
+    { value: "task_reminder", label: t("taskReminderType"), icon: "📋" },
+    { value: "user_activity", label: t("userActivityType"), icon: "👤" },
+    { value: "security_alert", label: t("securityAlertType"), icon: "🔒" },
+    { value: "maintenance_notice", label: t("maintenanceNoticeType"), icon: "🔧" },
+    { value: "deadline_warning", label: t("deadlineWarningType"), icon: "⏰" },
+    { value: "achievement", label: t("achievementType"), icon: "🏆" },
+    { value: "general", label: t("generalType"), icon: "🔔" }
   ];
 
   const priorities = [
-    { value: "low", label: "Low", color: "bg-gray-100 text-gray-800" },
-    { value: "normal", label: "Normal", color: "bg-blue-100 text-blue-800" },
-    { value: "high", label: "High", color: "bg-orange-100 text-orange-800" },
-    { value: "urgent", label: "Urgent", color: "bg-red-100 text-red-800" }
+    { value: "low", label: t("lowPriority"), color: "bg-gray-100 text-gray-800" },
+    { value: "normal", label: t("normalPriority"), color: "bg-blue-100 text-blue-800" },
+    { value: "high", label: t("highPriority"), color: "bg-orange-100 text-orange-800" },
+    { value: "urgent", label: t("urgentPriority"), color: "bg-red-100 text-red-800" }
   ];
 
   const handleQuickTest = (type: string, title: string, message: string, priority: string = "normal") => {
     if (!isGranted) {
       toast({
-        title: "Permission Required",
-        description: "Please enable device notifications first.",
+        title: t("permissionRequiredTitle"),
+        description: t("pleaseEnableDeviceNotifications"),
         variant: "destructive",
       });
       return;
@@ -67,16 +69,16 @@ export default function NotificationTestPage() {
     });
 
     toast({
-      title: "Test Sent",
-      description: `${title} notification sent to your device.`,
+      title: t("testSent"),
+      description: `${title} ${t("notificationSentToDevice")}`,
     });
   };
 
   const handleCustomNotification = async () => {
     if (!customNotification.title || !customNotification.message) {
       toast({
-        title: "Missing Information",
-        description: "Please fill in both title and message.",
+        title: t("missingInformationTitle"),
+        description: t("pleaseFillTitleAndMessage"),
         variant: "destructive",
       });
       return;
@@ -96,8 +98,8 @@ export default function NotificationTestPage() {
 
       if (response.ok) {
         toast({
-          title: "Custom Notification Sent",
-          description: "Your custom notification has been created and sent.",
+          title: t("customNotificationTitle"),
+          description: t("customNotificationSent"),
         });
         
         // Reset form
@@ -111,8 +113,8 @@ export default function NotificationTestPage() {
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to send custom notification.",
+        title: t("error"),
+        description: t("failedToSendCustomNotification"),
         variant: "destructive",
       });
     }
@@ -123,22 +125,22 @@ export default function NotificationTestPage() {
       const response = await authenticatedRequest("/api/device-notifications/system-alert", {
         method: "POST",
         body: JSON.stringify({
-          title: "System Alert Test",
-          message: "This is a system-wide alert notification sent to all users.",
+          title: t("systemAlertTestTitle"),
+          message: t("systemWideAlertMessage"),
           priority: "high"
         }),
       });
 
       if (response.ok) {
         toast({
-          title: "System Alert Sent",
-          description: "System alert has been sent to all users.",
+          title: t("customNotificationTitle"),
+          description: t("systemAlertSent"),
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to send system alert. Admin access may be required.",
+        title: t("error"),
+        description: t("failedToSendSystemAlert"),
         variant: "destructive",
       });
     }
@@ -149,9 +151,9 @@ export default function NotificationTestPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Device Notification Test Center</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{t("deviceNotificationTestCenter")}</h1>
             <p className="text-muted-foreground">
-              Test and verify the device notification system functionality
+              {t("testAndVerifyNotifications")}
             </p>
           </div>
         </div>
@@ -161,32 +163,32 @@ export default function NotificationTestPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Smartphone className="w-5 h-5 mr-2" />
-              Notification Permission Status
+              {t("notificationPermissionStatus")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex items-center space-x-2">
-                <Label>Browser Support:</Label>
+                <Label>{t("browserSupport")}:</Label>
                 <Badge variant={isSupported ? "default" : "destructive"}>
-                  {isSupported ? "Supported" : "Not Supported"}
+                  {isSupported ? t("supported") : t("notSupported")}
                 </Badge>
               </div>
               <div className="flex items-center space-x-2">
-                <Label>Permission:</Label>
+                <Label>{t("permission")}:</Label>
                 <Badge variant={
                   permission.permission === 'granted' ? 'default' : 
                   permission.permission === 'denied' ? 'destructive' : 'secondary'
                 }>
-                  {permission.permission === 'granted' ? 'Enabled' : 
-                   permission.permission === 'denied' ? 'Blocked' : 'Not Set'}
+                  {permission.permission === 'granted' ? t("enabled") : 
+                   permission.permission === 'denied' ? t("blocked") : t("notSet")}
                 </Badge>
               </div>
               <div>
                 {!isGranted && isSupported && (
                   <Button onClick={requestPermission}>
                     <Bell className="w-4 h-4 mr-2" />
-                    Request Permission
+                    {t("requestPermission")}
                   </Button>
                 )}
               </div>
@@ -199,16 +201,16 @@ export default function NotificationTestPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <TestTube className="w-5 h-5 mr-2" />
-              Quick Test Notifications
+              {t("quickTestNotifications")}
             </CardTitle>
             <CardDescription>
-              Send predefined test notifications to verify different types and priorities
+              {t("sendPredefinedTestNotifications")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Button
-                onClick={() => handleQuickTest("system_alert", "System Alert", "This is a test system alert notification", "high")}
+                onClick={() => handleQuickTest("system_alert", t("systemAlertType"), t("thisIsTestSystemAlert"), "high")}
                 disabled={!isGranted}
                 className="justify-start h-auto p-4"
                 variant="outline"
@@ -216,14 +218,14 @@ export default function NotificationTestPage() {
                 <div className="flex items-center space-x-3">
                   <AlertTriangle className="w-6 h-6 text-orange-500" />
                   <div className="text-left">
-                    <div className="font-medium">System Alert Test</div>
-                    <div className="text-sm text-muted-foreground">High priority system notification</div>
+                    <div className="font-medium">{t("systemAlertTest")}</div>
+                    <div className="text-sm text-muted-foreground">{t("highPrioritySystemNotification")}</div>
                   </div>
                 </div>
               </Button>
 
               <Button
-                onClick={() => handleQuickTest("task_reminder", "Task Reminder", "Don't forget to complete your daily tasks", "normal")}
+                onClick={() => handleQuickTest("task_reminder", t("taskReminderType"), t("dontForgetCompleteTask"), "normal")}
                 disabled={!isGranted}
                 className="justify-start h-auto p-4"
                 variant="outline"
@@ -231,14 +233,14 @@ export default function NotificationTestPage() {
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="w-6 h-6 text-blue-500" />
                   <div className="text-left">
-                    <div className="font-medium">Task Reminder Test</div>
-                    <div className="text-sm text-muted-foreground">Normal priority task notification</div>
+                    <div className="font-medium">{t("taskReminderTest")}</div>
+                    <div className="text-sm text-muted-foreground">{t("normalPriorityTaskNotification")}</div>
                   </div>
                 </div>
               </Button>
 
               <Button
-                onClick={() => handleQuickTest("deadline_warning", "Deadline Warning", "Project deadline is approaching in 2 days", "urgent")}
+                onClick={() => handleQuickTest("deadline_warning", t("deadlineWarningType"), t("deadlineApproachingInDays"), "urgent")}
                 disabled={!isGranted}
                 className="justify-start h-auto p-4"
                 variant="outline"
@@ -246,14 +248,14 @@ export default function NotificationTestPage() {
                 <div className="flex items-center space-x-3">
                   <Clock className="w-6 h-6 text-red-500" />
                   <div className="text-left">
-                    <div className="font-medium">Deadline Warning Test</div>
-                    <div className="text-sm text-muted-foreground">Urgent priority deadline notification</div>
+                    <div className="font-medium">{t("deadlineWarningTest")}</div>
+                    <div className="text-sm text-muted-foreground">{t("urgentPriorityDeadlineNotification")}</div>
                   </div>
                 </div>
               </Button>
 
               <Button
-                onClick={() => handleQuickTest("achievement", "Achievement Unlocked", "Congratulations! You've completed all your tasks this week", "low")}
+                onClick={() => handleQuickTest("achievement", t("achievementType"), t("congratulationsCompletedTasks"), "low")}
                 disabled={!isGranted}
                 className="justify-start h-auto p-4"
                 variant="outline"
@@ -261,8 +263,8 @@ export default function NotificationTestPage() {
                 <div className="flex items-center space-x-3">
                   <Trophy className="w-6 h-6 text-green-500" />
                   <div className="text-left">
-                    <div className="font-medium">Achievement Test</div>
-                    <div className="text-sm text-muted-foreground">Low priority achievement notification</div>
+                    <div className="font-medium">{t("achievementTest")}</div>
+                    <div className="text-sm text-muted-foreground">{t("lowPriorityAchievementNotification")}</div>
                   </div>
                 </div>
               </Button>
@@ -273,25 +275,25 @@ export default function NotificationTestPage() {
         {/* Custom Notification Builder */}
         <Card>
           <CardHeader>
-            <CardTitle>Custom Notification Builder</CardTitle>
+            <CardTitle>{t("customNotificationBuilder")}</CardTitle>
             <CardDescription>
-              Create and send custom notifications with specific content and settings
+              {t("createCustomNotifications")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
+                <Label htmlFor="title">{t("title")}</Label>
                 <Input
                   id="title"
                   value={customNotification.title}
                   onChange={(e) => setCustomNotification(prev => ({ ...prev, title: e.target.value }))}
-                  placeholder="Enter notification title"
+                  placeholder={t("enterNotificationTitle")}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="icon">Icon/Emoji</Label>
+                <Label htmlFor="icon">{t("iconEmoji")}</Label>
                 <Input
                   id="icon"
                   value={customNotification.icon}
@@ -303,19 +305,19 @@ export default function NotificationTestPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="message">Message</Label>
+              <Label htmlFor="message">{t("message")}</Label>
               <Textarea
                 id="message"
                 value={customNotification.message}
                 onChange={(e) => setCustomNotification(prev => ({ ...prev, message: e.target.value }))}
-                placeholder="Enter notification message"
+                placeholder={t("enterNotificationMessage")}
                 rows={3}
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Type</Label>
+                <Label>{t("type")}</Label>
                 <Select
                   value={customNotification.type}
                   onValueChange={(value) => setCustomNotification(prev => ({ ...prev, type: value }))}
@@ -337,7 +339,7 @@ export default function NotificationTestPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Priority</Label>
+                <Label>{t("priority")}</Label>
                 <Select
                   value={customNotification.priority}
                   onValueChange={(value) => setCustomNotification(prev => ({ ...prev, priority: value }))}
@@ -361,12 +363,12 @@ export default function NotificationTestPage() {
             <div className="flex space-x-4 pt-4">
               <Button onClick={handleCustomNotification} disabled={!isGranted}>
                 <TestTube className="w-4 h-4 mr-2" />
-                Send Custom Notification
+                {t("sendCustomNotification")}
               </Button>
               
               <Button onClick={createTestNotification} disabled={!isGranted} variant="outline">
                 <Bell className="w-4 h-4 mr-2" />
-                Send Default Test
+                {t("sendDefaultTest")}
               </Button>
             </div>
           </CardContent>
@@ -377,16 +379,16 @@ export default function NotificationTestPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <ShieldAlert className="w-5 h-5 mr-2" />
-              System Alert (Admin Only)
+              {t("systemAlertAdminOnly")}
             </CardTitle>
             <CardDescription>
-              Send system-wide alerts to all users (requires admin permissions)
+              {t("sendSystemWideAlerts")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={handleSystemAlert} variant="destructive">
               <AlertTriangle className="w-4 h-4 mr-2" />
-              Send System Alert to All Users
+              {t("sendSystemAlertToAllUsers")}
             </Button>
           </CardContent>
         </Card>
