@@ -841,6 +841,18 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  async getFeedbackByAccessibleUsers(accessibleUserIds: number[]): Promise<any[]> {
+    try {
+      const { FeedbackService } = await import("./feedback-service");
+      const feedback = await FeedbackService.getFeedbackByAccessibleUsers(accessibleUserIds);
+      console.log("Storage getFeedbackByAccessibleUsers result:", feedback?.length || 0, "items");
+      return feedback;
+    } catch (error) {
+      console.error("Storage getFeedbackByAccessibleUsers error:", error);
+      throw error;
+    }
+  }
+
   async createFeedback(feedbackData: any): Promise<any> {
     try {
       const { FeedbackService } = await import("./feedback-service");

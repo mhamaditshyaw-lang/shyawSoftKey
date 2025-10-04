@@ -1204,19 +1204,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
   // Feedback routes
-  app.get("/api/feedback", authenticateToken, async (req: AuthRequest, res) => {
+  app.get("/api/feedback", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       console.log("Fetching feedback for user:", req.user?.id, "role:", req.user?.role);
       let feedback;
-      if (req.user?.role === 'security') {
+      
+      if (req.user?.role === 'admin' || req.user?.role === 'office' || req.user?.role === 'office_team') {
+        // Admin and office roles can see all feedback
+        feedback = await storage.getAllFeedback();
+        console.log("Admin/office feedback:", feedback);
+      } else if (req.user?.role === 'security') {
         // Security role can only see their own feedback
         feedback = await storage.getFeedbackByUser(req.user?.id || 0);
         console.log("Security user feedback:", feedback);
       } else {
-        // All other roles can see all feedback
-        feedback = await storage.getAllFeedback();
-        console.log("All feedback:", feedback);
+        // Managers and other roles see feedback from their accessible users
+        feedback = await storage.getFeedbackByAccessibleUsers(req.accessibleUserIds!);
+        console.log("Manager/scoped feedback:", feedback);
       }
+      
       console.log("Returning feedback count:", feedback?.length || 0);
       res.json({ feedback });
     } catch (error: any) {

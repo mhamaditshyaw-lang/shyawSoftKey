@@ -1,7 +1,7 @@
 import { db } from "./db";
 import { feedback, archivedItems, feedbackTypes, InsertFeedback, InsertArchivedItem, InsertFeedbackType, insertFeedbackSchema, insertFeedbackTypeSchema, insertArchivedItemSchema } from "../shared/feedback-schema";
 import { users, interviewRequests, todoLists } from "../shared/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, inArray } from "drizzle-orm";
 
 export class FeedbackService {
   static async createFeedback(feedbackData: InsertFeedback): Promise<any> {
@@ -67,6 +67,36 @@ export class FeedbackService {
       .from(feedback)
       .leftJoin(users, eq(feedback.submittedById, users.id))
       .where(eq(feedback.submittedById, userId))
+      .orderBy(desc(feedback.createdAt));
+
+    return feedbackList;
+  }
+
+  static async getFeedbackByAccessibleUsers(accessibleUserIds: number[]): Promise<any[]> {
+    if (!accessibleUserIds || accessibleUserIds.length === 0) {
+      return [];
+    }
+
+    const feedbackList = await db
+      .select({
+        id: feedback.id,
+        type: feedback.type,
+        title: feedback.title,
+        description: feedback.description,
+        rating: feedback.rating,
+        relatedInterviewId: feedback.relatedInterviewId,
+        createdAt: feedback.createdAt,
+        updatedAt: feedback.updatedAt,
+        submittedBy: {
+          id: users.id,
+          firstName: users.firstName,
+          lastName: users.lastName,
+          email: users.email,
+        },
+      })
+      .from(feedback)
+      .leftJoin(users, eq(feedback.submittedById, users.id))
+      .where(inArray(feedback.submittedById, accessibleUserIds))
       .orderBy(desc(feedback.createdAt));
 
     return feedbackList;
