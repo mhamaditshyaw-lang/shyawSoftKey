@@ -27,11 +27,13 @@ export default function DepartmentManagementPage() {
   const [showCreateDept, setShowCreateDept] = useState(false);
   const [showAddEmployee, setShowAddEmployee] = useState(false);
   const [showEditEmployee, setShowEditEmployee] = useState(false);
+  const [showEditDept, setShowEditDept] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
   const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null);
   const [newDeptName, setNewDeptName] = useState("");
   const [newDeptManagerId, setNewDeptManagerId] = useState("");
   const [editDepartment, setEditDepartment] = useState("");
+  const [renameDeptName, setRenameDeptName] = useState("");
   
   const [employeeForm, setEmployeeForm] = useState({
     firstName: "",
@@ -242,6 +244,90 @@ export default function DepartmentManagementPage() {
     }
   };
 
+  const handleEditDepartment = (deptName: string) => {
+    setSelectedDepartment(deptName);
+    setRenameDeptName(deptName);
+    setShowEditDept(true);
+  };
+
+  const handleRenameDepartment = async () => {
+    if (!selectedDepartment || !renameDeptName) {
+      toast({
+        title: "Error",
+        description: "Please provide a new department name",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (selectedDepartment === renameDeptName) {
+      setShowEditDept(false);
+      return;
+    }
+
+    const employeesInDept = users.filter((u: any) => u.department === selectedDepartment);
+    
+    try {
+      for (const emp of employeesInDept) {
+        await authenticatedRequest("PATCH", `/api/users/${emp.id}`, {
+          department: renameDeptName
+        });
+      }
+      
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      toast({
+        title: "Success",
+        description: "Department renamed successfully",
+      });
+      setShowEditDept(false);
+      setSelectedDepartment(null);
+      setRenameDeptName("");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to rename department",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteDepartment = async (deptName: string) => {
+    if (deptName === "Unassigned") {
+      toast({
+        title: "Error",
+        description: "Cannot delete the Unassigned category",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const employeesInDept = users.filter((u: any) => u.department === deptName);
+    
+    if (!confirm(`Delete department "${deptName}"? All ${employeesInDept.length} employee(s) will be moved to Unassigned.`)) {
+      return;
+    }
+
+    try {
+      for (const emp of employeesInDept) {
+        await authenticatedRequest("PATCH", `/api/users/${emp.id}`, {
+          department: null
+        });
+      }
+      
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      toast({
+        title: "Success",
+        description: "Department deleted successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete department",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <DashboardLayout>
@@ -288,15 +374,39 @@ export default function DepartmentManagementPage() {
               className="bg-white dark:bg-dashboard-card-dark border-dashboard-border-light dark:border-dashboard-border-dark hover:shadow-lg transition-shadow"
             >
               <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
+                <div className="flex items-center justify-between mb-2">
+                  <CardTitle className="flex items-center space-x-2">
                     <Building2 className="h-5 w-5 text-dashboard-primary" />
                     <span>{dept.name}</span>
+                  </CardTitle>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary">
+                      {dept.employees.length} {dept.employees.length === 1 ? 'member' : 'members'}
+                    </Badge>
+                    {dept.name !== "Unassigned" && (
+                      <div className="flex gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditDepartment(dept.name)}
+                          className="h-6 w-6 p-0"
+                          data-testid={`button-edit-dept-${dept.name}`}
+                        >
+                          <Edit className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteDepartment(dept.name)}
+                          className="h-6 w-6 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          data-testid={`button-delete-dept-${dept.name}`}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                  <Badge variant="secondary">
-                    {dept.employees.length} {dept.employees.length === 1 ? 'member' : 'members'}
-                  </Badge>
-                </CardTitle>
+                </div>
                 <CardDescription>
                   {dept.manager ? (
                     <div className="flex items-center space-x-2 mt-2">
@@ -631,6 +741,45 @@ export default function DepartmentManagementPage() {
                 data-testid="button-update-department"
               >
                 {updateUserMutation.isPending ? "Updating..." : "Update Department"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Rename Department Dialog */}
+        <Dialog open={showEditDept} onOpenChange={setShowEditDept}>
+          <DialogContent className="bg-white dark:bg-dashboard-card-dark">
+            <DialogHeader>
+              <DialogTitle>Rename Department</DialogTitle>
+              <DialogDescription>
+                Change the name of "{selectedDepartment}". All employees in this department will be updated.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="renameDept">New Department Name *</Label>
+                <Input
+                  id="renameDept"
+                  placeholder="e.g., Finance, Operations, Legal"
+                  value={renameDeptName}
+                  onChange={(e) => setRenameDeptName(e.target.value)}
+                  data-testid="input-rename-department"
+                />
+                <p className="text-xs text-muted-foreground">
+                  This will update the department name for all {departments[selectedDepartment || ""]?.employees?.length || 0} employee(s)
+                </p>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowEditDept(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleRenameDepartment}
+                disabled={!renameDeptName}
+                data-testid="button-save-rename"
+              >
+                Rename Department
               </Button>
             </DialogFooter>
           </DialogContent>
