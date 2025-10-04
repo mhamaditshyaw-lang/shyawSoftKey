@@ -354,20 +354,20 @@ export default function UserActivityPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-              User Activity Dashboard
+              {t("userActivityDashboard")}
             </h1>
             <p className="text-sm md:text-base text-gray-600">
-              Track and monitor all user activities across the system
+              {t("trackMonitorActivities")}
             </p>
           </div>
           <div className="flex space-x-3">
             <Button onClick={exportActivities} variant="outline">
               <Download className="w-4 h-4 mr-2" />
-              Export CSV
+              {t("exportCsv")}
             </Button>
             <Button onClick={() => queryClient.invalidateQueries()} variant="outline">
               <RefreshCw className="w-4 h-4 mr-2" />
-              Refresh
+              {t("refresh")}
             </Button>
           </div>
         </div>
@@ -378,7 +378,7 @@ export default function UserActivityPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-xs font-medium">Total Activities</p>
+                  <p className="text-blue-100 text-xs font-medium">{t("totalActivities")}</p>
                   <p className="text-2xl font-bold">{activityStats.total}</p>
                 </div>
                 <Activity className="w-8 h-8 text-blue-200" />
@@ -390,7 +390,7 @@ export default function UserActivityPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-100 text-xs font-medium">Today</p>
+                  <p className="text-green-100 text-xs font-medium">{t("today")}</p>
                   <p className="text-2xl font-bold">{activityStats.todayCount}</p>
                 </div>
                 <Clock className="w-8 h-8 text-green-200" />
@@ -402,7 +402,7 @@ export default function UserActivityPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-yellow-100 text-xs font-medium">This Week</p>
+                  <p className="text-yellow-100 text-xs font-medium">{t("thisWeekActivities")}</p>
                   <p className="text-2xl font-bold">{activityStats.weekCount}</p>
                 </div>
                 <TrendingUp className="w-8 h-8 text-yellow-200" />
@@ -414,7 +414,7 @@ export default function UserActivityPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-100 text-xs font-medium">This Month</p>
+                  <p className="text-purple-100 text-xs font-medium">{t("thisMonthActivities")}</p>
                   <p className="text-2xl font-bold">{activityStats.monthCount}</p>
                 </div>
                 <BarChart3 className="w-8 h-8 text-purple-200" />
@@ -426,7 +426,7 @@ export default function UserActivityPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-indigo-100 text-xs font-medium">Todo Activities</p>
+                  <p className="text-indigo-100 text-xs font-medium">{t("taskActivities")}</p>
                   <p className="text-2xl font-bold">{activityStats.todoActivities}</p>
                 </div>
                 <CheckSquare className="w-8 h-8 text-indigo-200" />
@@ -438,7 +438,7 @@ export default function UserActivityPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-pink-100 text-xs font-medium">Feedback</p>
+                  <p className="text-pink-100 text-xs font-medium">{t("feedbackActivities")}</p>
                   <p className="text-2xl font-bold">{activityStats.feedbackActivities}</p>
                 </div>
                 <MessageSquare className="w-8 h-8 text-pink-200" />
@@ -450,7 +450,7 @@ export default function UserActivityPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-orange-100 text-xs font-medium">Interviews</p>
+                  <p className="text-orange-100 text-xs font-medium">{t("interviewActivities")}</p>
                   <p className="text-2xl font-bold">{activityStats.interviewActivities}</p>
                 </div>
                 <Users className="w-8 h-8 text-orange-200" />

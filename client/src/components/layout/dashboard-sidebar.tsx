@@ -79,7 +79,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       badge: null,
     },
     {
-      title: "Reminders",
+      title: t("reminders"),
       href: "/reminders",
       icon: Bell,
       badge: null,
@@ -109,13 +109,13 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       badge: null,
     },
     {
-      title: "Daily Operations",
+      title: t("dailyOperations"),
       href: "/metrics",
       icon: BarChart3,
-      badge: "Data Entry",
+      badge: t("dataEntry"),
     },
     {
-      title: "Data View",
+      title: t("dataView"),
       href: "/data-view",
       icon: Database,
       badge: null,
@@ -127,10 +127,10 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       badge: null,
     },
     {
-      title: "User Activity",
+      title: t("userActivity"),
       href: "/user-activity",
       icon: Activity,
-      badge: "Tracking",
+      badge: t("tracking"),
     }
   ];
 

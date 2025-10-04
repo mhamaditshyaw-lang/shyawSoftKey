@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ interface Reminder {
 }
 
 export default function RemindersPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
   const [filterType, setFilterType] = useState<"all" | "today" | "upcoming" | "overdue">("today");
@@ -248,8 +250,8 @@ export default function RemindersPage() {
                 <Bell className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Reminders</h1>
-                <p className="text-sm text-gray-600 mt-1">Manage your task reminders and notifications</p>
+                <h1 className="text-2xl font-bold text-gray-900">{t("reminders")}</h1>
+                <p className="text-sm text-gray-600 mt-1">{t("manageRemindersNotifications")}</p>
               </div>
             </CardTitle>
           </CardHeader>
@@ -264,7 +266,7 @@ export default function RemindersPage() {
                 data-testid="filter-today"
               >
                 <Calendar className="w-4 h-4" />
-                Today ({todayReminders.length})
+                {t("today")} ({todayReminders.length})
               </Button>
               <Button
                 variant={filterType === "upcoming" ? "default" : "outline"}
@@ -274,7 +276,7 @@ export default function RemindersPage() {
                 data-testid="filter-upcoming"
               >
                 <Clock className="w-4 h-4" />
-                Upcoming
+                {t("upcomingReminders")}
               </Button>
               <Button
                 variant={filterType === "overdue" ? "default" : "outline"}
@@ -284,7 +286,7 @@ export default function RemindersPage() {
                 data-testid="filter-overdue"
               >
                 <AlertCircle className="w-4 h-4" />
-                Overdue
+                {t("overdueReminders")}
               </Button>
               <Button
                 variant={filterType === "all" ? "default" : "outline"}
