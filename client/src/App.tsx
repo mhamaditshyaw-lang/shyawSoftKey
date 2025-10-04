@@ -101,7 +101,7 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/department-management">
-        <ProtectedRoute requiredPermission="canViewDepartmentManagement">
+        <ProtectedRoute>
           <DepartmentManagementPage />
         </ProtectedRoute>
       </Route>

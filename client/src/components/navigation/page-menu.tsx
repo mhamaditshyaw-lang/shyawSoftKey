@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
-import { Grid3X3, Search, ChevronRight, Home, Users, Calendar, CheckSquare, MessageSquare, BarChart3, Archive, FileText, Database, Globe } from "lucide-react";
+import { Grid3X3, Search, ChevronRight, Home, Users, Calendar, CheckSquare, MessageSquare, BarChart3, Archive, FileText, Database, Globe, Building2, Bell } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 interface NavItem {
@@ -105,7 +105,14 @@ export default function PageMenu() {
       roles: ["admin"],
       category: t("reportsCategory")
     },
-    
+    {
+      title: t("departmentManagement"),
+      href: "/departments",
+      icon: Building2,
+      description: t("manageDepartments"),
+      roles: ["admin"],
+      category: t("hrCategory"),
+    },
 
     { 
       title: "Multilingual Demo", 
@@ -123,7 +130,7 @@ export default function PageMenu() {
       page.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       page.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       page.category.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     return hasRole && matchesSearch;
   });
 
@@ -177,7 +184,7 @@ export default function PageMenu() {
                 ×
               </Button>
             </div>
-            
+
             {/* Search */}
             <div className="relative mt-4">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -189,7 +196,7 @@ export default function PageMenu() {
               />
             </div>
           </CardHeader>
-          
+
           <CardContent className="flex-1 overflow-y-auto p-6">
             <div className="space-y-6">
               {categories.map((category) => (
@@ -200,12 +207,12 @@ export default function PageMenu() {
                       {groupedPages[category].length} pages
                     </Badge>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {groupedPages[category].map((page) => {
                       const Icon = page.icon;
                       const isActive = location === page.href;
-                      
+
                       return (
                         <button
                           key={page.href}
@@ -224,7 +231,7 @@ export default function PageMenu() {
                           }`}>
                             <Icon className="w-5 h-5" />
                           </div>
-                          
+
                           <div className="flex-1 min-w-0">
                             <div className={`font-medium ${
                               isActive ? "text-primary" : "text-gray-900"
@@ -240,7 +247,7 @@ export default function PageMenu() {
                               </Badge>
                             )}
                           </div>
-                          
+
                           <ChevronRight className={`w-4 h-4 ${
                             isActive ? "text-primary" : "text-gray-400"
                           }`} />
@@ -250,7 +257,7 @@ export default function PageMenu() {
                   </div>
                 </div>
               ))}
-              
+
               {filteredPages.length === 0 && (
                 <div className="text-center py-12">
                   <Grid3X3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
