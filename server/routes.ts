@@ -77,6 +77,7 @@ async function authenticateToken(req: AuthRequest, res: Response, next: NextFunc
 function requireRole(roles: string[]) {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user || !roles.includes(req.user.role)) {
+      // This message can be translated on the frontend using the "insufficientPermissions" key
       return res.status(403).json({ message: 'Insufficient permissions' });
     }
     next();

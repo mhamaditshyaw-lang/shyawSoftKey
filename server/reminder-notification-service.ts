@@ -113,6 +113,7 @@ export class ReminderNotificationService {
 
   /**
    * Send a notification for a specific reminder
+   * Note: The frontend will translate these messages based on user's language preference
    */
   private static async sendReminderNotification(userId: number, reminder: any) {
     const title = reminder.title || "Reminder";
@@ -121,7 +122,7 @@ export class ReminderNotificationService {
     await DeviceNotificationService.createUserNotification(
       userId,
       "task_reminder",
-      `📅 ${title}`,
+      title,
       message,
       "normal",
       {
