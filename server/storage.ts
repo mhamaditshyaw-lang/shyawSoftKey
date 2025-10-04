@@ -304,37 +304,31 @@ export class DatabaseStorage implements IStorage {
 
   async getAccessibleUserIds(userId: number, role: string): Promise<number[]> {
     return await executeWithRetry(async () => {
-      // Admins, office, and office_team can see all users
-      if (role === 'admin' || role === 'office' || role === 'office_team') {
+      // Admins can see all users across all departments
+      if (role === 'admin') {
         const allUsers = await db.select({ id: users.id }).from(users);
         return allUsers.map(u => u.id);
       }
 
-      // Managers can see themselves and all their subordinates (recursively)
-      if (role === 'manager') {
-        const subordinateIds = new Set<number>([userId]);
-        const toProcess = [userId];
-
-        while (toProcess.length > 0) {
-          const currentManagerId = toProcess.shift()!;
-          const directReports = await db
-            .select({ id: users.id })
-            .from(users)
-            .where(eq(users.managerId, currentManagerId));
-
-          for (const report of directReports) {
-            if (!subordinateIds.has(report.id)) {
-              subordinateIds.add(report.id);
-              toProcess.push(report.id);
-            }
-          }
-        }
-
-        return Array.from(subordinateIds);
+      // Get the current user's department
+      const currentUser = await this.getUser(userId);
+      if (!currentUser) {
+        return [userId];
       }
 
-      // Regular staff can only see themselves
-      return [userId];
+      // If user has no department, they can only see themselves
+      if (!currentUser.department) {
+        return [userId];
+      }
+
+      // All users (managers, security, secretary, office, office_team) 
+      // can see only users in their own department
+      const departmentUsers = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.department, currentUser.department));
+
+      return departmentUsers.map(u => u.id);
     });
   }
 
