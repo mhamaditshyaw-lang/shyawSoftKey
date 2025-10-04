@@ -341,9 +341,9 @@ export class DatabaseStorage implements IStorage {
   async getTodoLists(accessibleUserIds?: number[]): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]> {
     if (accessibleUserIds && accessibleUserIds.length > 0) {
       const result = await db.query.todoLists.findMany({
-        where: (todoLists, { or, eq, inArray }) => or(
+        where: (todoLists, { or, inArray }) => or(
           inArray(todoLists.createdById, accessibleUserIds),
-          inArray(todoLists.assignedToId, accessibleUserIds.concat([null as any]))
+          inArray(todoLists.assignedToId, accessibleUserIds)
         ),
         with: {
           createdBy: true,
@@ -527,14 +527,14 @@ export class DatabaseStorage implements IStorage {
   async getInterviewRequests(accessibleUserIds?: number[], includeUnassigned?: boolean): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]> {
     if (accessibleUserIds && accessibleUserIds.length > 0) {
       const result = await db.query.interviewRequests.findMany({
-        where: (interviewRequests, { inArray, or, isNull }) => {
-          if (includeUnassigned) {
-            return or(
-              inArray(interviewRequests.requestedById, accessibleUserIds),
-              isNull(interviewRequests.managerId)
-            );
-          }
-          return inArray(interviewRequests.requestedById, accessibleUserIds);
+        where: (interviewRequests, { inArray, or, and, isNotNull }) => {
+          return or(
+            inArray(interviewRequests.requestedById, accessibleUserIds),
+            and(
+              isNotNull(interviewRequests.managerId),
+              inArray(interviewRequests.managerId, accessibleUserIds)
+            )
+          );
         },
         with: {
           requestedBy: true,
