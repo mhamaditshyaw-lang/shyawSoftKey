@@ -152,7 +152,8 @@ export default function UsersPage() {
       lastName: editingUser.lastName,
       email: editingUser.email,
       role: editingUser.role,
-      status: editingUser.status
+      status: editingUser.status,
+      managerId: editingUser.managerId || null
     };
 
     // Include password only if it's provided (not empty)
@@ -504,6 +505,29 @@ export default function UsersPage() {
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="inactive">Inactive</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="manager" className="text-gray-700 dark:text-gray-300">Manager</Label>
+                <Select 
+                  value={editingUser.managerId?.toString() || "none"} 
+                  onValueChange={(value) => setEditingUser({...editingUser, managerId: value === "none" ? null : parseInt(value)})}
+                >
+                  <SelectTrigger className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100" data-testid="select-manager">
+                    <SelectValue placeholder="Select manager" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white dark:bg-gray-800 border dark:border-gray-700">
+                    <SelectItem value="none">No Manager</SelectItem>
+                    {users
+                      .filter((u: any) => u.id !== editingUser.id)
+                      .map((user: any) => (
+                        <SelectItem key={user.id} value={user.id.toString()}>
+                          {user.firstName} {user.lastName} ({user.role})
+                        </SelectItem>
+                      ))
+                    }
                   </SelectContent>
                 </Select>
               </div>
