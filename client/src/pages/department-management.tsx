@@ -463,7 +463,6 @@ export default function DepartmentManagementPage() {
                     <SelectValue placeholder="Select manager (optional)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">No Manager</SelectItem>
                     {allManagers
                       .filter((m: any) => m.department === employeeForm.department)
                       .map((manager: any) => (
