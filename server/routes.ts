@@ -101,6 +101,52 @@ async function attachUserScope(req: AuthRequest, res: Response, next: NextFuncti
   }
 }
 
+// Authorization helper utilities
+function assertUserInScope(userId: number | null | undefined, accessibleUserIds: number[]): void {
+  if (userId && !accessibleUserIds.includes(userId)) {
+    throw new Error('User not in your accessible scope');
+  }
+}
+
+async function assertTodoListInScope(todoListId: number, accessibleUserIds: number[]): Promise<void> {
+  const todoList = await storage.getTodoList(todoListId);
+  if (!todoList) {
+    throw new Error('Todo list not found');
+  }
+  
+  const isInScope = 
+    accessibleUserIds.includes(todoList.createdById) ||
+    (todoList.assignedToId && accessibleUserIds.includes(todoList.assignedToId));
+  
+  if (!isInScope) {
+    throw new Error('Todo list not in your accessible scope');
+  }
+}
+
+async function assertTodoItemInScope(todoItemId: number, accessibleUserIds: number[]): Promise<void> {
+  const todoItem = await storage.getTodoItem(todoItemId);
+  if (!todoItem) {
+    throw new Error('Todo item not found');
+  }
+  
+  await assertTodoListInScope(todoItem.todoListId, accessibleUserIds);
+}
+
+async function assertInterviewInScope(interviewId: number, accessibleUserIds: number[]): Promise<void> {
+  const interview = await storage.getInterviewRequest(interviewId);
+  if (!interview) {
+    throw new Error('Interview request not found');
+  }
+  
+  const isInScope = 
+    accessibleUserIds.includes(interview.requestedById) ||
+    (interview.managerId && accessibleUserIds.includes(interview.managerId));
+  
+  if (!isInScope) {
+    throw new Error('Interview request not in your accessible scope');
+  }
+}
+
 // WebSocket connections storage
 
 

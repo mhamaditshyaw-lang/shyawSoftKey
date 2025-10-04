@@ -579,6 +579,17 @@ export class DatabaseStorage implements IStorage {
     return result;
   }
 
+  async getInterviewRequest(id: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null }) | undefined> {
+    const result = await db.query.interviewRequests.findFirst({
+      where: (interviewRequests, { eq }) => eq(interviewRequests.id, id),
+      with: {
+        requestedBy: true,
+        manager: true,
+      },
+    });
+    return result;
+  }
+
   async createInterviewRequest(request: InsertInterviewRequest): Promise<InterviewRequest> {
     const [interviewRequest] = await db
       .insert(interviewRequests)
