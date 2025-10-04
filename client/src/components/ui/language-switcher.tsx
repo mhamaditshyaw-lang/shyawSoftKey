@@ -11,7 +11,8 @@ import {
 
 const languages = [
   { code: 'en', name: 'English', nativeName: 'English' },
-  { code: 'ku', name: 'Kurdish', nativeName: 'کوردی' }
+  { code: 'ku', name: 'Kurdish', nativeName: 'کوردی' },
+  { code: 'ar', name: 'Arabic', nativeName: 'العربية' }
 ];
 
 export function LanguageSwitcher() {
