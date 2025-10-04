@@ -192,9 +192,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ user: userWithoutPassword });
   });
 
-  // User management routes (Admin and managers can view users based on their scope)
+  // User management routes - each manager sees only their own team
   app.get("/api/users", authenticateToken, attachUserScope, requireRole(['admin', 'manager', 'office', 'office_team']), async (req: AuthRequest, res) => {
     try {
+      // Filter users based on accessible user IDs - managers can only see their own team
       const users = await storage.getAllUsers(req.accessibleUserIds);
       const usersWithoutPasswords = users.map(({ password, ...user }) => user);
       res.json({ users: usersWithoutPasswords });
@@ -540,10 +541,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Todo routes (office role can see all, others see their own)
+  // Todo routes - each manager sees only their own data
   app.get("/api/todos", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       // Use accessibleUserIds to filter todos based on manager hierarchy
+      // This ensures managers can only see todos created by or assigned to their accessible users
       const todoLists = await storage.getTodoLists(req.accessibleUserIds);
       // Sanitize user data to remove passwords and other sensitive information
       const sanitizedTodoLists = sanitizeTodoLists(todoLists);
@@ -904,20 +906,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return acc;
       }, []);
 
-      // Get todo stats based on role
+      // Get todo stats based on role - managers see only their team's data
       let todoLists;
       if (req.user!.role === 'admin') {
         // Admins see all tasks
         todoLists = await storage.getTodoLists();
       } else if (req.user!.role === 'manager') {
-        // Managers only see tasks assigned to them or created by them
-        todoLists = await storage.getTodoListsByUser(req.user!.id);
+        // Managers see tasks from their accessible users (themselves + their staff)
+        const accessibleUserIds = await storage.getAccessibleUserIds(req.user!.id, req.user!.role);
+        todoLists = await storage.getTodoLists(accessibleUserIds);
       } else {
         // Others see only their own tasks
         todoLists = await storage.getTodoListsByUser(req.user!.id);
       }
 
-      // Get todo stats based on role
+      // Get todo stats based on role - managers see only their team's data
       let todoStats;
       if (req.user!.role === 'admin') {
         todoStats = await storage.getTodoStats();
@@ -945,14 +948,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
       });
 
-      // Get interview stats based on role
+      // Get interview stats based on role - managers see only their team's data
       let interviewStats, interviews;
       if (req.user!.role === 'admin') {
         interviewStats = await storage.getInterviewStats();
         interviews = await storage.getInterviewRequests();
       } else if (req.user!.role === 'manager') {
-        interviewStats = await storage.getInterviewStats();
-        interviews = await storage.getInterviewRequestsByManager(req.user!.id);
+        // Get accessible user IDs for this manager
+        const accessibleUserIds = await storage.getAccessibleUserIds(req.user!.id, req.user!.role);
+        interviews = await storage.getInterviewRequests(accessibleUserIds, false);
+        // Calculate stats from filtered interviews
+        interviewStats = {
+          totalRequests: interviews.length,
+          pendingRequests: interviews.filter((r: any) => r.status === 'pending').length,
+          approvedRequests: interviews.filter((r: any) => r.status === 'approved').length,
+        };
       } else {
         interviewStats = await storage.getInterviewStats();
         interviews = await storage.getInterviewRequestsByUser(req.user!.id);
@@ -1026,12 +1036,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
 
-  // Interview request routes
+  // Interview request routes - each manager sees only their own data
   app.get("/api/interviews", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       // Use accessibleUserIds to filter interviews based on manager hierarchy
-      // Managers also see unassigned requests (managerId is null)
-      const includeUnassigned = req.user!.role === 'manager';
+      // Managers should NOT see unassigned requests from other managers
+      const includeUnassigned = false; // Changed to prevent managers seeing other managers' unassigned requests
       const requests = await storage.getInterviewRequests(req.accessibleUserIds, includeUnassigned);
       
       res.json({ requests });

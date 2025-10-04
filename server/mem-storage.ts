@@ -126,7 +126,7 @@ export class MemStorage implements IStorage {
           createdAt: new Date(),
           lastActiveAt: new Date()
         },
-        
+
       ];
 
       this.nextUserId = 4; // Increment based on the number of users added
@@ -216,7 +216,7 @@ export class MemStorage implements IStorage {
     }
 
     const permissions = (user.permissions as Record<string, any>) || {};
-    
+
     const pagePermissions: Record<string, boolean> = {};
     Object.keys(permissions).forEach(key => {
       if (key.startsWith('canView')) {
@@ -356,7 +356,7 @@ export class MemStorage implements IStorage {
 
     // Remove all items associated with this todo list
     this.todoItems = this.todoItems.filter(item => item.todoListId !== id);
-    
+
     // Remove the todo list itself
     this.todoLists.splice(listIndex, 1);
     return true;
@@ -622,5 +622,34 @@ export class MemStorage implements IStorage {
 
     this.feedback.splice(feedbackIndex, 1);
     return true;
+  }
+
+  async getAccessibleUserIds(userId: number, userRole: string): Promise<number[]> {
+    if (userRole === 'admin') {
+      // Admin can see all users
+      return this.users.map(u => u.id);
+    } else if (userRole === 'manager') {
+      // Manager can ONLY see themselves and their direct staff
+      const staffIds = this.users
+        .filter(u => u.managerId === userId)
+        .map(u => u.id);
+      return [userId, ...staffIds];
+    } else if (userRole === 'office' || userRole === 'office_team' || userRole === 'secretary') {
+      // Staff can see themselves and their manager (if assigned)
+      const user = this.users.find(u => u.id === userId);
+      const accessibleIds = [userId];
+      if (user?.managerId) {
+        accessibleIds.push(user.managerId);
+        // Also include other staff under the same manager
+        const siblings = this.users
+          .filter(u => u.managerId === user.managerId && u.id !== userId)
+          .map(u => u.id);
+        accessibleIds.push(...siblings);
+      }
+      return accessibleIds;
+    } else {
+      // Security and other roles can only see themselves
+      return [userId];
+    }
   }
 }
