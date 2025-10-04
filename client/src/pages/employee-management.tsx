@@ -25,7 +25,8 @@ export default function EmployeeManagementPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [editingEmployee, setEditingEmployee] = useState<any>(null);
   const [employeeToDelete, setEmployeeToDelete] = useState<any>(null);
-  const { toast } = useToast();
+  const [assigningManager, setAssigningManager] = useState<any>(null);
+  const { toast} = useToast();
 
   const { data: employeesData, isLoading } = useQuery({
     queryKey: ["/api/users"],
@@ -77,6 +78,33 @@ export default function EmployeeManagementPage() {
       toast({
         title: t("error"),
         description: error.message || t("failedToDeleteEmployee"),
+        variant: "destructive",
+      });
+    },
+  });
+
+  const assignManagerMutation = useMutation({
+    mutationFn: async ({ staffId, managerId }: { staffId: number; managerId: number | null }) => {
+      if (managerId) {
+        const response = await authenticatedRequest("POST", `/api/staff/${staffId}/assign-manager`, { managerId });
+        return await response.json();
+      } else {
+        const response = await authenticatedRequest("POST", `/api/staff/${staffId}/remove-manager`, {});
+        return await response.json();
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      setAssigningManager(null);
+      toast({
+        title: t("success"),
+        description: "Manager assignment updated successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: t("error"),
+        description: error.message || "Failed to update manager assignment",
         variant: "destructive",
       });
     },
@@ -256,10 +284,21 @@ export default function EmployeeManagementPage() {
                         <TableCell>{employee.email}</TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
+                            {(employee.role === 'secretary' || employee.role === 'office' || employee.role === 'office_team') && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setAssigningManager(employee)}
+                                data-testid={`button-assign-manager-${employee.id}`}
+                              >
+                                <User className="h-4 w-4" />
+                              </Button>
+                            )}
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => setEditingEmployee(employee)}
+                              data-testid={`button-edit-${employee.id}`}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -268,6 +307,7 @@ export default function EmployeeManagementPage() {
                               size="sm"
                               onClick={() => setEmployeeToDelete(employee)}
                               className="text-red-600 hover:text-red-700"
+                              data-testid={`button-delete-${employee.id}`}
                             >
                               <Trash className="h-4 w-4" />
                             </Button>
@@ -386,6 +426,69 @@ export default function EmployeeManagementPage() {
                   variant="destructive"
                 >
                   {deleteEmployeeMutation.isPending ? t("deleting") : t("delete")}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Assign Manager Dialog */}
+        {assigningManager && (
+          <Dialog open={!!assigningManager} onOpenChange={() => setAssigningManager(null)}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Assign Manager</DialogTitle>
+                <DialogDescription>
+                  Assign a manager to {assigningManager.firstName} {assigningManager.lastName}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label className="text-right">Manager</Label>
+                  <Select
+                    value={assigningManager.managerId?.toString() || "none"}
+                    onValueChange={(value) => 
+                      setAssigningManager({ 
+                        ...assigningManager, 
+                        managerId: value === "none" ? null : parseInt(value) 
+                      })
+                    }
+                  >
+                    <SelectTrigger className="col-span-3" data-testid="select-manager">
+                      <SelectValue placeholder="Select a manager" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">None (Remove Manager)</SelectItem>
+                      {employeesData?.users
+                        ?.filter((u: any) => u.role === 'manager')
+                        .map((manager: any) => (
+                          <SelectItem key={manager.id} value={manager.id.toString()}>
+                            {manager.firstName} {manager.lastName}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button
+                  onClick={() => setAssigningManager(null)}
+                  variant="outline"
+                  data-testid="button-cancel-assign"
+                >
+                  {t("cancel")}
+                </Button>
+                <Button
+                  onClick={() => {
+                    assignManagerMutation.mutate({
+                      staffId: assigningManager.id,
+                      managerId: assigningManager.managerId
+                    });
+                  }}
+                  disabled={assignManagerMutation.isPending}
+                  data-testid="button-save-manager"
+                >
+                  {assignManagerMutation.isPending ? "Saving..." : "Save"}
                 </Button>
               </DialogFooter>
             </DialogContent>

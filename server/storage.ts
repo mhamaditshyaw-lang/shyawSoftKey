@@ -44,6 +44,12 @@ export interface IStorage {
   updateUserPageAccess(userId: number, pagePermissions: Record<string, boolean>): Promise<User>;
   getUserPageAccess(userId: number): Promise<Record<string, boolean>>;
   
+  // Manager-staff relationship methods
+  getStaffForManager(managerId: number): Promise<User[]>;
+  assignStaffToManager(staffId: number, managerId: number): Promise<User | undefined>;
+  removeStaffFromManager(staffId: number): Promise<User | undefined>;
+  getManagerForStaff(staffId: number): Promise<User | undefined>;
+  
   // Todo methods
   getTodoLists(): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]>;
   getTodoListsByUser(userId: number): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]>;
@@ -251,6 +257,44 @@ export class DatabaseStorage implements IStorage {
       });
 
       return pagePermissions;
+    });
+  }
+
+  async getStaffForManager(managerId: number): Promise<User[]> {
+    return await executeWithRetry(async () => {
+      return await db.select().from(users).where(eq(users.managerId, managerId));
+    });
+  }
+
+  async assignStaffToManager(staffId: number, managerId: number): Promise<User | undefined> {
+    return await executeWithRetry(async () => {
+      const [updatedUser] = await db
+        .update(users)
+        .set({ managerId, lastActiveAt: new Date() })
+        .where(eq(users.id, staffId))
+        .returning();
+      return updatedUser || undefined;
+    });
+  }
+
+  async removeStaffFromManager(staffId: number): Promise<User | undefined> {
+    return await executeWithRetry(async () => {
+      const [updatedUser] = await db
+        .update(users)
+        .set({ managerId: null, lastActiveAt: new Date() })
+        .where(eq(users.id, staffId))
+        .returning();
+      return updatedUser || undefined;
+    });
+  }
+
+  async getManagerForStaff(staffId: number): Promise<User | undefined> {
+    return await executeWithRetry(async () => {
+      const staff = await this.getUser(staffId);
+      if (!staff || !staff.managerId) {
+        return undefined;
+      }
+      return await this.getUser(staff.managerId);
     });
   }
 

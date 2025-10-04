@@ -68,6 +68,7 @@ export class MemStorage implements IStorage {
           department: 'IT',
           position: 'System Administrator',
           phoneNumber: '+964-770-100-1000',
+          managerId: null,
           createdAt: new Date(),
           lastActiveAt: new Date()
         },
@@ -94,6 +95,7 @@ export class MemStorage implements IStorage {
           department: 'Management',
           position: 'Operations Manager',
           phoneNumber: '+964-770-200-2000',
+          managerId: null,
           createdAt: new Date(),
           lastActiveAt: new Date()
         },
@@ -120,6 +122,7 @@ export class MemStorage implements IStorage {
           department: 'Security',
           position: 'Security Officer',
           phoneNumber: '+964-770-300-3000',
+          managerId: null,
           createdAt: new Date(),
           lastActiveAt: new Date()
         },
@@ -179,6 +182,85 @@ export class MemStorage implements IStorage {
 
   async getUsersByRole(role: string): Promise<User[]> {
     return this.users.filter(u => u.role === role);
+  }
+
+  async updateUserPageAccess(userId: number, pagePermissions: Record<string, boolean>): Promise<User> {
+    const user = await this.getUser(userId);
+    if (!user) {
+      throw new Error(`User with id ${userId} not found`);
+    }
+
+    const currentPermissions = (user.permissions as Record<string, any>) || {};
+    const updatedPermissions = {
+      ...currentPermissions,
+      ...pagePermissions,
+    };
+
+    const userIndex = this.users.findIndex(u => u.id === userId);
+    if (userIndex !== -1) {
+      this.users[userIndex] = {
+        ...this.users[userIndex],
+        permissions: updatedPermissions,
+        lastActiveAt: new Date()
+      };
+      return this.users[userIndex];
+    }
+
+    throw new Error(`Failed to update user ${userId}`);
+  }
+
+  async getUserPageAccess(userId: number): Promise<Record<string, boolean>> {
+    const user = await this.getUser(userId);
+    if (!user) {
+      return {};
+    }
+
+    const permissions = (user.permissions as Record<string, any>) || {};
+    
+    const pagePermissions: Record<string, boolean> = {};
+    Object.keys(permissions).forEach(key => {
+      if (key.startsWith('canView')) {
+        pagePermissions[key] = Boolean(permissions[key]);
+      }
+    });
+
+    return pagePermissions;
+  }
+
+  async getStaffForManager(managerId: number): Promise<User[]> {
+    return this.users.filter(u => u.managerId === managerId);
+  }
+
+  async assignStaffToManager(staffId: number, managerId: number): Promise<User | undefined> {
+    const userIndex = this.users.findIndex(u => u.id === staffId);
+    if (userIndex === -1) return undefined;
+
+    this.users[userIndex] = {
+      ...this.users[userIndex],
+      managerId,
+      lastActiveAt: new Date()
+    };
+    return this.users[userIndex];
+  }
+
+  async removeStaffFromManager(staffId: number): Promise<User | undefined> {
+    const userIndex = this.users.findIndex(u => u.id === staffId);
+    if (userIndex === -1) return undefined;
+
+    this.users[userIndex] = {
+      ...this.users[userIndex],
+      managerId: null,
+      lastActiveAt: new Date()
+    };
+    return this.users[userIndex];
+  }
+
+  async getManagerForStaff(staffId: number): Promise<User | undefined> {
+    const staff = await this.getUser(staffId);
+    if (!staff || !staff.managerId) {
+      return undefined;
+    }
+    return await this.getUser(staff.managerId);
   }
 
   // Todo methods

@@ -424,6 +424,105 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Manager-staff relationship routes
+  app.get("/api/managers/:managerId/staff", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const managerId = parseInt(req.params.managerId);
+      
+      // Only allow admin or the manager themselves to view their staff
+      if (req.user?.role !== 'admin' && req.user?.id !== managerId) {
+        return res.status(403).json({ message: 'Insufficient permissions' });
+      }
+
+      const staff = await storage.getStaffForManager(managerId);
+      const sanitizedStaff = staff.map(toPublicUser);
+      res.json({ staff: sanitizedStaff });
+    } catch (error: any) {
+      console.error("Error getting manager staff:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/staff/:staffId/assign-manager", authenticateToken, requireRole(['admin', 'manager']), async (req: AuthRequest, res) => {
+    try {
+      const staffId = parseInt(req.params.staffId);
+      const { managerId } = req.body;
+
+      if (!managerId) {
+        return res.status(400).json({ message: "Manager ID is required" });
+      }
+
+      // Verify manager exists and has manager role
+      const manager = await storage.getUser(managerId);
+      if (!manager) {
+        return res.status(404).json({ message: "Manager not found" });
+      }
+      if (manager.role !== 'manager') {
+        return res.status(400).json({ message: "User is not a manager" });
+      }
+
+      // If the user is a manager (not admin), they can only assign staff to themselves
+      if (req.user?.role === 'manager' && req.user?.id !== managerId) {
+        return res.status(403).json({ message: 'Managers can only assign staff to themselves' });
+      }
+
+      const updatedStaff = await storage.assignStaffToManager(staffId, managerId);
+      if (!updatedStaff) {
+        return res.status(404).json({ message: "Staff member not found" });
+      }
+
+      res.json({ user: toPublicUser(updatedStaff) });
+    } catch (error: any) {
+      console.error("Error assigning staff to manager:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/staff/:staffId/remove-manager", authenticateToken, requireRole(['admin', 'manager']), async (req: AuthRequest, res) => {
+    try {
+      const staffId = parseInt(req.params.staffId);
+
+      // Get current staff to check their manager
+      const staff = await storage.getUser(staffId);
+      if (!staff) {
+        return res.status(404).json({ message: "Staff member not found" });
+      }
+
+      // If the user is a manager (not admin), they can only remove their own staff
+      if (req.user?.role === 'manager' && req.user?.id !== staff.managerId) {
+        return res.status(403).json({ message: 'Managers can only remove their own staff' });
+      }
+
+      const updatedStaff = await storage.removeStaffFromManager(staffId);
+      res.json({ user: toPublicUser(updatedStaff) });
+    } catch (error: any) {
+      console.error("Error removing staff from manager:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/staff/:staffId/manager", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const staffId = parseInt(req.params.staffId);
+      
+      // Allow admin, the staff member themselves, or their manager to view this
+      const staff = await storage.getUser(staffId);
+      if (!staff) {
+        return res.status(404).json({ message: "Staff member not found" });
+      }
+
+      if (req.user?.role !== 'admin' && req.user?.id !== staffId && req.user?.id !== staff.managerId) {
+        return res.status(403).json({ message: 'Insufficient permissions' });
+      }
+
+      const manager = await storage.getManagerForStaff(staffId);
+      res.json({ manager: toPublicUser(manager) });
+    } catch (error: any) {
+      console.error("Error getting staff manager:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // Todo routes (office role can see all, others see their own)
   app.get("/api/todos", authenticateToken, async (req: AuthRequest, res) => {
     try {
@@ -1316,8 +1415,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Operational data routes
   app.get("/api/operational-data", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const entries = await storage.getOperationalData();
-      res.json({ entries });
+      let entries = await storage.getOperationalData();
+      
+      // Filter data based on manager-staff relationships
+      if (req.user?.role === 'admin') {
+        // Admin can see all data
+        res.json({ entries });
+      } else if (req.user?.role === 'manager') {
+        // Manager can only see their own data
+        const filteredEntries = entries.filter(entry => entry.createdById === req.user?.id);
+        res.json({ entries: filteredEntries });
+      } else {
+        // Staff members (secretary, office, office_team) can only see their manager's data
+        const currentUser = await storage.getUser(req.user!.id);
+        if (currentUser?.managerId) {
+          const filteredEntries = entries.filter(entry => entry.createdById === currentUser.managerId);
+          res.json({ entries: filteredEntries });
+        } else {
+          // If staff has no manager assigned, they see no data
+          res.json({ entries: [] });
+        }
+      }
     } catch (error) {
       console.error("Error fetching operational data:", error);
       res.status(500).json({ message: "Failed to fetch operational data" });

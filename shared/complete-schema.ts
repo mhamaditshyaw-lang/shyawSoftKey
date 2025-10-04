@@ -46,6 +46,7 @@ export const users = pgTable("users", {
   department: text("department"),
   position: text("position"),
   phoneNumber: text("phone_number"),
+  managerId: integer("manager_id").references(() => users.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   lastActiveAt: timestamp("last_active_at"),
 });
@@ -176,7 +177,7 @@ export const deviceNotifications = pgTable("device_notifications", {
 });
 
 // Relations
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
   createdTodoLists: many(todoLists, { relationName: "created_by" }),
   assignedTodoLists: many(todoLists, { relationName: "assigned_to" }),
   requestedInterviews: many(interviewRequests, { relationName: "requested_by" }),
@@ -186,6 +187,12 @@ export const usersRelations = relations(users, ({ many }) => ({
   archivedItems: many(archivedItems),
   deviceNotifications: many(deviceNotifications),
   operationalData: many(operationalData),
+  manager: one(users, {
+    fields: [users.managerId],
+    references: [users.id],
+    relationName: "manager_staff",
+  }),
+  staff: many(users, { relationName: "manager_staff" }),
 }));
 
 export const todoListsRelations = relations(todoLists, ({ one, many }) => ({
