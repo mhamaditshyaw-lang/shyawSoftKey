@@ -154,6 +154,14 @@ export default function NavigationBar() {
       color: "from-red-500 to-red-600"
     },
     {
+      id: "department-management",
+      title: "Department Management",
+      subtitle: "Departments",
+      icon: Building2,
+      href: "/department-management",
+      color: "from-pink-500 to-pink-600"
+    },
+    {
       id: "data-view",
       title: "Employee Tracking",
       subtitle: "Data View",
