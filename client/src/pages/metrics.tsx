@@ -585,13 +585,13 @@ export default function MetricsPage() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[
-                    { field: 'number1', label: 'Total employees today', placeholder: 'Enter total employees today' },
-                    { field: 'number2', label: 'Permanent employees', placeholder: 'Enter permanent employees count' },
-                    { field: 'number3', label: 'Non-permanent employees', placeholder: 'Enter non-permanent employees count' },
-                    { field: 'number4', label: 'Day - Start of work', placeholder: 'Enter day shift start count' },
-                    { field: 'number5', label: 'Day - Giving up', placeholder: 'Enter day shift giving up count' },
-                    { field: 'number6', label: 'Night - Start of work', placeholder: 'Enter night shift start count' },
-                    { field: 'number7', label: 'Night - Giving up', placeholder: 'Enter night shift giving up count' },
+                    { field: 'number1', label: t('totalEmployeesToday') },
+                    { field: 'number2', label: t('permanentEmployees') },
+                    { field: 'number3', label: t('nonPermanentEmployees') },
+                    { field: 'number4', label: t('dayStartOfWork') },
+                    { field: 'number5', label: t('dayGivingUp') },
+                    { field: 'number6', label: t('nightStartOfWork') },
+                    { field: 'number7', label: t('nightGivingUp') },
                   ].map((item, index) => {
                     const fieldName = item.field as keyof typeof formData;
                     return (
@@ -608,7 +608,6 @@ export default function MetricsPage() {
                         <Input
                           id={fieldName}
                           type="text"
-                          placeholder={item.placeholder}
                           value={formData[fieldName]}
                           onChange={(e) => handleInputChange(fieldName, e.target.value)}
                           className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
@@ -662,7 +661,7 @@ export default function MetricsPage() {
                     <div className="text-2xl font-bold text-blue-700">
                       {stats.sum.toFixed(2)}
                     </div>
-                    <div className="text-sm text-blue-600">Total Sum</div>
+                    <div className="text-sm text-blue-600">{t('totalSum')}</div>
                   </motion.div>
 
                   <motion.div 
@@ -674,7 +673,7 @@ export default function MetricsPage() {
                     <div className="text-2xl font-bold text-green-700">
                       {stats.average.toFixed(2)}
                     </div>
-                    <div className="text-sm text-green-600">Average</div>
+                    <div className="text-sm text-green-600">{t('average')}</div>
                   </motion.div>
 
                   <div className="grid grid-cols-2 gap-3">
@@ -687,7 +686,7 @@ export default function MetricsPage() {
                       <div className="text-lg font-bold text-purple-700">
                         {stats.max}
                       </div>
-                      <div className="text-xs text-purple-600">Maximum</div>
+                      <div className="text-xs text-purple-600">{t('maximum')}</div>
                     </motion.div>
 
                     <motion.div 
@@ -699,7 +698,7 @@ export default function MetricsPage() {
                       <div className="text-lg font-bold text-orange-700">
                         {stats.min}
                       </div>
-                      <div className="text-xs text-orange-600">Minimum</div>
+                      <div className="text-xs text-orange-600">{t('minimum')}</div>
                     </motion.div>
                   </div>
 
@@ -712,13 +711,13 @@ export default function MetricsPage() {
                     <div className="text-lg font-bold text-gray-700">
                       {stats.count} / 7
                     </div>
-                    <div className="text-sm text-gray-600">Fields Completed</div>
+                    <div className="text-sm text-gray-600">{t('fieldsCompleted')}</div>
                   </motion.div>
                 </div>
               ) : (
                 <div className="text-center py-8">
                   <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-500">Enter employee data to see statistics</p>
+                  <p className="text-gray-500">{t('enterDataToSeeStats')}</p>
                 </div>
               )}
             </CardContent>
@@ -727,7 +726,7 @@ export default function MetricsPage() {
           {/* Quick Actions */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Quick Actions</CardTitle>
+              <CardTitle className="text-lg">{t('quickActions')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <Button 
@@ -748,7 +747,7 @@ export default function MetricsPage() {
                 }}
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Fill Sample Data
+                {t('fillSampleData')}
               </Button>
               
               <Button 
@@ -775,7 +774,7 @@ export default function MetricsPage() {
                 }}
               >
                 <Calculator className="w-4 h-4 mr-2" />
-                Generate Random
+                {t('generateRandom')}
               </Button>
             </CardContent>
           </Card>
@@ -803,12 +802,12 @@ export default function MetricsPage() {
                 <form onSubmit={handleDeviceSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
-                      { field: 'device1', label: 'Day - Ice cream', placeholder: 'Enter day ice cream production' },
-                      { field: 'device2', label: 'Night - Ice cream', placeholder: 'Enter night ice cream production' },
-                      { field: 'device3', label: 'Day - Albany', placeholder: 'Enter day Albany operations' },
-                      { field: 'device4', label: 'Night - Albany', placeholder: 'Enter night Albany operations' },
-                      { field: 'device5', label: 'Day - Do', placeholder: 'Enter day Do activities' },
-                      { field: 'device6', label: 'Night - Do', placeholder: 'Enter night Do activities' },
+                      { field: 'device1', label: t('dayIceCream') },
+                      { field: 'device2', label: t('nightIceCream') },
+                      { field: 'device3', label: t('dayAlbany') },
+                      { field: 'device4', label: t('nightAlbany') },
+                      { field: 'device5', label: t('dayDo') },
+                      { field: 'device6', label: t('nightDo') },
                     ].map((item, index) => {
                       const fieldName = item.field as keyof typeof deviceData;
                       return (
@@ -825,7 +824,6 @@ export default function MetricsPage() {
                           <Input
                             id={fieldName}
                             type="text"
-                            placeholder={item.placeholder}
                             value={deviceData[fieldName]}
                             onChange={(e) => handleDeviceInputChange(fieldName, e.target.value)}
                             className="transition-all duration-200 focus:ring-2 focus:ring-green-500"
@@ -842,7 +840,7 @@ export default function MetricsPage() {
                       disabled={Object.values(deviceData).every(val => val === "")}
                     >
                       <Save className="w-4 h-4" />
-                      <span>Save Operations Data</span>
+                      <span>{t('saveOperationsData')}</span>
                     </Button>
                     <Button 
                       type="button" 
@@ -850,7 +848,7 @@ export default function MetricsPage() {
                       onClick={clearDeviceForm}
                       disabled={Object.values(deviceData).every(val => val === "")}
                     >
-                      Clear All
+                      {t('clearAll')}
                     </Button>
                   </div>
                 </form>
@@ -864,7 +862,7 @@ export default function MetricsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <TrendingUp className="w-5 h-5 text-green-600" />
-                  <span>Operations Statistics</span>
+                  <span>{t('operationsStatistics')}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -879,7 +877,7 @@ export default function MetricsPage() {
                       <div className="text-2xl font-bold text-green-700">
                         {deviceStats.sum.toFixed(2)}
                       </div>
-                      <div className="text-sm text-green-600">Total Count</div>
+                      <div className="text-sm text-green-600">{t('totalCount')}</div>
                     </motion.div>
 
                     <motion.div 
@@ -891,7 +889,7 @@ export default function MetricsPage() {
                       <div className="text-2xl font-bold text-blue-700">
                         {deviceStats.average.toFixed(2)}
                       </div>
-                      <div className="text-sm text-blue-600">Average</div>
+                      <div className="text-sm text-blue-600">{t('average')}</div>
                     </motion.div>
 
                     <div className="grid grid-cols-2 gap-3">
@@ -904,7 +902,7 @@ export default function MetricsPage() {
                         <div className="text-lg font-bold text-indigo-700">
                           {deviceStats.max}
                         </div>
-                        <div className="text-xs text-indigo-600">Maximum</div>
+                        <div className="text-xs text-indigo-600">{t('maximum')}</div>
                       </motion.div>
 
                       <motion.div 
@@ -916,7 +914,7 @@ export default function MetricsPage() {
                         <div className="text-lg font-bold text-red-700">
                           {deviceStats.min}
                         </div>
-                        <div className="text-xs text-red-600">Minimum</div>
+                        <div className="text-xs text-red-600">{t('minimum')}</div>
                       </motion.div>
                     </div>
 
@@ -929,13 +927,13 @@ export default function MetricsPage() {
                       <div className="text-lg font-bold text-gray-700">
                         {deviceStats.count} / 6
                       </div>
-                      <div className="text-sm text-gray-600">Fields Completed</div>
+                      <div className="text-sm text-gray-600">{t('fieldsCompleted')}</div>
                     </motion.div>
                   </div>
                 ) : (
                   <div className="text-center py-8">
                     <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-500">Enter operations data to see statistics</p>
+                    <p className="text-gray-500">{t('enterDataToSeeStats')}</p>
                   </div>
                 )}
               </CardContent>
@@ -944,7 +942,7 @@ export default function MetricsPage() {
             {/* Operations Quick Actions */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Operations Quick Actions</CardTitle>
+                <CardTitle className="text-lg">{t('quickActions')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button 
@@ -964,7 +962,7 @@ export default function MetricsPage() {
                   }}
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Fill Sample Data
+                  {t('fillSampleData')}
                 </Button>
                 
                 <Button 
@@ -984,7 +982,7 @@ export default function MetricsPage() {
                   }}
                 >
                   <Calculator className="w-4 h-4 mr-2" />
-                  Generate Random
+                  {t('generateRandom')}
                 </Button>
               </CardContent>
             </Card>
@@ -1002,22 +1000,22 @@ export default function MetricsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Users className="w-5 h-5 text-purple-600" />
-                  <span>Staff Count Data Entry</span>
+                  <span>{t('staffCountDataEntry')}</span>
                 </CardTitle>
                 <CardDescription>
-                  Enter staff counts for ice cream production, Albany operations, and Do activities by shift
+                  {t('enterStaffCountData')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleEmployeeCountSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
-                      { field: 'count1', label: 'Day - Ice cream', placeholder: 'Enter day ice cream staff count' },
-                      { field: 'count2', label: 'Night - Ice cream', placeholder: 'Enter night ice cream staff count' },
-                      { field: 'count3', label: 'Day - Albany', placeholder: 'Enter day Albany staff count' },
-                      { field: 'count4', label: 'Night - Albany', placeholder: 'Enter night Albany staff count' },
-                      { field: 'count5', label: 'Day - Do', placeholder: 'Enter day Do staff count' },
-                      { field: 'count6', label: 'Night - Do', placeholder: 'Enter night Do staff count' },
+                      { field: 'count1', label: t('dayIceCream') },
+                      { field: 'count2', label: t('nightIceCream') },
+                      { field: 'count3', label: t('dayAlbany') },
+                      { field: 'count4', label: t('nightAlbany') },
+                      { field: 'count5', label: t('dayDo') },
+                      { field: 'count6', label: t('nightDo') },
                     ].map((item, index) => {
                       const fieldName = item.field as keyof typeof employeeCountData;
                       return (
@@ -1034,7 +1032,6 @@ export default function MetricsPage() {
                           <Input
                             id={fieldName}
                             type="text"
-                            placeholder={item.placeholder}
                             value={employeeCountData[fieldName]}
                             onChange={(e) => handleEmployeeCountInputChange(fieldName, e.target.value)}
                             className="transition-all duration-200 focus:ring-2 focus:ring-purple-500"
@@ -1051,7 +1048,7 @@ export default function MetricsPage() {
                       disabled={Object.values(employeeCountData).every(val => val === "")}
                     >
                       <Save className="w-4 h-4" />
-                      <span>Save Staff Count Data</span>
+                      <span>{t('saveStaffCountData')}</span>
                     </Button>
                     <Button 
                       type="button" 
@@ -1059,7 +1056,7 @@ export default function MetricsPage() {
                       onClick={clearEmployeeCountForm}
                       disabled={Object.values(employeeCountData).every(val => val === "")}
                     >
-                      Clear All
+                      {t('clearAll')}
                     </Button>
                   </div>
                 </form>
@@ -1073,7 +1070,7 @@ export default function MetricsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <TrendingUp className="w-5 h-5 text-purple-600" />
-                  <span>Staff Count Statistics</span>
+                  <span>{t('staffCountStatistics')}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -1088,7 +1085,7 @@ export default function MetricsPage() {
                       <div className="text-2xl font-bold text-purple-700">
                         {employeeCountStats.sum.toFixed(0)}
                       </div>
-                      <div className="text-sm text-purple-600">Total Staff</div>
+                      <div className="text-sm text-purple-600">{t('totalStaff')}</div>
                     </motion.div>
 
                     <motion.div 
@@ -1100,7 +1097,7 @@ export default function MetricsPage() {
                       <div className="text-2xl font-bold text-indigo-700">
                         {employeeCountStats.average.toFixed(1)}
                       </div>
-                      <div className="text-sm text-indigo-600">Average per Shift</div>
+                      <div className="text-sm text-indigo-600">{t('averagePerShift')}</div>
                     </motion.div>
 
                     <div className="grid grid-cols-2 gap-3">
@@ -1113,7 +1110,7 @@ export default function MetricsPage() {
                         <div className="text-lg font-bold text-teal-700">
                           {employeeCountStats.max}
                         </div>
-                        <div className="text-xs text-teal-600">Largest Shift</div>
+                        <div className="text-xs text-teal-600">{t('largestShift')}</div>
                       </motion.div>
 
                       <motion.div 
@@ -1125,7 +1122,7 @@ export default function MetricsPage() {
                         <div className="text-lg font-bold text-orange-700">
                           {employeeCountStats.min}
                         </div>
-                        <div className="text-xs text-orange-600">Smallest Shift</div>
+                        <div className="text-xs text-orange-600">{t('smallestShift')}</div>
                       </motion.div>
                     </div>
 
@@ -1138,13 +1135,13 @@ export default function MetricsPage() {
                       <div className="text-lg font-bold text-gray-700">
                         {employeeCountStats.count} / 6
                       </div>
-                      <div className="text-sm text-gray-600">Shifts Completed</div>
+                      <div className="text-sm text-gray-600">{t('fieldsCompleted')}</div>
                     </motion.div>
                   </div>
                 ) : (
                   <div className="text-center py-8">
                     <Users className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-500">Enter staff count data to see statistics</p>
+                    <p className="text-gray-500">{t('enterDataToSeeStats')}</p>
                   </div>
                 )}
               </CardContent>
@@ -1153,7 +1150,7 @@ export default function MetricsPage() {
             {/* Staff Count Quick Actions */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Staff Count Quick Actions</CardTitle>
+                <CardTitle className="text-lg">{t('quickActions')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button 
@@ -1173,7 +1170,7 @@ export default function MetricsPage() {
                   }}
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Fill Sample Data
+                  {t('fillSampleData')}
                 </Button>
                 
                 <Button 
@@ -1193,7 +1190,7 @@ export default function MetricsPage() {
                   }}
                 >
                   <Calculator className="w-4 h-4 mr-2" />
-                  Generate Random
+                  {t('generateRandom')}
                 </Button>
               </CardContent>
             </Card>
@@ -1211,22 +1208,22 @@ export default function MetricsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Clock className="w-5 h-5 text-orange-600" />
-                  <span>Yesterday's Production Data Entry</span>
+                  <span>{t('productionDataEntry')}</span>
                 </CardTitle>
                 <CardDescription>
-                  Enter yesterday's production numbers for ice cream, Albany operations, and Do activities by shift
+                  {t('enterYesterdayProduction')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleYesterdayProductionSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
-                      { field: 'prod1', label: 'Day - Ice cream / Cartoon', placeholder: 'Enter day ice cream production in cartons' },
-                      { field: 'prod2', label: 'Night - Ice cream / Cartoon', placeholder: 'Enter night ice cream production in cartons' },
-                      { field: 'prod3', label: 'Day - Albany / Tons', placeholder: 'Enter day Albany production in tons' },
-                      { field: 'prod4', label: 'Night - Albany / Tons', placeholder: 'Enter night Albany production in tons' },
-                      { field: 'prod5', label: 'Day - Do / Tons', placeholder: 'Enter day Do activities in tons' },
-                      { field: 'prod6', label: 'Night - Do / Tons', placeholder: 'Enter night Do activities in tons' },
+                      { field: 'prod1', label: t('dayIceCreamCartons') },
+                      { field: 'prod2', label: t('nightIceCreamCartons') },
+                      { field: 'prod3', label: t('dayAlbanyTons') },
+                      { field: 'prod4', label: t('nightAlbanyTons') },
+                      { field: 'prod5', label: t('dayDoTons') },
+                      { field: 'prod6', label: t('nightDoTons') },
                     ].map((item, index) => {
                       const fieldName = item.field as keyof typeof yesterdayProductionData;
                       return (
@@ -1243,7 +1240,6 @@ export default function MetricsPage() {
                           <Input
                             id={fieldName}
                             type="text"
-                            placeholder={item.placeholder}
                             value={yesterdayProductionData[fieldName]}
                             onChange={(e) => handleYesterdayProductionInputChange(fieldName, e.target.value)}
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500"
@@ -1255,25 +1251,25 @@ export default function MetricsPage() {
 
                   {/* Calculated Totals Display */}
                   <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Calculated Totals</h4>
+                    <h4 className="text-sm font-semibold text-gray-700 mb-3">{t('calculatedTotals')}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="p-3 bg-white rounded border">
                         <div className="text-lg font-bold text-orange-700">
                           {(parseFloat(yesterdayProductionData.prod1 || '0') + parseFloat(yesterdayProductionData.prod2 || '0')).toFixed(0)}
                         </div>
-                        <div className="text-sm text-gray-600">Total Ice cream / Cartoon</div>
+                        <div className="text-sm text-gray-600">{t('totalIceCreamCartons')}</div>
                       </div>
                       <div className="p-3 bg-white rounded border">
                         <div className="text-lg font-bold text-orange-700">
                           {(parseFloat(yesterdayProductionData.prod3 || '0') + parseFloat(yesterdayProductionData.prod4 || '0')).toFixed(1)}
                         </div>
-                        <div className="text-sm text-gray-600">Total Albany / Tons</div>
+                        <div className="text-sm text-gray-600">{t('totalAlbanyTons')}</div>
                       </div>
                       <div className="p-3 bg-white rounded border">
                         <div className="text-lg font-bold text-orange-700">
                           {(parseFloat(yesterdayProductionData.prod5 || '0') + parseFloat(yesterdayProductionData.prod6 || '0')).toFixed(1)}
                         </div>
-                        <div className="text-sm text-gray-600">Total Do / Tons</div>
+                        <div className="text-sm text-gray-600">{t('totalDoTons')}</div>
                       </div>
                     </div>
                   </div>
@@ -1285,7 +1281,7 @@ export default function MetricsPage() {
                       disabled={Object.values(yesterdayProductionData).every(val => val === "")}
                     >
                       <Save className="w-4 h-4" />
-                      <span>Save Yesterday's Production</span>
+                      <span>{t('saveProductionData')}</span>
                     </Button>
                     <Button 
                       type="button" 
@@ -1293,7 +1289,7 @@ export default function MetricsPage() {
                       onClick={clearYesterdayProductionForm}
                       disabled={Object.values(yesterdayProductionData).every(val => val === "")}
                     >
-                      Clear All
+                      {t('clearAll')}
                     </Button>
                   </div>
                 </form>
@@ -1307,7 +1303,7 @@ export default function MetricsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <TrendingUp className="w-5 h-5 text-orange-600" />
-                  <span>Production Statistics</span>
+                  <span>{t('productionStatistics')}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -1322,7 +1318,7 @@ export default function MetricsPage() {
                       <div className="text-2xl font-bold text-orange-700">
                         {yesterdayProductionStats.sum.toFixed(0)}
                       </div>
-                      <div className="text-sm text-orange-600">Total Production</div>
+                      <div className="text-sm text-orange-600">{t('totalProduction')}</div>
                     </motion.div>
 
                     <motion.div 
@@ -1334,7 +1330,7 @@ export default function MetricsPage() {
                       <div className="text-2xl font-bold text-amber-700">
                         {yesterdayProductionStats.average.toFixed(1)}
                       </div>
-                      <div className="text-sm text-amber-600">Average per Category</div>
+                      <div className="text-sm text-amber-600">{t('averagePerCategory')}</div>
                     </motion.div>
 
                     <div className="grid grid-cols-2 gap-3">
@@ -1347,7 +1343,7 @@ export default function MetricsPage() {
                         <div className="text-lg font-bold text-yellow-700">
                           {yesterdayProductionStats.max}
                         </div>
-                        <div className="text-xs text-yellow-600">Highest Output</div>
+                        <div className="text-xs text-yellow-600">{t('highestOutput')}</div>
                       </motion.div>
 
                       <motion.div 
@@ -1359,7 +1355,7 @@ export default function MetricsPage() {
                         <div className="text-lg font-bold text-red-700">
                           {yesterdayProductionStats.min}
                         </div>
-                        <div className="text-xs text-red-600">Lowest Output</div>
+                        <div className="text-xs text-red-600">{t('lowestOutput')}</div>
                       </motion.div>
                     </div>
 
@@ -1372,13 +1368,13 @@ export default function MetricsPage() {
                       <div className="text-lg font-bold text-gray-700">
                         {yesterdayProductionStats.count} / 6
                       </div>
-                      <div className="text-sm text-gray-600">Categories Completed</div>
+                      <div className="text-sm text-gray-600">{t('categoriesCompleted')}</div>
                     </motion.div>
                   </div>
                 ) : (
                   <div className="text-center py-8">
                     <Clock className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-500">Enter yesterday's production data to see statistics</p>
+                    <p className="text-gray-500">{t('enterDataToSeeStats')}</p>
                   </div>
                 )}
               </CardContent>
@@ -1399,17 +1395,17 @@ export default function MetricsPage() {
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg font-semibold flex items-center text-teal-700">
                   <Truck className="w-5 h-5 mr-2" />
-                  Yesterday's Loading Vehicles
+                  {t('loadingDataEntry')}
                 </CardTitle>
-                <p className="text-sm text-gray-600">Track loading vehicle counts from yesterday</p>
+                <p className="text-sm text-gray-600">{t('enterVehicleLoadingData')}</p>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleYesterdayLoadingSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
-                      { field: 'load1', label: 'Ice cream / Loading vehicles', placeholder: 'Enter number of ice cream loading vehicles' },
-                      { field: 'load2', label: 'Albany / Loading vehicles', placeholder: 'Enter number of Albany loading vehicles' },
-                      { field: 'load3', label: 'Do / Loading vehicles', placeholder: 'Enter number of Do loading vehicles' },
+                      { field: 'load1', label: t('iceCreamLoadingVehicles') },
+                      { field: 'load2', label: t('albanyLoadingVehicles') },
+                      { field: 'load3', label: t('doLoadingVehicles') },
                     ].map((item, index) => {
                       const fieldName = item.field as keyof typeof yesterdayLoadingData;
                       return (
@@ -1426,7 +1422,6 @@ export default function MetricsPage() {
                           <Input
                             id={fieldName}
                             type="text"
-                            placeholder={item.placeholder}
                             value={yesterdayLoadingData[fieldName]}
                             onChange={(e) => handleYesterdayLoadingInputChange(fieldName, e.target.value)}
                             className="transition-all duration-200 focus:ring-2 focus:ring-teal-500"
@@ -1443,7 +1438,7 @@ export default function MetricsPage() {
                       disabled={Object.values(yesterdayLoadingData).every(val => val === "")}
                     >
                       <Save className="w-4 h-4" />
-                      <span>Save Yesterday's Loading Vehicles</span>
+                      <span>{t('saveLoadingData')}</span>
                     </Button>
                     <Button 
                       type="button" 
@@ -1451,7 +1446,7 @@ export default function MetricsPage() {
                       onClick={clearYesterdayLoadingForm}
                       disabled={Object.values(yesterdayLoadingData).every(val => val === "")}
                     >
-                      Clear All
+                      {t('clearAll')}
                     </Button>
                   </div>
                 </form>
@@ -1464,7 +1459,7 @@ export default function MetricsPage() {
             <div className="space-y-6">
               <Card className="h-full border-teal-200 shadow-lg">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg font-semibold text-teal-700">Loading Vehicle Stats</CardTitle>
+                  <CardTitle className="text-lg font-semibold text-teal-700">{t('loadingVehicleStats')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {calculateYesterdayLoadingStats() ? (
@@ -1478,7 +1473,7 @@ export default function MetricsPage() {
                         <div className="text-2xl font-bold text-teal-700">
                           {calculateYesterdayLoadingStats()?.sum}
                         </div>
-                        <div className="text-sm text-teal-600">Total Vehicles</div>
+                        <div className="text-sm text-teal-600">{t('totalVehicles')}</div>
                       </motion.div>
 
                       <motion.div 
@@ -1490,7 +1485,7 @@ export default function MetricsPage() {
                         <div className="text-2xl font-bold text-cyan-700">
                           {calculateYesterdayLoadingStats()?.average.toFixed(1)}
                         </div>
-                        <div className="text-sm text-cyan-600">Average per Category</div>
+                        <div className="text-sm text-cyan-600">{t('averagePerCategory')}</div>
                       </motion.div>
 
                       <div className="grid grid-cols-2 gap-3">
@@ -1503,7 +1498,7 @@ export default function MetricsPage() {
                           <div className="text-lg font-bold text-emerald-700">
                             {calculateYesterdayLoadingStats()?.max}
                           </div>
-                          <div className="text-xs text-emerald-600">Most Vehicles</div>
+                          <div className="text-xs text-emerald-600">{t('mostVehicles')}</div>
                         </motion.div>
 
                         <motion.div 
@@ -1515,7 +1510,7 @@ export default function MetricsPage() {
                           <div className="text-lg font-bold text-red-700">
                             {calculateYesterdayLoadingStats()?.min}
                           </div>
-                          <div className="text-xs text-red-600">Fewest Vehicles</div>
+                          <div className="text-xs text-red-600">{t('fewestVehicles')}</div>
                         </motion.div>
                       </div>
 
@@ -1528,13 +1523,13 @@ export default function MetricsPage() {
                         <div className="text-lg font-bold text-gray-700">
                           {calculateYesterdayLoadingStats()?.count || 0} / 3
                         </div>
-                        <div className="text-sm text-gray-600">Vehicle Categories Completed</div>
+                        <div className="text-sm text-gray-600">{t('vehicleCategoriesCompleted')}</div>
                       </motion.div>
                     </div>
                   ) : (
                     <div className="text-center py-8">
                       <Truck className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                      <p className="text-gray-500">Enter yesterday's loading vehicle data to see statistics</p>
+                      <p className="text-gray-500">{t('enterDataToSeeStats')}</p>
                     </div>
                   )}
                 </CardContent>
@@ -1543,7 +1538,7 @@ export default function MetricsPage() {
               {/* Yesterday's Loading Quick Actions */}
               <Card className="border-teal-200 shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-lg">Loading Quick Actions</CardTitle>
+                  <CardTitle className="text-lg">{t('loadingQuickActions')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <Button 
@@ -1560,7 +1555,7 @@ export default function MetricsPage() {
                     }}
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Fill Sample Data
+                    {t('fillSampleData')}
                   </Button>
                   
                   <Button 
@@ -1577,7 +1572,7 @@ export default function MetricsPage() {
                     }}
                   >
                     <Calculator className="w-4 h-4 mr-2" />
-                    Generate Random Data
+                    {t('generateRandom')}
                   </Button>
                 </CardContent>
               </Card>
