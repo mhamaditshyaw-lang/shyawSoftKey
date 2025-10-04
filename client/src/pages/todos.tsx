@@ -201,7 +201,7 @@ export default function TodosPage() {
     if (autoRefresh) {
       interval = setInterval(() => {
         queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
-      }, 30000);
+      }, 5000);
     }
     return () => {
       if (interval) clearInterval(interval);
@@ -723,7 +723,7 @@ export default function TodosPage() {
                     onCheckedChange={setAutoRefresh}
                   />
                   <span className="text-sm text-gray-600">
-                    {autoRefresh ? 'Every 30s' : 'Off'}
+                    {autoRefresh ? 'Every 5s' : 'Off'}
                   </span>
                 </div>
               </div>
