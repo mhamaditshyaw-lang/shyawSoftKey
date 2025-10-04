@@ -85,15 +85,12 @@ export default function NotificationTestPage() {
     }
 
     try {
-      const response = await authenticatedRequest("/api/device-notifications/test", {
-        method: "POST",
-        body: JSON.stringify({
-          title: customNotification.title,
-          message: customNotification.message,
-          type: customNotification.type,
-          priority: customNotification.priority,
-          icon: customNotification.icon,
-        }),
+      const response = await authenticatedRequest("POST", "/api/device-notifications/test", {
+        title: customNotification.title,
+        message: customNotification.message,
+        type: customNotification.type,
+        priority: customNotification.priority,
+        icon: customNotification.icon,
       });
 
       if (response.ok) {
@@ -122,13 +119,10 @@ export default function NotificationTestPage() {
 
   const handleSystemAlert = async () => {
     try {
-      const response = await authenticatedRequest("/api/device-notifications/system-alert", {
-        method: "POST",
-        body: JSON.stringify({
-          title: t("systemAlertTestTitle"),
-          message: t("systemWideAlertMessage"),
-          priority: "high"
-        }),
+      const response = await authenticatedRequest("POST", "/api/device-notifications/system-alert", {
+        title: t("systemAlertTestTitle"),
+        message: t("systemWideAlertMessage"),
+        priority: "high"
       });
 
       if (response.ok) {
