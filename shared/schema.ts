@@ -250,23 +250,21 @@ export const updateUserPasswordSchema = z.object({
 
 // Page Access Management - Maps application pages to permission keys
 export const PAGE_PERMISSIONS = {
-  "/": "canViewDashboard",
-  "/user-management": "canViewUserManagement",
-  "/todos": "canViewTodos",
-  "/reminders": "canViewReminders",
-  "/interviews": "canViewInterviews",
-  "/feedback": "canViewFeedback",
-  "/archive": "canViewArchive",
-  "/all-data": "canViewAllData",
-  "/add-employee": "canViewAddEmployee",
-  "/reports": "canViewReports",
-  "/metrics": "canViewMetrics",
-  "/user-activity": "canViewUserActivity",
-  "/data-view": "canViewDataView",
-  "/employee-management": "canViewEmployeeManagement",
-  "/department-management": "canViewDepartmentManagement",
-  "/notification-management": "canViewNotificationManagement",
-  "/user-settings": "canViewSettings",
+  "/": "view_dashboard",
+  "/interviews": "manage_interviews",
+  "/todos": "manage_todos",
+  "/reminders": "manage_reminders",
+  "/feedback": "manage_feedback",
+  "/metrics": "view_metrics",
+  "/users": "manage_users",
+  "/department-management": "manage_departments",
+  "/data-view": "view_data",
+  "/reports": "view_reports",
+  "/archive": "view_archive",
+  "/all-data": "view_all_data",
+  "/user-activity": "view_user_activity",
+  "/page-access-management": "manage_page_access",
+  "/notification-management": "manage_notifications"
 } as const;
 
 export type PagePath = keyof typeof PAGE_PERMISSIONS;
