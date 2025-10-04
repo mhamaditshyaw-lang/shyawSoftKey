@@ -29,7 +29,7 @@ import {
   type InsertArchivedItem,
 } from "@shared/feedback-schema";
 import { db, executeWithRetry } from "./db";
-import { eq, desc, and, or, sql } from "drizzle-orm";
+import { eq, desc, and, or, sql, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -39,7 +39,7 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, updates: Partial<User>): Promise<User | undefined>;
   deleteUser(id: number): Promise<boolean>;
-  getAllUsers(): Promise<User[]>;
+  getAllUsers(accessibleUserIds?: number[]): Promise<User[]>;
   getUsersByRole(role: string): Promise<User[]>;
   updateUserPageAccess(userId: number, pagePermissions: Record<string, boolean>): Promise<User>;
   getUserPageAccess(userId: number): Promise<Record<string, boolean>>;
@@ -49,9 +49,10 @@ export interface IStorage {
   assignStaffToManager(staffId: number, managerId: number): Promise<User | undefined>;
   removeStaffFromManager(staffId: number): Promise<User | undefined>;
   getManagerForStaff(staffId: number): Promise<User | undefined>;
+  getAccessibleUserIds(userId: number, role: string): Promise<number[]>;
   
   // Todo methods
-  getTodoLists(): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]>;
+  getTodoLists(accessibleUserIds?: number[]): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]>;
   getTodoListsByUser(userId: number): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]>;
   createTodoList(todoList: InsertTodoList): Promise<TodoList>;
   getTodoList(id: number): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] }) | undefined>;
@@ -72,7 +73,7 @@ export interface IStorage {
   deleteReminder(id: number): Promise<boolean>;
   
   // Interview request methods
-  getInterviewRequests(): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;
+  getInterviewRequests(accessibleUserIds?: number[], includeUnassigned?: boolean): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;
   getInterviewRequestsByManager(managerId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;
   getInterviewRequestsByUser(userId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;
   createInterviewRequest(request: InsertInterviewRequest): Promise<InterviewRequest>;
@@ -202,7 +203,10 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(accessibleUserIds?: number[]): Promise<User[]> {
+    if (accessibleUserIds && accessibleUserIds.length > 0) {
+      return await db.select().from(users).where(inArray(users.id, accessibleUserIds)).orderBy(desc(users.createdAt));
+    }
     return await db.select().from(users).orderBy(desc(users.createdAt));
   }
 
@@ -298,7 +302,61 @@ export class DatabaseStorage implements IStorage {
     });
   }
 
-  async getTodoLists(): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]> {
+  async getAccessibleUserIds(userId: number, role: string): Promise<number[]> {
+    return await executeWithRetry(async () => {
+      // Admins, office, and office_team can see all users
+      if (role === 'admin' || role === 'office' || role === 'office_team') {
+        const allUsers = await db.select({ id: users.id }).from(users);
+        return allUsers.map(u => u.id);
+      }
+
+      // Managers can see themselves and all their subordinates (recursively)
+      if (role === 'manager') {
+        const subordinateIds = new Set<number>([userId]);
+        const toProcess = [userId];
+
+        while (toProcess.length > 0) {
+          const currentManagerId = toProcess.shift()!;
+          const directReports = await db
+            .select({ id: users.id })
+            .from(users)
+            .where(eq(users.managerId, currentManagerId));
+
+          for (const report of directReports) {
+            if (!subordinateIds.has(report.id)) {
+              subordinateIds.add(report.id);
+              toProcess.push(report.id);
+            }
+          }
+        }
+
+        return Array.from(subordinateIds);
+      }
+
+      // Regular staff can only see themselves
+      return [userId];
+    });
+  }
+
+  async getTodoLists(accessibleUserIds?: number[]): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]> {
+    if (accessibleUserIds && accessibleUserIds.length > 0) {
+      const result = await db.query.todoLists.findMany({
+        where: (todoLists, { or, eq, inArray }) => or(
+          inArray(todoLists.createdById, accessibleUserIds),
+          inArray(todoLists.assignedToId, accessibleUserIds.concat([null as any]))
+        ),
+        with: {
+          createdBy: true,
+          assignedTo: true,
+          items: {
+            orderBy: (items, { desc }) => [desc(items.createdAt)],
+          },
+        },
+        orderBy: (todoLists, { desc }) => [desc(todoLists.createdAt)],
+      });
+      return result;
+    }
+    
     const result = await db.query.todoLists.findMany({
       with: {
         createdBy: true,
@@ -466,7 +524,27 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getInterviewRequests(): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]> {
+  async getInterviewRequests(accessibleUserIds?: number[], includeUnassigned?: boolean): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]> {
+    if (accessibleUserIds && accessibleUserIds.length > 0) {
+      const result = await db.query.interviewRequests.findMany({
+        where: (interviewRequests, { inArray, or, isNull }) => {
+          if (includeUnassigned) {
+            return or(
+              inArray(interviewRequests.requestedById, accessibleUserIds),
+              isNull(interviewRequests.managerId)
+            );
+          }
+          return inArray(interviewRequests.requestedById, accessibleUserIds);
+        },
+        with: {
+          requestedBy: true,
+          manager: true,
+        },
+        orderBy: (interviewRequests, { desc }) => [desc(interviewRequests.createdAt)],
+      });
+      return result;
+    }
+    
     const result = await db.query.interviewRequests.findMany({
       with: {
         requestedBy: true,

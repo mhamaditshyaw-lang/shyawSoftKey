@@ -43,6 +43,7 @@ interface AuthRequest extends Request {
     username: string;
     role: string;
   };
+  accessibleUserIds?: number[];
 }
 
 // Middleware to verify JWT token
@@ -82,6 +83,22 @@ function requireRole(roles: string[]) {
     }
     next();
   };
+}
+
+// Middleware to attach accessible user IDs based on manager hierarchy
+async function attachUserScope(req: AuthRequest, res: Response, next: NextFunction) {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Authentication required' });
+  }
+
+  try {
+    const accessibleUserIds = await storage.getAccessibleUserIds(req.user.id, req.user.role);
+    req.accessibleUserIds = accessibleUserIds;
+    next();
+  } catch (error) {
+    console.error('Error attaching user scope:', error);
+    return res.status(500).json({ message: 'Failed to determine user access scope' });
+  }
 }
 
 // WebSocket connections storage
@@ -175,10 +192,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ user: userWithoutPassword });
   });
 
-  // User management routes (Admin only can view all users)
-  app.get("/api/users", authenticateToken, requireRole(['admin']), async (req, res) => {
+  // User management routes (Admin and managers can view users based on their scope)
+  app.get("/api/users", authenticateToken, attachUserScope, requireRole(['admin', 'manager', 'office', 'office_team']), async (req: AuthRequest, res) => {
     try {
-      const users = await storage.getAllUsers();
+      const users = await storage.getAllUsers(req.accessibleUserIds);
       const usersWithoutPasswords = users.map(({ password, ...user }) => user);
       res.json({ users: usersWithoutPasswords });
     } catch (error: any) {
@@ -524,16 +541,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Todo routes (office role can see all, others see their own)
-  app.get("/api/todos", authenticateToken, async (req: AuthRequest, res) => {
+  app.get("/api/todos", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
-      let todoLists;
-      if (req.user?.role === 'office' || req.user?.role === 'admin' || req.user?.role === 'user' || req.user?.role === 'office_team') {
-        // Office, admin, user, and office_team roles can see all todo lists
-        todoLists = await storage.getTodoLists();
-      } else {
-        // Manager, security, and other roles only see their own todos
-        todoLists = await storage.getTodoListsByUser(req.user?.id || 0);
-      }
+      // Use accessibleUserIds to filter todos based on manager hierarchy
+      const todoLists = await storage.getTodoLists(req.accessibleUserIds);
       // Sanitize user data to remove passwords and other sensitive information
       const sanitizedTodoLists = sanitizeTodoLists(todoLists);
       res.json({ todoLists: sanitizedTodoLists });
@@ -1016,20 +1027,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
   // Interview request routes
-  app.get("/api/interviews", authenticateToken, async (req: AuthRequest, res) => {
+  app.get("/api/interviews", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
-      let requests: any[] = [];
-      if (req.user!.role === 'admin') {
-        requests = await storage.getInterviewRequests();
-      } else if (req.user!.role === 'manager') {
-        // Managers see requests assigned to them OR unassigned requests
-        const allRequests = await storage.getInterviewRequests();
-        requests = allRequests.filter(r => 
-          r.managerId === req.user!.id || r.managerId === null
-        );
-      } else if (req.user!.role === 'security') {
-        requests = await storage.getInterviewRequestsByUser(req.user!.id);
-      }
+      // Use accessibleUserIds to filter interviews based on manager hierarchy
+      // Managers also see unassigned requests (managerId is null)
+      const includeUnassigned = req.user!.role === 'manager';
+      const requests = await storage.getInterviewRequests(req.accessibleUserIds, includeUnassigned);
+      
       res.json({ requests });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
