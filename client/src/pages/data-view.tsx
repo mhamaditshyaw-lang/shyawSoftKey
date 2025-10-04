@@ -364,7 +364,7 @@ export default function DataViewPage() {
                 {dateFilter === 'custom' && (
                   <div className="space-y-2">
                     <Label htmlFor="custom-date" className="text-sm font-medium">
-                      Select Date
+                      {t("selectDate")}
                     </Label>
                     <Input
                       id="custom-date"
@@ -401,17 +401,17 @@ export default function DataViewPage() {
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("activeFilters")}:</span>
                   {dateFilter !== "all" && (
                     <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                      Date: {dateFilter === "custom" ? (customDate || "Select date") : dateFilter}
+                      {t("dateLabel")}: {dateFilter === "custom" ? (customDate || t("selectDate")) : dateFilter}
                     </Badge>
                   )}
                   {filter !== "all" && (
                     <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                      Type: {getTypeName(filter)}
+                      {t("typeLabel")}: {getTypeName(filter)}
                     </Badge>
                   )}
                   {searchTerm && (
                     <Badge variant="secondary" className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
-                      Search: "{searchTerm}"
+                      {t("searchLabel")}: "{searchTerm}"
                     </Badge>
                   )}
                   <Button
@@ -511,7 +511,7 @@ export default function DataViewPage() {
                   } transition-all duration-200`}
                 >
                   <Truck className="w-4 h-4 mr-2" />
-{t("loading")}
+{t("loadingVehicles")}
                 </Button>
               </div>
 
@@ -559,13 +559,13 @@ export default function DataViewPage() {
               </div>
               <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
                 {allData.length === 0
-                  ? "No Data Available"
-                  : "No Matching Results"}
+                  ? t("noDataAvailableMessage")
+                  : t("noMatchingResults")}
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
                 {allData.length === 0
-                  ? "Start adding operational data from the dashboard to see entries here."
-                  : "Try adjusting your search terms or filters to find what you're looking for."}
+                  ? t("startAddingDataMessage")
+                  : t("adjustFiltersMessage")}
               </p>
             </CardContent>
           </Card>
@@ -588,7 +588,7 @@ export default function DataViewPage() {
                           {getTypeName(entry.type)}
                         </CardTitle>
                         <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                          {Object.keys(entry.data).length} data fields recorded
+                          {Object.keys(entry.data).length} {t("dataFieldsRecorded")}
                         </p>
                       </div>
                     </div>
@@ -605,10 +605,10 @@ export default function DataViewPage() {
                           size="sm"
                           onClick={() => openDeleteModal(entry)}
                           className="bg-red-50 hover:bg-red-100 border-red-200 text-red-700 hover:text-red-800 shadow-sm"
-                          title="Admin Only: Delete Entry"
+                          title={t("adminOnlyDeleteEntry")}
                         >
                           <Trash2 className="w-4 h-4" />
-                          <span className="ml-1 text-xs">Admin</span>
+                          <span className="ml-1 text-xs">{t("admin")}</span>
                         </Button>
                       )}
                     </div>
@@ -641,7 +641,7 @@ export default function DataViewPage() {
                           {entry.stats.total.toFixed(1)}
                         </div>
                         <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                          Total
+                          {t("total")}
                         </div>
                       </div>
                       <div className="text-center">
@@ -649,7 +649,7 @@ export default function DataViewPage() {
                           {entry.stats.average.toFixed(1)}
                         </div>
                         <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                          Average
+                          {t("average")}
                         </div>
                       </div>
                       <div className="text-center">
@@ -657,7 +657,7 @@ export default function DataViewPage() {
                           {entry.stats.max}
                         </div>
                         <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                          Maximum
+                          {t("maximum")}
                         </div>
                       </div>
                       <div className="text-center">
@@ -665,7 +665,7 @@ export default function DataViewPage() {
                           {entry.stats.min}
                         </div>
                         <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                          Minimum
+                          {t("minimum")}
                         </div>
                       </div>
                     </div>
