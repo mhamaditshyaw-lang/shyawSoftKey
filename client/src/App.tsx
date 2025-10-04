@@ -18,6 +18,7 @@ import RemindersPage from "@/pages/reminders";
 import UsersPage from "@/pages/users";
 import UserManagementPage from "@/pages/user-management";
 import EmployeeManagementPage from "@/pages/employee-management";
+import DepartmentManagementPage from "@/pages/department-management";
 import AddEmployeePage from "@/pages/add-employee";
 
 import FeedbackPage from "@/pages/feedback";
@@ -97,6 +98,11 @@ function Router() {
       <Route path="/employee-management">
         <ProtectedRoute requiredPermission="canViewEmployeeManagement">
           <EmployeeManagementPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/department-management">
+        <ProtectedRoute requiredPermission="canViewDepartmentManagement">
+          <DepartmentManagementPage />
         </ProtectedRoute>
       </Route>
       <Route path="/add-employee">

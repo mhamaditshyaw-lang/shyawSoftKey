@@ -264,6 +264,7 @@ export const PAGE_PERMISSIONS = {
   "/user-activity": "canViewUserActivity",
   "/data-view": "canViewDataView",
   "/employee-management": "canViewEmployeeManagement",
+  "/department-management": "canViewDepartmentManagement",
   "/notification-management": "canViewNotificationManagement",
   "/user-settings": "canViewSettings",
 } as const;
