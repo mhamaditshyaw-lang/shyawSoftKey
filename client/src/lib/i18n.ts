@@ -2062,6 +2062,17 @@ const resources = {
       dayDoTons: "النهار - دو / طن",
       nightDoTons: "الليل - دو / طن",
       
+      dayShift: "وردية النهار",
+      nightShift: "وردية الليل",
+      iceCream: "آيس كريم",
+      albany: "ألباني",
+      doActivities: "أنشطة دو",
+      cartons: "كرتون",
+      tons: "طن",
+      vehicle1: "مركبة ١",
+      vehicle2: "مركبة ٢",
+      vehicle3: "مركبة ٣",
+      
       // Statistics
       totalSum: "المجموع الكلي",
       average: "المتوسط",
