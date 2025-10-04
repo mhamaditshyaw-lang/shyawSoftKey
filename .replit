@@ -78,12 +78,12 @@ localPort = 40925
 externalPort = 5173
 
 [[ports]]
-localPort = 42011
-externalPort = 4200
+localPort = 41973
+externalPort = 8000
 
 [[ports]]
-localPort = 43281
-externalPort = 6800
+localPort = 42011
+externalPort = 4200
 
 [[ports]]
 localPort = 43891
