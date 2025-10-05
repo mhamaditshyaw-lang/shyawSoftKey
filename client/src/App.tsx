@@ -16,7 +16,6 @@ import InterviewsPage from "@/pages/interviews";
 import TodosPage from "@/pages/todos";
 import RemindersPage from "@/pages/reminders";
 import UsersPage from "@/pages/users";
-import UserManagementPage from "@/pages/user-management";
 import EmployeeManagementPage from "@/pages/employee-management";
 import DepartmentManagementPage from "@/pages/department-management";
 import AddEmployeePage from "@/pages/add-employee";
@@ -75,17 +74,17 @@ function Router() {
     <Switch>
       <Route path="/login" component={LoginPage} />
       <Route path="/interviews">
-        <ProtectedRoute requiredPermission="canViewInterviews">
+        <ProtectedRoute requiredPermission="manage_interviews">
           <InterviewsPage />
         </ProtectedRoute>
       </Route>
       <Route path="/todos">
-        <ProtectedRoute requiredPermission="canViewTodos">
+        <ProtectedRoute requiredPermission="manage_todos">
           <TodosPage />
         </ProtectedRoute>
       </Route>
       <Route path="/reminders">
-        <ProtectedRoute requiredPermission="canViewReminders">
+        <ProtectedRoute requiredPermission="manage_reminders">
           <RemindersPage />
         </ProtectedRoute>
       </Route>
@@ -96,7 +95,7 @@ function Router() {
       </Route>
       
       <Route path="/employee-management">
-        <ProtectedRoute requiredPermission="canViewEmployeeManagement">
+        <ProtectedRoute>
           <EmployeeManagementPage />
         </ProtectedRoute>
       </Route>
@@ -106,43 +105,43 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/add-employee">
-        <ProtectedRoute requiredPermission="canViewAddEmployee">
+        <ProtectedRoute>
           <AddEmployeePage />
         </ProtectedRoute>
       </Route>
 
       <Route path="/feedback">
-        <ProtectedRoute requiredPermission="canViewFeedback">
+        <ProtectedRoute requiredPermission="manage_feedback">
           <FeedbackPage />
         </ProtectedRoute>
       </Route>
       <Route path="/archive">
-        <ProtectedRoute requiredPermission="canViewArchive">
+        <ProtectedRoute requiredPermission="view_archive">
           <ArchivePage />
         </ProtectedRoute>
       </Route>
       <Route path="/metrics">
-        <ProtectedRoute requiredPermission="canViewMetrics">
+        <ProtectedRoute requiredPermission="view_metrics">
           <MetricsPage />
         </ProtectedRoute>
       </Route>
       <Route path="/data-view">
-        <ProtectedRoute requiredPermission="canViewDataView">
+        <ProtectedRoute requiredPermission="view_data">
           <DataViewPage />
         </ProtectedRoute>
       </Route>
       <Route path="/all-data">
-        <ProtectedRoute requiredPermission="canViewAllData">
+        <ProtectedRoute requiredPermission="view_all_data">
           <AllDataPage />
         </ProtectedRoute>
       </Route>
       <Route path="/user-activity">
-        <ProtectedRoute requiredPermission="canViewUserActivity">
+        <ProtectedRoute requiredPermission="view_user_activity">
           <UserActivityPage />
         </ProtectedRoute>
       </Route>
       <Route path="/reports">
-        <ProtectedRoute requiredPermission="canViewReports">
+        <ProtectedRoute requiredPermission="view_reports">
           <ReportsPage />
         </ProtectedRoute>
       </Route>
@@ -152,7 +151,7 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/notification-management">
-        <ProtectedRoute requiredPermission="canViewNotificationManagement">
+        <ProtectedRoute requiredPermission="manage_notifications">
           <NotificationManagementPage />
         </ProtectedRoute>
       </Route>

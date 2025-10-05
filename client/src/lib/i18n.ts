@@ -2066,8 +2066,6 @@ const resources = {
       dayDoTons: "النهار - دو / طن",
       nightDoTons: "الليل - دو / طن",
 
-      dayShift: "وردية النهار",
-      nightShift: "وردية الليل",
       iceCream: "آيس كريم",
       albany: "ألباني",
       doActivities: "أنشطة دو",
