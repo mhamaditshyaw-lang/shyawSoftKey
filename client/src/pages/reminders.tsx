@@ -166,14 +166,20 @@ export default function RemindersPage() {
   const filterReminders = () => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
     
     switch (filterType) {
       case "today":
-        return todayReminders;
+        // Today includes all reminders from start of today to end of today
+        return reminders.filter(reminder => {
+          const reminderDate = new Date(reminder.reminderDate);
+          return reminderDate >= today && reminderDate < tomorrow;
+        });
       case "upcoming":
         return reminders.filter(reminder => {
           const reminderDate = new Date(reminder.reminderDate);
-          return reminderDate > today && !reminder.isCompleted;
+          return reminderDate >= tomorrow && !reminder.isCompleted;
         });
       case "overdue":
         return reminders.filter(reminder => {
@@ -194,7 +200,10 @@ export default function RemindersPage() {
   };
 
   const isOverdue = (dateString: string) => {
-    return new Date(dateString) < new Date() && filterType !== "upcoming";
+    const now = new Date();
+    const reminderDate = new Date(dateString);
+    // A reminder is overdue if it's in the past and not completed
+    return reminderDate < now;
   };
 
   const handleToggleComplete = (id: number, isCompleted: boolean) => {
@@ -453,13 +462,13 @@ export default function RemindersPage() {
                                 <Badge variant={
                                   reminder.isCompleted 
                                     ? "secondary" 
-                                    : isOverdue(reminder.reminderDate) 
+                                    : isOverdue(reminder.reminderDate) && !reminder.isCompleted
                                       ? "destructive" 
                                       : "default"
                                 }>
                                   {reminder.isCompleted 
                                     ? "Completed" 
-                                    : isOverdue(reminder.reminderDate) 
+                                    : isOverdue(reminder.reminderDate) && !reminder.isCompleted
                                       ? "Overdue" 
                                       : "Pending"}
                                 </Badge>

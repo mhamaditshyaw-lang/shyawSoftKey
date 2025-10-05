@@ -58,11 +58,9 @@ export class ReminderNotificationService {
     try {
       console.log("Checking for due reminders...");
 
-      // Get today's date range in local timezone
       const now = new Date();
+      // Check reminders from start of today up to current time
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
 
       // Get all users to check their reminders
       const users = await storage.getAllUsers();
@@ -73,8 +71,8 @@ export class ReminderNotificationService {
         }
 
         try {
-          // Get today's reminders for this user that haven't been completed and haven't had notifications sent
-          const reminders = await storage.getRemindersByDateRange(user.id, today, tomorrow);
+          // Get reminders due between start of today and now
+          const reminders = await storage.getRemindersByDateRange(user.id, today, now);
           const pendingReminders = reminders.filter(reminder => 
             !reminder.isCompleted && !reminder.notificationSent
           );
