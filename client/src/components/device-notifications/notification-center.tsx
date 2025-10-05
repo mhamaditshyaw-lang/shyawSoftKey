@@ -386,7 +386,7 @@ export default function NotificationCenter() {
           
           <DropdownMenuSeparator />
           
-          <ScrollArea className="max-h-80">
+          <ScrollArea className="h-96 overflow-y-auto">
             {isLoading ? (
               <div className="p-4 text-center text-gray-500">
                 Loading notifications...
@@ -397,8 +397,8 @@ export default function NotificationCenter() {
                 <p>No notifications yet</p>
               </div>
             ) : (
-              <div className="space-y-1">
-                {notifications.slice(0, 10).map((notification: any) => (
+              <div className="space-y-1 pr-4">
+                {notifications.map((notification: any) => (
                   <div
                     key={notification.id}
                     className={`p-3 border-l-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
