@@ -18,7 +18,8 @@ import {
   Plus,
   Building2,
   Activity,
-  Bell
+  Bell,
+  HardDrive
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -226,22 +227,40 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
         })}
 
         {isAdmin && (
-          <Link href="/page-access-management">
-            <Button
-              variant={isActive("/page-access-management") ? "default" : "ghost"}
-              size="sm"
-              className={cn(
-                "w-full justify-start gap-3 transition-all duration-200",
-                isActive("/page-access-management")
-                  ? "bg-dashboard-primary text-white shadow-lg hover:bg-dashboard-primary/90"
-                  : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
-                isCollapsed && "justify-center px-2"
-              )}
-            >
-              <Shield className={cn("h-5 w-5", isActive("/page-access-management") && "text-white")} />
-              {!isCollapsed && <span className="flex-1 text-left">Page Access Management</span>}
-            </Button>
-          </Link>
+          <>
+            <Link href="/page-access-management">
+              <Button
+                variant={isActive("/page-access-management") ? "default" : "ghost"}
+                size="sm"
+                className={cn(
+                  "w-full justify-start gap-3 transition-all duration-200",
+                  isActive("/page-access-management")
+                    ? "bg-dashboard-primary text-white shadow-lg hover:bg-dashboard-primary/90"
+                    : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
+                  isCollapsed && "justify-center px-2"
+                )}
+              >
+                <Shield className={cn("h-5 w-5", isActive("/page-access-management") && "text-white")} />
+                {!isCollapsed && <span className="flex-1 text-left">Page Access Management</span>}
+              </Button>
+            </Link>
+            <Link href="/backup-restore">
+              <Button
+                variant={isActive("/backup-restore") ? "default" : "ghost"}
+                size="sm"
+                className={cn(
+                  "w-full justify-start gap-3 transition-all duration-200",
+                  isActive("/backup-restore")
+                    ? "bg-dashboard-primary text-white shadow-lg hover:bg-dashboard-primary/90"
+                    : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
+                  isCollapsed && "justify-center px-2"
+                )}
+              >
+                <HardDrive className={cn("h-5 w-5", isActive("/backup-restore") && "text-white")} />
+                {!isCollapsed && <span className="flex-1 text-left">Backup & Restore</span>}
+              </Button>
+            </Link>
+          </>
         )}
       </nav>
 

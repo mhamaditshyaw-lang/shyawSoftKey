@@ -1649,6 +1649,172 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Backup and Restore routes
+  app.get("/api/backup/download", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+    try {
+      const { spawn } = await import('child_process');
+      const fs = await import('fs');
+      const path = await import('path');
+      const { URL } = await import('url');
+
+      const backupDir = path.join(process.cwd(), 'backups');
+      if (!fs.existsSync(backupDir)) {
+        fs.mkdirSync(backupDir, { recursive: true });
+      }
+
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const backupFile = path.join(backupDir, `backup-${timestamp}.sql`);
+
+      const dbUrl = process.env.DATABASE_URL;
+      if (!dbUrl) {
+        return res.status(500).json({ message: 'Database not configured' });
+      }
+
+      const dbConfig = new URL(dbUrl);
+      const hostname = dbConfig.hostname || 'localhost';
+      const port = dbConfig.port || '5432';
+      const username = dbConfig.username || 'postgres';
+      const password = dbConfig.password || '';
+      const database = dbConfig.pathname?.slice(1) || 'postgres';
+
+      const writeStream = fs.createWriteStream(backupFile);
+      const env = { ...process.env };
+      if (password) {
+        env.PGPASSWORD = password;
+      }
+
+      const pgDump = spawn('pg_dump', [
+        '-h', hostname,
+        '-p', port,
+        '-U', username,
+        '-d', database,
+        '-F', 'p',
+        '--no-password'
+      ], { env });
+
+      let stderr = '';
+      pgDump.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
+
+      pgDump.stdout.pipe(writeStream);
+
+      await new Promise((resolve, reject) => {
+        pgDump.on('close', (code) => {
+          if (code === 0) {
+            resolve(code);
+          } else {
+            reject(new Error(`pg_dump failed: ${stderr}`));
+          }
+        });
+        pgDump.on('error', (err) => {
+          reject(new Error(`Failed to start pg_dump: ${err.message}`));
+        });
+      });
+
+      res.download(backupFile, `database-backup-${timestamp}.sql`, (err) => {
+        if (err) {
+          console.error('Error downloading backup:', err);
+        }
+        try {
+          fs.unlinkSync(backupFile);
+        } catch (e) {
+          console.error('Error deleting temp backup file:', e);
+        }
+      });
+    } catch (error: any) {
+      console.error("Error creating backup:", error);
+      res.status(500).json({ message: "Failed to create backup: " + error.message });
+    }
+  });
+
+  app.post("/api/backup/restore", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+    try {
+      const { spawn } = await import('child_process');
+      const fs = await import('fs');
+      const path = await import('path');
+      const { URL } = await import('url');
+
+      const { backupData } = req.body;
+      
+      if (!backupData || typeof backupData !== 'string') {
+        return res.status(400).json({ message: "No valid backup data provided" });
+      }
+
+      const MAX_BACKUP_SIZE = 100 * 1024 * 1024;
+      if (backupData.length > MAX_BACKUP_SIZE) {
+        return res.status(400).json({ message: "Backup file too large (max 100MB)" });
+      }
+
+      const backupDir = path.join(process.cwd(), 'backups');
+      if (!fs.existsSync(backupDir)) {
+        fs.mkdirSync(backupDir, { recursive: true });
+      }
+
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const restoreFile = path.join(backupDir, `restore-${timestamp}.sql`);
+
+      fs.writeFileSync(restoreFile, backupData, 'utf-8');
+
+      const dbUrl = process.env.DATABASE_URL;
+      if (!dbUrl) {
+        return res.status(500).json({ message: 'Database not configured' });
+      }
+
+      const dbConfig = new URL(dbUrl);
+      const hostname = dbConfig.hostname || 'localhost';
+      const port = dbConfig.port || '5432';
+      const username = dbConfig.username || 'postgres';
+      const password = dbConfig.password || '';
+      const database = dbConfig.pathname?.slice(1) || 'postgres';
+
+      const readStream = fs.createReadStream(restoreFile);
+      const env = { ...process.env };
+      if (password) {
+        env.PGPASSWORD = password;
+      }
+
+      const psql = spawn('psql', [
+        '-h', hostname,
+        '-p', port,
+        '-U', username,
+        '-d', database,
+        '--no-password'
+      ], { env });
+
+      let stderr = '';
+      psql.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
+
+      readStream.pipe(psql.stdin);
+
+      await new Promise((resolve, reject) => {
+        psql.on('close', (code) => {
+          if (code === 0) {
+            resolve(code);
+          } else {
+            reject(new Error(`psql failed: ${stderr}`));
+          }
+        });
+        psql.on('error', (err) => {
+          reject(new Error(`Failed to start psql: ${err.message}`));
+        });
+      });
+
+      try {
+        fs.unlinkSync(restoreFile);
+      } catch (e) {
+        console.error('Error deleting temp restore file:', e);
+      }
+
+      res.json({ message: "Database restored successfully" });
+    } catch (error: any) {
+      console.error("Error restoring backup:", error);
+      res.status(500).json({ message: "Failed to restore backup: " + error.message });
+    }
+  });
+
   const httpServer = createServer(app);
 
 

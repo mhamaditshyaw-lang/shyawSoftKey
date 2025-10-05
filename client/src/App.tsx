@@ -30,6 +30,7 @@ import UserActivityPage from "@/pages/user-activity";
 import ReportsPage from "@/pages/reports";
 import NotificationTestPage from "@/pages/notification-test";
 import NotificationManagementPage from "@/pages/notification-management";
+import BackupRestorePage from "@/pages/backup-restore";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/header";
 import SlidingSidebarMenu from "@/components/navigation/sliding-sidebar-menu";
@@ -164,6 +165,11 @@ function Router() {
       <Route path="/page-access-management">
         <ProtectedRoute>
           <PageAccessManagement />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/backup-restore">
+        <ProtectedRoute requiredPermission="manage_users">
+          <BackupRestorePage />
         </ProtectedRoute>
       </Route>
       <Route path="/">
