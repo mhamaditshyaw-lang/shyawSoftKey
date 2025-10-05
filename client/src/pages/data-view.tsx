@@ -72,7 +72,11 @@ const translateFieldLabel = (fieldLabel: string, t: any): string => {
     'Night - Do / Tons': 'nightDoTons',
     'Ice cream / Loading vehicles': 'iceCreamLoadingVehicles',
     'Albany / Loading vehicles': 'albanyLoadingVehicles',
-    'Do / Loading vehicles': 'doLoadingVehicles'
+    'Do / Loading vehicles': 'doLoadingVehicles',
+    'VEHICLE 1 (TONS)': 'vehicle1Tons',
+    'VEHICLE 2 (TONS)': 'vehicle2Tons',
+    'VEHICLE 3 (TONS)': 'vehicle3Tons',
+    'HEAD INSERT NAME': 'headInsertName'
   };
   
   const translationKey = fieldLabelMap[fieldLabel];
