@@ -196,7 +196,18 @@ export default function RemindersPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    // Format date in local timezone
+    const dateStr = date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit' 
+    });
+    const timeStr = date.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: true 
+    });
+    return `${dateStr} ${timeStr}`;
   };
 
   const isOverdue = (dateString: string) => {
@@ -226,8 +237,13 @@ export default function RemindersPage() {
       return;
     }
 
-    // Convert datetime-local string to ISO string for the API
-    const reminderDateTime = new Date(newReminderDate).toISOString();
+    // The datetime-local input gives us a string like "2025-10-05T11:24"
+    // We need to treat this as local time, not UTC
+    // Create a date object that preserves the local timezone
+    const localDate = new Date(newReminderDate);
+    
+    // Convert to ISO string (this will be in UTC)
+    const reminderDateTime = localDate.toISOString();
 
     createReminderMutation.mutate({
       reminderDate: reminderDateTime,
