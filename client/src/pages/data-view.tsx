@@ -78,7 +78,7 @@ const translateFieldLabel = (fieldLabel: string, t: any): string => {
     'VEHICLE 3 (TONS)': 'vehicle3Tons',
     'HEAD INSERT NAME': 'headInsertName'
   };
-  
+
   const translationKey = fieldLabelMap[fieldLabel];
   return translationKey ? t(translationKey) : fieldLabel;
 };
@@ -99,7 +99,7 @@ export default function DataViewPage() {
   const { toast } = useToast();
 
   // Fetch operational data from API using authenticated request
-  const { data: operationalDataResponse, refetch } = useQuery({
+  const { data: operationalDataResponse, refetch, isLoading } = useQuery({
     queryKey: ["/api/operational-data"],
     queryFn: async () => {
       const { authenticatedRequest } = await import("@/lib/auth");
@@ -161,28 +161,28 @@ export default function DataViewPage() {
   const isToday = (date: string): boolean => {
     const today = new Date();
     const entryDate = new Date(date);
-    
+
     // Reset time to compare only dates
     today.setHours(0, 0, 0, 0);
     entryDate.setHours(0, 0, 0, 0);
-    
+
     return entryDate.getTime() === today.getTime();
   };
 
   const isThisWeek = (date: string): boolean => {
     const today = new Date();
     const entryDate = new Date(date);
-    
+
     // Get start of current week (Sunday)
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - today.getDay());
     startOfWeek.setHours(0, 0, 0, 0);
-    
+
     // Get end of current week (Saturday)
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
     endOfWeek.setHours(23, 59, 59, 999);
-    
+
     return entryDate >= startOfWeek && entryDate <= endOfWeek;
   };
 
@@ -197,20 +197,20 @@ export default function DataViewPage() {
 
   const isCustomDate = (date: string): boolean => {
     if (!customDate) return false;
-    
+
     try {
       const entryDate = new Date(date);
       const filterDate = new Date(customDate);
-      
+
       // Get date parts for accurate comparison
       const entryYear = entryDate.getFullYear();
       const entryMonth = entryDate.getMonth();
       const entryDay = entryDate.getDate();
-      
+
       const filterYear = filterDate.getFullYear();
       const filterMonth = filterDate.getMonth();
       const filterDay = filterDate.getDate();
-      
+
       return entryYear === filterYear && entryMonth === filterMonth && entryDay === filterDay;
     } catch (error) {
       return false;
@@ -247,7 +247,7 @@ export default function DataViewPage() {
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
           Object.values(entry.data).some((value) =>
-            value.toLowerCase().includes(searchTerm.toLowerCase()),
+            String(value).toLowerCase().includes(searchTerm.toLowerCase()),
           ) ||
           new Date(entry.createdAt).toLocaleDateString().includes(searchTerm),
       );
@@ -332,7 +332,17 @@ export default function DataViewPage() {
 
   // Check if user is admin
   const isAdmin = user?.role === "admin";
-  
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+          <p className="text-lg text-gray-700 dark:text-gray-300">{t("loadingDataMessage")}</p>
+        </div>
+      </div>
+    );
+  }
 
 
   return (
