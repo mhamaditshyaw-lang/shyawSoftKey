@@ -40,12 +40,44 @@ interface DataEntry {
     min: number;
   };
   createdAt: string;
+  timestamp?: string;
   createdBy?: {
     username: string;
     firstName: string;
     lastName: string;
   };
 }
+
+// Helper function to translate field labels
+const translateFieldLabel = (fieldLabel: string, t: any): string => {
+  const fieldLabelMap: Record<string, string> = {
+    'Total employees today': 'totalEmployeesToday',
+    'Permanent employees': 'permanentEmployees',
+    'Non-permanent employees': 'nonPermanentEmployees',
+    'Day - Start of work': 'dayStartOfWork',
+    'Day - Giving up': 'dayGivingUp',
+    'Night - Start of work': 'nightStartOfWork',
+    'Night - Giving up': 'nightGivingUp',
+    'Day - Ice cream': 'dayIceCream',
+    'Night - Ice cream': 'nightIceCream',
+    'Day - Albany': 'dayAlbany',
+    'Night - Albany': 'nightAlbany',
+    'Day - Do': 'dayDo',
+    'Night - Do': 'nightDo',
+    'Day - Ice cream / Cartons': 'dayIceCreamCartons',
+    'Night - Ice cream / Cartons': 'nightIceCreamCartons',
+    'Day - Albany / Tons': 'dayAlbanyTons',
+    'Night - Albany / Tons': 'nightAlbanyTons',
+    'Day - Do / Tons': 'dayDoTons',
+    'Night - Do / Tons': 'nightDoTons',
+    'Ice cream / Loading vehicles': 'iceCreamLoadingVehicles',
+    'Albany / Loading vehicles': 'albanyLoadingVehicles',
+    'Do / Loading vehicles': 'doLoadingVehicles'
+  };
+  
+  const translationKey = fieldLabelMap[fieldLabel];
+  return translationKey ? t(translationKey) : fieldLabel;
+};
 
 export default function DataViewPage() {
   const { t } = useTranslation();
@@ -624,7 +656,7 @@ export default function DataViewPage() {
                         className="group/item bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:shadow-md transition-all duration-200"
                       >
                         <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-                          {key}
+                          {translateFieldLabel(key, t)}
                         </div>
                         <div className="text-lg font-bold text-gray-800 group-hover/item:text-blue-600 transition-colors">
                           {value}
