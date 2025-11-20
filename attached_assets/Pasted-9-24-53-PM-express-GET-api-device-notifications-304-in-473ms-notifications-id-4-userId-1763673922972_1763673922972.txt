@@ -1,0 +1,64 @@
+9:24:53 PM [express] GET /api/device-notifications 304 in 473ms :: {"notifications":[{"id":4,"userId…
+Creating todo item with data: { todoListId: 1, text: 'test', priority: 'medium', user: 1 }
+Parsed item data: {
+  todoListId: 1,
+  title: 'test',
+  description: '',
+  priority: 'medium',
+  isCompleted: false
+}
+Storage: Creating todo item with: {
+  todoListId: 1,
+  title: 'test',
+  description: '',
+  priority: 'medium',
+  isCompleted: false
+}
+Storage: Error creating todo item: error: column "completed_by_id" of relation "todo_items" does not exist
+    at /home/runner/workspace/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async <anonymous> (/home/runner/workspace/node_modules/src/node-postgres/session.ts:104:19)
+    at async DatabaseStorage.createTodoItem (/home/runner/workspace/server/storage.ts:424:26)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:661:24) {
+  length: 139,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '174',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_target.c',
+  line: '1065',
+  routine: 'checkInsertTargets'
+}
+Error creating todo item: error: column "completed_by_id" of relation "todo_items" does not exist
+    at /home/runner/workspace/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async <anonymous> (/home/runner/workspace/node_modules/src/node-postgres/session.ts:104:19)
+    at async DatabaseStorage.createTodoItem (/home/runner/workspace/server/storage.ts:424:26)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:661:24) {
+  length: 139,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '174',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_target.c',
+  line: '1065',
+  routine: 'checkInsertTargets'
+}
