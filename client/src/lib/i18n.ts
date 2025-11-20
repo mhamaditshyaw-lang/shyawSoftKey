@@ -834,8 +834,40 @@ const resources = {
           todo_completed: "Todo Completed",
           system: "System"
         }
-      }
-
+      },
+      
+      // Notification Management Page
+      needToBeLoggedInToViewNotifications: "You need to be logged in to view notifications.",
+      manageAllYourSystemNotifications: "Manage and organize all your system notifications",
+      searchNotifications: "Search Notifications",
+      searchByTitleOrMessage: "Search by title or message...",
+      filterByType: "Filter by Type",
+      filterByStatus: "Filter by Status",
+      allStatus: "All Status",
+      allTypes: "All Types",
+      markAllRead: "Mark All as Read",
+      loadingNotifications: "Loading notifications...",
+      noNotificationsFound: "No Notifications Found",
+      noNotificationsMatchFilters: "No notifications match your filters",
+      noNotificationsYet: "You don't have any notifications yet",
+      new: "New",
+      types: "Types",
+      relatedTo: "Related to {{type}}",
+      failedToMarkNotificationAsRead: "Failed to mark notification as read",
+      failedToMarkAllNotificationsAsRead: "Failed to mark all notifications as read",
+      failedToDeleteNotification: "Failed to delete notification",
+      unreadCount: "{{count}} unread",
+      
+      // Notification Test Page
+      normalPriority: "Normal",
+      permission: "Permission",
+      enabled: "Enabled",
+      blocked: "Blocked",
+      notSet: "Not Set",
+      supported: "Supported",
+      notSupported: "Not Supported",
+      requestPermission: "Request Permission",
+      browserSupport: "Browser Support"
     }
   },
   ku: {
