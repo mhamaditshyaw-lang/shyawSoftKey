@@ -149,12 +149,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUser(id: number, updates: Partial<User>): Promise<User | undefined> {
-    const [user] = await db
-      .update(users)
-      .set({ ...updates, lastActiveAt: new Date() })
-      .where(eq(users.id, id))
-      .returning();
-    return user || undefined;
+    return await executeWithRetry(async () => {
+      const [user] = await db
+        .update(users)
+        .set({ ...updates, lastActiveAt: new Date() })
+        .where(eq(users.id, id))
+        .returning();
+      return user || undefined;
+    });
   }
 
   async deleteUser(id: number): Promise<boolean> {
@@ -204,14 +206,18 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllUsers(accessibleUserIds?: number[]): Promise<User[]> {
-    if (accessibleUserIds && accessibleUserIds.length > 0) {
-      return await db.select().from(users).where(inArray(users.id, accessibleUserIds)).orderBy(desc(users.createdAt));
-    }
-    return await db.select().from(users).orderBy(desc(users.createdAt));
+    return await executeWithRetry(async () => {
+      if (accessibleUserIds && accessibleUserIds.length > 0) {
+        return await db.select().from(users).where(inArray(users.id, accessibleUserIds)).orderBy(desc(users.createdAt));
+      }
+      return await db.select().from(users).orderBy(desc(users.createdAt));
+    });
   }
 
   async getUsersByRole(role: string): Promise<User[]> {
-    return await db.select().from(users).where(eq(users.role, role as any));
+    return await executeWithRetry(async () => {
+      return await db.select().from(users).where(eq(users.role, role as any));
+    });
   }
 
   async updateUserPageAccess(userId: number, pagePermissions: Record<string, boolean>): Promise<User> {
@@ -333,11 +339,45 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getTodoLists(accessibleUserIds?: number[]): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]> {
-    if (accessibleUserIds && accessibleUserIds.length > 0) {
+    return await executeWithRetry(async () => {
+      if (accessibleUserIds && accessibleUserIds.length > 0) {
+        const result = await db.query.todoLists.findMany({
+          where: (todoLists, { or, inArray }) => or(
+            inArray(todoLists.createdById, accessibleUserIds),
+            inArray(todoLists.assignedToId, accessibleUserIds)
+          ),
+          with: {
+            createdBy: true,
+            assignedTo: true,
+            items: {
+              orderBy: (items, { desc }) => [desc(items.createdAt)],
+            },
+          },
+          orderBy: (todoLists, { desc }) => [desc(todoLists.createdAt)],
+        });
+        return result;
+      }
+      
       const result = await db.query.todoLists.findMany({
-        where: (todoLists, { or, inArray }) => or(
-          inArray(todoLists.createdById, accessibleUserIds),
-          inArray(todoLists.assignedToId, accessibleUserIds)
+        with: {
+          createdBy: true,
+          assignedTo: true,
+          items: {
+            orderBy: (items, { desc }) => [desc(items.createdAt)],
+          },
+        },
+        orderBy: (todoLists, { desc }) => [desc(todoLists.createdAt)],
+      });
+      return result;
+    });
+  }
+
+  async getTodoListsByUser(userId: number): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]> {
+    return await executeWithRetry(async () => {
+      const result = await db.query.todoLists.findMany({
+        where: (todoLists, { or, eq }) => or(
+          eq(todoLists.createdById, userId),
+          eq(todoLists.assignedToId, userId)
         ),
         with: {
           createdBy: true,
@@ -349,59 +389,33 @@ export class DatabaseStorage implements IStorage {
         orderBy: (todoLists, { desc }) => [desc(todoLists.createdAt)],
       });
       return result;
-    }
-    
-    const result = await db.query.todoLists.findMany({
-      with: {
-        createdBy: true,
-        assignedTo: true,
-        items: {
-          orderBy: (items, { desc }) => [desc(items.createdAt)],
-        },
-      },
-      orderBy: (todoLists, { desc }) => [desc(todoLists.createdAt)],
     });
-    return result;
-  }
-
-  async getTodoListsByUser(userId: number): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]> {
-    const result = await db.query.todoLists.findMany({
-      where: (todoLists, { or, eq }) => or(
-        eq(todoLists.createdById, userId),
-        eq(todoLists.assignedToId, userId)
-      ),
-      with: {
-        createdBy: true,
-        assignedTo: true,
-        items: {
-          orderBy: (items, { desc }) => [desc(items.createdAt)],
-        },
-      },
-      orderBy: (todoLists, { desc }) => [desc(todoLists.createdAt)],
-    });
-    return result;
   }
 
   async createTodoList(todoList: InsertTodoList): Promise<TodoList> {
-    const [list] = await db
-      .insert(todoLists)
-      .values(todoList)
-      .returning();
-    return list;
+    return await executeWithRetry(async () => {
+      const [list] = await db
+        .insert(todoLists)
+        .values(todoList)
+        .returning();
+      return list;
+    });
   }
 
   async getTodoList(id: number): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] }) | undefined> {
-    const result = await db.query.todoLists.findFirst({
-      where: (todoLists, { eq }) => eq(todoLists.id, id),
-      with: {
-        createdBy: true,
-        assignedTo: true,
-        items: {
-          orderBy: (items, { desc }) => [desc(items.createdAt)],
+    return await executeWithRetry(async () => {
+      const result = await db.query.todoLists.findFirst({
+        where: (todoLists, { eq }) => eq(todoLists.id, id),
+        with: {
+          createdBy: true,
+          assignedTo: true,
+          items: {
+            orderBy: (items, { desc }) => [desc(items.createdAt)],
+          },
         },
-      },
+      });
+      return result || undefined;
     });
-    return result || undefined;
   }
 
   async createTodoItem(item: InsertTodoItem): Promise<TodoItem> {
@@ -439,17 +453,19 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateTodoItem(id: number, updates: Partial<TodoItem>): Promise<TodoItem | undefined> {
-    const updateData = { ...updates };
-    if (updates.isCompleted !== undefined) {
-      updateData.completedAt = updates.isCompleted ? new Date() : null;
-    }
-    
-    const [item] = await db
-      .update(todoItems)
-      .set(updateData)
-      .where(eq(todoItems.id, id))
-      .returning();
-    return item || undefined;
+    return await executeWithRetry(async () => {
+      const updateData = { ...updates };
+      if (updates.isCompleted !== undefined) {
+        updateData.completedAt = updates.isCompleted ? new Date() : null;
+      }
+      
+      const [item] = await db
+        .update(todoItems)
+        .set(updateData)
+        .where(eq(todoItems.id, id))
+        .returning();
+      return item || undefined;
+    });
   }
 
   async deleteTodoItem(id: number): Promise<boolean> {
@@ -505,17 +521,19 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateTodoList(id: number, updates: Partial<TodoList>): Promise<TodoList | undefined> {
-    try {
-      const [list] = await db
-        .update(todoLists)
-        .set(updates)
-        .where(eq(todoLists.id, id))
-        .returning();
-      return list || undefined;
-    } catch (error) {
-      console.error("Storage: Error updating todo list:", error);
-      return undefined;
-    }
+    return await executeWithRetry(async () => {
+      try {
+        const [list] = await db
+          .update(todoLists)
+          .set(updates)
+          .where(eq(todoLists.id, id))
+          .returning();
+        return list || undefined;
+      } catch (error) {
+        console.error("Storage: Error updating todo list:", error);
+        return undefined;
+      }
+    });
   }
 
   async getInterviewRequests(accessibleUserIds?: number[], includeUnassigned?: boolean): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]> {
@@ -593,12 +611,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateInterviewRequest(id: number, updates: Partial<InterviewRequest>): Promise<InterviewRequest | undefined> {
-    const [request] = await db
-      .update(interviewRequests)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(eq(interviewRequests.id, id))
-      .returning();
-    return request || undefined;
+    return await executeWithRetry(async () => {
+      const [request] = await db
+        .update(interviewRequests)
+        .set({ ...updates, updatedAt: new Date() })
+        .where(eq(interviewRequests.id, id))
+        .returning();
+      return request || undefined;
+    });
   }
 
   // Interview comment methods
@@ -639,58 +659,64 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserStats(): Promise<{ totalUsers: number; activeUsers: number; pendingUsers: number }> {
-    const [stats] = await db
-      .select({
-        totalUsers: sql<number>`count(*)`,
-        activeUsers: sql<number>`count(*) filter (where status = 'active')`,
-        pendingUsers: sql<number>`count(*) filter (where status = 'pending')`,
-      })
-      .from(users);
-    
-    return {
-      totalUsers: Number(stats.totalUsers),
-      activeUsers: Number(stats.activeUsers),
-      pendingUsers: Number(stats.pendingUsers),
-    };
+    return await executeWithRetry(async () => {
+      const [stats] = await db
+        .select({
+          totalUsers: sql<number>`count(*)`,
+          activeUsers: sql<number>`count(*) filter (where status = 'active')`,
+          pendingUsers: sql<number>`count(*) filter (where status = 'pending')`,
+        })
+        .from(users);
+      
+      return {
+        totalUsers: Number(stats.totalUsers),
+        activeUsers: Number(stats.activeUsers),
+        pendingUsers: Number(stats.pendingUsers),
+      };
+    });
   }
 
   async getTodoStats(): Promise<{ totalTodos: number; completedTodos: number; pendingTodos: number }> {
-    const [stats] = await db
-      .select({
-        totalTodos: sql<number>`count(*)`,
-        completedTodos: sql<number>`count(*) filter (where is_completed = true)`,
-        pendingTodos: sql<number>`count(*) filter (where is_completed = false)`,
-      })
-      .from(todoItems);
-    
-    return {
-      totalTodos: Number(stats.totalTodos),
-      completedTodos: Number(stats.completedTodos),
-      pendingTodos: Number(stats.pendingTodos),
-    };
+    return await executeWithRetry(async () => {
+      const [stats] = await db
+        .select({
+          totalTodos: sql<number>`count(*)`,
+          completedTodos: sql<number>`count(*) filter (where is_completed = true)`,
+          pendingTodos: sql<number>`count(*) filter (where is_completed = false)`,
+        })
+        .from(todoItems);
+      
+      return {
+        totalTodos: Number(stats.totalTodos),
+        completedTodos: Number(stats.completedTodos),
+        pendingTodos: Number(stats.pendingTodos),
+      };
+    });
   }
 
   async getTodoStatsByUser(userId: number): Promise<{ totalTodos: number; completedTodos: number; pendingTodos: number }> {
-    const [stats] = await db
-      .select({
-        totalTodos: sql<number>`count(*)`,
-        completedTodos: sql<number>`count(*) filter (where is_completed = true)`,
-        pendingTodos: sql<number>`count(*) filter (where is_completed = false)`,
-      })
-      .from(todoItems)
-      .innerJoin(todoLists, eq(todoItems.todoListId, todoLists.id))
-      .where(
-        or(
-          eq(todoLists.createdById, userId),
-          eq(todoLists.assignedToId, userId)
-        )
-      );
-    
-    return {
-      totalTodos: Number(stats.totalTodos),
-      completedTodos: Number(stats.completedTodos),
-      pendingTodos: Number(stats.pendingTodos),
-    };
+    return await executeWithRetry(async () => {
+      const [stats] = await db
+        .select({
+          totalTodos: sql<number>`count(*)`,
+          completedTodos: sql<number>`count(*) filter (where is_completed = true)`,
+          pendingTodos: sql<number>`count(*) filter (where is_completed = false)`,
+        })
+        .from(todoItems)
+        .innerJoin(todoLists, eq(todoItems.todoListId, todoLists.id))
+        .where(
+          or(
+            eq(todoLists.createdById, userId),
+            eq(todoLists.assignedToId, userId)
+          )
+        );
+      
+      return {
+        totalTodos: Number(stats.totalTodos),
+        completedTodos: Number(stats.completedTodos),
+        pendingTodos: Number(stats.pendingTodos),
+      };
+    });
   }
 
   // Reminder methods implementation

@@ -39,8 +39,10 @@ export async function executeWithRetry<T>(
         error.code === '08003' || // connection does not exist
         error.code === '08006' || // connection failure
         error.code === '08001' || // unable to connect
+        error.code === '28P01' || // password authentication failed (can occur during Neon database wake-up)
         error.message?.includes('terminating connection') ||
-        error.message?.includes('connection was closed');
+        error.message?.includes('connection was closed') ||
+        error.message?.includes('endpoint has been disabled');
 
       if (shouldRetry && attempt < maxRetries) {
         console.log(`Database operation failed (attempt ${attempt}/${maxRetries}), retrying in ${delay}ms...`);
