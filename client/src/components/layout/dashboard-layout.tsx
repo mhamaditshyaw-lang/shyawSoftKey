@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { DashboardHeader } from "./dashboard-header";
 import { DashboardSidebar } from "./dashboard-sidebar";
+import { PageInfo } from "@/components/page-info";
 import { cn } from "@/lib/utils";
 
 interface DashboardLayoutProps {
@@ -66,6 +67,7 @@ export function DashboardLayout({ children, notificationCount = 0 }: DashboardLa
         
         <main className="flex-1 overflow-y-auto">
           <div className="p-6 space-y-6">
+            <PageInfo />
             {children}
           </div>
         </main>

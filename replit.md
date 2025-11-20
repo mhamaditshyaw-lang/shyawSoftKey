@@ -4,26 +4,17 @@
 
 This is a full-stack web application for internal employee management with role-based access control (admin, manager, security). It manages employees, todo lists, and internal interview/evaluation requests, focusing on employee affairs, performance reviews, internal role changes, and administrative tasks. The project's business vision is to streamline internal HR and operational processes, enhance employee management efficiency, and provide comprehensive reporting tools.
 
-## Recent Changes (October 2025)
+## Recent Changes (November 2025)
 
-- **Local Installation Configuration**: Configured application for local computer installation
-  - Database: PostgreSQL with name "shyaw_admin" and password "Hama10Kurd$$"
-  - Network: Application accessible at 192.168.70.10:5000 and localhost:5000
-  - Server binding: 0.0.0.0:5000 (allows network interface access)
-- **Database Driver Migration**: Replaced Neon serverless driver with standard PostgreSQL (pg) driver
-  - Updated `server/db.ts` to use `drizzle-orm/node-postgres`
-  - Updated `scripts/fix-interview-comments-table.js` for local PostgreSQL compatibility
-  - Application now supports local PostgreSQL installations
-- **Documentation Created**:
-  - `LOCAL_INSTALLATION.md` - Comprehensive local installation guide
-  - `INSTALLATION_CHECKLIST.md` - Step-by-step installation checklist
-  - `LOCAL_SETUP_SUMMARY.md` - Installation summary and quick reference
-  - `setup-windows.bat` - Automated Windows setup script
-  - `setup-unix.sh` - Automated macOS/Linux setup script
-- **Configuration Updates**:
-  - Updated `.env.example` with local database configuration template
-  - Updated `README.md` with local installation instructions
-  - Added network configuration guides for static IP setup
+- **Menu Partitions System Implemented**:
+  - Created comprehensive menu partitions organizing all 25+ pages into 5 business sections
+  - Automatic PageInfo display on all pages showing current partition and page title
+  - Partition Browser page at `/partitions` to explore all pages by section
+  - Partition utilities for page searching and breadcrumb generation
+  - 5 Partitions: Task Management, Employee Management, HR & Operations, Analytics & Reports, System Management
+- **Employee Role Added**:
+  - Added "Employee" role to database schema and user management forms
+  - Implemented in add user form, filter dropdowns, and user creation
 
 ## User Preferences
 
@@ -41,6 +32,7 @@ Preferred communication style: Simple, everyday language.
 - Prefers old/simple design for Data View with search functionality and icons on filter buttons
 - Removed all test fields and debug sections from dashboard for clean production interface
 - Removed notification bell icon from header per user request while keeping notification management functionality in sidebar navigation
+- Menu partitions should NOT be changed (no layout modifications) - partitions are data organization only, auto-display on all pages
 
 ## System Architecture
 
@@ -58,11 +50,12 @@ The application follows a client-server architecture.
 - Animated welcome dashboard with greeting, time-based messages, role badges, and smooth animations.
 - Implemented emoji/icon picker for description highlights.
 - Comprehensive contextual help tooltips system (HelpTooltip, FeatureTooltip, RoleTooltip, StatusTooltip, ActionTooltip) for improved user experience.
+- **Menu Partition System**: Automatic page partition display on all pages showing current section and page title, partition browser for exploring pages by business category.
 
 **Technical Implementations:**
 - **Frontend**: React with TypeScript, Vite for build tooling, React Query for server state management, Wouter for routing, Context-based auth system.
 - **Backend**: Express.js server with TypeScript, organized API endpoints, database abstraction through `storage.ts`, Drizzle ORM.
-- **Authentication**: JWT-based authentication with role-based access control (Admin, Manager, Security).
+- **Authentication**: JWT-based authentication with role-based access control (Admin, Manager, Security, Office, Secretary, Employee).
 - **Database**: PostgreSQL (local) with standard pg driver, Drizzle ORM for schema management.
 - **Database Schema**: PostgreSQL with tables for Users, Todo Lists, Todo Items, and Interview Requests.
 - **Data Flow**: Authentication, authorization, data operations, and real-time updates via React Query.
@@ -71,16 +64,8 @@ The application follows a client-server architecture.
 - **Data View**: Clean, minimal design with gradient backgrounds, improved typography, and glass-morphism effects. Features comprehensive date filtering (today-first, auto-refresh), real-time data counters, and admin-only data removal controls with confirmation modals.
 - **Reports**: Comprehensive Management Reports page with interactive charts using Recharts, user statistics, task analytics, interview metrics, feedback analysis, and operational data with CSV export.
 - **Internationalization**: Comprehensive Kurdish and English language support, including i18n configuration and translated components.
+- **Menu Partitions**: Data-driven organization of 25+ pages into 5 business sections (Task Management, Employee Management, HR & Operations, Analytics & Reports, System Management) with automatic display on all pages.
 - **Development & Deployment**: Configured for Replit deployment, using Vite for frontend build, esbuild for backend bundling. Production mode uses `NODE_ENV`-based configuration and external port mapping. Includes a cPanel deployment guide for Hostinger and similar providers.
-
-**Feature Specifications:**
-- Internal employee management with roles (admin, manager, security).
-- Todo list management with assignment and priority.
-- Internal interview/evaluation request scheduling.
-- Comprehensive dashboard with sections for Employee, Operations, Staff Count, Yesterday's Production, and Yesterday's Loading Vehicles.
-- Employee Management system with employee profiles, Add Employee form, and New Daily List form.
-- Feedback & Reviews system with analytics dashboard, rating distribution, and trend analysis.
-- Smart Prioritization Algorithm for daily tasks based on urgency, priority, workload, completion rate, and user patterns.
 
 ## External Dependencies
 
@@ -94,7 +79,7 @@ The application follows a client-server architecture.
 
 **Backend:**
 - **Server Framework**: Express.js
-- **Database**: Neon PostgreSQL
+- **Database**: PostgreSQL with pg driver
 - **ORM**: Drizzle ORM
 - **Authentication**: JWT, bcrypt
 - **Development**: tsx
