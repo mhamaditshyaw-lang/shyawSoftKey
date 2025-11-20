@@ -37,7 +37,6 @@ import PartitionBrowserPage from "@/pages/partition-browser";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/header";
 import SlidingSidebarMenu from "@/components/navigation/sliding-sidebar-menu";
-import PartitionMenuBar from "@/components/navigation/partition-menu-bar";
 import PageAccessManagement from "@/pages/page-access-management";
 
 interface ProtectedRouteProps {
