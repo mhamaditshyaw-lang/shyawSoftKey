@@ -2603,9 +2603,7 @@ const resources = {
       noDataMatchesFilters: "لا توجد بيانات مطابقة للفلاتر الحالية.",
       allDataDashboardDesc: "عرض شامل لجميع بيانات النظام مع تصفية متقدمة",
       operational: "تشغيلي",
-      allTypes: "جميع الأنواع",
       operationalData: "البيانات التشغيلية",
-      allStatuses: "جميع الحالات",
       inProgressStatus: "قيد التنفيذ",
       allUsers: "جميع المستخدمين",
 
