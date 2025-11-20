@@ -1148,11 +1148,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Send device notification if status changed
       if (updates.status && (updates.status === 'approved' || updates.status === 'rejected')) {
         const { DeviceNotificationService } = await import("./device-notification-service");
+        const message = updates.status === 'approved' 
+          ? 'تم الموافقة على طلب الاجتماع الخاص بك'
+          : 'تم رفض طلب الاجتماع الخاص بك';
         await DeviceNotificationService.createUserNotification(
           original.requestedBy.id,
           "security_alert",
-          "Interview Status Update",
-          `Your interview request has been ${updates.status}`,
+          "تحديث حالة الاجتماع",
+          message,
           updates.status === 'approved' ? 'normal' : 'high'
         );
       }
