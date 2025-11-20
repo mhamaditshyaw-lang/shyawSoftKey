@@ -48,6 +48,17 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
   const [location] = useLocation();
   const { user } = useAuth();
   const { t } = useTranslation();
+  const [expandedPartitions, setExpandedPartitions] = useState<Set<string>>(new Set(["Analytics & Reports"]));
+  
+  const togglePartition = (partitionTitle: string) => {
+    const newExpanded = new Set(expandedPartitions);
+    if (newExpanded.has(partitionTitle)) {
+      newExpanded.delete(partitionTitle);
+    } else {
+      newExpanded.add(partitionTitle);
+    }
+    setExpandedPartitions(newExpanded);
+  };
   
   const isAdmin = user?.role === 'admin';
   
@@ -116,44 +127,68 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-4 overflow-y-auto">
-        {partitionItems.map((partition) => (
-          <div key={partition.title} className="space-y-2">
-            {!isCollapsed && (
-              <div className="flex items-center gap-2 px-2 py-2">
-                <span className="text-lg">{partition.icon}</span>
-                <span className="text-xs font-bold uppercase text-dashboard-primary dark:text-blue-400 tracking-wider">
-                  {partition.title}
-                </span>
-              </div>
-            )}
-            {partition.items.map((item) => {
-              const active = isActive(item.path);
-              
-              return (
-                <Link key={item.path} href={item.path}>
-                  <Button
-                    variant={active ? "default" : "ghost"}
-                    size="sm"
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        {partitionItems.map((partition) => {
+          const isExpanded = expandedPartitions.has(partition.title);
+          
+          return (
+            <div key={partition.title} className="space-y-1">
+              <button
+                onClick={() => !isCollapsed && togglePartition(partition.title)}
+                className={cn(
+                  "w-full flex items-center gap-2 px-2 py-2 rounded-lg transition-all duration-200",
+                  isCollapsed 
+                    ? "justify-center" 
+                    : "justify-between hover:bg-dashboard-primary/5 dark:hover:bg-dashboard-primary/10"
+                )}
+                title={isCollapsed ? partition.title : undefined}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{partition.icon}</span>
+                  {!isCollapsed && (
+                    <span className="text-xs font-bold uppercase text-dashboard-primary dark:text-blue-400 tracking-wider">
+                      {partition.title}
+                    </span>
+                  )}
+                </div>
+                {!isCollapsed && (
+                  <ChevronRight 
                     className={cn(
-                      "w-full justify-start gap-3 transition-all duration-200",
-                      active 
-                        ? "bg-dashboard-primary text-white shadow-lg hover:bg-dashboard-primary/90" 
-                        : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
-                      isCollapsed && "justify-center px-2"
-                    )}
-                    title={item.label}
-                  >
-                    <span className="text-base">{partition.icon}</span>
-                    {!isCollapsed && (
-                      <span className="flex-1 text-left text-sm">{item.label}</span>
-                    )}
-                  </Button>
-                </Link>
-              );
-            })}
-          </div>
-        ))}
+                      "h-4 w-4 text-dashboard-primary transition-transform duration-200",
+                      isExpanded && "rotate-90"
+                    )} 
+                  />
+                )}
+              </button>
+
+              {isExpanded && !isCollapsed && (
+                <div className="space-y-1 pl-2 border-l border-dashboard-primary/20">
+                  {partition.items.map((item) => {
+                    const active = isActive(item.path);
+                    
+                    return (
+                      <Link key={item.path} href={item.path}>
+                        <Button
+                          variant={active ? "default" : "ghost"}
+                          size="sm"
+                          className={cn(
+                            "w-full justify-start gap-2 transition-all duration-200 text-xs",
+                            active 
+                              ? "bg-dashboard-primary text-white shadow-lg hover:bg-dashboard-primary/90" 
+                              : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
+                          )}
+                          title={item.label}
+                        >
+                          <span className="text-sm">{item.label}</span>
+                        </Button>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
 
         {isAdmin && (
           <div className="border-t border-dashboard-secondary/10 pt-4 space-y-2">
