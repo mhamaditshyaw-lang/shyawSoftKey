@@ -843,8 +843,6 @@ const resources = {
       searchByTitleOrMessage: "Search by title or message...",
       filterByType: "Filter by Type",
       filterByStatus: "Filter by Status",
-      allStatus: "All Status",
-      allTypes: "All Types",
       markAllRead: "Mark All as Read",
       loadingNotifications: "Loading notifications...",
       noNotificationsFound: "No Notifications Found",
@@ -855,9 +853,7 @@ const resources = {
       relatedTo: "Related to {{type}}",
       failedToMarkNotificationAsRead: "Failed to mark notification as read",
       failedToMarkAllNotificationsAsRead: "Failed to mark all notifications as read",
-      failedToDeleteNotification: "Failed to delete notification",
-      unreadCount: "{{count}} unread",
-      normalPriority: "Normal"
+      unreadCount: "{{count}} unread"
     }
   },
   ku: {
