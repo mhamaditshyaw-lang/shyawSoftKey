@@ -568,9 +568,9 @@ export default function MetricsPage() {
       {/* Employee Tracking Section */}
       <div className="mb-12">
         <h3 className="text-2xl font-bold text-gray-800 mb-6">{t("employeeAttendance")}</h3>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8">
           {/* Main Input Form */}
-        <div className="lg:col-span-2">
+        <div>
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
@@ -639,155 +639,15 @@ export default function MetricsPage() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Statistics Panel */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <BarChart3 className="w-5 h-5 text-green-600" />
-                <span>{t("statistics")}</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {stats ? (
-                <div className="space-y-4">
-                  <motion.div 
-                    className="bg-blue-50 p-4 rounded-lg"
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="text-2xl font-bold text-blue-700">
-                      {stats.sum.toFixed(2)}
-                    </div>
-                    <div className="text-sm text-blue-600">{t('totalSum')}</div>
-                  </motion.div>
-
-                  <motion.div 
-                    className="bg-green-50 p-4 rounded-lg"
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.1 }}
-                  >
-                    <div className="text-2xl font-bold text-green-700">
-                      {stats.average.toFixed(2)}
-                    </div>
-                    <div className="text-sm text-green-600">{t('average')}</div>
-                  </motion.div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <motion.div 
-                      className="bg-purple-50 p-3 rounded-lg"
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 0.2 }}
-                    >
-                      <div className="text-lg font-bold text-purple-700">
-                        {stats.max}
-                      </div>
-                      <div className="text-xs text-purple-600">{t('maximum')}</div>
-                    </motion.div>
-
-                    <motion.div 
-                      className="bg-orange-50 p-3 rounded-lg"
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 0.3 }}
-                    >
-                      <div className="text-lg font-bold text-orange-700">
-                        {stats.min}
-                      </div>
-                      <div className="text-xs text-orange-600">{t('minimum')}</div>
-                    </motion.div>
-                  </div>
-
-                  <motion.div 
-                    className="bg-gray-50 p-4 rounded-lg"
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.4 }}
-                  >
-                    <div className="text-lg font-bold text-gray-700">
-                      {stats.count} / 7
-                    </div>
-                    <div className="text-sm text-gray-600">{t('fieldsCompleted')}</div>
-                  </motion.div>
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-500">{t('enterDataToSeeStats')}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">{t('quickActions')}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full"
-                onClick={() => {
-                  // Fill with sample employee data
-                  setFormData({
-                    number1: "150", // Total employees today
-                    number2: "120", // Permanent employees 
-                    number3: "30",  // Non-permanent employees
-                    number4: "75",  // Day - Start of work
-                    number5: "5",   // Day - Giving up
-                    number6: "40",  // Night - Start of work
-                    number7: "2",   // Night - Giving up
-                  });
-                }}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                {t('fillSampleData')}
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full"
-                onClick={() => {
-                  // Fill with random employee data
-                  const totalEmployees = Math.floor(Math.random() * 200) + 50;
-                  const permanentEmployees = Math.floor(totalEmployees * 0.7);
-                  const nonPermanentEmployees = totalEmployees - permanentEmployees;
-                  const dayStart = Math.floor(totalEmployees * 0.6);
-                  const nightStart = totalEmployees - dayStart;
-                  
-                  setFormData({
-                    number1: totalEmployees.toString(),
-                    number2: permanentEmployees.toString(),
-                    number3: nonPermanentEmployees.toString(),
-                    number4: dayStart.toString(),
-                    number5: Math.floor(Math.random() * 10).toString(),
-                    number6: nightStart.toString(),
-                    number7: Math.floor(Math.random() * 5).toString(),
-                  });
-                }}
-              >
-                <Calculator className="w-4 h-4 mr-2" />
-                {t('generateRandom')}
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
       </div>
       </div>
 
       {/* Device Operations Section */}
       <div className="mb-8">
         <h3 className="text-2xl font-bold text-gray-800 mb-6">{t("operationsTracking")}</h3>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8">
           {/* Device Input Form */}
-          <div className="lg:col-span-2">
+          <div>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -855,147 +715,15 @@ export default function MetricsPage() {
               </CardContent>
             </Card>
           </div>
-
-          {/* Device Statistics Panel */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <TrendingUp className="w-5 h-5 text-green-600" />
-                  <span>{t('operationsStatistics')}</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {deviceStats ? (
-                  <div className="space-y-4">
-                    <motion.div 
-                      className="bg-green-50 p-4 rounded-lg"
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <div className="text-2xl font-bold text-green-700">
-                        {deviceStats.sum.toFixed(2)}
-                      </div>
-                      <div className="text-sm text-green-600">{t('totalCount')}</div>
-                    </motion.div>
-
-                    <motion.div 
-                      className="bg-blue-50 p-4 rounded-lg"
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 0.1 }}
-                    >
-                      <div className="text-2xl font-bold text-blue-700">
-                        {deviceStats.average.toFixed(2)}
-                      </div>
-                      <div className="text-sm text-blue-600">{t('average')}</div>
-                    </motion.div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <motion.div 
-                        className="bg-indigo-50 p-3 rounded-lg"
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.3, delay: 0.2 }}
-                      >
-                        <div className="text-lg font-bold text-indigo-700">
-                          {deviceStats.max}
-                        </div>
-                        <div className="text-xs text-indigo-600">{t('maximum')}</div>
-                      </motion.div>
-
-                      <motion.div 
-                        className="bg-red-50 p-3 rounded-lg"
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.3, delay: 0.3 }}
-                      >
-                        <div className="text-lg font-bold text-red-700">
-                          {deviceStats.min}
-                        </div>
-                        <div className="text-xs text-red-600">{t('minimum')}</div>
-                      </motion.div>
-                    </div>
-
-                    <motion.div 
-                      className="bg-gray-50 p-4 rounded-lg"
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 0.4 }}
-                    >
-                      <div className="text-lg font-bold text-gray-700">
-                        {deviceStats.count} / 6
-                      </div>
-                      <div className="text-sm text-gray-600">{t('fieldsCompleted')}</div>
-                    </motion.div>
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-500">{t('enterDataToSeeStats')}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Operations Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">{t('quickActions')}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full"
-                  onClick={() => {
-                    // Fill with sample device data
-                    setDeviceData({
-                      device1: "250", // Day - Ice cream
-                      device2: "180", // Night - Ice cream
-                      device3: "45",  // Day - Albany
-                      device4: "32",  // Night - Albany
-                      device5: "15",  // Day - Do
-                      device6: "12",  // Night - Do
-                    });
-                  }}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  {t('fillSampleData')}
-                </Button>
-                
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full"
-                  onClick={() => {
-                    // Fill with random device data
-                    setDeviceData({
-                      device1: Math.floor(Math.random() * 200 + 150).toString(), // Day - Ice cream
-                      device2: Math.floor(Math.random() * 150 + 100).toString(), // Night - Ice cream
-                      device3: Math.floor(Math.random() * 40 + 20).toString(),   // Day - Albany
-                      device4: Math.floor(Math.random() * 30 + 15).toString(),   // Night - Albany
-                      device5: Math.floor(Math.random() * 20 + 5).toString(),    // Day - Do
-                      device6: Math.floor(Math.random() * 15 + 5).toString(),    // Night - Do
-                    });
-                  }}
-                >
-                  <Calculator className="w-4 h-4 mr-2" />
-                  {t('generateRandom')}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
         </div>
       </div>
 
       {/* Employee Count Section */}
       <div className="mb-8">
         <h3 className="text-2xl font-bold text-gray-800 mb-6">{t("staffCountTracking")}</h3>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8">
           {/* Employee Count Input Form */}
-          <div className="lg:col-span-2">
+          <div>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
