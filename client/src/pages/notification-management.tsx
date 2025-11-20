@@ -18,7 +18,6 @@ import {
   Filter,
   RefreshCw,
   Trash2,
-  MarkAsRead,
   Settings,
   Users,
   MessageSquare,
@@ -89,10 +88,12 @@ export default function NotificationManagement() {
   const [filterType, setFilterType] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
 
-  const { data: notifications = [], isLoading, refetch } = useQuery({
+  const { data: notificationsData, isLoading, refetch } = useQuery({
     queryKey: ['/api/device-notifications'],
     refetchInterval: 5000, // Refetch every 5 seconds
   });
+
+  const notifications = (notificationsData as Notification[]) || [];
 
   const markAsReadMutation = useMutation({
     mutationFn: (notificationId: number) => 
@@ -163,7 +164,7 @@ export default function NotificationManagement() {
   });
 
   const unreadCount = notifications.filter((n: Notification) => !n.isRead).length;
-  const notificationTypes = [...new Set(notifications.map((n: Notification) => n.type))];
+  const notificationTypes = Array.from(new Set(notifications.map((n: Notification) => n.type)));
 
   if (!user) {
     return (
@@ -289,7 +290,7 @@ export default function NotificationManagement() {
                   <option value="all">{t('allTypes')}</option>
                   {notificationTypes.map(type => (
                     <option key={type} value={type}>
-                      {t(`enums.notificationType.${type}`, type.replace('_', ' ').toUpperCase())}
+                      {String(t(`enums.notificationType.${type}`, type.replace('_', ' ').toUpperCase()))}
                     </option>
                   ))}
                 </select>
