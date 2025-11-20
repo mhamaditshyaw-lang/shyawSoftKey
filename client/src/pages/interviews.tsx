@@ -314,19 +314,21 @@ export default function InterviewsPage() {
             <div className="space-y-2">
               <Label className="text-sm font-medium">
                 <User className="w-4 h-4 inline mr-1" />
-                User Filter
+                Manager Filter
               </Label>
               <Select value={userFilter} onValueChange={setUserFilter}>
                 <SelectTrigger data-testid="select-user-filter">
-                  <SelectValue placeholder="All Users" />
+                  <SelectValue placeholder="All Managers" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Users</SelectItem>
-                  {users.map((u: any) => (
-                    <SelectItem key={u.id} value={u.id.toString()}>
-                      {u.firstName} {u.lastName}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="all">All Managers</SelectItem>
+                  {users
+                    .filter((u: any) => u.role === 'manager')
+                    .map((u: any) => (
+                      <SelectItem key={u.id} value={u.id.toString()}>
+                        {u.firstName} {u.lastName}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -386,7 +388,7 @@ export default function InterviewsPage() {
                 {searchTerm && ` • Search: "${searchTerm}"`}
                 {statusFilter !== "all" && ` • Status: ${statusFilter}`}
                 {positionFilter !== "all" && ` • Position: ${positionFilter}`}
-                {userFilter !== "all" && ` • User: ${users.find((u: any) => u.id.toString() === userFilter)?.firstName} ${users.find((u: any) => u.id.toString() === userFilter)?.lastName}`}
+                {userFilter !== "all" && ` • Manager: ${users.find((u: any) => u.id.toString() === userFilter)?.firstName} ${users.find((u: any) => u.id.toString() === userFilter)?.lastName}`}
               </span>
               {(searchTerm || dateFilter !== "all" || statusFilter !== "all" || positionFilter !== "all" || userFilter !== "all") && (
                 <Button
