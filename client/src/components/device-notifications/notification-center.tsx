@@ -33,8 +33,10 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useDeviceNotifications } from "@/hooks/use-device-notifications";
 import { getRelativeTime } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 export default function NotificationCenter() {
+  const { t } = useTranslation();
   const { 
     notifications, 
     unreadCount, 
@@ -48,8 +50,6 @@ export default function NotificationCenter() {
     isSupported,
     isGranted 
   } = useDeviceNotifications();
-  
-  // Production ready - debug logging removed
   
   const [isOpen, setIsOpen] = useState(false);
   
@@ -323,10 +323,10 @@ export default function NotificationCenter() {
           <DropdownMenuLabel className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Bell className="h-4 w-4" />
-              <span>Notifications</span>
+              <span>{t('notifications')}</span>
               {unreadCount > 0 && (
                 <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                  {unreadCount} new
+                  {unreadCount} {t('new')}
                 </Badge>
               )}
             </div>
@@ -334,7 +334,7 @@ export default function NotificationCenter() {
               {isGranted ? (
                 <Badge variant="default" className="bg-green-500">
                   <Check className="w-3 h-3 mr-1" />
-                  Enabled
+                  {t('enabled')}
                 </Badge>
               ) : (
                 <Button
@@ -344,7 +344,7 @@ export default function NotificationCenter() {
                   className="text-xs"
                 >
                   <Bell className="w-3 h-3 mr-1" />
-                  Enable Notifications
+                  {t('enableNotifications')}
                 </Button>
               )}
             </div>
@@ -361,7 +361,7 @@ export default function NotificationCenter() {
                 className="flex-1"
               >
                 <Check className="w-3 h-3 mr-1" />
-                Mark All Read
+                {t('markAllRead')}
               </Button>
             )}
             <Button
@@ -371,7 +371,7 @@ export default function NotificationCenter() {
               className="flex-1"
             >
               <TestTube className="w-3 h-3 mr-1" />
-              Test
+              {t('test')}
             </Button>
             <Button
               size="sm"
@@ -380,7 +380,7 @@ export default function NotificationCenter() {
               className="flex-1"
             >
               <Settings className="w-3 h-3 mr-1" />
-              Settings
+              {t('settings')}
             </Button>
           </div>
           
@@ -389,12 +389,12 @@ export default function NotificationCenter() {
           <ScrollArea className="h-96 overflow-y-auto">
             {isLoading ? (
               <div className="p-4 text-center text-gray-500">
-                Loading notifications...
+                {t('loadingNotifications')}
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-4 text-center text-gray-500">
                 <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>No notifications yet</p>
+                <p>{t('noNotificationsYet')}</p>
               </div>
             ) : (
               <div className="space-y-1 pr-4">
@@ -434,7 +434,7 @@ export default function NotificationCenter() {
                                   markAsRead(notification.id);
                                 }}
                                 className="h-6 w-6 p-0 hover:bg-blue-100 dark:hover:bg-blue-900"
-                                title="Mark as read"
+                                title={t('markRead')}
                               >
                                 <Check className="w-3 h-3 text-blue-600" />
                               </Button>
@@ -447,7 +447,7 @@ export default function NotificationCenter() {
                                 deleteNotification(notification.id);
                               }}
                               className="h-6 w-6 p-0 text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900"
-                              title="Delete notification"
+                              title={t('deleteNotification')}
                             >
                               <Trash2 className="w-3 h-3" />
                             </Button>
@@ -474,7 +474,7 @@ export default function NotificationCenter() {
                             ))
                           ) : (
                             <div className="text-xs text-gray-500">
-                              No quick actions available for {notification.type}
+                              {t('noQuickActionsAvailable')} {notification.type}
                             </div>
                           )}
                         </div>
@@ -498,7 +498,7 @@ export default function NotificationCenter() {
                   disabled={unreadCount === 0}
                 >
                   <Check className="w-3 h-3 mr-1" />
-                  Mark All Read ({unreadCount})
+                  {t('markAllRead')} ({unreadCount})
                 </Button>
               </div>
             </>
@@ -512,24 +512,24 @@ export default function NotificationCenter() {
           <DialogHeader>
             <DialogTitle className="flex items-center">
               <Smartphone className="w-5 h-5 mr-2" />
-              Device Notification Settings
+              {t('deviceNotificationSettings')}
             </DialogTitle>
           </DialogHeader>
           
           <div className="space-y-6">
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm">Browser Support</CardTitle>
+                <CardTitle className="text-sm">{t('browserSupport')}</CardTitle>
                 <CardDescription>
                   {isSupported 
-                    ? "Your browser supports device notifications" 
-                    : "Device notifications are not supported in this browser"
+                    ? t('browserSupportsNotifications')
+                    : t('browserNotSupported')
                   }
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center space-x-2">
-                  <Label htmlFor="enable-notifications">Enable Notifications</Label>
+                  <Label htmlFor="enable-notifications">{t('enableNotificationsLabel')}</Label>
                   <Switch
                     id="enable-notifications"
                     checked={isGranted}
@@ -546,18 +546,18 @@ export default function NotificationCenter() {
 
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm">Permission Status</CardTitle>
+                <CardTitle className="text-sm">{t('permissionStatus')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-sm">Current Status:</span>
+                    <span className="text-sm">{t('currentStatus')}</span>
                     <Badge variant={
                       permission.permission === 'granted' ? 'default' : 
                       permission.permission === 'denied' ? 'destructive' : 'secondary'
                     }>
-                      {permission.permission === 'granted' ? 'Enabled' : 
-                       permission.permission === 'denied' ? 'Blocked' : 'Not Set'}
+                      {permission.permission === 'granted' ? t('enabled') : 
+                       permission.permission === 'denied' ? t('blocked') : t('notSet')}
                     </Badge>
                   </div>
                   
@@ -567,7 +567,7 @@ export default function NotificationCenter() {
                       onClick={requestPermission}
                       className="w-full mt-3"
                     >
-                      Request Permission
+                      {t('requestPermission')}
                     </Button>
                   )}
                 </div>
@@ -576,9 +576,9 @@ export default function NotificationCenter() {
 
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm">Test Notifications</CardTitle>
+                <CardTitle className="text-sm">{t('testNotifications')}</CardTitle>
                 <CardDescription>
-                  Send a test notification to verify everything is working
+                  {t('sendTestDesc')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -590,7 +590,7 @@ export default function NotificationCenter() {
                   disabled={!isGranted}
                 >
                   <TestTube className="w-4 h-4 mr-2" />
-                  Send Test Notification
+                  {t('sendTestNotification')}
                 </Button>
               </CardContent>
             </Card>
