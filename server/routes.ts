@@ -692,11 +692,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/todos/items/:id", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const id = parseInt(req.params.id);
-      const updates = req.body;
+      let updates = { ...req.body };
 
       // Verify todo item is in accessible scope (for non-admin roles)
       if (req.user?.role !== 'admin') {
         await assertTodoItemInScope(id, req.accessibleUserIds!);
+      }
+
+      // If marking as complete, auto-set completedById
+      if (updates.isCompleted === true && !updates.completedById) {
+        updates.completedById = req.user?.id;
       }
 
       const todoItem = await storage.updateTodoItem(id, updates);

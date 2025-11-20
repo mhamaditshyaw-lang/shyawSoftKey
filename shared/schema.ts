@@ -132,6 +132,10 @@ export const todoItemsRelations = relations(todoItems, ({ one, many }) => ({
     fields: [todoItems.todoListId],
     references: [todoLists.id],
   }),
+  completedBy: one(users, {
+    fields: [todoItems.completedById],
+    references: [users.id],
+  }),
   reminders: many(reminders),
 }));
 
@@ -199,6 +203,8 @@ export const insertTodoItemSchema = createInsertSchema(todoItems, {
   createdAt: true,
   updatedAt: true,
   completedAt: true,
+  completedById: true,
+  completedByNote: true,
 });
 
 export const insertInterviewRequestSchema = createInsertSchema(interviewRequests, {
