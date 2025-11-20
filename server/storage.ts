@@ -316,7 +316,13 @@ export class DatabaseStorage implements IStorage {
         return allUsers.map(u => u.id);
       }
 
-      // Get the current user's department
+      // Managers, office staff, security, secretary can see all departments
+      if (['manager', 'office', 'office_team', 'security', 'secretary'].includes(role)) {
+        const allUsers = await db.select({ id: users.id }).from(users);
+        return allUsers.map(u => u.id);
+      }
+
+      // Employees can only see their own department
       const currentUser = await this.getUser(userId);
       if (!currentUser) {
         return [userId];
@@ -327,8 +333,7 @@ export class DatabaseStorage implements IStorage {
         return [userId];
       }
 
-      // All users (managers, security, secretary, office, office_team) 
-      // can see only users in their own department
+      // Employees can see only users in their own department
       const departmentUsers = await db
         .select({ id: users.id })
         .from(users)
