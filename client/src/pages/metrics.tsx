@@ -791,147 +791,15 @@ export default function MetricsPage() {
               </CardContent>
             </Card>
           </div>
-
-          {/* Employee Count Statistics Panel */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <TrendingUp className="w-5 h-5 text-purple-600" />
-                  <span>{t('staffCountStatistics')}</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {employeeCountStats ? (
-                  <div className="space-y-4">
-                    <motion.div 
-                      className="bg-purple-50 p-4 rounded-lg"
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <div className="text-2xl font-bold text-purple-700">
-                        {employeeCountStats.sum.toFixed(0)}
-                      </div>
-                      <div className="text-sm text-purple-600">{t('totalStaff')}</div>
-                    </motion.div>
-
-                    <motion.div 
-                      className="bg-indigo-50 p-4 rounded-lg"
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 0.1 }}
-                    >
-                      <div className="text-2xl font-bold text-indigo-700">
-                        {employeeCountStats.average.toFixed(1)}
-                      </div>
-                      <div className="text-sm text-indigo-600">{t('averagePerShift')}</div>
-                    </motion.div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <motion.div 
-                        className="bg-teal-50 p-3 rounded-lg"
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.3, delay: 0.2 }}
-                      >
-                        <div className="text-lg font-bold text-teal-700">
-                          {employeeCountStats.max}
-                        </div>
-                        <div className="text-xs text-teal-600">{t('largestShift')}</div>
-                      </motion.div>
-
-                      <motion.div 
-                        className="bg-orange-50 p-3 rounded-lg"
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.3, delay: 0.3 }}
-                      >
-                        <div className="text-lg font-bold text-orange-700">
-                          {employeeCountStats.min}
-                        </div>
-                        <div className="text-xs text-orange-600">{t('smallestShift')}</div>
-                      </motion.div>
-                    </div>
-
-                    <motion.div 
-                      className="bg-gray-50 p-4 rounded-lg"
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 0.4 }}
-                    >
-                      <div className="text-lg font-bold text-gray-700">
-                        {employeeCountStats.count} / 6
-                      </div>
-                      <div className="text-sm text-gray-600">{t('fieldsCompleted')}</div>
-                    </motion.div>
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Users className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-500">{t('enterDataToSeeStats')}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Staff Count Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">{t('quickActions')}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full"
-                  onClick={() => {
-                    // Fill with sample employee count data
-                    setEmployeeCountData({
-                      count1: "25", // Day - Ice cream
-                      count2: "18", // Night - Ice cream
-                      count3: "12", // Day - Albany
-                      count4: "8",  // Night - Albany
-                      count5: "6",  // Day - Do
-                      count6: "4",  // Night - Do
-                    });
-                  }}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  {t('fillSampleData')}
-                </Button>
-                
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full"
-                  onClick={() => {
-                    // Fill with random employee count data
-                    setEmployeeCountData({
-                      count1: Math.floor(Math.random() * 20 + 15).toString(), // Day - Ice cream
-                      count2: Math.floor(Math.random() * 15 + 12).toString(), // Night - Ice cream
-                      count3: Math.floor(Math.random() * 10 + 8).toString(),  // Day - Albany
-                      count4: Math.floor(Math.random() * 8 + 5).toString(),   // Night - Albany
-                      count5: Math.floor(Math.random() * 6 + 3).toString(),   // Day - Do
-                      count6: Math.floor(Math.random() * 5 + 2).toString(),   // Night - Do
-                    });
-                  }}
-                >
-                  <Calculator className="w-4 h-4 mr-2" />
-                  {t('generateRandom')}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
         </div>
       </div>
 
       {/* Yesterday's Production Section */}
       <div className="mb-8">
         <h3 className="text-2xl font-bold text-gray-800 mb-6">{t("yesterdayProduction")}</h3>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8">
           {/* Yesterday's Production Input Form */}
-          <div className="lg:col-span-2">
+          <div>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -1024,101 +892,15 @@ export default function MetricsPage() {
               </CardContent>
             </Card>
           </div>
-
-          {/* Yesterday's Production Statistics Panel */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <TrendingUp className="w-5 h-5 text-orange-600" />
-                  <span>{t('productionStatistics')}</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {yesterdayProductionStats ? (
-                  <div className="space-y-4">
-                    <motion.div 
-                      className="bg-orange-50 p-4 rounded-lg"
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <div className="text-2xl font-bold text-orange-700">
-                        {yesterdayProductionStats.sum.toFixed(0)}
-                      </div>
-                      <div className="text-sm text-orange-600">{t('totalProduction')}</div>
-                    </motion.div>
-
-                    <motion.div 
-                      className="bg-amber-50 p-4 rounded-lg"
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 0.1 }}
-                    >
-                      <div className="text-2xl font-bold text-amber-700">
-                        {yesterdayProductionStats.average.toFixed(1)}
-                      </div>
-                      <div className="text-sm text-amber-600">{t('averagePerCategory')}</div>
-                    </motion.div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <motion.div 
-                        className="bg-yellow-50 p-3 rounded-lg"
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.3, delay: 0.2 }}
-                      >
-                        <div className="text-lg font-bold text-yellow-700">
-                          {yesterdayProductionStats.max}
-                        </div>
-                        <div className="text-xs text-yellow-600">{t('highestOutput')}</div>
-                      </motion.div>
-
-                      <motion.div 
-                        className="bg-red-50 p-3 rounded-lg"
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.3, delay: 0.3 }}
-                      >
-                        <div className="text-lg font-bold text-red-700">
-                          {yesterdayProductionStats.min}
-                        </div>
-                        <div className="text-xs text-red-600">{t('lowestOutput')}</div>
-                      </motion.div>
-                    </div>
-
-                    <motion.div 
-                      className="bg-gray-50 p-4 rounded-lg"
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 0.4 }}
-                    >
-                      <div className="text-lg font-bold text-gray-700">
-                        {yesterdayProductionStats.count} / 6
-                      </div>
-                      <div className="text-sm text-gray-600">{t('categoriesCompleted')}</div>
-                    </motion.div>
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Clock className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-500">{t('enterDataToSeeStats')}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-
-          </div>
         </div>
       </div>
 
       {/* Yesterday's Loading Section */}
       <div className="mb-8">
         <h3 className="text-2xl font-bold text-gray-800 mb-6">{t("yesterdayLoadingVehicles")}</h3>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8">
           {/* Yesterday's Loading Input Form */}
-          <div className="lg:col-span-2">
+          <div>
             <Card className="border-teal-200 shadow-lg">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg font-semibold flex items-center text-teal-700">
@@ -1180,131 +962,6 @@ export default function MetricsPage() {
                 </form>
               </CardContent>
             </Card>
-          </div>
-
-          {/* Yesterday's Loading Statistics Panel */}
-          <div className="lg:col-span-1">
-            <div className="space-y-6">
-              <Card className="h-full border-teal-200 shadow-lg">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg font-semibold text-teal-700">{t('loadingVehicleStats')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {calculateYesterdayLoadingStats() ? (
-                    <div className="space-y-4">
-                      <motion.div 
-                        className="bg-teal-50 p-4 rounded-lg"
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <div className="text-2xl font-bold text-teal-700">
-                          {calculateYesterdayLoadingStats()?.sum}
-                        </div>
-                        <div className="text-sm text-teal-600">{t('totalVehicles')}</div>
-                      </motion.div>
-
-                      <motion.div 
-                        className="bg-cyan-50 p-4 rounded-lg"
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.3, delay: 0.1 }}
-                      >
-                        <div className="text-2xl font-bold text-cyan-700">
-                          {calculateYesterdayLoadingStats()?.average.toFixed(1)}
-                        </div>
-                        <div className="text-sm text-cyan-600">{t('averagePerCategory')}</div>
-                      </motion.div>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <motion.div 
-                          className="bg-emerald-50 p-3 rounded-lg"
-                          initial={{ scale: 0.9, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          transition={{ duration: 0.3, delay: 0.2 }}
-                        >
-                          <div className="text-lg font-bold text-emerald-700">
-                            {calculateYesterdayLoadingStats()?.max}
-                          </div>
-                          <div className="text-xs text-emerald-600">{t('mostVehicles')}</div>
-                        </motion.div>
-
-                        <motion.div 
-                          className="bg-red-50 p-3 rounded-lg"
-                          initial={{ scale: 0.9, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          transition={{ duration: 0.3, delay: 0.3 }}
-                        >
-                          <div className="text-lg font-bold text-red-700">
-                            {calculateYesterdayLoadingStats()?.min}
-                          </div>
-                          <div className="text-xs text-red-600">{t('fewestVehicles')}</div>
-                        </motion.div>
-                      </div>
-
-                      <motion.div 
-                        className="bg-gray-50 p-4 rounded-lg"
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.3, delay: 0.4 }}
-                      >
-                        <div className="text-lg font-bold text-gray-700">
-                          {calculateYesterdayLoadingStats()?.count || 0} / 3
-                        </div>
-                        <div className="text-sm text-gray-600">{t('vehicleCategoriesCompleted')}</div>
-                      </motion.div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Truck className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                      <p className="text-gray-500">{t('enterDataToSeeStats')}</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Yesterday's Loading Quick Actions */}
-              <Card className="border-teal-200 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-lg">{t('loadingQuickActions')}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full"
-                    onClick={() => {
-                      // Fill with sample yesterday loading data
-                      setYesterdayLoadingData({
-                        load1: "8",  // Ice cream / Loading vehicles
-                        load2: "5",  // Albany / Loading vehicles
-                        load3: "3",  // Do / Loading vehicles
-                      });
-                    }}
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    {t('fillSampleData')}
-                  </Button>
-                  
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full"
-                    onClick={() => {
-                      // Fill with random yesterday loading data
-                      setYesterdayLoadingData({
-                        load1: Math.floor(Math.random() * 10 + 5).toString(),  // Ice cream / Loading vehicles
-                        load2: Math.floor(Math.random() * 8 + 3).toString(),   // Albany / Loading vehicles
-                        load3: Math.floor(Math.random() * 6 + 2).toString(),   // Do / Loading vehicles
-                      });
-                    }}
-                  >
-                    <Calculator className="w-4 h-4 mr-2" />
-                    {t('generateRandom')}
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
           </div>
         </div>
       </div>
