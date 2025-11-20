@@ -96,6 +96,10 @@ export default function TodosPage() {
   
   const [showCompletionDetailsDialog, setShowCompletionDetailsDialog] = useState(false);
   const [selectedCompletedItem, setSelectedCompletedItem] = useState<TodoItem | null>(null);
+  
+  const [showCompletionProofModal, setShowCompletionProofModal] = useState(false);
+  const [selectedItemForProof, setSelectedItemForProof] = useState<TodoItem | null>(null);
+  const [completionProof, setCompletionProof] = useState("");
 
   // Fetch todos data
   const { data: todosData, isLoading, error } = useQuery({
@@ -389,9 +393,54 @@ export default function TodosPage() {
   };
 
   const handleToggleItem = (itemId: number, isCompleted: boolean) => {
-    toggleTodoItemMutation.mutate({
-      itemId,
-      isCompleted: !isCompleted,
+    // If marking as complete (not uncompleting), ask for proof
+    if (!isCompleted) {
+      const item = todoLists.flatMap(list => list.items).find(i => i.id === itemId);
+      if (item) {
+        setSelectedItemForProof(item);
+        setShowCompletionProofModal(true);
+      }
+    } else {
+      // If uncompleting, just toggle without proof
+      toggleTodoItemMutation.mutate({
+        itemId,
+        isCompleted: !isCompleted,
+      });
+    }
+  };
+
+  const handleCompleteWithProof = () => {
+    if (!selectedItemForProof) return;
+    if (!completionProof.trim()) {
+      toast({
+        title: "Error",
+        description: t('completionEvidenceRequired'),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Send completion with proof
+    const response = authenticatedRequest("PATCH", `/api/todos/items/${selectedItemForProof.id}`, {
+      isCompleted: true,
+      completedByNote: completionProof.trim(),
+    });
+
+    response.then(res => res.json()).then(() => {
+      queryClient.invalidateQueries({ queryKey: ["/api/todos"] });
+      toast({
+        title: "Success",
+        description: "Task marked complete with proof!",
+      });
+      setShowCompletionProofModal(false);
+      setSelectedItemForProof(null);
+      setCompletionProof("");
+    }).catch(err => {
+      toast({
+        title: "Error",
+        description: "Failed to complete task",
+        variant: "destructive",
+      });
     });
   };
 
@@ -816,7 +865,68 @@ export default function TodosPage() {
         )}
       </AnimatePresence>
 
-      {/* Completion Details Modal */}
+      {/* Completion Proof Modal - Ask for proof when marking complete */}
+      <Dialog open={showCompletionProofModal} onOpenChange={setShowCompletionProofModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-blue-600" />
+              {t('markTaskComplete')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('completionEvidenceRequired')}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedItemForProof && (
+            <div className="space-y-4">
+              <div>
+                <Label className="text-sm font-semibold">Task:</Label>
+                <p className="text-sm text-gray-700 mt-1 font-medium">{selectedItemForProof.title}</p>
+              </div>
+              
+              <div>
+                <Label htmlFor="completion-proof" className="text-sm font-semibold">
+                  {t('describeCompletion')}
+                </Label>
+                <Textarea
+                  id="completion-proof"
+                  value={completionProof}
+                  onChange={(e) => setCompletionProof(e.target.value)}
+                  placeholder="e.g., 'Sent report to Finance department', 'Interviewed 3 candidates', 'Updated database with Q4 metrics'"
+                  rows={4}
+                  className="mt-2"
+                  data-testid="textarea-completion-proof"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <Button
+                  onClick={handleCompleteWithProof}
+                  disabled={!completionProof.trim()}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  data-testid="button-complete-with-proof"
+                >
+                  {t('markComplete')}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowCompletionProofModal(false);
+                    setSelectedItemForProof(null);
+                    setCompletionProof("");
+                  }}
+                  className="flex-1"
+                  data-testid="button-cancel-proof"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Completion Details Modal - Manager views proof */}
       <Dialog open={showCompletionDetailsDialog} onOpenChange={setShowCompletionDetailsDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
