@@ -587,12 +587,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Todo routes - all users can see todos from all departments, but can only modify their own
+  // Todo routes - each user sees only their own department data
   app.get("/api/todos", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
-      // Show ALL todos from all departments (no filtering by accessibleUserIds)
-      // Users can view but cannot modify tasks from other departments
-      const todoLists = await storage.getTodoLists();
+      // Filter todos by accessible users in same department
+      const todoLists = await storage.getTodoLists(req.accessibleUserIds);
       // Sanitize user data to remove passwords and other sensitive information
       const sanitizedTodoLists = sanitizeTodoLists(todoLists);
       res.json({ todoLists: sanitizedTodoLists });
