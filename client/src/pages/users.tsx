@@ -281,6 +281,7 @@ export default function UsersPage() {
               <TableHead>Employee</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Comments</TableHead>
               <TableHead>Last Active</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -350,6 +351,24 @@ export default function UsersPage() {
                       {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
                     </Badge>
                   </StatusTooltip>
+                </TableCell>
+                <TableCell className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="max-w-xs truncate">
+                    {user.comments && user.comments.trim() !== '' ? (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="cursor-help">{user.comments}</span>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs bg-white dark:bg-gray-800 border dark:border-gray-700">
+                            <p className="text-sm text-gray-900 dark:text-gray-100 whitespace-normal">{user.comments}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ) : (
+                      <span className="text-gray-400 italic">No comments</span>
+                    )}
+                  </div>
                 </TableCell>
                 <TableCell className="text-sm text-gray-600 dark:text-gray-400">
                   {user.lastActiveAt
