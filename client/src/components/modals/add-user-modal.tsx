@@ -139,6 +139,7 @@ export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) 
                 <SelectItem value="office">Office</SelectItem>
                 <SelectItem value="secretary">Secretary</SelectItem>
                 <SelectItem value="office_team">Office Team</SelectItem>
+                <SelectItem value="employee">{t("employee")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
