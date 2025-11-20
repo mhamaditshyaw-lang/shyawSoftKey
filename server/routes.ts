@@ -587,12 +587,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Todo routes - each manager sees only their own data
+  // Todo routes - all users can see todos from all departments, but can only modify their own
   app.get("/api/todos", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
-      // Use accessibleUserIds to filter todos based on manager hierarchy
-      // This ensures managers can only see todos created by or assigned to their accessible users
-      const todoLists = await storage.getTodoLists(req.accessibleUserIds);
+      // Show ALL todos from all departments (no filtering by accessibleUserIds)
+      // Users can view but cannot modify tasks from other departments
+      const todoLists = await storage.getTodoLists();
       // Sanitize user data to remove passwords and other sensitive information
       const sanitizedTodoLists = sanitizeTodoLists(todoLists);
       res.json({ todoLists: sanitizedTodoLists });
@@ -694,7 +694,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const id = parseInt(req.params.id);
       let updates = { ...req.body };
 
-      // Verify todo item is in accessible scope (for non-admin roles)
+      // Verify todo item is in accessible scope - only allow modifications for same department
       if (req.user?.role !== 'admin') {
         await assertTodoItemInScope(id, req.accessibleUserIds!);
       }
@@ -711,7 +711,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ todoItem });
     } catch (error: any) {
-      res.status(400).json({ message: error.message });
+      res.status(400).json({ message: error.message || "Cannot modify tasks from other departments" });
     }
   });
 
@@ -720,7 +720,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       
-      // Verify todo item is in accessible scope (for non-admin roles)
+      // Verify todo item is in accessible scope - only allow deletion for same department
       if (req.user?.role !== 'admin') {
         await assertTodoItemInScope(id, req.accessibleUserIds!);
       }
@@ -733,7 +733,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Todo item deleted successfully" });
     } catch (error: any) {
       console.error("Error deleting todo item:", error);
-      res.status(500).json({ message: error.message || "Failed to delete todo item" });
+      res.status(500).json({ message: error.message || "Cannot delete tasks from other departments" });
     }
   });
 
