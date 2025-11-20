@@ -14,6 +14,8 @@ import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Building2, Users, Plus, UserPlus, Edit, Trash2, User } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { MENU_PARTITIONS } from "@/lib/menu-partitions";
+import DepartmentPartitions from "@/components/department-partitions";
 
 interface Department {
   name: string;
@@ -34,6 +36,8 @@ export default function DepartmentManagementPage() {
   const [newDeptManagerId, setNewDeptManagerId] = useState("");
   const [editDepartment, setEditDepartment] = useState("");
   const [renameDeptName, setRenameDeptName] = useState("");
+  const [showPartitionView, setShowPartitionView] = useState(false);
+  const [newDeptPartition, setNewDeptPartition] = useState("");
   
   const [employeeForm, setEmployeeForm] = useState({
     firstName: "",
@@ -350,6 +354,13 @@ export default function DepartmentManagementPage() {
           </div>
           <div className="flex gap-2">
             <Button 
+              onClick={() => setShowPartitionView(!showPartitionView)}
+              variant={showPartitionView ? "default" : "outline"}
+              className={showPartitionView ? "bg-dashboard-primary" : "border-dashboard-primary text-dashboard-primary hover:bg-dashboard-primary/10"}
+            >
+              {showPartitionView ? "List View" : "Partition View"}
+            </Button>
+            <Button 
               onClick={() => setShowAddEmployee(true)}
               variant="outline"
               className="border-dashboard-primary text-dashboard-primary hover:bg-dashboard-primary/10"
@@ -367,7 +378,10 @@ export default function DepartmentManagementPage() {
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {showPartitionView ? (
+          <DepartmentPartitions departments={departments} />
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {Object.values(departments).map((dept) => (
             <Card 
               key={dept.name}
@@ -477,6 +491,7 @@ export default function DepartmentManagementPage() {
             </Card>
           ))}
         </div>
+        )}
 
         {/* Create Department Dialog */}
         <Dialog open={showCreateDept} onOpenChange={setShowCreateDept}>
@@ -488,6 +503,21 @@ export default function DepartmentManagementPage() {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="partition">Partition (Section) *</Label>
+                <Select value={newDeptPartition} onValueChange={setNewDeptPartition}>
+                  <SelectTrigger id="partition">
+                    <SelectValue placeholder="Select partition" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MENU_PARTITIONS.map((partition) => (
+                      <SelectItem key={partition.title} value={partition.title}>
+                        {partition.icon} {partition.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="deptName">Department Name *</Label>
                 <Input
