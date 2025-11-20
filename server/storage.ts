@@ -350,9 +350,6 @@ export class DatabaseStorage implements IStorage {
             createdBy: true,
             assignedTo: true,
             items: {
-              with: {
-                completedBy: true,
-              },
               orderBy: (items, { desc }) => [desc(items.createdAt)],
             },
           },
