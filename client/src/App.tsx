@@ -212,6 +212,7 @@ function App() {
         <AuthProvider>
           <DeviceNotificationProvider>
             <TooltipProvider>
+              <RTLHandler />
               <Toaster />
               <Router />
             </TooltipProvider>
