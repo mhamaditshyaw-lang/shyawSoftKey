@@ -4,6 +4,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { DeviceNotificationProvider } from "@/hooks/use-device-notifications";
+import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
 import { ThemeProvider } from "@/hooks/use-theme";
 import { queryClient } from "./lib/queryClient";
@@ -68,6 +70,27 @@ function ProtectedRoute({ children, requiredPermission }: ProtectedRouteProps) {
   }
 
   return <>{children}</>;
+}
+
+function RTLHandler() {
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    const isRTL = i18n.language === 'ar' || i18n.language === 'ku';
+    const htmlElement = document.documentElement;
+    
+    if (isRTL) {
+      htmlElement.setAttribute('dir', 'rtl');
+      htmlElement.lang = i18n.language;
+      document.body.style.direction = 'rtl';
+    } else {
+      htmlElement.setAttribute('dir', 'ltr');
+      htmlElement.lang = i18n.language;
+      document.body.style.direction = 'ltr';
+    }
+  }, [i18n.language]);
+
+  return null;
 }
 
 function Router() {
