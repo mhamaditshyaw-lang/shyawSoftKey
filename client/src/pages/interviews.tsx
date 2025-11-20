@@ -11,7 +11,7 @@ import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Clock, Check, X, Edit, Calendar, Plus, Archive, Search, RefreshCw, Filter, User, MapPin, CheckCircle2, XCircle } from "lucide-react";
+import { Clock, Check, X, Edit, Calendar, Plus, Archive, Search, RefreshCw, Filter, User, MapPin, CheckCircle2, XCircle, MessageSquare } from "lucide-react";
 import InterviewRequestModal from "@/components/modals/interview-request-modal";
 import ViewInterviewDetailsModal from "@/components/modals/view-interview-details-modal";
 import { getRelativeTime } from "@/lib/utils";
@@ -138,7 +138,7 @@ export default function InterviewsPage() {
         request.requestedById === userIdFilter ||
         request.managerId === userIdFilter ||
         request.actionTakenById === userIdFilter;
-      
+
       if (!matchesUser) return false;
     }
 
@@ -324,11 +324,18 @@ export default function InterviewsPage() {
                   <SelectItem value="all">All Managers</SelectItem>
                   {users
                     .filter((u: any) => u.role === 'manager')
-                    .map((u: any) => (
-                      <SelectItem key={u.id} value={u.id.toString()}>
-                        {u.firstName} {u.lastName}
-                      </SelectItem>
-                    ))}
+                    .map((u: any) => {
+                      // Check if user has comments
+                      const hasComments = u.comments && u.comments.length > 0;
+                      return (
+                        <SelectItem key={u.id} value={u.id.toString()}>
+                          <div className="flex items-center">
+                            {u.firstName} {u.lastName}
+                            {hasComments && <MessageSquare className="w-4 h-4 ml-2 text-gray-500" />}
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
                 </SelectContent>
               </Select>
             </div>
