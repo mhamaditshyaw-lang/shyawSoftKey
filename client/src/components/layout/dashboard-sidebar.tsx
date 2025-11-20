@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslation } from "react-i18next";
 import { PAGE_PERMISSIONS } from "@shared/schema";
+import { MENU_PARTITIONS } from "@/lib/menu-partitions";
 
 // Placeholder component (not used anymore, kept for compatibility)
 const SidebarMenuButton = ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => {
@@ -60,88 +61,14 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
     return permissions?.[permissionKey] === true;
   };
 
-  const navigationItems = [
-    {
-      title: t("dashboard"),
-      href: "/",
-      icon: Home,
-      badge: null,
-    },
-    {
-      title: t("users"),
-      href: "/users",
-      icon: Users,
-      badge: null,
-    },
-    {
-      title: "Department Management",
-      href: "/department-management",
-      icon: Building2,
-      badge: null,
-    },
-    {
-      title: t("todos"),
-      href: "/todos",
-      icon: CheckSquare,
-      badge: null,
-    },
-    {
-      title: t("reminders"),
-      href: "/reminders",
-      icon: Bell,
-      badge: null,
-    },
-    {
-      title: t("interviews"),
-      href: "/interviews",
-      icon: UserCheck,
-      badge: null,
-    },
-    {
-      title: t("reports"),
-      href: "/reports",
-      icon: BarChart3,
-      badge: null,
-    },
-    {
-      title: t("feedback"),
-      href: "/feedback",
-      icon: MessageSquare,
-      badge: null,
-    },
-    {
-      title: t("archive"),
-      href: "/archive",
-      icon: Archive,
-      badge: null,
-    },
-    {
-      title: t("dailyOperations"),
-      href: "/metrics",
-      icon: BarChart3,
-      badge: t("dataEntry"),
-    },
-    {
-      title: t("dataView"),
-      href: "/data-view",
-      icon: Database,
-      badge: null,
-    },
-    {
-      title: t("allData"),
-      href: "/all-data",
-      icon: Shield,
-      badge: null,
-    },
-    {
-      title: t("userActivity"),
-      href: "/user-activity",
-      icon: Activity,
-      badge: t("tracking"),
-    }
-  ];
+  const getPartitionItems = () => {
+    return MENU_PARTITIONS.map(partition => ({
+      ...partition,
+      items: partition.items.filter(item => hasPermission(item.path))
+    })).filter(partition => partition.items.length > 0);
+  };
 
-  const filteredItems = navigationItems.filter(item => hasPermission(item.href));
+  const partitionItems = getPartitionItems();
 
   const isActive = (href: string) => {
     if (href === "/") {
@@ -189,45 +116,54 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
-        {filteredItems.map((item) => {
-          const Icon = item.icon;
-          const active = isActive(item.href);
-
-          return (
-            <Link key={item.href} href={item.href}>
-              <Button
-                variant={active ? "default" : "ghost"}
-                size="sm"
-                className={cn(
-                  "w-full justify-start gap-3 transition-all duration-200",
-                  active 
-                    ? "bg-dashboard-primary text-white shadow-lg hover:bg-dashboard-primary/90" 
-                    : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
-                  isCollapsed && "justify-center px-2"
-                )}
-              >
-                <Icon className={cn("h-5 w-5", active && "text-white")} />
-                {!isCollapsed && (
-                  <>
-                    <span className="flex-1 text-left">{item.title}</span>
-                    {item.badge && (
-                      <Badge 
-                        variant="secondary" 
-                        className="ml-auto bg-dashboard-accent text-white text-xs"
-                      >
-                        {item.badge}
-                      </Badge>
+      <nav className="flex-1 p-4 space-y-4 overflow-y-auto">
+        {partitionItems.map((partition) => (
+          <div key={partition.title} className="space-y-2">
+            {!isCollapsed && (
+              <div className="flex items-center gap-2 px-2 py-2">
+                <span className="text-lg">{partition.icon}</span>
+                <span className="text-xs font-bold uppercase text-dashboard-primary dark:text-blue-400 tracking-wider">
+                  {partition.title}
+                </span>
+              </div>
+            )}
+            {partition.items.map((item) => {
+              const active = isActive(item.path);
+              
+              return (
+                <Link key={item.path} href={item.path}>
+                  <Button
+                    variant={active ? "default" : "ghost"}
+                    size="sm"
+                    className={cn(
+                      "w-full justify-start gap-3 transition-all duration-200",
+                      active 
+                        ? "bg-dashboard-primary text-white shadow-lg hover:bg-dashboard-primary/90" 
+                        : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
+                      isCollapsed && "justify-center px-2"
                     )}
-                  </>
-                )}
-              </Button>
-            </Link>
-          );
-        })}
+                    title={item.label}
+                  >
+                    <span className="text-base">{partition.icon}</span>
+                    {!isCollapsed && (
+                      <span className="flex-1 text-left text-sm">{item.label}</span>
+                    )}
+                  </Button>
+                </Link>
+              );
+            })}
+          </div>
+        ))}
 
         {isAdmin && (
-          <>
+          <div className="border-t border-dashboard-secondary/10 pt-4 space-y-2">
+            {!isCollapsed && (
+              <div className="px-2 py-2">
+                <span className="text-xs font-bold uppercase text-dashboard-primary dark:text-blue-400 tracking-wider">
+                  ⚙️ Admin
+                </span>
+              </div>
+            )}
             <Link href="/page-access-management">
               <Button
                 variant={isActive("/page-access-management") ? "default" : "ghost"}
@@ -239,9 +175,10 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
                     : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
                   isCollapsed && "justify-center px-2"
                 )}
+                title="Page Access Management"
               >
                 <Shield className={cn("h-5 w-5", isActive("/page-access-management") && "text-white")} />
-                {!isCollapsed && <span className="flex-1 text-left">Page Access Management</span>}
+                {!isCollapsed && <span className="flex-1 text-left text-sm">Page Access Management</span>}
               </Button>
             </Link>
             <Link href="/backup-restore">
@@ -255,12 +192,13 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
                     : "hover:bg-dashboard-primary/10 text-dashboard-text-light dark:text-dashboard-text-dark hover:text-dashboard-primary",
                   isCollapsed && "justify-center px-2"
                 )}
+                title="Backup & Restore"
               >
                 <HardDrive className={cn("h-5 w-5", isActive("/backup-restore") && "text-white")} />
-                {!isCollapsed && <span className="flex-1 text-left">Backup & Restore</span>}
+                {!isCollapsed && <span className="flex-1 text-left text-sm">Backup & Restore</span>}
               </Button>
             </Link>
-          </>
+          </div>
         )}
       </nav>
 
