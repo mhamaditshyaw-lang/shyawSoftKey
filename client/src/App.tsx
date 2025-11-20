@@ -33,6 +33,7 @@ import ReportsPage from "@/pages/reports";
 import NotificationTestPage from "@/pages/notification-test";
 import NotificationManagementPage from "@/pages/notification-management";
 import BackupRestorePage from "@/pages/backup-restore";
+import PartitionBrowserPage from "@/pages/partition-browser";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/header";
 import SlidingSidebarMenu from "@/components/navigation/sliding-sidebar-menu";
@@ -194,6 +195,11 @@ function Router() {
       <Route path="/backup-restore">
         <ProtectedRoute requiredPermission="manage_users">
           <BackupRestorePage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/partitions">
+        <ProtectedRoute>
+          <PartitionBrowserPage />
         </ProtectedRoute>
       </Route>
       <Route path="/">
