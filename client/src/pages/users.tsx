@@ -433,7 +433,7 @@ export default function UsersPage() {
 
       {/* Edit User Modal */}
       <Dialog open={!!editingUser} onOpenChange={() => setEditingUser(null)}>
-        <DialogContent className="bg-white dark:bg-gray-800 border dark:border-gray-700">
+        <DialogContent className="bg-white dark:bg-gray-800 border dark:border-gray-700 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-gray-900 dark:text-gray-100">Edit User</DialogTitle>
             <DialogDescription className="text-gray-600 dark:text-gray-400">
