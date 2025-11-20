@@ -1,63 +1,90 @@
-export interface MenuPartition {
-  title: string;
-  icon: string;
-  items: MenuItem[];
-}
-
 export interface MenuItem {
   label: string;
   path: string;
+  description?: string;
+}
+
+export interface MenuPartition {
+  title: string;
+  icon: string;
+  description: string;
+  items: MenuItem[];
 }
 
 export const MENU_PARTITIONS: MenuPartition[] = [
   {
     title: "Task Management",
     icon: "📋",
+    description: "Daily tasks, reminders, and activity tracking",
     items: [
-      { label: "Daily Tasks", path: "/todos" },
-      { label: "Reminders", path: "/reminders" },
-      { label: "User Activity", path: "/user-activity" },
+      { label: "Daily Tasks", path: "/todos", description: "Manage and complete daily tasks" },
+      { label: "Reminders", path: "/reminders", description: "Set and manage task reminders" },
+      { label: "User Activity", path: "/user-activity", description: "Track user activity logs" },
     ],
   },
   {
     title: "Employee Management",
     icon: "👥",
+    description: "Manage employees, departments, and teams",
     items: [
-      { label: "Users", path: "/users" },
-      { label: "Employee List", path: "/employee-management" },
-      { label: "Add Employee", path: "/add-employee" },
-      { label: "Departments", path: "/department-management" },
+      { label: "Users", path: "/users", description: "View and manage all users" },
+      { label: "Employee List", path: "/employee-management", description: "Browse employees by department" },
+      { label: "Add Employee", path: "/add-employee", description: "Create new employee records" },
+      { label: "Departments", path: "/department-management", description: "Organize departments and teams" },
     ],
   },
   {
     title: "HR & Operations",
     icon: "🏢",
+    description: "HR operations, interviews, and performance management",
     items: [
-      { label: "Interviews", path: "/interviews" },
-      { label: "Feedback", path: "/feedback" },
-      { label: "Performance Archive", path: "/archive" },
-      { label: "Page Access", path: "/page-access-management" },
+      { label: "Interviews", path: "/interviews", description: "Schedule and manage interviews" },
+      { label: "Feedback", path: "/feedback", description: "Collect and review feedback" },
+      { label: "Performance Archive", path: "/archive", description: "Archive performance reviews" },
+      { label: "Page Access", path: "/page-access-management", description: "Manage page permissions" },
     ],
   },
   {
     title: "Analytics & Reports",
     icon: "📊",
+    description: "Business intelligence and reporting",
     items: [
-      { label: "Dashboard", path: "/" },
-      { label: "Metrics", path: "/metrics" },
-      { label: "Reports", path: "/reports" },
-      { label: "Data View", path: "/data-view" },
-      { label: "All Data", path: "/all-data" },
+      { label: "Dashboard", path: "/", description: "Main dashboard overview" },
+      { label: "Metrics", path: "/metrics", description: "View system metrics" },
+      { label: "Reports", path: "/reports", description: "Generate business reports" },
+      { label: "Data View", path: "/data-view", description: "View raw data with filters" },
+      { label: "All Data", path: "/all-data", description: "Browse all system data" },
     ],
   },
   {
     title: "System Management",
     icon: "⚙️",
+    description: "System administration and maintenance",
     items: [
-      { label: "Notifications", path: "/notification-management" },
-      { label: "Backup & Restore", path: "/backup-restore" },
-      { label: "Demo", path: "/multilingual-demo" },
-      { label: "Notification Test", path: "/notification-test" },
+      { label: "Notifications", path: "/notification-management", description: "Manage notifications" },
+      { label: "Backup & Restore", path: "/backup-restore", description: "Backup and restore data" },
+      { label: "Demo", path: "/multilingual-demo", description: "Multilingual demo" },
+      { label: "Notification Test", path: "/notification-test", description: "Test notifications" },
     ],
   },
 ];
+
+// Helper functions
+export function getPartitionByPage(path: string): MenuPartition | undefined {
+  return MENU_PARTITIONS.find((partition) =>
+    partition.items.some((item) => item.path === path)
+  );
+}
+
+export function getPageTitle(path: string): string {
+  for (const partition of MENU_PARTITIONS) {
+    const item = partition.items.find((i) => i.path === path);
+    if (item) return item.label;
+  }
+  return "Dashboard";
+}
+
+export function getPartitionPages(partitionTitle: string): MenuItem[] {
+  const partition = MENU_PARTITIONS.find((p) => p.title === partitionTitle);
+  return partition?.items || [];
+}
