@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -243,6 +244,7 @@ export default function EmployeeManagementPage() {
                       <StatusTooltip status="Active" description="Current account status" />
                     </TableHead>
                     <TableHead>{t("email")}</TableHead>
+                    <TableHead>{t("comments")}</TableHead>
                     <TableHead>
                       {t("actions")}
                       <ActionTooltip action="Edit or Delete" description="Manage employee accounts" />
@@ -252,7 +254,7 @@ export default function EmployeeManagementPage() {
                 <TableBody>
                   {filteredEmployees.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                      <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                         {t("noEmployeesFound")}
                       </TableCell>
                     </TableRow>
@@ -282,6 +284,11 @@ export default function EmployeeManagementPage() {
                           </Badge>
                         </TableCell>
                         <TableCell>{employee.email}</TableCell>
+                        <TableCell>
+                          <div className="max-w-xs truncate text-sm text-gray-600 dark:text-gray-400">
+                            {employee.comments || <span className="text-gray-400">{t("noComments")}</span>}
+                          </div>
+                        </TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
                             {(employee.role === 'secretary' || employee.role === 'office' || employee.role === 'office_team') && (
@@ -376,6 +383,22 @@ export default function EmployeeManagementPage() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label htmlFor="edit-comments" className="text-right mt-2">
+                    {t("comments")}
+                  </Label>
+                  <Textarea
+                    id="edit-comments"
+                    value={editingEmployee.comments || ""}
+                    onChange={(e) => 
+                      setEditingEmployee({ ...editingEmployee, comments: e.target.value })
+                    }
+                    placeholder={t("addComments")}
+                    className="col-span-3"
+                    rows={4}
+                    data-testid="input-comments"
+                  />
+                </div>
               </div>
               <DialogFooter>
                 <Button
@@ -389,7 +412,8 @@ export default function EmployeeManagementPage() {
                     id: editingEmployee.id,
                     updates: {
                       role: editingEmployee.role,
-                      status: editingEmployee.status
+                      status: editingEmployee.status,
+                      comments: editingEmployee.comments
                     }
                   })}
                   disabled={updateEmployeeMutation.isPending}

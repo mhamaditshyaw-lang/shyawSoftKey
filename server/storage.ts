@@ -73,9 +73,9 @@ export interface IStorage {
   deleteReminder(id: number): Promise<boolean>;
   
   // Interview request methods
-  getInterviewRequests(accessibleUserIds?: number[], includeUnassigned?: boolean): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;
-  getInterviewRequestsByManager(managerId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;
-  getInterviewRequestsByUser(userId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]>;
+  getInterviewRequests(accessibleUserIds?: number[], includeUnassigned?: boolean): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[]>;
+  getInterviewRequestsByManager(managerId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[]>;
+  getInterviewRequestsByUser(userId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[]>;
   createInterviewRequest(request: InsertInterviewRequest): Promise<InterviewRequest>;
   updateInterviewRequest(id: number, updates: Partial<InterviewRequest>): Promise<InterviewRequest | undefined>;
 
@@ -536,7 +536,7 @@ export class DatabaseStorage implements IStorage {
     });
   }
 
-  async getInterviewRequests(accessibleUserIds?: number[], includeUnassigned?: boolean): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]> {
+  async getInterviewRequests(accessibleUserIds?: number[], includeUnassigned?: boolean): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[]> {
     if (accessibleUserIds && accessibleUserIds.length > 0) {
       const result = await db.query.interviewRequests.findMany({
         where: (interviewRequests, { inArray, or, and, isNotNull }) => {
@@ -551,6 +551,7 @@ export class DatabaseStorage implements IStorage {
         with: {
           requestedBy: true,
           manager: true,
+          actionTakenBy: true,
         },
         orderBy: (interviewRequests, { desc }) => [desc(interviewRequests.createdAt)],
       });
@@ -561,42 +562,46 @@ export class DatabaseStorage implements IStorage {
       with: {
         requestedBy: true,
         manager: true,
+        actionTakenBy: true,
       },
       orderBy: (interviewRequests, { desc }) => [desc(interviewRequests.createdAt)],
     });
     return result;
   }
 
-  async getInterviewRequestsByManager(managerId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]> {
+  async getInterviewRequestsByManager(managerId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[]> {
     const result = await db.query.interviewRequests.findMany({
       where: (interviewRequests, { eq }) => eq(interviewRequests.managerId, managerId),
       with: {
         requestedBy: true,
         manager: true,
+        actionTakenBy: true,
       },
       orderBy: (interviewRequests, { desc }) => [desc(interviewRequests.createdAt)],
     });
     return result;
   }
 
-  async getInterviewRequestsByUser(userId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]> {
+  async getInterviewRequestsByUser(userId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[]> {
     const result = await db.query.interviewRequests.findMany({
       where: (interviewRequests, { eq }) => eq(interviewRequests.requestedById, userId),
       with: {
         requestedBy: true,
         manager: true,
+        actionTakenBy: true,
       },
       orderBy: (interviewRequests, { desc }) => [desc(interviewRequests.createdAt)],
     });
     return result;
   }
 
-  async getInterviewRequest(id: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null }) | undefined> {
+  async getInterviewRequest(id: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null }) | undefined> {
     const result = await db.query.interviewRequests.findFirst({
       where: (interviewRequests, { eq }) => eq(interviewRequests.id, id),
       with: {
         requestedBy: true,
         manager: true,
+        actionTakenBy: true,
       },
     });
     return result;

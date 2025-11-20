@@ -1119,7 +1119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/interviews/:id", authenticateToken, attachUserScope, requireRole(['manager', 'admin', 'office', 'office_team']), async (req: AuthRequest, res) => {
     try {
       const id = parseInt(req.params.id);
-      const updates = req.body;
+      let updates = { ...req.body };
 
       // Verify interview is in accessible scope (for non-admin roles)
       if (req.user?.role !== 'admin') {
@@ -1132,7 +1132,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Interview request not found" });
       }
 
-      const request = await storage.updateInterviewRequest(id, updates);
+      // If status is being changed to approved or rejected, save who took the action
+      if (updates.status && (updates.status === 'approved' || updates.status === 'rejected')) {
+        updates.actionTakenById = req.user?.id;
+      }
+
+      await storage.updateInterviewRequest(id, updates);
+      
+      // Fetch the updated request with all relations to return to client
+      const request = await storage.getInterviewRequest(id);
       if (!request) {
         return res.status(404).json({ message: "Interview request not found" });
       }

@@ -46,6 +46,7 @@ export const users = pgTable("users", {
   department: text("department"),
   position: text("position"),
   phoneNumber: text("phone_number"),
+  comments: text("comments"),
   managerId: integer("manager_id").references(() => users.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   lastActiveAt: timestamp("last_active_at"),
@@ -109,6 +110,7 @@ export const interviewRequests = pgTable("interview_requests", {
   description: text("description"),
   status: requestStatusEnum("status").notNull().default("pending"),
   rejectionReason: text("rejection_reason"),
+  actionTakenById: integer("action_taken_by_id").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -234,6 +236,11 @@ export const interviewRequestsRelations = relations(interviewRequests, ({ one, m
     fields: [interviewRequests.managerId],
     references: [users.id],
     relationName: "manager",
+  }),
+  actionTakenBy: one(users, {
+    fields: [interviewRequests.actionTakenById],
+    references: [users.id],
+    relationName: "action_taken_by",
   }),
   feedback: many(feedback),
 }));

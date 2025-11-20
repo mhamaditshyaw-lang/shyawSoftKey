@@ -26,6 +26,7 @@ export default function InterviewsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState("today");
   const [customDate, setCustomDate] = useState("");
+  const [userFilter, setUserFilter] = useState("all");
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
@@ -42,7 +43,16 @@ export default function InterviewsPage() {
     refetchInterval: autoRefresh ? 30000 : false, // Auto-refresh every 30 seconds
   });
 
+  const { data: usersData } = useQuery({
+    queryKey: ["/api/users"],
+    queryFn: async () => {
+      const response = await authenticatedRequest("GET", "/api/users");
+      return await response.json();
+    },
+  });
+
   const interviewRequests = interviewsData?.requests || [];
+  const users = usersData?.users || [];
 
   // Auto-refresh effect
   useEffect(() => {
@@ -98,6 +108,17 @@ export default function InterviewsPage() {
     // Status filter
     if (statusFilter !== "all" && request.status !== statusFilter) {
       return false;
+    }
+
+    // User filter
+    if (userFilter !== "all") {
+      const userIdFilter = parseInt(userFilter);
+      const matchesUser = 
+        request.requestedById === userIdFilter ||
+        request.managerId === userIdFilter ||
+        request.actionTakenById === userIdFilter;
+      
+      if (!matchesUser) return false;
     }
 
     // Search filter
@@ -248,6 +269,27 @@ export default function InterviewsPage() {
               </Select>
             </div>
 
+            {/* User Filter */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">
+                <User className="w-4 h-4 inline mr-1" />
+                User Filter
+              </Label>
+              <Select value={userFilter} onValueChange={setUserFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Users" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Users</SelectItem>
+                  {users.map((u: any) => (
+                    <SelectItem key={u.id} value={u.id.toString()}>
+                      {u.firstName} {u.lastName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Date Filter */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">Date Filter</Label>
@@ -264,19 +306,19 @@ export default function InterviewsPage() {
                 </SelectContent>
               </Select>
             </div>
+          </div>
 
-            {/* Auto Refresh Toggle */}
-            <div className="space-y-2">
+          {/* Auto Refresh Toggle */}
+          <div className="mt-4">
+            <div className="flex items-center space-x-2">
+              <Switch
+                checked={autoRefresh}
+                onCheckedChange={setAutoRefresh}
+              />
               <Label className="text-sm font-medium">Auto Refresh</Label>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={autoRefresh}
-                  onCheckedChange={setAutoRefresh}
-                />
-                <span className="text-sm text-gray-600">
-                  {autoRefresh ? "Every 30s" : "Off"}
-                </span>
-              </div>
+              <span className="text-sm text-gray-600">
+                {autoRefresh ? "Every 30s" : "Off"}
+              </span>
             </div>
           </div>
 
@@ -302,6 +344,7 @@ export default function InterviewsPage() {
                 {dateFilter !== "all" && ` • Filtered by: ${dateFilter === "custom" ? `${customDate}` : dateFilter}`}
                 {searchTerm && ` • Search: "${searchTerm}"`}
                 {statusFilter !== "all" && ` • Status: ${statusFilter}`}
+                {userFilter !== "all" && ` • User: ${users.find((u: any) => u.id.toString() === userFilter)?.firstName} ${users.find((u: any) => u.id.toString() === userFilter)?.lastName}`}
               </span>
               {(searchTerm || dateFilter !== "all" || statusFilter !== "all") && (
                 <Button
@@ -355,6 +398,11 @@ export default function InterviewsPage() {
                       <Badge className={getStatusBadgeColor(request.status)}>
                         {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                       </Badge>
+                      {request.actionTakenBy && (request.status === 'approved' || request.status === 'rejected') && (
+                        <span className="text-sm text-gray-600">
+                          by {request.actionTakenBy.firstName} {request.actionTakenBy.lastName}
+                        </span>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
