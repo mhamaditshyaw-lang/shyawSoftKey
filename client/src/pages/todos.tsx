@@ -38,8 +38,11 @@ import {
   Archive,
   Undo2,
   CheckSquare,
+  Eye,
+  AlertCircle,
 } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 interface TodoItem {
   id: number;
@@ -47,8 +50,12 @@ interface TodoItem {
   isCompleted: boolean;
   createdAt: string;
   updatedAt: string;
+  completedAt?: string;
+  completedById?: number;
+  completedByNote?: string;
   priority: "low" | "medium" | "high";
   reminderDate?: string;
+  completedBy?: any;
 }
 
 interface TodoList {
@@ -86,6 +93,9 @@ export default function TodosPage() {
   const [reminderMessage, setReminderMessage] = useState("");
   const [editingListId, setEditingListId] = useState<number | null>(null);
   const [editedTitle, setEditedTitle] = useState("");
+  
+  const [showCompletionDetailsDialog, setShowCompletionDetailsDialog] = useState(false);
+  const [selectedCompletedItem, setSelectedCompletedItem] = useState<TodoItem | null>(null);
 
   // Fetch todos data
   const { data: todosData, isLoading, error } = useQuery({
@@ -806,6 +816,65 @@ export default function TodosPage() {
         )}
       </AnimatePresence>
 
+      {/* Completion Details Modal */}
+      <Dialog open={showCompletionDetailsDialog} onOpenChange={setShowCompletionDetailsDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-green-600" />
+              {t('completionEvidence')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('completedByNote')}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedCompletedItem && (
+            <div className="space-y-4">
+              <div>
+                <Label className="text-sm font-semibold">Task</Label>
+                <p className="text-sm text-gray-700 mt-1">{selectedCompletedItem.title}</p>
+              </div>
+              
+              {selectedCompletedItem.completedBy && (
+                <div>
+                  <Label className="text-sm font-semibold flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    {t('completedBy')}
+                  </Label>
+                  <p className="text-sm text-gray-700 mt-1">
+                    {selectedCompletedItem.completedBy.firstName} {selectedCompletedItem.completedBy.lastName}
+                  </p>
+                </div>
+              )}
+              
+              {selectedCompletedItem.completedAt && (
+                <div>
+                  <Label className="text-sm font-semibold flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    {t('completionDate')}
+                  </Label>
+                  <p className="text-sm text-gray-700 mt-1">
+                    {new Date(selectedCompletedItem.completedAt).toLocaleString()}
+                  </p>
+                </div>
+              )}
+              
+              <div>
+                <Label className="text-sm font-semibold flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  Proof / Evidence
+                </Label>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
+                  <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                    {selectedCompletedItem.completedByNote}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Set Reminder Modal */}
       <AnimatePresence>
         {showReminderDialog && (
@@ -1074,6 +1143,21 @@ export default function TodosPage() {
                               >
                                 <Sparkles className="w-4 h-4 text-green-500" />
                               </motion.div>
+                            )}
+                            {item.isCompleted && item.completedByNote && (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  setSelectedCompletedItem(item);
+                                  setShowCompletionDetailsDialog(true);
+                                }}
+                                className="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-1 h-6 w-6"
+                                title="View completion proof"
+                                data-testid={`button-view-proof-${item.id}`}
+                              >
+                                <Eye className="w-3 h-3" />
+                              </Button>
                             )}
                             {true && (
                               <div className="flex items-center gap-1 border border-red-300 rounded-md px-1 py-0.5 bg-red-50">
