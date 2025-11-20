@@ -19,14 +19,19 @@ export class ReminderNotificationService {
     console.log("Starting reminder notification service...");
     this.isRunning = true;
 
-    // Delay the first check by 10 seconds to allow database connection to be established
+    // Delay the first check by 30 seconds to allow database connection to be established
+    // Don't run the first check if database is not ready yet
     setTimeout(() => {
-      this.checkAndSendReminders();
-    }, 10000);
+      this.checkAndSendReminders().catch(err => {
+        console.log("Initial reminder check skipped due to database connection issue. Will retry on next interval.");
+      });
+    }, 30000);
 
     // Then run every hour
     this.intervalId = setInterval(() => {
-      this.checkAndSendReminders();
+      this.checkAndSendReminders().catch(err => {
+        console.log("Reminder check skipped due to database connection issue. Will retry on next interval.");
+      });
     }, 60 * 60 * 1000); // 1 hour = 60 minutes * 60 seconds * 1000 milliseconds
 
     console.log("Reminder notification service started successfully");
@@ -102,8 +107,15 @@ export class ReminderNotificationService {
       }
 
       console.log("Reminder check completed");
-    } catch (error) {
-      console.error("Error in reminder notification service:", error);
+    } catch (error: any) {
+      // Only log error details if it's not a database connection error
+      if (error.code === '28P01' || error.message?.includes('password authentication failed')) {
+        console.log("Reminder check skipped: Database connection not ready");
+      } else {
+        console.error("Error in reminder notification service:", error);
+      }
+      // Re-throw the error so the caller can handle it
+      throw error;
     } finally {
       this.isCheckingReminders = false;
     }
