@@ -27,6 +27,7 @@ export default function InterviewsPage() {
   const [dateFilter, setDateFilter] = useState("today");
   const [customDate, setCustomDate] = useState("");
   const [userFilter, setUserFilter] = useState("all");
+  const [positionFilter, setPositionFilter] = useState("all");
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
@@ -103,11 +104,31 @@ export default function InterviewsPage() {
     );
   };
 
+  // Get unique positions for filter (exclude null/undefined)
+  const uniquePositions = (Array.from(
+    new Set(
+      interviewRequests
+        .map((request: any) => request.position)
+        .filter((position: any): position is string => Boolean(position) && typeof position === 'string')
+    )
+  ) as string[]).sort();
+
   // Filter interviews based on criteria
   const filteredInterviews = interviewRequests.filter((request: any) => {
     // Status filter
     if (statusFilter !== "all" && request.status !== statusFilter) {
       return false;
+    }
+
+    // Position filter
+    if (positionFilter !== "all") {
+      // Handle null/undefined positions gracefully
+      if (!request.position) {
+        return false;
+      }
+      if (request.position !== positionFilter) {
+        return false;
+      }
     }
 
     // User filter
@@ -125,12 +146,13 @@ export default function InterviewsPage() {
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch = 
-        request.position.toLowerCase().includes(searchLower) ||
-        request.candidateName.toLowerCase().includes(searchLower) ||
-        request.requestedBy.firstName.toLowerCase().includes(searchLower) ||
-        request.requestedBy.lastName.toLowerCase().includes(searchLower) ||
-        (request.manager && 
-         `${request.manager.firstName} ${request.manager.lastName}`.toLowerCase().includes(searchLower));
+        (request.position?.toLowerCase() ?? '').includes(searchLower) ||
+        (request.candidateName?.toLowerCase() ?? '').includes(searchLower) ||
+        (request.requestedBy?.firstName?.toLowerCase() ?? '').includes(searchLower) ||
+        (request.requestedBy?.lastName?.toLowerCase() ?? '').includes(searchLower) ||
+        (request.manager 
+          ? `${request.manager.firstName ?? ''} ${request.manager.lastName ?? ''}`.toLowerCase().includes(searchLower)
+          : false);
 
       if (!matchesSearch) return false;
     }
@@ -238,7 +260,7 @@ export default function InterviewsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Search Input */}
             <div className="space-y-2">
               <Label htmlFor="search" className="text-sm font-medium">{t("search")}</Label>
@@ -249,6 +271,7 @@ export default function InterviewsPage() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
+                  data-testid="input-search"
                 />
               </div>
             </div>
@@ -257,7 +280,7 @@ export default function InterviewsPage() {
             <div className="space-y-2">
               <Label className="text-sm font-medium">Status Filter</Label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
+                <SelectTrigger data-testid="select-status-filter">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -269,6 +292,24 @@ export default function InterviewsPage() {
               </Select>
             </div>
 
+            {/* Position Filter */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Position Filter</Label>
+              <Select value={positionFilter} onValueChange={setPositionFilter}>
+                <SelectTrigger data-testid="select-position-filter">
+                  <SelectValue placeholder="All Positions" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Positions</SelectItem>
+                  {uniquePositions.map((position: string) => (
+                    <SelectItem key={position} value={position}>
+                      {position}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* User Filter */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">
@@ -276,7 +317,7 @@ export default function InterviewsPage() {
                 User Filter
               </Label>
               <Select value={userFilter} onValueChange={setUserFilter}>
-                <SelectTrigger>
+                <SelectTrigger data-testid="select-user-filter">
                   <SelectValue placeholder="All Users" />
                 </SelectTrigger>
                 <SelectContent>
@@ -294,7 +335,7 @@ export default function InterviewsPage() {
             <div className="space-y-2">
               <Label className="text-sm font-medium">Date Filter</Label>
               <Select value={dateFilter} onValueChange={setDateFilter}>
-                <SelectTrigger>
+                <SelectTrigger data-testid="select-date-filter">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -344,9 +385,10 @@ export default function InterviewsPage() {
                 {dateFilter !== "all" && ` • Filtered by: ${dateFilter === "custom" ? `${customDate}` : dateFilter}`}
                 {searchTerm && ` • Search: "${searchTerm}"`}
                 {statusFilter !== "all" && ` • Status: ${statusFilter}`}
+                {positionFilter !== "all" && ` • Position: ${positionFilter}`}
                 {userFilter !== "all" && ` • User: ${users.find((u: any) => u.id.toString() === userFilter)?.firstName} ${users.find((u: any) => u.id.toString() === userFilter)?.lastName}`}
               </span>
-              {(searchTerm || dateFilter !== "all" || statusFilter !== "all") && (
+              {(searchTerm || dateFilter !== "all" || statusFilter !== "all" || positionFilter !== "all" || userFilter !== "all") && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -354,9 +396,12 @@ export default function InterviewsPage() {
                     setSearchTerm("");
                     setDateFilter("all");
                     setStatusFilter("all");
+                    setPositionFilter("all");
+                    setUserFilter("all");
                     setCustomDate("");
                   }}
                   className="text-blue-600 hover:text-blue-800"
+                  data-testid="button-clear-filters"
                 >
                   Clear Filters
                 </Button>
@@ -433,6 +478,36 @@ export default function InterviewsPage() {
                         <p className="text-sm font-medium text-gray-500">Duration</p>
                         <p className="text-sm text-gray-900 mt-1">{request.duration} minutes</p>
                       </div>
+                    </div>
+
+                    {/* Manager and Handler Information */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                      <div>
+                        <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
+                          <User className="w-4 h-4" />
+                          Assigned Manager
+                        </p>
+                        <p className="text-sm text-gray-900 dark:text-gray-100 mt-1">
+                          {request.manager 
+                            ? `${request.manager.firstName} ${request.manager.lastName}` 
+                            : <span className="text-gray-400 italic">Not assigned</span>
+                          }
+                        </p>
+                      </div>
+                      {request.actionTakenBy && (
+                        <div>
+                          <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
+                            {request.status === 'approved' ? <CheckCircle2 className="w-4 h-4 text-green-600" /> : <XCircle className="w-4 h-4 text-red-600" />}
+                            Handled By
+                          </p>
+                          <p className="text-sm text-gray-900 dark:text-gray-100 mt-1 font-medium">
+                            {request.actionTakenBy.firstName} {request.actionTakenBy.lastName}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {request.status === 'approved' ? 'Approved' : 'Rejected'} on {new Date(request.updatedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      )}
                     </div>
 
                     {request.description && (

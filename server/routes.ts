@@ -289,7 +289,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Define allowed fields based on role
       const allowedFields = isAdmin 
-        ? ['firstName', 'lastName', 'email', 'role', 'status', 'permissions', 'department', 'position', 'phoneNumber', 'managerId']
+        ? ['firstName', 'lastName', 'email', 'role', 'status', 'permissions', 'department', 'position', 'phoneNumber', 'managerId', 'comments']
         : ['firstName', 'lastName', 'department', 'position', 'phoneNumber']; // managers can only update profile fields
 
       // Filter updates to only allowed fields

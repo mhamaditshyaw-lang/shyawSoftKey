@@ -10,10 +10,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Edit, Trash, User } from "lucide-react";
+import { Plus, Edit, Trash, User, MessageSquare } from "lucide-react";
 import AddUserModal from "@/components/modals/add-user-modal";
 import { HelpTooltip, FeatureTooltip, RoleTooltip, StatusTooltip, ActionTooltip } from "@/components/ui/help-tooltip";
 import { useTranslation } from "react-i18next";
@@ -153,7 +155,8 @@ export default function UsersPage() {
       email: editingUser.email,
       role: editingUser.role,
       status: editingUser.status,
-      managerId: editingUser.managerId || null
+      managerId: editingUser.managerId || null,
+      comments: editingUser.comments || ''
     };
 
     // Include password only if it's provided (not empty)
@@ -293,8 +296,20 @@ export default function UsersPage() {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <div className="font-medium text-gray-900 dark:text-gray-100">
+                      <div className="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
                         {user.firstName} {user.lastName}
+                        {user.comments && user.comments.trim() !== '' && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <MessageSquare className="w-4 h-4 text-blue-500 cursor-help" data-testid={`icon-comments-${user.id}`} />
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-xs bg-white dark:bg-gray-800 border dark:border-gray-700">
+                                <p className="text-sm text-gray-900 dark:text-gray-100">{user.comments}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
                       </div>
                       <div className="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
                       <div className="text-xs text-gray-400 dark:text-gray-500">@{user.username}</div>
@@ -530,6 +545,19 @@ export default function UsersPage() {
                     }
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="comments" className="text-gray-700 dark:text-gray-300">Comments</Label>
+                <Textarea
+                  id="comments"
+                  value={editingUser.comments || ''}
+                  onChange={(e) => setEditingUser({...editingUser, comments: e.target.value})}
+                  className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                  placeholder="Add notes or comments about this user..."
+                  rows={3}
+                  data-testid="textarea-comments"
+                />
               </div>
             </div>
           )}
