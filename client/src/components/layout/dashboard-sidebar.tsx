@@ -127,79 +127,59 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-3 space-y-2 overflow-y-auto">
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {partitionItems.map((partition) => {
           const isExpanded = expandedPartitions.has(partition.title);
-          const partitionColors: Record<string, { bg: string; text: string; hover: string }> = {
-            "Task Management": { bg: "bg-blue-50 dark:bg-blue-950/30", text: "text-blue-600 dark:text-blue-400", hover: "hover:bg-blue-100 dark:hover:bg-blue-950/50" },
-            "Employee Management": { bg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-600 dark:text-purple-400", hover: "hover:bg-purple-100 dark:hover:bg-purple-950/50" },
-            "HR & Operations": { bg: "bg-green-50 dark:bg-green-950/30", text: "text-green-600 dark:text-green-400", hover: "hover:bg-green-100 dark:hover:bg-green-950/50" },
-            "Analytics & Reports": { bg: "bg-orange-50 dark:bg-orange-950/30", text: "text-orange-600 dark:text-orange-400", hover: "hover:bg-orange-100 dark:hover:bg-orange-950/50" },
-            "System Management": { bg: "bg-red-50 dark:bg-red-950/30", text: "text-red-600 dark:text-red-400", hover: "hover:bg-red-100 dark:hover:bg-red-950/50" },
-          };
-          
-          const colors = partitionColors[partition.title] || partitionColors["Task Management"];
           
           return (
-            <div key={partition.title} className="space-y-2">
+            <div key={partition.title} className="space-y-1">
               <button
                 onClick={() => !isCollapsed && togglePartition(partition.title)}
                 className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 font-medium",
+                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200",
                   isCollapsed 
                     ? "justify-center" 
-                    : `${colors.bg} ${colors.text} ${colors.hover} border border-transparent hover:border-current/20`
+                    : "hover:bg-dashboard-secondary/5 dark:hover:bg-dashboard-secondary/10"
                 )}
                 title={isCollapsed ? partition.title : undefined}
               >
-                <div className={cn(
-                  "flex items-center justify-center w-8 h-8 rounded-lg font-bold text-base",
-                  colors.bg,
-                  colors.text
-                )}>
-                  {partition.icon}
-                </div>
                 {!isCollapsed && (
                   <>
-                    <span className="text-sm font-semibold uppercase tracking-wide flex-1 text-left">
+                    <span className="text-lg flex-shrink-0">{partition.icon}</span>
+                    <span className="text-sm font-semibold text-dashboard-text-light dark:text-dashboard-text-dark flex-1 text-left">
                       {partition.title}
                     </span>
                     <ChevronRight 
                       className={cn(
-                        "h-4 w-4 transition-transform duration-300 flex-shrink-0",
+                        "h-4 w-4 text-dashboard-secondary/60 transition-transform duration-200 flex-shrink-0",
                         isExpanded && "rotate-90"
                       )} 
                     />
                   </>
                 )}
+                {isCollapsed && (
+                  <span className="text-lg">{partition.icon}</span>
+                )}
               </button>
 
               {isExpanded && !isCollapsed && (
-                <div className={cn(
-                  "space-y-1.5 ml-2 pl-3 border-l-2 transition-all duration-300",
-                  colors.text,
-                  colors.text.replace("text-", "border-")
-                )}>
+                <div className="space-y-1 pl-6">
                   {partition.items.map((item) => {
                     const active = isActive(item.path);
                     
                     return (
                       <Link key={item.path} href={item.path}>
                         <Button
-                          variant="ghost"
+                          variant={active ? "default" : "ghost"}
                           size="sm"
                           className={cn(
-                            "w-full justify-start gap-2.5 transition-all duration-200 text-xs font-medium group",
+                            "w-full justify-start gap-2 transition-all duration-200 text-xs",
                             active 
-                              ? `${colors.bg} ${colors.text} shadow-md hover:shadow-lg` 
-                              : `hover:${colors.bg} text-dashboard-text-light dark:text-dashboard-text-dark hover:${colors.text}`,
+                              ? "bg-dashboard-primary text-white shadow-md hover:bg-dashboard-primary/90" 
+                              : "text-dashboard-text-light dark:text-dashboard-text-dark hover:bg-dashboard-primary/5 dark:hover:bg-dashboard-primary/10",
                           )}
                           title={item.label}
                         >
-                          <span className={cn(
-                            "w-1.5 h-1.5 rounded-full transition-all duration-200",
-                            active ? colors.text : `bg-dashboard-secondary/50 group-hover:${colors.text}`
-                          )} />
                           <span className="flex-1 text-left">{item.label}</span>
                         </Button>
                       </Link>
