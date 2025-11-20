@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,7 @@ interface InterviewRequestModalProps {
 }
 
 export default function InterviewRequestModal({ open, onOpenChange }: InterviewRequestModalProps) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     position: "",
     candidateName: "",
@@ -58,8 +60,8 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/interviews"] });
       toast({
-        title: "Success",
-        description: "Interview request created successfully",
+        title: t("success"),
+        description: t("interviewRequestCreatedSuccessfully"),
       });
       onOpenChange(false);
       setFormData({
@@ -74,8 +76,8 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to create request",
+        title: t("error"),
+        description: error.message || t("failed to create request"),
         variant: "destructive",
       });
     },
@@ -92,15 +94,15 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Schedule Employee Review</DialogTitle>
+          <DialogTitle>{t("scheduleInterview")}</DialogTitle>
           <DialogDescription>
-            Schedule an employee evaluation, performance review, or internal role change interview.
+            {t("manageEmployeeEvaluations")}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="position">Review Type / Position</Label>
+            <Label htmlFor="position">{t("position")}</Label>
             <Input
               id="position"
               value={formData.position}
@@ -111,7 +113,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="candidateName">Employee Name</Label>
+              <Label htmlFor="candidateName">{t("candidateName")}</Label>
               <Input
                 id="candidateName"
                 value={formData.candidateName}
@@ -120,7 +122,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="candidateEmail">Employee Email (Optional)</Label>
+              <Label htmlFor="candidateEmail">{t("emailAddress")}</Label>
               <Input
                 id="candidateEmail"
                 type="email"
@@ -131,13 +133,13 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="managerId">Assign to Manager (Optional)</Label>
+            <Label htmlFor="managerId">{t("managerAssigned")}</Label>
             <Select value={formData.managerId} onValueChange={(value) => setFormData({ ...formData, managerId: value })}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">No specific manager</SelectItem>
+                <SelectItem value="none">{t("noAssignment")}</SelectItem>
                 {managers.map((manager: any) => (
                   <SelectItem key={manager.id} value={manager.id.toString()}>
                     {manager.firstName} {manager.lastName} ({manager.username})
@@ -149,7 +151,7 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="proposedDateTime">Proposed Date & Time</Label>
+              <Label htmlFor="proposedDateTime">{t("proposedDateTime")}</Label>
               <Input
                 id="proposedDateTime"
                 type="datetime-local"
@@ -159,27 +161,27 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="duration">Duration (minutes)</Label>
+              <Label htmlFor="duration">{t("duration")}</Label>
               <Select value={formData.duration} onValueChange={(value) => setFormData({ ...formData, duration: value })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="5">5 minutes</SelectItem>
-                  <SelectItem value="10">10 minutes</SelectItem>
-                  <SelectItem value="15">15 minutes</SelectItem>
-                  <SelectItem value="30">30 minutes</SelectItem>
-                  <SelectItem value="45">45 minutes</SelectItem>
-                  <SelectItem value="60">60 minutes</SelectItem>
-                  <SelectItem value="90">90 minutes</SelectItem>
-                  <SelectItem value="120">120 minutes</SelectItem>
+                  <SelectItem value="5">5 {t("duration")}</SelectItem>
+                  <SelectItem value="10">10 {t("duration")}</SelectItem>
+                  <SelectItem value="15">15 {t("duration")}</SelectItem>
+                  <SelectItem value="30">30 {t("duration")}</SelectItem>
+                  <SelectItem value="45">45 {t("duration")}</SelectItem>
+                  <SelectItem value="60">60 {t("duration")}</SelectItem>
+                  <SelectItem value="90">90 {t("duration")}</SelectItem>
+                  <SelectItem value="120">120 {t("duration")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Review Details (Optional)</Label>
+            <Label htmlFor="description">{t("description")}</Label>
             <Textarea
               id="description"
               value={formData.description}
@@ -195,10 +197,10 @@ export default function InterviewRequestModal({ open, onOpenChange }: InterviewR
               onClick={() => onOpenChange(false)}
               disabled={createRequestMutation.isPending}
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button type="submit" disabled={createRequestMutation.isPending}>
-              {createRequestMutation.isPending ? "Scheduling..." : "Schedule Review"}
+              {createRequestMutation.isPending ? t("creating") : t("scheduleInterview")}
             </Button>
           </div>
         </form>

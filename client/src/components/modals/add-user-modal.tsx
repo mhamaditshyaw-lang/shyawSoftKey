@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";  
@@ -15,6 +16,7 @@ interface AddUserModalProps {
 }
 
 export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -33,8 +35,8 @@ export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
       toast({
-        title: "Success",
-        description: "User created successfully",
+        title: t("success"),
+        description: t("userCreatedSuccessfully"),
       });
       onOpenChange(false);
       setFormData({
@@ -48,8 +50,8 @@ export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) 
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to create user",
+        title: t("error"),
+        description: error.message || t("failed to create user"),
         variant: "destructive",
       });
     },
@@ -64,16 +66,16 @@ export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add New Employee</DialogTitle>
+          <DialogTitle>{t("addNewEmployee")}</DialogTitle>
           <DialogDescription>
-            Add a new employee to the company system with appropriate role and permissions.
+            {t("addEmployeePage")}
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
+              <Label htmlFor="firstName">{t("firstName")}</Label>
               <Input
                 id="firstName"
                 value={formData.firstName}
@@ -82,7 +84,7 @@ export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) 
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
+              <Label htmlFor="lastName">{t("lastName")}</Label>
               <Input
                 id="lastName"
                 value={formData.lastName}
@@ -93,7 +95,7 @@ export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) 
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username">{t("username")}</Label>
             <Input
               id="username"
               value={formData.username}
@@ -103,7 +105,7 @@ export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) 
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("email")}</Label>
             <Input
               id="email"
               type="email"
@@ -114,7 +116,7 @@ export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("password")}</Label>
             <Input
               id="password"
               type="password"
@@ -125,15 +127,15 @@ export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) 
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="role">Role</Label>
+            <Label htmlFor="role">{t("role")}</Label>
             <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="manager">Manager</SelectItem>
-                <SelectItem value="security">Security</SelectItem>
+                <SelectItem value="admin">{t("admin")}</SelectItem>
+                <SelectItem value="manager">{t("manager")}</SelectItem>
+                <SelectItem value="security">{t("security")}</SelectItem>
                 <SelectItem value="office">Office</SelectItem>
                 <SelectItem value="secretary">Secretary</SelectItem>
                 <SelectItem value="office_team">Office Team</SelectItem>
@@ -148,10 +150,10 @@ export default function AddUserModal({ open, onOpenChange }: AddUserModalProps) 
               onClick={() => onOpenChange(false)}
               disabled={createUserMutation.isPending}
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button type="submit" disabled={createUserMutation.isPending}>
-              {createUserMutation.isPending ? "Adding..." : "Add Employee"}
+              {createUserMutation.isPending ? t("creating") : t("addNewEmployee")}
             </Button>
           </div>
         </form>
