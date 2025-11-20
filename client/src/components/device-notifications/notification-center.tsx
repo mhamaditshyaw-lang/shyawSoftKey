@@ -124,7 +124,7 @@ export default function NotificationCenter() {
     // Common actions for all notifications
     if (!notification.isRead) {
       actions.push({
-        label: "Mark Read",
+        label: t('markRead'),
         icon: Check,
         onClick: (notif) => markAsRead(notif.id),
         variant: "outline",
@@ -136,7 +136,7 @@ export default function NotificationCenter() {
     switch (notification.type) {
       case 'user_activity':
         actions.push({
-          label: "View Users",
+          label: t('viewUsers'),
           icon: UserPlus,
           onClick: () => window.location.href = '/users',
           variant: "outline",
@@ -147,7 +147,7 @@ export default function NotificationCenter() {
       case 'task_reminder':
         if (notification.title.toLowerCase().includes('interview')) {
           actions.push({
-            label: "View Interviews",
+            label: t('viewInterviews'),
             icon: Calendar,
             onClick: () => window.location.href = '/interviews',
             variant: "outline",
@@ -155,7 +155,7 @@ export default function NotificationCenter() {
           });
         } else {
           actions.push({
-            label: "View Tasks",
+            label: t('viewTasks'),
             icon: FileText,
             onClick: () => window.location.href = '/todos',
             variant: "outline",
@@ -167,7 +167,7 @@ export default function NotificationCenter() {
       case 'system_alert':
       case 'security_alert':
         actions.push({
-          label: notification.priority === 'urgent' ? "Take Action" : "View Alert",
+          label: notification.priority === 'urgent' ? t('takeAction') : t('viewAlert'),
           icon: ArrowRight,
           onClick: () => {
             if (notification.actionUrl) {
@@ -186,7 +186,7 @@ export default function NotificationCenter() {
       case 'general':
         if (notification.title.toLowerCase().includes('feedback')) {
           actions.push({
-            label: "Give Feedback",
+            label: t('giveFeedback'),
             icon: MessageSquare,
             onClick: () => window.location.href = '/feedback',
             variant: "outline",
@@ -197,7 +197,7 @@ export default function NotificationCenter() {
 
       case 'achievement':
         actions.push({
-          label: "View Details",
+          label: t('viewDetails'),
           icon: Star,
           onClick: () => {
             if (notification.actionUrl) {
@@ -213,7 +213,7 @@ export default function NotificationCenter() {
 
       case 'deadline_warning':
         actions.push({
-          label: "Check Deadline",
+          label: t('checkDeadline'),
           icon: Calendar,
           onClick: () => {
             if (notification.actionUrl) {
@@ -229,7 +229,7 @@ export default function NotificationCenter() {
 
       case 'maintenance_notice':
         actions.push({
-          label: "View Notice",
+          label: t('viewNotice'),
           icon: Settings,
           onClick: () => {
             if (notification.actionUrl) {
@@ -247,7 +247,7 @@ export default function NotificationCenter() {
         // Generic action for unknown types
         if (notification.actionUrl) {
           actions.push({
-            label: "View Details",
+            label: t('viewDetails'),
             icon: ExternalLink,
             onClick: () => window.location.href = notification.actionUrl,
             variant: "outline",
@@ -259,7 +259,7 @@ export default function NotificationCenter() {
     // Priority-based actions
     if (notification.priority === 'urgent' && actions.length === 1) {
       actions.push({
-        label: "Mark Important",
+        label: t('markImportant'),
         icon: Star,
         onClick: (notif) => {
           // Here you could implement a mark as important API call
@@ -277,7 +277,7 @@ export default function NotificationCenter() {
     
     if (notificationAge > sevenDays) {
       actions.push({
-        label: "Archive",
+        label: t('archiveNotification'),
         icon: Archive,
         onClick: (notif) => deleteNotification(notif.id),
         variant: "ghost",
