@@ -12,7 +12,8 @@ export const deviceNotificationTypeEnum = pgEnum("device_notification_type", [
   "maintenance_notice",
   "deadline_warning",
   "achievement",
-  "general"
+  "general",
+  "broadcast"
 ]);
 
 export const deviceNotificationPriorityEnum = pgEnum("device_notification_priority", [
