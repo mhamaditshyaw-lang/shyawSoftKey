@@ -278,29 +278,29 @@ export default function InterviewsPage() {
 
             {/* Status Filter */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Status Filter</Label>
+              <Label className="text-sm font-medium">{t("statusFilter")}</Label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger data-testid="select-status-filter">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="approved">Approved</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
+                  <SelectItem value="all">{t("allStatuses")}</SelectItem>
+                  <SelectItem value="pending">{t("pending")}</SelectItem>
+                  <SelectItem value="approved">{t("approved")}</SelectItem>
+                  <SelectItem value="rejected">{t("rejected")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Position Filter */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Position Filter</Label>
+              <Label className="text-sm font-medium">{t("positionFilter")}</Label>
               <Select value={positionFilter} onValueChange={setPositionFilter}>
                 <SelectTrigger data-testid="select-position-filter">
-                  <SelectValue placeholder="All Positions" />
+                  <SelectValue placeholder={t("allPositions")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Positions</SelectItem>
+                  <SelectItem value="all">{t("allPositions")}</SelectItem>
                   {uniquePositions.map((position: string) => (
                     <SelectItem key={position} value={position}>
                       {position}
@@ -314,14 +314,14 @@ export default function InterviewsPage() {
             <div className="space-y-2">
               <Label className="text-sm font-medium">
                 <User className="w-4 h-4 inline mr-1" />
-                Manager Filter
+                {t("managerFilter")}
               </Label>
               <Select value={userFilter} onValueChange={setUserFilter}>
                 <SelectTrigger data-testid="select-user-filter">
-                  <SelectValue placeholder="All Managers" />
+                  <SelectValue placeholder={t("allManagers")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Managers</SelectItem>
+                  <SelectItem value="all">{t("allManagers")}</SelectItem>
                   {users
                     .filter((u: any) => u.role === 'manager')
                     .map((u: any) => {
@@ -342,17 +342,17 @@ export default function InterviewsPage() {
 
             {/* Date Filter */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Date Filter</Label>
+              <Label className="text-sm font-medium">{t("dateFilter")}</Label>
               <Select value={dateFilter} onValueChange={setDateFilter}>
                 <SelectTrigger data-testid="select-date-filter">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="today">Today</SelectItem>
-                  <SelectItem value="week">This Week</SelectItem>
-                  <SelectItem value="month">This Month</SelectItem>
-                  <SelectItem value="custom">Custom Date</SelectItem>
-                  <SelectItem value="all">All Dates</SelectItem>
+                  <SelectItem value="today">{t("today")}</SelectItem>
+                  <SelectItem value="week">{t("thisWeek")}</SelectItem>
+                  <SelectItem value="month">{t("thisMonth")}</SelectItem>
+                  <SelectItem value="custom">{t("custom")}</SelectItem>
+                  <SelectItem value="all">{t("allDates")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -365,9 +365,9 @@ export default function InterviewsPage() {
                 checked={autoRefresh}
                 onCheckedChange={setAutoRefresh}
               />
-              <Label className="text-sm font-medium">Auto Refresh</Label>
+              <Label className="text-sm font-medium">{t("autoRefresh")}</Label>
               <span className="text-sm text-gray-600">
-                {autoRefresh ? "Every 30s" : "Off"}
+                {autoRefresh ? t("every30s") : t("off")}
               </span>
             </div>
           </div>
@@ -375,7 +375,7 @@ export default function InterviewsPage() {
           {/* Custom Date Input */}
           {dateFilter === "custom" && (
             <div className="mt-4 max-w-xs">
-              <Label htmlFor="customDate" className="text-sm font-medium">Select Date</Label>
+              <Label htmlFor="customDate" className="text-sm font-medium">{t("selectDate")}</Label>
               <Input
                 id="customDate"
                 type="date"
@@ -412,7 +412,7 @@ export default function InterviewsPage() {
                   className="text-blue-600 hover:text-blue-800"
                   data-testid="button-clear-filters"
                 >
-                  Clear Filters
+                  {t("clearFilters")}
                 </Button>
               )}
             </div>
@@ -426,17 +426,17 @@ export default function InterviewsPage() {
           <Card>
             <CardContent className="p-12 text-center">
               <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No interview requests found</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">{t("noInterviewRequests")}</h3>
               <p className="text-gray-600 mb-4">
                 {statusFilter === "all" 
-                  ? "There are no interview requests yet."
-                  : `No ${statusFilter} requests found.`
+                  ? t("noInterviewRequests")
+                  : `${t("noInterviewRequests")}`
                 }
               </p>
               {(user?.role === "security" || user?.role === "admin" || user?.role === "manager") && (
                 <Button onClick={() => setShowRequestModal(true)}>
                   <Plus className="w-4 h-4 mr-2" />
-                  Schedule First Review
+                  {t("scheduleFirstReview")}
                 </Button>
               )}
             </CardContent>
@@ -454,27 +454,27 @@ export default function InterviewsPage() {
                       </Badge>
                       {request.actionTakenBy && (request.status === 'approved' || request.status === 'rejected') && (
                         <span className="text-sm text-gray-600">
-                          by {request.actionTakenBy.firstName} {request.actionTakenBy.lastName}
+                          {t("by")} {request.actionTakenBy.firstName} {request.actionTakenBy.lastName}
                         </span>
                       )}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                       <div>
-                        <p className="text-sm font-medium text-gray-500">Candidate</p>
+                        <p className="text-sm font-medium text-gray-500">{t("candidate")}</p>
                         <p className="text-sm text-gray-900 mt-1">{request.candidateName}</p>
                         {request.candidateEmail && (
                           <p className="text-xs text-gray-600">{request.candidateEmail}</p>
                         )}
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-500">Requested by</p>
+                        <p className="text-sm font-medium text-gray-500">{t("requestedBy")}</p>
                         <p className="text-sm text-gray-900 mt-1">
                           {request.requestedBy.firstName} {request.requestedBy.lastName}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-500">Proposed Date</p>
+                        <p className="text-sm font-medium text-gray-500">{t("proposedDate")}</p>
                         <p className="text-sm text-gray-900 mt-1">
                           {new Date(request.proposedDateTime).toLocaleDateString()} at{" "}
                           {new Date(request.proposedDateTime).toLocaleTimeString([], {
@@ -484,8 +484,8 @@ export default function InterviewsPage() {
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-500">Duration</p>
-                        <p className="text-sm text-gray-900 mt-1">{request.duration} minutes</p>
+                        <p className="text-sm font-medium text-gray-500">{t("duration")}</p>
+                        <p className="text-sm text-gray-900 mt-1">{request.duration} {t("minutes")}</p>
                       </div>
                     </div>
 
@@ -494,12 +494,12 @@ export default function InterviewsPage() {
                       <div>
                         <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
                           <User className="w-4 h-4" />
-                          Assigned Manager
+                          {t("assignedManager")}
                         </p>
                         <p className="text-sm text-gray-900 dark:text-gray-100 mt-1">
                           {request.manager 
                             ? `${request.manager.firstName} ${request.manager.lastName}` 
-                            : <span className="text-gray-400 italic">Not assigned</span>
+                            : <span className="text-gray-400 italic">{t("notAssigned")}</span>
                           }
                         </p>
                       </div>
@@ -507,13 +507,13 @@ export default function InterviewsPage() {
                         <div>
                           <p className="text-sm font-medium text-gray-500 flex items-center gap-1">
                             {request.status === 'approved' ? <CheckCircle2 className="w-4 h-4 text-green-600" /> : <XCircle className="w-4 h-4 text-red-600" />}
-                            Handled By
+                            {t("handledBy")}
                           </p>
                           <p className="text-sm text-gray-900 dark:text-gray-100 mt-1 font-medium">
                             {request.actionTakenBy.firstName} {request.actionTakenBy.lastName}
                           </p>
                           <p className="text-xs text-gray-500 mt-0.5">
-                            {request.status === 'approved' ? 'Approved' : 'Rejected'} on {new Date(request.updatedAt).toLocaleDateString()}
+                            {request.status === 'approved' ? t("approved") : t("rejected")} {t("on")} {new Date(request.updatedAt).toLocaleDateString()}
                           </p>
                         </div>
                       )}
@@ -521,14 +521,14 @@ export default function InterviewsPage() {
 
                     {request.description && (
                       <div className="mb-4">
-                        <p className="text-sm font-medium text-gray-500 mb-2">Interview Details</p>
+                        <p className="text-sm font-medium text-gray-500 mb-2">{t("interviewDetails")}</p>
                         <p className="text-sm text-gray-700">{request.description}</p>
                       </div>
                     )}
 
                     {request.rejectionReason && (
                       <div className="mb-4">
-                        <p className="text-sm font-medium text-red-600 mb-2">Rejection Reason</p>
+                        <p className="text-sm font-medium text-red-600 mb-2">{t("rejectionReason")}</p>
                         <p className="text-sm text-red-700">{request.rejectionReason}</p>
                       </div>
                     )}
@@ -536,7 +536,7 @@ export default function InterviewsPage() {
                     <div className="flex items-center space-x-2 text-sm text-gray-500">
                       <Clock className="w-4 h-4" />
                       <span>
-                        Submitted {new Date(request.createdAt).toLocaleDateString()}
+                        {t("submitted")} {new Date(request.createdAt).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
@@ -554,7 +554,7 @@ export default function InterviewsPage() {
                           disabled={updateRequestMutation.isPending}
                         >
                           <CheckCircle2 className="w-4 h-4 mr-2" />
-                          Approve
+                          {t("approve")}
                         </Button>
                         <Button
                           variant="destructive"
@@ -565,7 +565,7 @@ export default function InterviewsPage() {
                           disabled={updateRequestMutation.isPending}
                         >
                           <XCircle className="w-4 h-4 mr-2" />
-                          Reject
+                          {t("reject")}
                         </Button>
                       </>
                     )}
@@ -579,7 +579,7 @@ export default function InterviewsPage() {
                       data-testid={`button-view-details-${request.id}`}
                     >
                       <Calendar className="w-4 h-4 mr-2" />
-                      View Details
+                      {t("viewDetails")}
                     </Button>
 
                     {(user?.role === "admin" || user?.role === "manager") && (
@@ -617,7 +617,7 @@ export default function InterviewsPage() {
                         className="text-blue-600 border-blue-600 hover:bg-blue-50"
                       >
                         <Archive className="w-4 h-4 mr-2" />
-                        Archive
+                        {t("archiveInterview")}
                       </Button>
                     )}
                   </div>
