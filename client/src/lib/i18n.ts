@@ -2653,7 +2653,6 @@ const resources = {
       takeAction: "اتخاذ إجراء",
       viewAlert: "عرض التنبيه",
       giveFeedback: "إرسال تعليق",
-      viewDetails: "عرض التفاصيل",
       checkDeadline: "التحقق من الموعد النهائي",
       viewNotice: "عرض الإشعار",
       markImportant: "وضع علامة مهمة",
