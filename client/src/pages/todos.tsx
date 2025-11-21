@@ -1282,41 +1282,38 @@ export default function TodosPage() {
                                     setSelectedCompletedItem(item);
                                     setShowCompletionDetailsDialog(true);
                                   }}
-                                  className="flex items-center gap-1.5 bg-green-100 text-green-700 hover:text-green-800 hover:bg-green-200 p-1.5 h-7 px-2.5 rounded text-xs font-bold border border-green-300"
+                                  className="flex items-center gap-1 bg-green-100 text-green-700 hover:text-green-800 hover:bg-green-200 p-1.5 h-7 px-2 rounded text-xs font-bold border border-green-300"
                                   title="Click to view completion proof"
                                   data-testid={`button-view-proof-${item.id}`}
                                 >
                                   <Eye className="w-4 h-4 flex-shrink-0" />
-                                  <span>Proof</span>
                                 </Button>
                               </motion.div>
                             )}
-                            {true && (
-                              <div className="flex items-center gap-1 border border-red-300 rounded-md px-1 py-0.5 bg-red-50">
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => {
-                                    setSelectedItemForReminder(item);
-                                    setShowReminderDialog(true);
-                                  }}
-                                  className="text-amber-500 hover:text-amber-700 hover:bg-amber-50 p-1 h-6 w-6"
-                                  title="Set reminder"
-                                  data-testid={`button-reminder-${item.id}`}
-                                >
-                                  <Bell className="w-3 h-3" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => handleRemoveTask(item.id)}
-                                  className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 h-6 w-6"
-                                  title="Delete task"
-                                >
-                                  <X className="w-3 h-3" />
-                                </Button>
-                              </div>
-                            )}
+                            <div className="flex items-center gap-1 border border-amber-300 rounded-md px-1.5 py-0.5 bg-amber-50">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  setSelectedItemForReminder(item);
+                                  setShowReminderDialog(true);
+                                }}
+                                className="text-amber-600 hover:text-amber-700 hover:bg-amber-100 p-0.5 h-6 w-6"
+                                title="Set reminder"
+                                data-testid={`button-reminder-${item.id}`}
+                              >
+                                <Bell className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => handleRemoveTask(item.id)}
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50 p-0.5 h-6 w-6"
+                                title="Delete task"
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </div>
                         </motion.div>
                       ))}
