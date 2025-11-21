@@ -1282,12 +1282,12 @@ export default function TodosPage() {
                                     setSelectedCompletedItem(item);
                                     setShowCompletionDetailsDialog(true);
                                   }}
-                                  className="flex items-center gap-1 bg-green-100 text-green-700 hover:text-green-800 hover:bg-green-200 p-1 h-6 px-2 rounded text-xs font-semibold"
-                                  title="Proof provided - Click to view"
+                                  className="flex items-center gap-1.5 bg-green-100 text-green-700 hover:text-green-800 hover:bg-green-200 p-1.5 h-7 px-2.5 rounded text-xs font-bold border border-green-300"
+                                  title="Click to view completion proof"
                                   data-testid={`button-view-proof-${item.id}`}
                                 >
-                                  <Eye className="w-3 h-3" />
-                                  Proof ✅
+                                  <Eye className="w-4 h-4 flex-shrink-0" />
+                                  <span>Proof</span>
                                 </Button>
                               </motion.div>
                             )}
