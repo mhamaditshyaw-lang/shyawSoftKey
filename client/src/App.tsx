@@ -39,6 +39,7 @@ import Header from "@/components/layout/header";
 import SlidingSidebarMenu from "@/components/navigation/sliding-sidebar-menu";
 import PageAccessManagement from "@/pages/page-access-management";
 import BroadcastNotificationPage from "@/pages/broadcast-notification";
+import ManagerTodosPage from "@/pages/manager-todos";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -205,6 +206,11 @@ function Router() {
       <Route path="/partitions">
         <ProtectedRoute>
           <PartitionBrowserPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/manager-todos">
+        <ProtectedRoute>
+          <ManagerTodosPage />
         </ProtectedRoute>
       </Route>
       <Route path="/">
