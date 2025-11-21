@@ -2,6 +2,7 @@ export interface MenuItem {
   labelKey: string;
   label: string;
   path: string;
+  iconName?: string;
   description?: string;
 }
 
@@ -20,9 +21,9 @@ export const MENU_PARTITIONS: MenuPartition[] = [
     iconName: "ListTodo",
     description: "Daily tasks, reminders, and activity tracking",
     items: [
-      { labelKey: "menu_dailyTasks", label: "Daily Tasks", path: "/todos", description: "Manage and complete daily tasks" },
-      { labelKey: "menu_reminders", label: "Reminders", path: "/reminders", description: "Set and manage task reminders" },
-      { labelKey: "menu_userActivity", label: "User Activity", path: "/user-activity", description: "Track user activity logs" },
+      { labelKey: "menu_dailyTasks", label: "Daily Tasks", path: "/todos", iconName: "CheckCircle2", description: "Manage and complete daily tasks" },
+      { labelKey: "menu_reminders", label: "Reminders", path: "/reminders", iconName: "Clock", description: "Set and manage task reminders" },
+      { labelKey: "menu_userActivity", label: "User Activity", path: "/user-activity", iconName: "Activity", description: "Track user activity logs" },
     ],
   },
   {
@@ -31,9 +32,9 @@ export const MENU_PARTITIONS: MenuPartition[] = [
     iconName: "Users",
     description: "Manage employees, departments, and teams",
     items: [
-      { labelKey: "menu_users", label: "Users", path: "/users", description: "View and manage all users" },
-      { labelKey: "menu_addEmployee", label: "Add Employee", path: "/add-employee", description: "Create new employee records" },
-      { labelKey: "menu_departments", label: "Departments", path: "/department-management", description: "Organize departments and teams" },
+      { labelKey: "menu_users", label: "Users", path: "/users", iconName: "Users2", description: "View and manage all users" },
+      { labelKey: "menu_addEmployee", label: "Add Employee", path: "/add-employee", iconName: "UserPlus", description: "Create new employee records" },
+      { labelKey: "menu_departments", label: "Departments", path: "/department-management", iconName: "Building2", description: "Organize departments and teams" },
     ],
   },
   {
@@ -42,10 +43,10 @@ export const MENU_PARTITIONS: MenuPartition[] = [
     iconName: "Briefcase",
     description: "HR operations, interviews, and performance management",
     items: [
-      { labelKey: "menu_interviews", label: "Interviews", path: "/interviews", description: "Schedule and manage interviews" },
-      { labelKey: "menu_feedback", label: "Feedback", path: "/feedback", description: "Collect and review feedback" },
-      { labelKey: "menu_performanceArchive", label: "Performance Archive", path: "/archive", description: "Archive performance reviews" },
-      { labelKey: "menu_pageAccess", label: "Page Access", path: "/page-access-management", description: "Manage page permissions" },
+      { labelKey: "menu_interviews", label: "Interviews", path: "/interviews", iconName: "MessageCircle", description: "Schedule and manage interviews" },
+      { labelKey: "menu_feedback", label: "Feedback", path: "/feedback", iconName: "MessageSquare", description: "Collect and review feedback" },
+      { labelKey: "menu_performanceArchive", label: "Performance Archive", path: "/archive", iconName: "Archive", description: "Archive performance reviews" },
+      { labelKey: "menu_pageAccess", label: "Page Access", path: "/page-access-management", iconName: "Lock", description: "Manage page permissions" },
     ],
   },
   {
@@ -54,10 +55,10 @@ export const MENU_PARTITIONS: MenuPartition[] = [
     iconName: "TrendingUp",
     description: "Business intelligence and reporting",
     items: [
-      { labelKey: "menu_reports", label: "Reports", path: "/reports", description: "Generate business reports" },
-      { labelKey: "menu_operationData", label: "Operation Data", path: "/metrics", description: "View system operation data" },
-      { labelKey: "menu_dataView", label: "Data View", path: "/data-view", description: "View raw data with filters" },
-      { labelKey: "menu_allData", label: "All Data", path: "/all-data", description: "Browse all system data" },
+      { labelKey: "menu_reports", label: "Reports", path: "/reports", iconName: "FileText", description: "Generate business reports" },
+      { labelKey: "menu_operationData", label: "Operation Data", path: "/metrics", iconName: "Database", description: "View system operation data" },
+      { labelKey: "menu_dataView", label: "Data View", path: "/data-view", iconName: "Eye", description: "View raw data with filters" },
+      { labelKey: "menu_allData", label: "All Data", path: "/all-data", iconName: "Layers", description: "Browse all system data" },
     ],
   },
   {
@@ -66,11 +67,11 @@ export const MENU_PARTITIONS: MenuPartition[] = [
     iconName: "Cog",
     description: "System administration and maintenance",
     items: [
-      { labelKey: "menu_broadcastNotification", label: "Broadcast Notification", path: "/broadcast-notification", description: "Send messages to all users" },
-      { labelKey: "menu_notifications", label: "Notifications", path: "/notification-management", description: "Manage notifications" },
-      { labelKey: "menu_backupRestore", label: "Backup & Restore", path: "/backup-restore", description: "Backup and restore data" },
-      { labelKey: "menu_demo", label: "Demo", path: "/multilingual-demo", description: "Multilingual demo" },
-      { labelKey: "menu_notificationTest", label: "Notification Test", path: "/notification-test", description: "Test notifications" },
+      { labelKey: "menu_broadcastNotification", label: "Broadcast Notification", path: "/broadcast-notification", iconName: "Radio", description: "Send messages to all users" },
+      { labelKey: "menu_notifications", label: "Notifications", path: "/notification-management", iconName: "Bell", description: "Manage notifications" },
+      { labelKey: "menu_backupRestore", label: "Backup & Restore", path: "/backup-restore", iconName: "HardDrive", description: "Backup and restore data" },
+      { labelKey: "menu_demo", label: "Demo", path: "/multilingual-demo", iconName: "Play", description: "Multilingual demo" },
+      { labelKey: "menu_notificationTest", label: "Notification Test", path: "/notification-test", iconName: "TestTube", description: "Test notifications" },
     ],
   },
 ];

@@ -24,7 +24,19 @@ import {
   ListTodo,
   Briefcase,
   TrendingUp,
-  Cog
+  Cog,
+  CheckCircle2,
+  Clock,
+  Users2,
+  UserPlus,
+  MessageCircle,
+  Lock,
+  FileText,
+  Eye,
+  Layers,
+  Radio,
+  Play,
+  TestTube
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +55,7 @@ const SidebarMenuButton = ({ children, asChild }: { children: React.ReactNode; a
 };
 
 // Icon mapping for menu partitions
-const iconMap: Record<string, LucideIcon> = {
+const partitionIconMap: Record<string, LucideIcon> = {
   ListTodo,
   Users,
   Briefcase,
@@ -51,8 +63,36 @@ const iconMap: Record<string, LucideIcon> = {
   Cog,
 };
 
+// Icon mapping for menu items
+const itemIconMap: Record<string, LucideIcon> = {
+  CheckCircle2,
+  Clock,
+  Activity,
+  Users2,
+  UserPlus,
+  Building2,
+  MessageCircle,
+  MessageSquare,
+  Archive,
+  Lock,
+  FileText,
+  Database,
+  Eye,
+  Layers,
+  Radio,
+  Bell,
+  HardDrive,
+  Play,
+  TestTube,
+};
+
 const getPartitionIcon = (iconName: string): LucideIcon => {
-  return iconMap[iconName] || ListTodo;
+  return partitionIconMap[iconName] || ListTodo;
+};
+
+const getItemIcon = (iconName?: string): LucideIcon | null => {
+  if (!iconName) return null;
+  return itemIconMap[iconName] || null;
 };
 
 
@@ -231,10 +271,17 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
                           )}
                           title={item.label}
                         >
-                          <span className={cn(
-                            "w-2 h-2 rounded-full flex-shrink-0",
-                            active ? "bg-white" : "bg-dashboard-primary/40"
-                          )} />
+                          {(() => {
+                            const ItemIcon = getItemIcon(item.iconName);
+                            return ItemIcon ? (
+                              <ItemIcon className={cn("h-4 w-4 flex-shrink-0", active ? "text-white" : "text-dashboard-primary")} />
+                            ) : (
+                              <span className={cn(
+                                "w-2 h-2 rounded-full flex-shrink-0",
+                                active ? "bg-white" : "bg-dashboard-primary/40"
+                              )} />
+                            );
+                          })()}
                           <span className="flex-1 text-left">{t(item.labelKey)}</span>
                         </Button>
                       </Link>
