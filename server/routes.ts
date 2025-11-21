@@ -1641,6 +1641,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/broadcast-notification", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
+    try {
+      const { title, message } = req.body;
+
+      if (!title || !message) {
+        return res.status(400).json({ message: "Title and message are required" });
+      }
+
+      const { DeviceNotificationService } = await import("./device-notification-service");
+      
+      // Get all active users count for response
+      const allUsers = await storage.getAllUsers();
+      const usersCount = allUsers.length;
+
+      // Send broadcast notification to all users
+      const notificationPromises = allUsers.map(user =>
+        DeviceNotificationService.createUserNotification(
+          user.id,
+          "broadcast",
+          title,
+          message,
+          "normal",
+          { 
+            icon: "📢",
+            actionUrl: "/"
+          }
+        )
+      );
+
+      await Promise.all(notificationPromises);
+
+      res.json({ 
+        message: "Broadcast notification sent successfully",
+        usersCount 
+      });
+    } catch (error) {
+      console.error("Error sending broadcast notification:", error);
+      res.status(500).json({ message: "Failed to send broadcast notification" });
+    }
+  });
+
   // Reminder notification service routes
   app.post("/api/reminder-notifications/trigger", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
     try {

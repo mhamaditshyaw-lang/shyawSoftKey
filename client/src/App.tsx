@@ -176,6 +176,11 @@ function Router() {
           <NotificationTestPage />
         </ProtectedRoute>
       </Route>
+      <Route path="/broadcast-notification">
+        <ProtectedRoute requiredPermission="manage_users">
+          <BroadcastNotificationPage />
+        </ProtectedRoute>
+      </Route>
       <Route path="/notification-management">
         <ProtectedRoute requiredPermission="manage_notifications">
           <NotificationManagementPage />
