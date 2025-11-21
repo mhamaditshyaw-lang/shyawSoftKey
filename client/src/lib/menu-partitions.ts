@@ -59,6 +59,7 @@ export const MENU_PARTITIONS: MenuPartition[] = [
     icon: "⚙️",
     description: "System administration and maintenance",
     items: [
+      { label: "Broadcast Notification", path: "/broadcast-notification", description: "Send messages to all users" },
       { label: "Notifications", path: "/notification-management", description: "Manage notifications" },
       { label: "Backup & Restore", path: "/backup-restore", description: "Backup and restore data" },
       { label: "Demo", path: "/multilingual-demo", description: "Multilingual demo" },

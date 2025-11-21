@@ -38,6 +38,7 @@ import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/header";
 import SlidingSidebarMenu from "@/components/navigation/sliding-sidebar-menu";
 import PageAccessManagement from "@/pages/page-access-management";
+import BroadcastNotificationPage from "@/pages/broadcast-notification";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
