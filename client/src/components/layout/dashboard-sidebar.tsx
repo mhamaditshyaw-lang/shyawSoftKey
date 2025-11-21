@@ -20,7 +20,11 @@ import {
   Activity,
   Bell,
   HardDrive,
-  LucideIcon
+  LucideIcon,
+  ListTodo,
+  Briefcase,
+  TrendingUp,
+  Cog
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -40,15 +44,15 @@ const SidebarMenuButton = ({ children, asChild }: { children: React.ReactNode; a
 
 // Icon mapping for menu partitions
 const iconMap: Record<string, LucideIcon> = {
-  CheckSquare,
+  ListTodo,
   Users,
-  Zap,
-  BarChart3,
-  Settings,
+  Briefcase,
+  TrendingUp,
+  Cog,
 };
 
 const getPartitionIcon = (iconName: string): LucideIcon => {
-  return iconMap[iconName] || CheckSquare;
+  return iconMap[iconName] || ListTodo;
 };
 
 
@@ -202,7 +206,10 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
                   </>
                 )}
                 {isCollapsed && (
-                  <span className="text-lg">{partition.icon}</span>
+                  (() => {
+                    const IconComponent = getPartitionIcon(partition.iconName);
+                    return <IconComponent className="h-5 w-5 text-dashboard-primary" />;
+                  })()
                 )}
               </button>
 

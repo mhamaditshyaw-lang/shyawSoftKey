@@ -17,7 +17,7 @@ export const MENU_PARTITIONS: MenuPartition[] = [
   {
     titleKey: "menu_taskManagement",
     title: "Task Management",
-    iconName: "CheckSquare",
+    iconName: "ListTodo",
     description: "Daily tasks, reminders, and activity tracking",
     items: [
       { labelKey: "menu_dailyTasks", label: "Daily Tasks", path: "/todos", description: "Manage and complete daily tasks" },
@@ -39,7 +39,7 @@ export const MENU_PARTITIONS: MenuPartition[] = [
   {
     titleKey: "menu_hrOperations",
     title: "HR & Operations",
-    iconName: "Zap",
+    iconName: "Briefcase",
     description: "HR operations, interviews, and performance management",
     items: [
       { labelKey: "menu_interviews", label: "Interviews", path: "/interviews", description: "Schedule and manage interviews" },
@@ -51,7 +51,7 @@ export const MENU_PARTITIONS: MenuPartition[] = [
   {
     titleKey: "menu_analyticsReports",
     title: "Analytics & Reports",
-    iconName: "BarChart3",
+    iconName: "TrendingUp",
     description: "Business intelligence and reporting",
     items: [
       { labelKey: "menu_reports", label: "Reports", path: "/reports", description: "Generate business reports" },
@@ -63,7 +63,7 @@ export const MENU_PARTITIONS: MenuPartition[] = [
   {
     titleKey: "menu_systemManagement",
     title: "System Management",
-    iconName: "Settings",
+    iconName: "Cog",
     description: "System administration and maintenance",
     items: [
       { labelKey: "menu_broadcastNotification", label: "Broadcast Notification", path: "/broadcast-notification", description: "Send messages to all users" },
