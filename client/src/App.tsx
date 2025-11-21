@@ -40,6 +40,7 @@ import SlidingSidebarMenu from "@/components/navigation/sliding-sidebar-menu";
 import PageAccessManagement from "@/pages/page-access-management";
 import BroadcastNotificationPage from "@/pages/broadcast-notification";
 import ManagerTodosPage from "@/pages/manager-todos";
+import ManagerDashboard from "@/pages/manager-dashboard";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -211,6 +212,11 @@ function Router() {
       <Route path="/manager-todos">
         <ProtectedRoute>
           <ManagerTodosPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/manager-dashboard">
+        <ProtectedRoute>
+          <ManagerDashboard />
         </ProtectedRoute>
       </Route>
       <Route path="/">
