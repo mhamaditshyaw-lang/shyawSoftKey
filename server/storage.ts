@@ -119,43 +119,43 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
     return await executeWithRetry(async () => {
-      const [user] = await db.select().from(users).where(eq(users.id, id));
-      return user || undefined;
+      const result = await db.select().from(users).where(eq(users.id, id));
+      return (result as User[])[0] || undefined;
     });
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     return await executeWithRetry(async () => {
-      const [user] = await db.select().from(users).where(eq(users.username, username));
-      return user || undefined;
+      const result = await db.select().from(users).where(eq(users.username, username));
+      return (result as User[])[0] || undefined;
     });
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
     return await executeWithRetry(async () => {
-      const [user] = await db.select().from(users).where(eq(users.email, email));
-      return user || undefined;
+      const result = await db.select().from(users).where(eq(users.email, email));
+      return (result as User[])[0] || undefined;
     });
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
     return await executeWithRetry(async () => {
-      const [user] = await db
+      const result = await db
         .insert(users)
         .values(insertUser)
         .returning();
-      return user;
+      return (result as User[])[0];
     });
   }
 
   async updateUser(id: number, updates: Partial<User>): Promise<User | undefined> {
     return await executeWithRetry(async () => {
-      const [user] = await db
+      const result = await db
         .update(users)
         .set({ ...updates, lastActiveAt: new Date() })
         .where(eq(users.id, id))
         .returning();
-      return user || undefined;
+      return (result as User[])[0] || undefined;
     });
   }
 
@@ -197,7 +197,7 @@ export class DatabaseStorage implements IStorage {
           .where(eq(users.id, id))
           .returning();
         
-        return result.length > 0;
+        return (result as User[]).length > 0;
       });
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -208,15 +208,15 @@ export class DatabaseStorage implements IStorage {
   async getAllUsers(accessibleUserIds?: number[]): Promise<User[]> {
     return await executeWithRetry(async () => {
       if (accessibleUserIds && accessibleUserIds.length > 0) {
-        return await db.select().from(users).where(inArray(users.id, accessibleUserIds)).orderBy(desc(users.createdAt));
+        return await db.select().from(users).where(inArray(users.id, accessibleUserIds)).orderBy(desc(users.createdAt)) as User[];
       }
-      return await db.select().from(users).orderBy(desc(users.createdAt));
+      return await db.select().from(users).orderBy(desc(users.createdAt)) as User[];
     });
   }
 
   async getUsersByRole(role: string): Promise<User[]> {
     return await executeWithRetry(async () => {
-      return await db.select().from(users).where(eq(users.role, role as any));
+      return await db.select().from(users).where(eq(users.role, role as any)) as User[];
     });
   }
 
