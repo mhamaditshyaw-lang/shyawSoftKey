@@ -32,7 +32,8 @@ import {
   Filter,
   ArrowRight,
   ArrowUp,
-  Server
+  Server,
+  Radio
 } from "lucide-react";
 import { HelpTooltip, FeatureTooltip, StatusTooltip } from "@/components/ui/help-tooltip";
 import { useTranslation } from "react-i18next";
@@ -837,6 +838,28 @@ export default function DashboardPage() {
                         <BarChart3 className="w-8 h-8" />
                       </motion.div>
                       <span className="font-medium">{t("viewReports")}</span>
+                    </Button>
+                  </motion.div>
+                )}
+
+                {user?.role === "admin" && (
+                  <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 1.6, type: "spring", stiffness: 200 }}
+                    variants={iconVariants}
+                    whileHover="hover"
+                    whileTap="tap"
+                  >
+                    <Button
+                      variant="outline"
+                      className="p-6 h-auto flex-col space-y-2 w-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 bg-white/80 text-purple-700 hover:text-purple-800 transition-all duration-300 shadow-sm hover:shadow-md"
+                      onClick={() => setLocation("/broadcast-notification")}
+                    >
+                      <motion.div variants={iconVariants}>
+                        <Radio className="w-8 h-8" />
+                      </motion.div>
+                      <span className="font-medium">Broadcast</span>
                     </Button>
                   </motion.div>
                 )}
