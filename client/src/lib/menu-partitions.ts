@@ -38,10 +38,10 @@ export const MENU_PARTITIONS: MenuPartition[] = [
     ],
   },
   {
-    titleKey: "menu_hrOperations",
-    title: "HR & Operations",
+    titleKey: "menu_operations",
+    title: "Operations",
     iconName: "Briefcase",
-    description: "HR operations, interviews, and performance management",
+    description: "Operations, interviews, and performance management",
     items: [
       { labelKey: "menu_interviews", label: "Interviews", path: "/interviews", iconName: "MessageCircle", description: "Schedule and manage interviews" },
       { labelKey: "menu_feedback", label: "Feedback", path: "/feedback", iconName: "MessageSquare", description: "Collect and review feedback" },
