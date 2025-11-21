@@ -691,16 +691,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/todos/items/:id", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const id = parseInt(req.params.id);
-      let updates = { ...req.body };
+      let updates: any = {};
+
+      // Only allow specific fields to be updated
+      const allowedFields = ['isCompleted', 'title', 'description', 'priority', 'dueDate', 'reminderDate', 'completedByNote'];
+      
+      for (const field of allowedFields) {
+        if (req.body[field] !== undefined) {
+          updates[field] = req.body[field];
+        }
+      }
 
       // Verify todo item is in accessible scope - only allow modifications for same department
       if (req.user?.role !== 'admin') {
         await assertTodoItemInScope(id, req.accessibleUserIds!);
       }
 
-      // If marking as complete, auto-set completedById
-      if (updates.isCompleted === true && !updates.completedById) {
+      // If marking as complete, auto-set completedById and completedAt
+      if (updates.isCompleted === true) {
         updates.completedById = req.user?.id;
+        updates.completedAt = new Date();
       }
 
       const todoItem = await storage.updateTodoItem(id, updates);
