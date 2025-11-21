@@ -345,8 +345,10 @@ export class DatabaseStorage implements IStorage {
 
   async getTodoLists(accessibleUserIds?: number[]): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]> {
     return await executeWithRetry(async () => {
+      let todoListsResult;
+      
       if (accessibleUserIds && accessibleUserIds.length > 0) {
-        const result = await db.query.todoLists.findMany({
+        todoListsResult = await db.query.todoLists.findMany({
           where: (todoLists, { or, inArray }) => or(
             inArray(todoLists.createdById, accessibleUserIds),
             inArray(todoLists.assignedToId, accessibleUserIds)
@@ -354,32 +356,37 @@ export class DatabaseStorage implements IStorage {
           with: {
             createdBy: true,
             assignedTo: true,
-            items: {
-              orderBy: (items, { desc }) => [desc(items.createdAt)],
-            },
           },
           orderBy: (todoLists, { desc }) => [desc(todoLists.createdAt)],
         });
-        return result;
+      } else {
+        todoListsResult = await db.query.todoLists.findMany({
+          with: {
+            createdBy: true,
+            assignedTo: true,
+          },
+          orderBy: (todoLists, { desc }) => [desc(todoLists.createdAt)],
+        });
       }
       
-      const result = await db.query.todoLists.findMany({
-        with: {
-          createdBy: true,
-          assignedTo: true,
-          items: {
-            orderBy: (items, { desc }) => [desc(items.createdAt)],
-          },
-        },
-        orderBy: (todoLists, { desc }) => [desc(todoLists.createdAt)],
-      });
+      // Manually fetch items with all columns using raw SQL
+      const result = await Promise.all(
+        todoListsResult.map(async (list) => {
+          const items = await db.select().from(todoItems).where(eq(todoItems.todoListId, list.id)).orderBy(desc(todoItems.createdAt));
+          return {
+            ...list,
+            items: items as TodoItem[],
+          };
+        })
+      );
+      
       return result;
     });
   }
 
   async getTodoListsByUser(userId: number): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]> {
     return await executeWithRetry(async () => {
-      const result = await db.query.todoLists.findMany({
+      const todoListsResult = await db.query.todoLists.findMany({
         where: (todoLists, { or, eq }) => or(
           eq(todoLists.createdById, userId),
           eq(todoLists.assignedToId, userId)
@@ -387,12 +394,19 @@ export class DatabaseStorage implements IStorage {
         with: {
           createdBy: true,
           assignedTo: true,
-          items: {
-            orderBy: (items, { desc }) => [desc(items.createdAt)],
-          },
         },
         orderBy: (todoLists, { desc }) => [desc(todoLists.createdAt)],
       });
+      
+      const result = await Promise.all(
+        todoListsResult.map(async (list) => {
+          const items = await db.select().from(todoItems).where(eq(todoItems.todoListId, list.id)).orderBy(desc(todoItems.createdAt));
+          return {
+            ...list,
+            items: items as TodoItem[],
+          };
+        })
+      );
       return result;
     });
   }
@@ -409,17 +423,21 @@ export class DatabaseStorage implements IStorage {
 
   async getTodoList(id: number): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] }) | undefined> {
     return await executeWithRetry(async () => {
-      const result = await db.query.todoLists.findFirst({
+      const list = await db.query.todoLists.findFirst({
         where: (todoLists, { eq }) => eq(todoLists.id, id),
         with: {
           createdBy: true,
           assignedTo: true,
-          items: {
-            orderBy: (items, { desc }) => [desc(items.createdAt)],
-          },
         },
       });
-      return result || undefined;
+      
+      if (!list) return undefined;
+      
+      const items = await db.select().from(todoItems).where(eq(todoItems.todoListId, id)).orderBy(desc(todoItems.createdAt));
+      return {
+        ...list,
+        items: items as TodoItem[],
+      };
     });
   }
 
