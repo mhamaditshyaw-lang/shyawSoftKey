@@ -93,7 +93,7 @@ export default function NotificationManagement() {
     refetchInterval: 5000, // Refetch every 5 seconds
   });
 
-  const notifications = (notificationsData as Notification[]) || [];
+  const notifications = (notificationsData?.notifications as Notification[]) || [];
 
   const markAsReadMutation = useMutation({
     mutationFn: (notificationId: number) => 
