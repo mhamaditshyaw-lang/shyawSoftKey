@@ -1255,7 +1255,7 @@ export default function TodosPage() {
                             )}
                           </motion.button>
                           <span className={`flex-1 text-sm font-medium break-words overflow-hidden ${
-                            item.isCompleted ? 'text-green-700 line-through' : 'text-gray-900'
+                            item.isCompleted ? 'text-green-700' : 'text-gray-900'
                           }`}>
                             {item.title}
                           </span>
