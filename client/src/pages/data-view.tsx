@@ -669,11 +669,11 @@ export default function DataViewPage() {
                         key={key}
                         className="group/item bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:shadow-md transition-all duration-200"
                       >
-                        <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-                          {translateFieldLabel(key, t)}
-                        </div>
-                        <div className="text-lg font-bold text-gray-800 group-hover/item:text-blue-600 transition-colors">
+                        <div className="text-2xl font-bold text-gray-800 group-hover/item:text-blue-600 transition-colors">
                           {value}
+                        </div>
+                        <div className="text-xs font-medium text-gray-500 mt-2">
+                          {translateFieldLabel(key, t)}
                         </div>
                       </div>
                     ))}
