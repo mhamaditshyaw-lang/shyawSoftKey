@@ -43,7 +43,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Checkbox } from "./ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 interface TodoItem {
@@ -1270,19 +1270,26 @@ export default function TodosPage() {
                               </motion.div>
                             )}
                             {item.isCompleted && item.completedByNote && (
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => {
-                                  setSelectedCompletedItem(item);
-                                  setShowCompletionDetailsDialog(true);
-                                }}
-                                className="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-1 h-6 w-6"
-                                title="View completion proof"
-                                data-testid={`button-view-proof-${item.id}`}
+                              <motion.div
+                                initial={{ scale: 0, rotate: -180 }}
+                                animate={{ scale: 1, rotate: 0 }}
+                                transition={{ type: "spring", stiffness: 300 }}
                               >
-                                <Eye className="w-3 h-3" />
-                              </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setSelectedCompletedItem(item);
+                                    setShowCompletionDetailsDialog(true);
+                                  }}
+                                  className="flex items-center gap-1 bg-green-100 text-green-700 hover:text-green-800 hover:bg-green-200 p-1 h-6 px-2 rounded text-xs font-semibold"
+                                  title="Proof provided - Click to view"
+                                  data-testid={`button-view-proof-${item.id}`}
+                                >
+                                  <CheckCircle2 className="w-3 h-3" />
+                                  Proof ✅
+                                </Button>
+                              </motion.div>
                             )}
                             {true && (
                               <div className="flex items-center gap-1 border border-red-300 rounded-md px-1 py-0.5 bg-red-50">
