@@ -174,7 +174,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
                   <>
                     <span className="text-lg flex-shrink-0">{partition.icon}</span>
                     <span className="text-sm font-bold text-dashboard-text-light dark:text-dashboard-text-dark flex-1 text-left tracking-wide">
-                      {partition.title}
+                      {t(partition.titleKey)}
                     </span>
                     <ChevronRight 
                       className={cn(
@@ -211,7 +211,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
                             "w-2 h-2 rounded-full flex-shrink-0",
                             active ? "bg-white" : "bg-dashboard-primary/40"
                           )} />
-                          <span className="flex-1 text-left">{item.label}</span>
+                          <span className="flex-1 text-left">{t(item.labelKey)}</span>
                         </Button>
                       </Link>
                     );
