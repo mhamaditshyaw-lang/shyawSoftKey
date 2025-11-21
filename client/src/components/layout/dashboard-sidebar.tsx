@@ -48,7 +48,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
   const [location] = useLocation();
   const { user } = useAuth();
   const { t } = useTranslation();
-  const [expandedPartitions, setExpandedPartitions] = useState<Set<string>>(new Set(["Analytics & Reports"]));
+  const [expandedPartitions, setExpandedPartitions] = useState<Set<string>>(new Set());
   
   const togglePartition = (partitionTitle: string) => {
     const newExpanded = new Set(expandedPartitions);
@@ -87,6 +87,8 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
     }
     return location.startsWith(href);
   };
+  
+  const dashboardActive = isActive("/");
 
   return (
     <aside className={cn(
@@ -127,7 +129,29 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 p-3 space-y-2 overflow-y-auto">
+        {/* Dashboard - Top Item */}
+        <Link href="/">
+          <Button
+            variant={dashboardActive ? "default" : "ghost"}
+            size="sm"
+            className={cn(
+              "w-full justify-start gap-3 transition-all duration-200 font-medium rounded-lg",
+              dashboardActive
+                ? "bg-gradient-to-r from-dashboard-primary to-blue-600 text-white shadow-lg"
+                : "text-dashboard-text-light dark:text-dashboard-text-dark hover:bg-blue-50 dark:hover:bg-blue-950/30",
+              isCollapsed && "justify-center px-2"
+            )}
+            title={isCollapsed ? "Dashboard" : undefined}
+          >
+            <Home className="h-5 w-5 flex-shrink-0" />
+            {!isCollapsed && <span>Dashboard</span>}
+          </Button>
+        </Link>
+
+        <div className="border-t border-dashboard-secondary/10 my-1" />
+
+        {/* Partitions */}
         {partitionItems.map((partition) => {
           const isExpanded = expandedPartitions.has(partition.title);
           
@@ -136,23 +160,26 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
               <button
                 onClick={() => !isCollapsed && togglePartition(partition.title)}
                 className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200",
+                  "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 font-medium",
                   isCollapsed 
                     ? "justify-center" 
-                    : "hover:bg-dashboard-secondary/5 dark:hover:bg-dashboard-secondary/10"
+                    : cn(
+                      "hover:bg-dashboard-primary/10 dark:hover:bg-dashboard-primary/20",
+                      isExpanded && "bg-dashboard-primary/5 dark:bg-dashboard-primary/10"
+                    )
                 )}
                 title={isCollapsed ? partition.title : undefined}
               >
                 {!isCollapsed && (
                   <>
                     <span className="text-lg flex-shrink-0">{partition.icon}</span>
-                    <span className="text-sm font-semibold text-dashboard-text-light dark:text-dashboard-text-dark flex-1 text-left">
+                    <span className="text-sm font-bold text-dashboard-text-light dark:text-dashboard-text-dark flex-1 text-left tracking-wide">
                       {partition.title}
                     </span>
                     <ChevronRight 
                       className={cn(
-                        "h-4 w-4 text-dashboard-secondary/60 transition-transform duration-200 flex-shrink-0",
-                        isExpanded && "rotate-90"
+                        "h-4 w-4 text-dashboard-secondary/70 transition-transform duration-300 flex-shrink-0",
+                        isExpanded && "rotate-90 text-dashboard-primary"
                       )} 
                     />
                   </>
@@ -163,23 +190,27 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
               </button>
 
               {isExpanded && !isCollapsed && (
-                <div className="space-y-1 pl-6">
+                <div className="space-y-1 pl-2 border-l-2 border-dashboard-primary/20">
                   {partition.items.map((item) => {
                     const active = isActive(item.path);
                     
                     return (
                       <Link key={item.path} href={item.path}>
                         <Button
-                          variant={active ? "default" : "ghost"}
+                          variant="ghost"
                           size="sm"
                           className={cn(
-                            "w-full justify-start gap-2 transition-all duration-200 text-xs",
+                            "w-full justify-start gap-2 px-3 transition-all duration-200 text-xs font-medium",
                             active 
                               ? "bg-dashboard-primary text-white shadow-md hover:bg-dashboard-primary/90" 
                               : "text-dashboard-text-light dark:text-dashboard-text-dark hover:bg-dashboard-primary/5 dark:hover:bg-dashboard-primary/10",
                           )}
                           title={item.label}
                         >
+                          <span className={cn(
+                            "w-2 h-2 rounded-full flex-shrink-0",
+                            active ? "bg-white" : "bg-dashboard-primary/40"
+                          )} />
                           <span className="flex-1 text-left">{item.label}</span>
                         </Button>
                       </Link>

@@ -28,7 +28,6 @@ export const MENU_PARTITIONS: MenuPartition[] = [
     description: "Manage employees, departments, and teams",
     items: [
       { label: "Users", path: "/users", description: "View and manage all users" },
-      { label: "Employee List", path: "/employee-management", description: "Browse employees by department" },
       { label: "Add Employee", path: "/add-employee", description: "Create new employee records" },
       { label: "Departments", path: "/department-management", description: "Organize departments and teams" },
     ],
@@ -49,9 +48,8 @@ export const MENU_PARTITIONS: MenuPartition[] = [
     icon: "📊",
     description: "Business intelligence and reporting",
     items: [
-      { label: "Dashboard", path: "/", description: "Main dashboard overview" },
-      { label: "Metrics", path: "/metrics", description: "View system metrics" },
       { label: "Reports", path: "/reports", description: "Generate business reports" },
+      { label: "Operation Data", path: "/metrics", description: "View system operation data" },
       { label: "Data View", path: "/data-view", description: "View raw data with filters" },
       { label: "All Data", path: "/all-data", description: "Browse all system data" },
     ],
