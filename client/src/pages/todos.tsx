@@ -1286,7 +1286,7 @@ export default function TodosPage() {
                                   title="Proof provided - Click to view"
                                   data-testid={`button-view-proof-${item.id}`}
                                 >
-                                  <CheckCircle2 className="w-3 h-3" />
+                                  <Eye className="w-3 h-3" />
                                   Proof ✅
                                 </Button>
                               </motion.div>
