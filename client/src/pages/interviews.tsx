@@ -11,7 +11,7 @@ import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Clock, Check, X, Edit, Calendar, Plus, Archive, Search, RefreshCw, Filter, User, MapPin, CheckCircle2, XCircle, MessageSquare } from "lucide-react";
+import { Clock, Check, X, Edit, Calendar, Plus, Archive, Search, RefreshCw, Filter, User, MapPin, CheckCircle2, XCircle, MessageSquare, ChevronLeft, ChevronRight } from "lucide-react";
 import InterviewRequestModal from "@/components/modals/interview-request-modal";
 import ViewInterviewDetailsModal from "@/components/modals/view-interview-details-modal";
 import { getRelativeTime } from "@/lib/utils";
@@ -34,6 +34,8 @@ export default function InterviewsPage() {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showModifyModal, setShowModifyModal] = useState(false);
   const [showArchiveModal, setShowArchiveModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const { data: interviewsData, isLoading } = useQuery({
     queryKey: ["/api/interviews"],
@@ -172,6 +174,17 @@ export default function InterviewsPage() {
         return true;
     }
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredInterviews.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedInterviews = filteredInterviews.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter, searchTerm, dateFilter, customDate, userFilter, positionFilter]);
 
   const updateRequestMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: number; updates: any }) => {
@@ -442,7 +455,7 @@ export default function InterviewsPage() {
             </CardContent>
           </Card>
         ) : (
-          filteredInterviews.map((request: any) => (
+          paginatedInterviews.map((request: any) => (
             <Card key={request.id}>
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
@@ -627,6 +640,51 @@ export default function InterviewsPage() {
           ))
         )}
       </div>
+
+      {/* Pagination Controls */}
+      {filteredInterviews.length > itemsPerPage && (
+        <div className="flex items-center justify-between mt-8 px-4 py-4 border-t border-gray-200 bg-gray-50 rounded-lg">
+          <div className="text-sm text-gray-600">
+            {t("showing")} {startIndex + 1}-{Math.min(endIndex, filteredInterviews.length)} {t("of")} {filteredInterviews.length}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              data-testid="button-prev-page"
+            >
+              <ChevronLeft className="w-4 h-4 mr-1" />
+              {t("previous")}
+            </Button>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setCurrentPage(page)}
+                  className="w-10"
+                  data-testid={`button-page-${page}`}
+                >
+                  {page}
+                </Button>
+              ))}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              data-testid="button-next-page"
+            >
+              {t("next")}
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       <InterviewRequestModal 
         open={showRequestModal} 

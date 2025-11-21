@@ -40,6 +40,8 @@ import {
   CheckSquare,
   Eye,
   AlertCircle,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -100,6 +102,8 @@ export default function TodosPage() {
   const [showCompletionProofModal, setShowCompletionProofModal] = useState(false);
   const [selectedItemForProof, setSelectedItemForProof] = useState<TodoItem | null>(null);
   const [completionProof, setCompletionProof] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Fetch todos data
   const { data: todosData, isLoading, error } = useQuery({
@@ -208,6 +212,17 @@ export default function TodosPage() {
 
     return matchesSearch && matchesDate && matchesPriority && matchesStatus && matchesUser;
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredTodoLists.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedTodoLists = filteredTodoLists.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, dateFilter, customDate, priorityFilter, statusFilter, userFilter]);
 
   // Auto-refresh effect
   useEffect(() => {
@@ -1085,7 +1100,7 @@ export default function TodosPage() {
           variants={containerVariants}
           className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
         >
-          {filteredTodoLists.map((list: TodoList, index: number) => {
+          {paginatedTodoLists.map((list: TodoList, index: number) => {
             const completionPercentage = getCompletionPercentage(list.items);
             const isCompleted = completionPercentage === 100;
 
