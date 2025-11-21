@@ -8,7 +8,7 @@ export interface MenuItem {
 export interface MenuPartition {
   titleKey: string;
   title: string;
-  icon: string;
+  iconName: string;
   description: string;
   items: MenuItem[];
 }
@@ -17,7 +17,7 @@ export const MENU_PARTITIONS: MenuPartition[] = [
   {
     titleKey: "menu_taskManagement",
     title: "Task Management",
-    icon: "📋",
+    iconName: "CheckSquare",
     description: "Daily tasks, reminders, and activity tracking",
     items: [
       { labelKey: "menu_dailyTasks", label: "Daily Tasks", path: "/todos", description: "Manage and complete daily tasks" },
@@ -28,7 +28,7 @@ export const MENU_PARTITIONS: MenuPartition[] = [
   {
     titleKey: "menu_employeeManagement",
     title: "Employee Management",
-    icon: "👥",
+    iconName: "Users",
     description: "Manage employees, departments, and teams",
     items: [
       { labelKey: "menu_users", label: "Users", path: "/users", description: "View and manage all users" },
@@ -39,7 +39,7 @@ export const MENU_PARTITIONS: MenuPartition[] = [
   {
     titleKey: "menu_hrOperations",
     title: "HR & Operations",
-    icon: "🏢",
+    iconName: "Zap",
     description: "HR operations, interviews, and performance management",
     items: [
       { labelKey: "menu_interviews", label: "Interviews", path: "/interviews", description: "Schedule and manage interviews" },
@@ -51,7 +51,7 @@ export const MENU_PARTITIONS: MenuPartition[] = [
   {
     titleKey: "menu_analyticsReports",
     title: "Analytics & Reports",
-    icon: "📊",
+    iconName: "BarChart3",
     description: "Business intelligence and reporting",
     items: [
       { labelKey: "menu_reports", label: "Reports", path: "/reports", description: "Generate business reports" },
@@ -63,7 +63,7 @@ export const MENU_PARTITIONS: MenuPartition[] = [
   {
     titleKey: "menu_systemManagement",
     title: "System Management",
-    icon: "⚙️",
+    iconName: "Settings",
     description: "System administration and maintenance",
     items: [
       { labelKey: "menu_broadcastNotification", label: "Broadcast Notification", path: "/broadcast-notification", description: "Send messages to all users" },

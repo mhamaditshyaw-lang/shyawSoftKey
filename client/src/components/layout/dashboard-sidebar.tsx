@@ -19,7 +19,8 @@ import {
   Building2,
   Activity,
   Bell,
-  HardDrive
+  HardDrive,
+  LucideIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +36,19 @@ const SidebarMenuButton = ({ children, asChild }: { children: React.ReactNode; a
     return <>{children}</>;
   }
   return <button>{children}</button>;
+};
+
+// Icon mapping for menu partitions
+const iconMap: Record<string, LucideIcon> = {
+  CheckSquare,
+  Users,
+  Zap,
+  BarChart3,
+  Settings,
+};
+
+const getPartitionIcon = (iconName: string): LucideIcon => {
+  return iconMap[iconName] || CheckSquare;
 };
 
 
@@ -172,7 +186,10 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
               >
                 {!isCollapsed && (
                   <>
-                    <span className="text-lg flex-shrink-0">{partition.icon}</span>
+                    {(() => {
+                      const IconComponent = getPartitionIcon(partition.iconName);
+                      return <IconComponent className="h-5 w-5 flex-shrink-0 text-dashboard-primary" />;
+                    })()}
                     <span className="text-sm font-bold text-dashboard-text-light dark:text-dashboard-text-dark flex-1 text-left tracking-wide">
                       {t(partition.titleKey)}
                     </span>
