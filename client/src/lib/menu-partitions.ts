@@ -33,7 +33,6 @@ export const MENU_PARTITIONS: MenuPartition[] = [
     description: "Manage employees, departments, and teams",
     items: [
       { labelKey: "menu_users", label: "Users", path: "/users", iconName: "Users2", description: "View and manage all users" },
-      { labelKey: "menu_addEmployee", label: "Add Employee", path: "/add-employee", iconName: "UserPlus", description: "Create new employee records" },
       { labelKey: "menu_departments", label: "Departments", path: "/department-management", iconName: "Building2", description: "Organize departments and teams" },
     ],
   },
