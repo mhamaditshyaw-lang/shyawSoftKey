@@ -6,6 +6,19 @@ This is a full-stack web application for internal employee management with role-
 
 ## Recent Changes (November 2025)
 
+- **Port Configuration for Local Development**:
+  - Made port configurable via PORT environment variable
+  - Local development: `PORT=3000 npm run dev` (for port 3000)
+  - Replit deployment: `npm run dev` (defaults to port 5000)
+  - Allows flexible development workflow on any machine
+- **Manager-Only Pages Created**:
+  - Password-protected manager todos page (`/manager-todos`)
+  - Team dashboard showing managed staff and task statistics (`/manager-dashboard`)
+  - Eye icon for completion proof/notes display on all pages
+- **TypeScript Type Casting Fixes**:
+  - Fixed 11 database query type-casting errors in storage layer
+  - Proper Drizzle ORM result handling with array type casting
+  - Improved type safety for todo, interview, and user management operations
 - **Menu Partitions System Implemented**:
   - Created comprehensive menu partitions organizing all 25+ pages into 5 business sections
   - Automatic PageInfo display on all pages showing current partition and page title
