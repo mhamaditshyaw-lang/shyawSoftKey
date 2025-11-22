@@ -372,16 +372,24 @@ export class DatabaseStorage implements IStorage {
       
       // Manually fetch items with all columns using raw SQL
       const result = await Promise.all(
-        todoListsResult.map(async (list) => {
+        todoListsResult.map(async (list: any) => {
           const items = await db.select().from(todoItems).where(eq(todoItems.todoListId, list.id)).orderBy(desc(todoItems.createdAt));
           return {
-            ...list,
-            items: items as TodoItem[],
-          };
+            id: list.id,
+            title: list.title,
+            description: list.description,
+            createdById: list.createdById,
+            assignedToId: list.assignedToId,
+            priority: list.priority,
+            createdAt: list.createdAt,
+            createdBy: list.createdBy as User,
+            assignedTo: (list.assignedTo || null) as User | null,
+            items: (items as TodoItem[]),
+          } as TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] };
         })
       );
       
-      return result;
+      return result as (TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[];
     });
   }
 
@@ -400,15 +408,23 @@ export class DatabaseStorage implements IStorage {
       });
       
       const result = await Promise.all(
-        todoListsResult.map(async (list) => {
+        todoListsResult.map(async (list: any) => {
           const items = await db.select().from(todoItems).where(eq(todoItems.todoListId, list.id)).orderBy(desc(todoItems.createdAt));
           return {
-            ...list,
-            items: items as TodoItem[],
-          };
+            id: list.id,
+            title: list.title,
+            description: list.description,
+            createdById: list.createdById,
+            assignedToId: list.assignedToId,
+            priority: list.priority,
+            createdAt: list.createdAt,
+            createdBy: list.createdBy as User,
+            assignedTo: (list.assignedTo || null) as User | null,
+            items: (items as TodoItem[]),
+          } as TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] };
         })
       );
-      return result;
+      return result as (TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[];
     });
   }
 
@@ -435,10 +451,19 @@ export class DatabaseStorage implements IStorage {
       if (!list) return undefined;
       
       const items = await db.select().from(todoItems).where(eq(todoItems.todoListId, id)).orderBy(desc(todoItems.createdAt));
+      const typedList = list as any;
       return {
-        ...list,
-        items: items as TodoItem[],
-      };
+        id: typedList.id,
+        title: typedList.title,
+        description: typedList.description,
+        createdById: typedList.createdById,
+        assignedToId: typedList.assignedToId,
+        priority: typedList.priority,
+        createdAt: typedList.createdAt,
+        createdBy: typedList.createdBy as User,
+        assignedTo: (typedList.assignedTo || null) as User | null,
+        items: (items as TodoItem[]),
+      } as TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] };
     });
   }
 
