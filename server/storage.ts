@@ -413,11 +413,11 @@ export class DatabaseStorage implements IStorage {
 
   async createTodoList(todoList: InsertTodoList): Promise<TodoList> {
     return await executeWithRetry(async () => {
-      const [list] = await db
+      const result = await db
         .insert(todoLists)
         .values(todoList)
         .returning();
-      return list;
+      return (result as TodoList[])[0];
     });
   }
 
@@ -444,7 +444,7 @@ export class DatabaseStorage implements IStorage {
   async createTodoItem(item: InsertTodoItem): Promise<TodoItem> {
     console.log("Storage: Creating todo item with:", item);
     try {
-      const [todoItem] = await db
+      const result = await db
         .insert(todoItems)
         .values({
           todoListId: item.todoListId,
@@ -454,6 +454,7 @@ export class DatabaseStorage implements IStorage {
           priority: item.priority || "medium",
         })
         .returning();
+      const todoItem = (result as TodoItem[])[0];
       console.log("Storage: Created todo item:", todoItem);
       return todoItem;
     } catch (error) {
@@ -464,11 +465,11 @@ export class DatabaseStorage implements IStorage {
 
   async getTodoItem(id: number): Promise<TodoItem | undefined> {
     try {
-      const [item] = await db
+      const result = await db
         .select()
         .from(todoItems)
         .where(eq(todoItems.id, id));
-      return item || undefined;
+      return (result as TodoItem[])[0] || undefined;
     } catch (error) {
       console.error("Storage: Error getting todo item:", error);
       return undefined;
@@ -482,12 +483,12 @@ export class DatabaseStorage implements IStorage {
         updateData.completedAt = updates.isCompleted ? new Date() : null;
       }
       
-      const [item] = await db
+      const result = await db
         .update(todoItems)
         .set(updateData)
         .where(eq(todoItems.id, id))
         .returning();
-      return item || undefined;
+      return (result as TodoItem[])[0] || undefined;
     });
   }
 
@@ -546,12 +547,12 @@ export class DatabaseStorage implements IStorage {
   async updateTodoList(id: number, updates: Partial<TodoList>): Promise<TodoList | undefined> {
     return await executeWithRetry(async () => {
       try {
-        const [list] = await db
+        const result = await db
           .update(todoLists)
           .set(updates)
           .where(eq(todoLists.id, id))
           .returning();
-        return list || undefined;
+        return (result as TodoList[])[0] || undefined;
       } catch (error) {
         console.error("Storage: Error updating todo list:", error);
         return undefined;
@@ -631,21 +632,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createInterviewRequest(request: InsertInterviewRequest): Promise<InterviewRequest> {
-    const [interviewRequest] = await db
+    const result = await db
       .insert(interviewRequests)
       .values(request)
       .returning();
-    return interviewRequest;
+    return (result as InterviewRequest[])[0];
   }
 
   async updateInterviewRequest(id: number, updates: Partial<InterviewRequest>): Promise<InterviewRequest | undefined> {
     return await executeWithRetry(async () => {
-      const [request] = await db
+      const result = await db
         .update(interviewRequests)
         .set({ ...updates, updatedAt: new Date() })
         .where(eq(interviewRequests.id, id))
         .returning();
-      return request || undefined;
+      return (result as InterviewRequest[])[0] || undefined;
     });
   }
 
@@ -678,11 +679,11 @@ export class DatabaseStorage implements IStorage {
 
   async createInterviewComment(comment: InsertInterviewComment): Promise<InterviewComment> {
     return await executeWithRetry(async () => {
-      const [newComment] = await db
+      const result = await db
         .insert(interviewComments)
         .values(comment)
         .returning();
-      return newComment;
+      return (result as InterviewComment[])[0];
     });
   }
 
