@@ -273,7 +273,8 @@ export class DatabaseStorage implements IStorage {
 
   async getStaffForManager(managerId: number): Promise<User[]> {
     return await executeWithRetry(async () => {
-      return await db.select().from(users).where(eq(users.managerId, managerId));
+      const result = await db.select().from(users).where(eq(users.managerId, managerId));
+      return (result as User[]);
     });
   }
 
@@ -605,7 +606,7 @@ export class DatabaseStorage implements IStorage {
         },
         orderBy: (interviewRequests, { desc }) => [desc(interviewRequests.createdAt)],
       });
-      return result;
+      return (result as any[]) as (InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[];
     }
     
     const result = await db.query.interviewRequests.findMany({
@@ -616,7 +617,7 @@ export class DatabaseStorage implements IStorage {
       },
       orderBy: (interviewRequests, { desc }) => [desc(interviewRequests.createdAt)],
     });
-    return result;
+    return (result as any[]) as (InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[];
   }
 
   async getInterviewRequestsByManager(managerId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[]> {
@@ -629,7 +630,7 @@ export class DatabaseStorage implements IStorage {
       },
       orderBy: (interviewRequests, { desc }) => [desc(interviewRequests.createdAt)],
     });
-    return result;
+    return (result as any[]) as (InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[];
   }
 
   async getInterviewRequestsByUser(userId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[]> {
@@ -642,7 +643,7 @@ export class DatabaseStorage implements IStorage {
       },
       orderBy: (interviewRequests, { desc }) => [desc(interviewRequests.createdAt)],
     });
-    return result;
+    return (result as any[]) as (InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[];
   }
 
   async getInterviewRequest(id: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null }) | undefined> {
@@ -654,7 +655,7 @@ export class DatabaseStorage implements IStorage {
         actionTakenBy: true,
       },
     });
-    return result;
+    return (result as any) as (InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null }) | undefined;
   }
 
   async createInterviewRequest(request: InsertInterviewRequest): Promise<InterviewRequest> {

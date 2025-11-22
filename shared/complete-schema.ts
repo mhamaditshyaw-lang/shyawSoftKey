@@ -42,15 +42,15 @@ export const users = pgTable("users", {
   lastName: text("last_name").notNull(),
   role: roleEnum("role").notNull().default("security"),
   status: statusEnum("status").notNull().default("pending"),
-  permissions: jsonb("permissions").default({}),
+  permissions: jsonb("permissions").default({}) as any,
   department: text("department"),
   position: text("position"),
   phoneNumber: text("phone_number"),
   comments: text("comments"),
-  managerId: integer("manager_id").references(() => users.id, { onDelete: "set null" }),
+  managerId: integer("manager_id").references((): any => users.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   lastActiveAt: timestamp("last_active_at"),
-});
+} as any);
 
 // Todo Lists table
 export const todoLists = pgTable("todo_lists", {
