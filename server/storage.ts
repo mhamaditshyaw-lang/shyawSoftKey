@@ -233,7 +233,7 @@ export class DatabaseStorage implements IStorage {
         ...pagePermissions,
       };
 
-      const [updatedUser] = await db
+      const result = await db
         .update(users)
         .set({ 
           permissions: updatedPermissions,
@@ -242,6 +242,7 @@ export class DatabaseStorage implements IStorage {
         .where(eq(users.id, userId))
         .returning();
 
+      const updatedUser = (result as User[])[0];
       if (!updatedUser) {
         throw new Error(`Failed to update user ${userId}`);
       }
@@ -278,23 +279,23 @@ export class DatabaseStorage implements IStorage {
 
   async assignStaffToManager(staffId: number, managerId: number): Promise<User | undefined> {
     return await executeWithRetry(async () => {
-      const [updatedUser] = await db
+      const result = await db
         .update(users)
         .set({ managerId, lastActiveAt: new Date() })
         .where(eq(users.id, staffId))
         .returning();
-      return updatedUser || undefined;
+      return (result as User[])[0] || undefined;
     });
   }
 
   async removeStaffFromManager(staffId: number): Promise<User | undefined> {
     return await executeWithRetry(async () => {
-      const [updatedUser] = await db
+      const result = await db
         .update(users)
         .set({ managerId: null, lastActiveAt: new Date() })
         .where(eq(users.id, staffId))
         .returning();
-      return updatedUser || undefined;
+      return (result as User[])[0] || undefined;
     });
   }
 
