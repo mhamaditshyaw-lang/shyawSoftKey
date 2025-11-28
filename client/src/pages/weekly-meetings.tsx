@@ -22,13 +22,10 @@ export default function WeeklyMeetingsPage() {
       const now = new Date();
       const weekNumber = Math.ceil((now.getDate() - now.getDay()) / 7);
       
-      return apiRequest("/api/weekly-meetings", {
-        method: "POST",
-        body: JSON.stringify({
-          weekNumber,
-          year: now.getFullYear(),
-          meetingDate: now.toISOString(),
-        }),
+      return apiRequest("POST", "/api/weekly-meetings", {
+        weekNumber,
+        year: now.getFullYear(),
+        meetingDate: now.toISOString(),
       });
     },
     onSuccess: () => {

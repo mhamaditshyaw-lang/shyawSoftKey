@@ -35,15 +35,12 @@ export default function WeeklyMeetingDetailPage() {
 
   const addTaskMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest(`/api/weekly-meetings/${id}/tasks`, {
-        method: "POST",
-        body: JSON.stringify({
-          meetingId: parseInt(id!),
-          departmentName: newTask.department,
-          title: newTask.title,
-          description: newTask.description,
-          targetValue: parseInt(newTask.target) || 0,
-        }),
+      return apiRequest("POST", `/api/weekly-meetings/${id}/tasks`, {
+        meetingId: parseInt(id!),
+        departmentName: newTask.department,
+        title: newTask.title,
+        description: newTask.description,
+        targetValue: parseInt(newTask.target) || 0,
       });
     },
     onSuccess: () => {
