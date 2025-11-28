@@ -177,7 +177,7 @@ export default function WeeklyMeetingDetailPage() {
                   <SelectValue placeholder="Assign User" />
                 </SelectTrigger>
                 <SelectContent>
-                  {users.map((u: any) => (
+                  {Array.isArray(users) && users.map((u: any) => (
                     <SelectItem key={u.id} value={u.id.toString()}>
                       {u.firstName} {u.lastName}
                     </SelectItem>
