@@ -53,8 +53,6 @@ export const todoItems = pgTable("todo_items", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   completedAt: timestamp("completed_at"),
-  completedById: integer("completed_by_id").references(() => users.id),
-  completedByNote: text("completed_by_note"),
 });
 
 export const reminders = pgTable("reminders", {
@@ -182,10 +180,6 @@ export const todoItemsRelations = relations(todoItems, ({ one, many }) => ({
     fields: [todoItems.todoListId],
     references: [todoLists.id],
   }),
-  completedBy: one(users, {
-    fields: [todoItems.completedById],
-    references: [users.id],
-  }),
   reminders: many(reminders),
 }));
 
@@ -293,8 +287,6 @@ export const insertTodoItemSchema = createInsertSchema(todoItems, {
   createdAt: true,
   updatedAt: true,
   completedAt: true,
-  completedById: true,
-  completedByNote: true,
 });
 
 export const insertInterviewRequestSchema = createInsertSchema(interviewRequests, {
