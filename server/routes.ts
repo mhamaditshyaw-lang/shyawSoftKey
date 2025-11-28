@@ -1964,6 +1964,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/weekly-meetings/tasks/:taskId/progress", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const taskId = parseInt(req.params.taskId);
+      const { current, status } = req.body;
+      
+      // Store progress in task comments as a special entry
+      const comment = await storage.createTaskComment(
+        taskId,
+        req.user?.id || 1,
+        `Progress updated: ${current}/${(await storage.getWeeklyMeetingTasks(1))[0]?.targetValue || 1} - Status: ${status}`,
+        ""
+      );
+      res.json({ success: true, taskId, current, status });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

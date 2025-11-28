@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2, Plus, Save, CheckCircle, Clock, Zap, Send, FileCheck, Eye } from "lucide-react";
+import { Loader2, Plus, Save, CheckCircle, Clock, Zap, Send, FileCheck, Eye, TrendingUp } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import {
   Select,
@@ -33,6 +33,7 @@ export default function WeeklyMeetingDetailPage() {
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
   const [newComment, setNewComment] = useState("");
   const [expandedCommentId, setExpandedCommentId] = useState<number | null>(null);
+  const [taskProgress, setTaskProgress] = useState<Record<number, {current: number, status: string}>>({});
 
   const { data: usersData = [] } = useQuery({
     queryKey: ["/api/users"],
@@ -103,6 +104,26 @@ export default function WeeklyMeetingDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings", id, "tasks"] });
       setNewComment("");
       toast({ title: "Success", description: "Comment added successfully" });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateProgressMutation = useMutation({
+    mutationFn: async ({ taskId, current, status }: { taskId: number; current: number; status: string }) => {
+      return apiRequest("PATCH", `/api/weekly-meetings/tasks/${taskId}/progress`, {
+        current,
+        status,
+      });
+    },
+    onSuccess: (_, { taskId, current, status }) => {
+      setTaskProgress(prev => ({...prev, [taskId]: {current, status}}));
+      toast({ title: "Success", description: "Progress updated successfully" });
     },
     onError: (error: any) => {
       toast({
@@ -248,16 +269,66 @@ export default function WeeklyMeetingDetailPage() {
                   </Button>
                   {selectedTask === task.id && (
                     <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-3">
+                      <div className="space-y-2 bg-blue-50 dark:bg-blue-900/20 p-3 rounded border border-blue-200 dark:border-blue-800">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs font-semibold text-blue-900 dark:text-blue-200 flex items-center gap-1">
+                            <TrendingUp className="h-3 w-3" />
+                            Update Progress
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 mb-2">
+                          <div className="flex flex-col gap-1">
+                            <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Current Value</label>
+                            <Input
+                              type="number"
+                              min="0"
+                              max={task.targetValue}
+                              value={taskProgress[task.id]?.current || 0}
+                              onChange={(e) => setTaskProgress(prev => ({...prev, [task.id]: {...(prev[task.id] || {status: 'not_started'}), current: parseInt(e.target.value) || 0}}))}
+                              className="text-xs h-8"
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Status</label>
+                            <select
+                              value={taskProgress[task.id]?.status || 'not_started'}
+                              onChange={(e) => setTaskProgress(prev => ({...prev, [task.id]: {...(prev[task.id] || {current: 0}), status: e.target.value}}))}
+                              className="text-xs border rounded px-2 py-1 h-8 dark:bg-slate-800"
+                            >
+                              <option value="not_started">Not Started</option>
+                              <option value="in_progress">In Progress</option>
+                              <option value="completed">Completed</option>
+                              <option value="on_hold">On Hold</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col gap-1 justify-end">
+                            <Button
+                              size="sm"
+                              onClick={() => updateProgressMutation.mutate({
+                                taskId: task.id,
+                                current: taskProgress[task.id]?.current || 0,
+                                status: taskProgress[task.id]?.status || 'not_started'
+                              })}
+                              disabled={updateProgressMutation.isPending}
+                              className="gap-1 h-8 text-xs"
+                            >
+                              {updateProgressMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                              Save
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
                           <span className="text-xs font-medium text-slate-600 dark:text-slate-400">Progress</span>
-                          <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">0%</span>
+                          <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{Math.round(((taskProgress[task.id]?.current || 0) / (task.targetValue || 1)) * 100)}%</span>
                         </div>
                         <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                          <div className="bg-indigo-600 h-full w-0 transition-all"></div>
+                          <div className="bg-indigo-600 h-full transition-all" style={{width: `${Math.round(((taskProgress[task.id]?.current || 0) / (task.targetValue || 1)) * 100)}%`}}></div>
                         </div>
                         <p className="text-xs text-slate-500 dark:text-slate-500">
-                          Target: {task.targetValue} | Current: 0 | Status: Not Started
+                          Target: {task.targetValue} | Current: {taskProgress[task.id]?.current || 0} | Status: {taskProgress[task.id]?.status ? taskProgress[task.id].status.replace(/_/g, ' ').toUpperCase() : 'NOT STARTED'}
                         </p>
                       </div>
 
