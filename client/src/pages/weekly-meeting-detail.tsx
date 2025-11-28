@@ -7,8 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2, Plus, Save, CheckCircle, Clock, Zap } from "lucide-react";
+import { Loader2, Plus, Save, CheckCircle, Clock, Zap, Send } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function WeeklyMeetingDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -21,8 +28,14 @@ export default function WeeklyMeetingDetailPage() {
     title: "",
     description: "",
     target: "",
+    assignedUserId: "",
   });
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
+  const [newComment, setNewComment] = useState("");
+
+  const { data: users = [] } = useQuery({
+    queryKey: ["/api/users"],
+  });
 
   const { data: meeting, isLoading } = useQuery({
     queryKey: ["/api/weekly-meetings", id],
@@ -59,12 +72,34 @@ export default function WeeklyMeetingDetailPage() {
         title: newTask.title,
         description: newTask.description,
         targetValue: parseInt(newTask.target) || 0,
+        assignedUserId: newTask.assignedUserId ? parseInt(newTask.assignedUserId) : null,
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings", id, "tasks"] });
-      setNewTask({ department: "", title: "", description: "", target: "" });
+      setNewTask({ department: "", title: "", description: "", target: "", assignedUserId: "" });
       toast({ title: "Success", description: "Task added successfully" });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const addCommentMutation = useMutation({
+    mutationFn: async (taskId: number) => {
+      return apiRequest("POST", `/api/weekly-meetings/tasks/${taskId}/comments`, {
+        comment: newComment,
+        proofUrl: "",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings", id, "tasks"] });
+      setNewComment("");
+      toast({ title: "Success", description: "Comment added successfully" });
     },
     onError: (error: any) => {
       toast({
@@ -125,7 +160,7 @@ export default function WeeklyMeetingDetailPage() {
             <CardDescription>Assign work points to departments</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <Input
                 placeholder="Department"
                 value={newTask.department}
@@ -137,6 +172,19 @@ export default function WeeklyMeetingDetailPage() {
                 value={newTask.target}
                 onChange={(e) => setNewTask({ ...newTask, target: e.target.value })}
               />
+              <Select value={newTask.assignedUserId} onValueChange={(value) => setNewTask({ ...newTask, assignedUserId: value })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Assign User" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">No Assignment</SelectItem>
+                  {users.map((u: any) => (
+                    <SelectItem key={u.id} value={u.id.toString()}>
+                      {u.firstName} {u.lastName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <Input
               placeholder="Task Title"
@@ -197,7 +245,7 @@ export default function WeeklyMeetingDetailPage() {
                     {selectedTask === task.id ? "Hide" : "View"} Progress
                   </Button>
                   {selectedTask === task.id && (
-                    <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                    <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-3">
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
                           <span className="text-xs font-medium text-slate-600 dark:text-slate-400">Progress</span>
@@ -209,6 +257,40 @@ export default function WeeklyMeetingDetailPage() {
                         <p className="text-xs text-slate-500 dark:text-slate-500">
                           Target: {task.targetValue} | Current: 0 | Status: Not Started
                         </p>
+                      </div>
+
+                      <div className="space-y-2 bg-indigo-50 dark:bg-indigo-900/20 p-2 rounded border border-indigo-200 dark:border-indigo-800">
+                        <p className="text-xs font-semibold text-indigo-900 dark:text-indigo-200">Comments & Progress</p>
+                        
+                        {task.comments && task.comments.length > 0 && (
+                          <div className="space-y-2 max-h-40 overflow-y-auto">
+                            {task.comments.map((comment: any) => (
+                              <div key={comment.id} className="bg-white dark:bg-slate-800 p-2 rounded text-xs">
+                                <p className="font-medium text-slate-900 dark:text-white">{comment.authorId}</p>
+                                <p className="text-slate-600 dark:text-slate-400">{comment.comment}</p>
+                                <p className="text-xs text-slate-500">{new Date(comment.createdAt).toLocaleString()}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        <div className="flex gap-2 items-end">
+                          <Textarea
+                            placeholder="Add comment or proof..."
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                            rows={2}
+                            className="text-xs flex-1"
+                          />
+                          <Button
+                            size="sm"
+                            onClick={() => addCommentMutation.mutate(task.id)}
+                            disabled={!newComment.trim() || addCommentMutation.isPending}
+                            className="gap-1"
+                          >
+                            <Send className="h-3 w-3" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   )}

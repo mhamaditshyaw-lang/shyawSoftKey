@@ -8,6 +8,7 @@ import {
   operationalData,
   weeklyMeetings,
   weeklyMeetingTasks,
+  taskComments,
   departmentTaskProgress,
   weeklyMeetingArchive,
   type User, 
@@ -125,6 +126,8 @@ export interface IStorage {
   getWeeklyMeeting(id: number): Promise<any>;
   createWeeklyMeetingTask(data: any): Promise<any>;
   getWeeklyMeetingTasks(meetingId: number): Promise<any[]>;
+  createTaskComment(taskId: number, authorId: number, comment: string, proofUrl?: string): Promise<any>;
+  getTaskComments(taskId: number): Promise<any[]>;
   updateDepartmentTaskProgress(taskId: number, departmentHeadId: number, updates: any): Promise<any>;
   getWeeklyMeetingArchive(meetingId: number): Promise<any[]>;
   archiveWeeklyMeeting(meetingId: number, archivedById: number, resultsData: any): Promise<any>;
@@ -1028,7 +1031,28 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getWeeklyMeetingTasks(meetingId: number): Promise<any[]> {
-    return await db.select().from(weeklyMeetingTasks).where(eq(weeklyMeetingTasks.meetingId, meetingId));
+    const tasks = await db.select().from(weeklyMeetingTasks).where(eq(weeklyMeetingTasks.meetingId, meetingId));
+    return Promise.all(tasks.map(async (task: any) => {
+      const comments = await this.getTaskComments(task.id);
+      return { ...task, comments };
+    }));
+  }
+
+  async createTaskComment(taskId: number, authorId: number, comment: string, proofUrl?: string): Promise<any> {
+    const result = await db.insert(taskComments).values({
+      taskId,
+      authorId,
+      comment,
+      proofUrl,
+    } as any).returning();
+    return (result as any[])[0];
+  }
+
+  async getTaskComments(taskId: number): Promise<any[]> {
+    const comments = await db.select().from(taskComments).where(eq(taskComments.taskId, taskId)).orderBy(desc(taskComments.createdAt));
+    return comments.map((c: any) => ({
+      ...c,
+    }));
   }
 
   async updateDepartmentTaskProgress(taskId: number, departmentHeadId: number, updates: any): Promise<any> {

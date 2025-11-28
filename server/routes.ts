@@ -1932,6 +1932,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/weekly-meetings/tasks/:taskId/comments", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const comment = await storage.createTaskComment(
+        parseInt(req.params.taskId),
+        req.user?.id || 1,
+        req.body.comment,
+        req.body.proofUrl
+      );
+      res.json(comment);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/weekly-meetings/tasks/:taskId/comments", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const comments = await storage.getTaskComments(parseInt(req.params.taskId));
+      res.json(comments);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/users", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const allUsers = await storage.getAllUsers();
+      res.json(allUsers);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

@@ -120,6 +120,17 @@ export const weeklyMeetingTasks = pgTable("weekly_meeting_tasks", {
   description: text("description"),
   targetValue: integer("target_value"),
   priority: priorityEnum("priority").notNull().default("medium"),
+  assignedUserId: integer("assigned_user_id").references(() => users.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Task Comments table
+export const taskComments = pgTable("task_comments", {
+  id: serial("id").primaryKey(),
+  taskId: integer("task_id").references(() => weeklyMeetingTasks.id, { onDelete: "cascade" }).notNull(),
+  authorId: integer("author_id").references(() => users.id).notNull(),
+  comment: text("comment").notNull(),
+  proofUrl: text("proof_url"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -237,7 +248,24 @@ export const weeklyMeetingTasksRelations = relations(weeklyMeetingTasks, ({ one,
     fields: [weeklyMeetingTasks.meetingId],
     references: [weeklyMeetings.id],
   }),
+  assignedUser: one(users, {
+    fields: [weeklyMeetingTasks.assignedUserId],
+    references: [users.id],
+    relationName: "assigned_user",
+  }),
+  comments: many(taskComments),
   progress: many(departmentTaskProgress),
+}));
+
+export const taskCommentsRelations = relations(taskComments, ({ one }) => ({
+  task: one(weeklyMeetingTasks, {
+    fields: [taskComments.taskId],
+    references: [weeklyMeetingTasks.id],
+  }),
+  author: one(users, {
+    fields: [taskComments.authorId],
+    references: [users.id],
+  }),
 }));
 
 export const departmentTaskProgressRelations = relations(departmentTaskProgress, ({ one }) => ({
