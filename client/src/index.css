@@ -890,3 +890,58 @@
 .nav-item.active:hover {
   @apply bg-primary text-primary-foreground opacity-90;
 }
+
+/* Sidebar Animations */
+@keyframes slideInIcon {
+  from {
+    transform: scale(0.8) rotate(-15deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+
+.sidebar-icon {
+  animation: slideInIcon 0.3s ease-out;
+}
+
+/* Scrollbar hide for navigation */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Smooth icon transitions */
+@keyframes iconBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+.animate-icon-bounce {
+  animation: iconBounce 2s ease-in-out infinite;
+}
+
+/* Gradient text animation */
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-text {
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
