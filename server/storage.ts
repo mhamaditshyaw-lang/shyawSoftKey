@@ -6,6 +6,10 @@ import {
   interviewRequests,
   interviewComments,
   operationalData,
+  weeklyMeetings,
+  weeklyMeetingTasks,
+  departmentTaskProgress,
+  weeklyMeetingArchive,
   type User, 
   type InsertUser,
   type TodoList,
@@ -1002,6 +1006,54 @@ export class DatabaseStorage implements IStorage {
       .delete(archivedItems)
       .where(eq(archivedItems.id, archiveId));
     return (result.rowCount || 0) > 0;
+  }
+
+  async createWeeklyMeeting(data: any): Promise<any> {
+    const result = await db.insert(weeklyMeetings).values(data).returning();
+    return (result as any[])[0];
+  }
+
+  async getWeeklyMeetings(): Promise<any[]> {
+    return await db.select().from(weeklyMeetings).orderBy(desc(weeklyMeetings.createdAt));
+  }
+
+  async getWeeklyMeeting(id: number): Promise<any> {
+    const result = await db.select().from(weeklyMeetings).where(eq(weeklyMeetings.id, id));
+    return (result as any[])[0];
+  }
+
+  async createWeeklyMeetingTask(data: any): Promise<any> {
+    const result = await db.insert(weeklyMeetingTasks).values(data).returning();
+    return (result as any[])[0];
+  }
+
+  async getWeeklyMeetingTasks(meetingId: number): Promise<any[]> {
+    return await db.select().from(weeklyMeetingTasks).where(eq(weeklyMeetingTasks.meetingId, meetingId));
+  }
+
+  async updateDepartmentTaskProgress(taskId: number, departmentHeadId: number, updates: any): Promise<any> {
+    const result = await db.update(departmentTaskProgress).set(updates)
+      .where((col: any) => col.and(eq(departmentTaskProgress.taskId, taskId), eq(departmentTaskProgress.departmentHeadId, departmentHeadId)))
+      .returning();
+    return (result as any[])[0];
+  }
+
+  async getWeeklyMeetingArchive(meetingId: number): Promise<any[]> {
+    return await db.select().from(weeklyMeetingArchive).where(eq(weeklyMeetingArchive.meetingId, meetingId));
+  }
+
+  async archiveWeeklyMeeting(meetingId: number, archivedById: number, resultsData: any): Promise<any> {
+    const meeting = await this.getWeeklyMeeting(meetingId);
+    const tasks = await this.getWeeklyMeetingTasks(meetingId);
+    const result = await db.insert(weeklyMeetingArchive).values({
+      meetingId,
+      meetingData: JSON.stringify(meeting),
+      tasksData: JSON.stringify(tasks),
+      resultsData: JSON.stringify(resultsData),
+      archivedById,
+    } as any).returning();
+    await db.update(weeklyMeetings).set({ status: "archived" as any }).where(eq(weeklyMeetings.id, meetingId));
+    return (result as any[])[0];
   }
 }
 

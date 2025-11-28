@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { Calendar, Plus, Archive, Eye, Loader2 } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import { PageInfo } from "@/components/layout/page-info";
 
 export default function WeeklyMeetingsPage() {
   const { user } = useAuth();
@@ -58,6 +59,7 @@ export default function WeeklyMeetingsPage() {
 
   return (
     <div className="space-y-6 p-6">
+      <PageInfo partition="task_management" page="Weekly Meetings" />
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Weekly Meeting Tasks</h1>
