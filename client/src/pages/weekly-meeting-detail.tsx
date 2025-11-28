@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2, Plus, Save, CheckCircle, Clock, Zap, Send } from "lucide-react";
+import { Loader2, Plus, Save, CheckCircle, Clock, Zap, Send, FileCheck, Eye } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import {
   Select,
@@ -32,6 +32,7 @@ export default function WeeklyMeetingDetailPage() {
   });
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
   const [newComment, setNewComment] = useState("");
+  const [expandedCommentId, setExpandedCommentId] = useState<number | null>(null);
 
   const { data: users = [] } = useQuery<any[]>({
     queryKey: ["/api/users"],
@@ -262,14 +263,51 @@ export default function WeeklyMeetingDetailPage() {
                         <p className="text-xs font-semibold text-indigo-900 dark:text-indigo-200">Comments & Progress</p>
                         
                         {task.comments && task.comments.length > 0 && (
-                          <div className="space-y-2 max-h-40 overflow-y-auto">
-                            {task.comments.map((comment: any) => (
-                              <div key={comment.id} className="bg-white dark:bg-slate-800 p-2 rounded text-xs">
-                                <p className="font-medium text-slate-900 dark:text-white">{comment.authorId}</p>
-                                <p className="text-slate-600 dark:text-slate-400">{comment.comment}</p>
-                                <p className="text-xs text-slate-500">{new Date(comment.createdAt).toLocaleString()}</p>
-                              </div>
-                            ))}
+                          <div className="space-y-2 max-h-56 overflow-y-auto border-l-2 border-indigo-300 dark:border-indigo-600 pl-2">
+                            {task.comments.map((comment: any) => {
+                              const commenter = users?.find((u: any) => u.id === comment.authorId);
+                              return (
+                                <div key={comment.id} className={`p-2 rounded text-xs ${comment.proofUrl ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800' : 'bg-slate-100 dark:bg-slate-700'}`}>
+                                  <div className="flex items-center justify-between mb-1">
+                                    <p className="font-medium text-slate-900 dark:text-white">
+                                      {commenter ? `${commenter.firstName} ${commenter.lastName}` : `User ${comment.authorId}`}
+                                    </p>
+                                    {comment.proofUrl && (
+                                      <span className="flex items-center gap-1 px-1.5 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded text-xs font-semibold">
+                                        <FileCheck className="h-3 w-3" />
+                                        Proof
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-slate-600 dark:text-slate-300 whitespace-pre-wrap">{comment.comment}</p>
+                                  <div className="flex items-center justify-between mt-1 pt-1 border-t border-slate-200 dark:border-slate-600">
+                                    <p className="text-xs text-slate-500">{new Date(comment.createdAt).toLocaleString()}</p>
+                                    {comment.proofUrl && (
+                                      <button 
+                                        onClick={() => setExpandedCommentId(expandedCommentId === comment.id ? null : comment.id)}
+                                        className="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 hover:underline text-xs"
+                                      >
+                                        <Eye className="h-3 w-3" />
+                                        View Proof
+                                      </button>
+                                    )}
+                                  </div>
+                                  {expandedCommentId === comment.id && comment.proofUrl && (
+                                    <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-700">
+                                      <p className="text-xs font-semibold text-blue-900 dark:text-blue-200 mb-1">Proof File:</p>
+                                      <a 
+                                        href={comment.proofUrl} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="text-xs text-blue-600 dark:text-blue-400 hover:underline break-all"
+                                      >
+                                        {comment.proofUrl}
+                                      </a>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
                           </div>
                         )}
 
