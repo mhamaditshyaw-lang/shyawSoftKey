@@ -6,6 +6,19 @@ This is a full-stack web application for internal employee management with role-
 
 ## Recent Changes (November 2025)
 
+- **Weekly Meetings Task Management - Complete Implementation** (Latest):
+  - Added `assignedUserId` field to weekly meeting tasks for user assignments
+  - Created `taskComments` table for storing comments and proof on tasks
+  - Implemented storage methods: `createTaskComment`, `getTaskComments`, with auto-loading on task fetch
+  - Added API endpoints: POST/GET `/api/weekly-meetings/tasks/:taskId/comments` and GET `/api/users`
+  - Frontend UI enhancements:
+    - User dropdown selector in "Add New Task" form for assigning tasks to team members
+    - Comments & Progress section in task detail view showing comment history
+    - Comment input textarea with timestamp tracking and proof submission support
+    - Scrollable comment history with author and creation time display
+  - Database migration: Successfully synced new `assignedUserId` and `taskComments` table
+  - All features tested and working: user assignments, comments, and proof tracking fully functional
+
 - **Port Configuration for Local Development**:
   - Made port configurable via PORT environment variable
   - Local development: `PORT=3000 npm run dev` (for port 3000)
