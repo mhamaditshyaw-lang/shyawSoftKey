@@ -9,7 +9,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2, Plus, Save, CheckCircle, Clock } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { PageInfo } from "@/components/layout/page-info";
 
 export default function WeeklyMeetingDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -71,7 +70,6 @@ export default function WeeklyMeetingDetailPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <PageInfo partition="task_management" page="Meeting Details" />
       <Button variant="outline" onClick={() => setLocation("/weekly-meetings")}>
         ← Back to Meetings
       </Button>
