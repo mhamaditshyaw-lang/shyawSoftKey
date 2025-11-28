@@ -3,9 +3,10 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Calendar, Plus, Archive, Eye, Loader2, Filter, ChevronDown } from "lucide-react";
+import { Calendar, Plus, Archive, Eye, Loader2, Filter, ChevronDown, Search, X } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import {
   Select,
@@ -21,14 +22,21 @@ export default function WeeklyMeetingsPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [expandedMeetings, setExpandedMeetings] = useState<Set<number>>(new Set());
+  const [nameSearch, setNameSearch] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   const { data: meetings = [], isLoading } = useQuery({
     queryKey: ["/api/weekly-meetings"],
   });
 
-  const filteredMeetings = meetings.filter((meeting: any) =>
-    statusFilter === "all" ? true : meeting.status === statusFilter
-  );
+  const filteredMeetings = meetings.filter((meeting: any) => {
+    const statusMatch = statusFilter === "all" ? true : meeting.status === statusFilter;
+    const nameMatch = nameSearch === "" || `Week ${meeting.weekNumber}`.toLowerCase().includes(nameSearch.toLowerCase());
+    const dateMatch = (!dateFrom || new Date(meeting.meetingDate) >= new Date(dateFrom)) &&
+                      (!dateTo || new Date(meeting.meetingDate) <= new Date(dateTo));
+    return statusMatch && nameMatch && dateMatch;
+  });
 
   const createMeetingMutation = useMutation({
     mutationFn: async () => {
@@ -89,26 +97,63 @@ export default function WeeklyMeetingsPage() {
         )}
       </div>
 
-      <div className="flex items-center gap-2">
-        <Filter className="h-4 w-4 text-slate-500" />
-        <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Filter by status:</span>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-48">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Meetings</SelectItem>
-            <SelectItem value="planned">Planned</SelectItem>
-            <SelectItem value="in_progress">In Progress</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="archived">Archived</SelectItem>
-          </SelectContent>
-        </Select>
-        {filteredMeetings.length > 0 && (
-          <span className="text-sm text-slate-500 dark:text-slate-400 ml-auto">
-            {filteredMeetings.length} meeting{filteredMeetings.length !== 1 ? 's' : ''}
-          </span>
-        )}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-slate-500" />
+          <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Filters:</span>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-40">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="planned">Planned</SelectItem>
+              <SelectItem value="in_progress">In Progress</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="archived">Archived</SelectItem>
+            </SelectContent>
+          </Select>
+          <Input
+            placeholder="Search by week..."
+            value={nameSearch}
+            onChange={(e) => setNameSearch(e.target.value)}
+            className="w-40 h-9"
+          />
+          <Input
+            type="date"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+            className="w-40 h-9"
+            placeholder="From"
+          />
+          <Input
+            type="date"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+            className="w-40 h-9"
+            placeholder="To"
+          />
+          {(nameSearch || dateFrom || dateTo) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setNameSearch("");
+                setDateFrom("");
+                setDateTo("");
+              }}
+              className="gap-1"
+            >
+              <X className="h-3 w-3" />
+              Clear
+            </Button>
+          )}
+          {filteredMeetings.length > 0 && (
+            <span className="text-sm text-slate-500 dark:text-slate-400 ml-auto">
+              {filteredMeetings.length} result{filteredMeetings.length !== 1 ? 's' : ''}
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

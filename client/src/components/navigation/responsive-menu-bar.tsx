@@ -47,6 +47,7 @@ export default function ResponsiveMenuBar() {
     { title: "Dashboard", href: "/", icon: Home, roles: ["admin", "manager", "security"], shortTitle: "Home" },
     { title: "Employee Reviews", href: "/interviews", icon: Calendar, roles: ["admin", "manager", "security"], shortTitle: "Reviews" },
     { title: "Daily Tasks", href: "/todos", icon: CheckSquare, roles: ["admin", "manager", "security"], shortTitle: "Tasks" },
+    { title: "Weekly Meetings", href: "/weekly-meetings", icon: Calendar, roles: ["admin", "manager", "security"], shortTitle: "Meetings" },
     { title: "Reminders", href: "/reminders", icon: Bell, roles: ["admin", "manager", "security"], shortTitle: "Reminders" },
     { title: "Feedback", href: "/feedback", icon: MessageSquare, roles: ["admin", "manager", "security"], shortTitle: "Feedback" },
     { title: "Employee Tracking", href: "/metrics", icon: Users, roles: ["admin", "manager", "security"], shortTitle: "Tracking" },
