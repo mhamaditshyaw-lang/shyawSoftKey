@@ -25,12 +25,29 @@ export default function WeeklyMeetingDetailPage() {
 
   const { data: meeting, isLoading } = useQuery({
     queryKey: ["/api/weekly-meetings", id],
-    queryFn: () => fetch(`/api/weekly-meetings/${id}`).then(r => r.json()),
+    queryFn: async () => {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`/api/weekly-meetings/${id}`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error('Failed to fetch meeting');
+      return res.json();
+    },
   });
 
   const { data: tasks = [] } = useQuery({
     queryKey: ["/api/weekly-meetings", id, "tasks"],
-    queryFn: () => fetch(`/api/weekly-meetings/${id}/tasks`).then(r => r.json()),
+    queryFn: async () => {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`/api/weekly-meetings/${id}/tasks`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error('Failed to fetch tasks');
+      const data = await res.json();
+      return Array.isArray(data) ? data : [];
+    },
   });
 
   const addTaskMutation = useMutation({
