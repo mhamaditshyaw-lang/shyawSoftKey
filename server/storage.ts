@@ -114,6 +114,16 @@ export interface IStorage {
   getOperationalData(): Promise<any[]>;
   deleteOperationalData(id: number): Promise<boolean>;
   clearAllOperationalData(): Promise<boolean>;
+
+  // Weekly Meeting methods
+  createWeeklyMeeting(data: any): Promise<any>;
+  getWeeklyMeetings(): Promise<any[]>;
+  getWeeklyMeeting(id: number): Promise<any>;
+  createWeeklyMeetingTask(data: any): Promise<any>;
+  getWeeklyMeetingTasks(meetingId: number): Promise<any[]>;
+  updateDepartmentTaskProgress(taskId: number, departmentHeadId: number, updates: any): Promise<any>;
+  getWeeklyMeetingArchive(meetingId: number): Promise<any[]>;
+  archiveWeeklyMeeting(meetingId: number, archivedById: number, resultsData: any): Promise<any>;
 }
 
 export class DatabaseStorage implements IStorage {

@@ -31,6 +31,8 @@ export const deviceNotificationPriorityEnum = pgEnum("device_notification_priori
   "high", 
   "urgent"
 ]);
+export const meetingStatusEnum = pgEnum("meeting_status", ["planned", "completed", "archived"]);
+export const taskProgressEnum = pgEnum("task_progress", ["not_started", "in_progress", "completed", "verified"]);
 
 // Users table
 export const users = pgTable("users", {
@@ -178,6 +180,54 @@ export const deviceNotifications = pgTable("device_notifications", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Weekly Meetings table
+export const weeklyMeetings = pgTable("weekly_meetings", {
+  id: serial("id").primaryKey(),
+  weekNumber: integer("week_number").notNull(),
+  year: integer("year").notNull(),
+  meetingDate: timestamp("meeting_date").notNull(),
+  status: meetingStatusEnum("status").notNull().default("planned"),
+  createdById: integer("created_by_id").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Weekly Meeting Tasks table
+export const weeklyMeetingTasks = pgTable("weekly_meeting_tasks", {
+  id: serial("id").primaryKey(),
+  meetingId: integer("meeting_id").references(() => weeklyMeetings.id, { onDelete: "cascade" }).notNull(),
+  departmentName: text("department_name").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  targetValue: integer("target_value"),
+  priority: priorityEnum("priority").notNull().default("medium"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Department Task Progress table
+export const departmentTaskProgress = pgTable("department_task_progress", {
+  id: serial("id").primaryKey(),
+  taskId: integer("task_id").references(() => weeklyMeetingTasks.id, { onDelete: "cascade" }).notNull(),
+  departmentHeadId: integer("department_head_id").references(() => users.id).notNull(),
+  progress: integer("progress").notNull().default(0),
+  status: taskProgressEnum("status").notNull().default("not_started"),
+  notes: text("notes"),
+  proofUrl: text("proof_url"),
+  lastUpdatedById: integer("last_updated_by_id").references(() => users.id),
+  lastUpdatedAt: timestamp("last_updated_at").defaultNow().notNull(),
+});
+
+// Weekly Meeting Archive table
+export const weeklyMeetingArchive = pgTable("weekly_meeting_archive", {
+  id: serial("id").primaryKey(),
+  meetingId: integer("meeting_id").notNull(),
+  meetingData: jsonb("meeting_data").notNull(),
+  tasksData: jsonb("tasks_data").notNull(),
+  resultsData: jsonb("results_data"),
+  archivedById: integer("archived_by_id").references(() => users.id).notNull(),
+  archivedAt: timestamp("archived_at").defaultNow().notNull(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ one, many }) => ({
   createdTodoLists: many(todoLists, { relationName: "created_by" }),
@@ -284,6 +334,46 @@ export const deviceNotificationsRelations = relations(deviceNotifications, ({ on
   }),
 }));
 
+export const weeklyMeetingsRelations = relations(weeklyMeetings, ({ one, many }) => ({
+  createdBy: one(users, {
+    fields: [weeklyMeetings.createdById],
+    references: [users.id],
+  }),
+  tasks: many(weeklyMeetingTasks),
+}));
+
+export const weeklyMeetingTasksRelations = relations(weeklyMeetingTasks, ({ one, many }) => ({
+  meeting: one(weeklyMeetings, {
+    fields: [weeklyMeetingTasks.meetingId],
+    references: [weeklyMeetings.id],
+  }),
+  progress: many(departmentTaskProgress),
+}));
+
+export const departmentTaskProgressRelations = relations(departmentTaskProgress, ({ one }) => ({
+  task: one(weeklyMeetingTasks, {
+    fields: [departmentTaskProgress.taskId],
+    references: [weeklyMeetingTasks.id],
+  }),
+  departmentHead: one(users, {
+    fields: [departmentTaskProgress.departmentHeadId],
+    references: [users.id],
+    relationName: "dept_head",
+  }),
+  lastUpdatedBy: one(users, {
+    fields: [departmentTaskProgress.lastUpdatedById],
+    references: [users.id],
+    relationName: "last_updated",
+  }),
+}));
+
+export const weeklyMeetingArchiveRelations = relations(weeklyMeetingArchive, ({ one }) => ({
+  archivedBy: one(users, {
+    fields: [weeklyMeetingArchive.archivedById],
+    references: [users.id],
+  }),
+}));
+
 // Insert Schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -356,6 +446,27 @@ export const insertDeviceNotificationSchema = createInsertSchema(deviceNotificat
   createdAt: true,
 });
 
+export const insertWeeklyMeetingSchema = createInsertSchema(weeklyMeetings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertWeeklyMeetingTaskSchema = createInsertSchema(weeklyMeetingTasks).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertDepartmentTaskProgressSchema = createInsertSchema(departmentTaskProgress).omit({
+  id: true,
+  lastUpdatedAt: true,
+});
+
+export const insertWeeklyMeetingArchiveSchema = createInsertSchema(weeklyMeetingArchive).omit({
+  id: true,
+  archivedAt: true,
+});
+
 // Authentication Schemas
 export const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -400,6 +511,14 @@ export type ArchivedItem = typeof archivedItems.$inferSelect;
 export type InsertArchivedItem = z.infer<typeof insertArchivedItemSchema>;
 export type DeviceNotification = typeof deviceNotifications.$inferSelect;
 export type InsertDeviceNotification = z.infer<typeof insertDeviceNotificationSchema>;
+export type WeeklyMeeting = typeof weeklyMeetings.$inferSelect;
+export type InsertWeeklyMeeting = z.infer<typeof insertWeeklyMeetingSchema>;
+export type WeeklyMeetingTask = typeof weeklyMeetingTasks.$inferSelect;
+export type InsertWeeklyMeetingTask = z.infer<typeof insertWeeklyMeetingTaskSchema>;
+export type DepartmentTaskProgress = typeof departmentTaskProgress.$inferSelect;
+export type InsertDepartmentTaskProgress = z.infer<typeof insertDepartmentTaskProgressSchema>;
+export type WeeklyMeetingArchive = typeof weeklyMeetingArchive.$inferSelect;
+export type InsertWeeklyMeetingArchive = z.infer<typeof insertWeeklyMeetingArchiveSchema>;
 export type LoginCredentials = z.infer<typeof loginSchema>;
 export type ChangePasswordData = z.infer<typeof changePasswordSchema>;
 export type UpdateUserPasswordData = z.infer<typeof updateUserPasswordSchema>;

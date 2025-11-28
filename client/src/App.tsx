@@ -41,6 +41,8 @@ import PageAccessManagement from "@/pages/page-access-management";
 import BroadcastNotificationPage from "@/pages/broadcast-notification";
 import ManagerTodosPage from "@/pages/manager-todos";
 import ManagerDashboard from "@/pages/manager-dashboard";
+import WeeklyMeetingsPage from "@/pages/weekly-meetings";
+import WeeklyMeetingDetailPage from "@/pages/weekly-meeting-detail";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -171,6 +173,16 @@ function Router() {
       <Route path="/reports">
         <ProtectedRoute requiredPermission="view_reports">
           <ReportsPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/weekly-meetings">
+        <ProtectedRoute>
+          <WeeklyMeetingsPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/weekly-meetings/:id">
+        <ProtectedRoute>
+          <WeeklyMeetingDetailPage />
         </ProtectedRoute>
       </Route>
       <Route path="/notification-test">

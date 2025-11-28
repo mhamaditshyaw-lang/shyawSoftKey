@@ -1,0 +1,192 @@
+import { useParams, useLocation } from "wouter";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
+import { Loader2, Plus, Save, CheckCircle, Clock } from "lucide-react";
+import { queryClient, apiRequest } from "@/lib/queryClient";
+
+export default function WeeklyMeetingDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [, setLocation] = useLocation();
+
+  const [newTask, setNewTask] = useState({
+    department: "",
+    title: "",
+    description: "",
+    target: "",
+  });
+
+  const { data: meeting, isLoading } = useQuery({
+    queryKey: ["/api/weekly-meetings", id],
+    queryFn: () => fetch(`/api/weekly-meetings/${id}`).then(r => r.json()),
+  });
+
+  const { data: tasks = [] } = useQuery({
+    queryKey: ["/api/weekly-meetings", id, "tasks"],
+    queryFn: () => fetch(`/api/weekly-meetings/${id}/tasks`).then(r => r.json()),
+  });
+
+  const addTaskMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest(`/api/weekly-meetings/${id}/tasks`, {
+        method: "POST",
+        body: JSON.stringify({
+          meetingId: parseInt(id!),
+          departmentName: newTask.department,
+          title: newTask.title,
+          description: newTask.description,
+          targetValue: parseInt(newTask.target) || 0,
+        }),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings", id, "tasks"] });
+      setNewTask({ department: "", title: "", description: "", target: "" });
+      toast({ title: "Success", description: "Task added successfully" });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 p-6">
+      <Button variant="outline" onClick={() => setLocation("/weekly-meetings")}>
+        ← Back to Meetings
+      </Button>
+
+      <div className="grid grid-cols-3 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Week Number</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold text-indigo-600">{meeting?.weekNumber}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Total Tasks</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold text-blue-600">{tasks.length}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Meeting Status</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">
+              {meeting?.status}
+            </span>
+          </CardContent>
+        </Card>
+      </div>
+
+      {(user?.role === "admin" || user?.role === "manager") && meeting?.status === "planned" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Add New Task</CardTitle>
+            <CardDescription>Assign work points to departments</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                placeholder="Department"
+                value={newTask.department}
+                onChange={(e) => setNewTask({ ...newTask, department: e.target.value })}
+              />
+              <Input
+                placeholder="Target Value"
+                type="number"
+                value={newTask.target}
+                onChange={(e) => setNewTask({ ...newTask, target: e.target.value })}
+              />
+            </div>
+            <Input
+              placeholder="Task Title"
+              value={newTask.title}
+              onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+            />
+            <Textarea
+              placeholder="Description"
+              value={newTask.description}
+              onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+              rows={3}
+            />
+            <Button
+              onClick={() => addTaskMutation.mutate()}
+              disabled={!newTask.department || !newTask.title || addTaskMutation.isPending}
+              className="w-full gap-2"
+            >
+              {addTaskMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Plus className="h-4 w-4" />
+              )}
+              Add Task
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Tasks</CardTitle>
+          <CardDescription>Department work points for this week</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {tasks.map((task: any) => (
+              <Card key={task.id} className="bg-slate-50 dark:bg-slate-900">
+                <CardContent className="pt-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <h4 className="font-semibold text-slate-900 dark:text-white">{task.title}</h4>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">{task.departmentName}</p>
+                    </div>
+                    <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-200 rounded text-xs font-medium">
+                      Target: {task.targetValue}
+                    </span>
+                  </div>
+                  {task.description && (
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">{task.description}</p>
+                  )}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      toast({ title: "Navigate", description: "Going to task details..." });
+                    }}
+                  >
+                    View Progress
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

@@ -1881,9 +1881,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Weekly Meetings Routes
+  app.post("/api/weekly-meetings", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const meeting = await storage.createWeeklyMeeting({
+        weekNumber: req.body.weekNumber,
+        year: req.body.year,
+        meetingDate: new Date(req.body.meetingDate),
+        createdById: req.user?.id,
+      } as any);
+      res.json(meeting);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/weekly-meetings", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const meetings = await storage.getWeeklyMeetings();
+      res.json(meetings);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/weekly-meetings/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const meeting = await storage.getWeeklyMeeting(parseInt(req.params.id));
+      res.json(meeting || { message: "Not found" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/weekly-meetings/:id/tasks", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const task = await storage.createWeeklyMeetingTask(req.body);
+      res.json(task);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/weekly-meetings/:id/tasks", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const tasks = await storage.getWeeklyMeetingTasks(parseInt(req.params.id));
+      res.json(tasks);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
-
-
-
   return httpServer;
 }
