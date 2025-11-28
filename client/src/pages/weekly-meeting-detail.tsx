@@ -34,9 +34,11 @@ export default function WeeklyMeetingDetailPage() {
   const [newComment, setNewComment] = useState("");
   const [expandedCommentId, setExpandedCommentId] = useState<number | null>(null);
 
-  const { data: users = [] } = useQuery<any[]>({
+  const { data: usersData = [] } = useQuery({
     queryKey: ["/api/users"],
   });
+  
+  const users = Array.isArray(usersData) ? usersData : (usersData as any)?.users || [];
 
   const { data: meeting, isLoading } = useQuery({
     queryKey: ["/api/weekly-meetings", id],
@@ -265,7 +267,7 @@ export default function WeeklyMeetingDetailPage() {
                         {task.comments && task.comments.length > 0 && (
                           <div className="space-y-2 max-h-56 overflow-y-auto border-l-2 border-indigo-300 dark:border-indigo-600 pl-2">
                             {task.comments.map((comment: any) => {
-                              const commenter = users?.find((u: any) => u.id === comment.authorId);
+                              const commenter = Array.isArray(users) && users.find((u: any) => u.id === comment.authorId);
                               return (
                                 <div key={comment.id} className={`p-2 rounded text-xs ${comment.proofUrl ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800' : 'bg-slate-100 dark:bg-slate-700'}`}>
                                   <div className="flex items-center justify-between mb-1">
