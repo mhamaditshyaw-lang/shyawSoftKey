@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2, Plus, Save, CheckCircle, Clock } from "lucide-react";
+import { Loader2, Plus, Save, CheckCircle, Clock, Zap } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 
 export default function WeeklyMeetingDetailPage() {
@@ -22,6 +22,7 @@ export default function WeeklyMeetingDetailPage() {
     description: "",
     target: "",
   });
+  const [selectedTask, setSelectedTask] = useState<number | null>(null);
 
   const { data: meeting, isLoading } = useQuery({
     queryKey: ["/api/weekly-meetings", id],
@@ -189,12 +190,28 @@ export default function WeeklyMeetingDetailPage() {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => {
-                      toast({ title: "Navigate", description: "Going to task details..." });
-                    }}
+                    onClick={() => setSelectedTask(selectedTask === task.id ? null : task.id)}
+                    className="gap-1"
                   >
-                    View Progress
+                    <Zap className="h-3 w-3" />
+                    {selectedTask === task.id ? "Hide" : "View"} Progress
                   </Button>
+                  {selectedTask === task.id && (
+                    <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs font-medium text-slate-600 dark:text-slate-400">Progress</span>
+                          <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">0%</span>
+                        </div>
+                        <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                          <div className="bg-indigo-600 h-full w-0 transition-all"></div>
+                        </div>
+                        <p className="text-xs text-slate-500 dark:text-slate-500">
+                          Target: {task.targetValue} | Current: 0 | Status: Not Started
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}

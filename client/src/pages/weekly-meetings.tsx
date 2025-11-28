@@ -5,17 +5,30 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Calendar, Plus, Archive, Eye, Loader2 } from "lucide-react";
+import { Calendar, Plus, Archive, Eye, Loader2, Filter, ChevronDown } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function WeeklyMeetingsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isCreating, setIsCreating] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [expandedMeetings, setExpandedMeetings] = useState<Set<number>>(new Set());
 
   const { data: meetings = [], isLoading } = useQuery({
     queryKey: ["/api/weekly-meetings"],
   });
+
+  const filteredMeetings = meetings.filter((meeting: any) =>
+    statusFilter === "all" ? true : meeting.status === statusFilter
+  );
 
   const createMeetingMutation = useMutation({
     mutationFn: async () => {
@@ -76,8 +89,30 @@ export default function WeeklyMeetingsPage() {
         )}
       </div>
 
+      <div className="flex items-center gap-2">
+        <Filter className="h-4 w-4 text-slate-500" />
+        <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Filter by status:</span>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-48">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Meetings</SelectItem>
+            <SelectItem value="planned">Planned</SelectItem>
+            <SelectItem value="in_progress">In Progress</SelectItem>
+            <SelectItem value="completed">Completed</SelectItem>
+            <SelectItem value="archived">Archived</SelectItem>
+          </SelectContent>
+        </Select>
+        {filteredMeetings.length > 0 && (
+          <span className="text-sm text-slate-500 dark:text-slate-400 ml-auto">
+            {filteredMeetings.length} meeting{filteredMeetings.length !== 1 ? 's' : ''}
+          </span>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {meetings.map((meeting: any) => (
+        {filteredMeetings.map((meeting: any) => (
           <Card key={meeting.id} className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex items-start justify-between">
@@ -98,9 +133,36 @@ export default function WeeklyMeetingsPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                {new Date(meeting.meetingDate).toLocaleDateString()}
-              </p>
+              <div className="space-y-2">
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  {new Date(meeting.meetingDate).toLocaleDateString()}
+                </p>
+                {meeting.description && (
+                  <div className="bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded border border-indigo-200 dark:border-indigo-800">
+                    <button
+                      onClick={() => {
+                        const newSet = new Set(expandedMeetings);
+                        if (newSet.has(meeting.id)) newSet.delete(meeting.id);
+                        else newSet.add(meeting.id);
+                        setExpandedMeetings(newSet);
+                      }}
+                      className="flex items-center gap-2 w-full text-left hover:opacity-75 transition-opacity"
+                    >
+                      <ChevronDown
+                        className={`h-3 w-3 text-indigo-600 transition-transform ${
+                          expandedMeetings.has(meeting.id) ? "rotate-180" : ""
+                        }`}
+                      />
+                      <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400">
+                        Description
+                      </span>
+                    </button>
+                    {expandedMeetings.has(meeting.id) && (
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-2">{meeting.description}</p>
+                    )}
+                  </div>
+                )}
+              </div>
               <div className="flex gap-2">
                 <Link href={`/weekly-meetings/${meeting.id}`} asChild>
                   <Button variant="outline" size="sm" className="flex-1 gap-1">
@@ -126,11 +188,15 @@ export default function WeeklyMeetingsPage() {
         ))}
       </div>
 
-      {meetings.length === 0 && (
+      {filteredMeetings.length === 0 && (
         <Card className="text-center py-12">
           <Calendar className="h-12 w-12 mx-auto text-slate-400 mb-3" />
-          <p className="text-slate-600 dark:text-slate-400">No weekly meetings yet</p>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Create one to get started</p>
+          <p className="text-slate-600 dark:text-slate-400">
+            {statusFilter === "all" ? "No weekly meetings yet" : "No meetings found matching your filter"}
+          </p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            {statusFilter === "all" ? "Create one to get started" : "Try adjusting your filter"}
+          </p>
         </Card>
       )}
     </div>
