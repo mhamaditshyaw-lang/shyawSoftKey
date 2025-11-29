@@ -33,15 +33,15 @@ export default function WeeklyMeetingsDataPage() {
   const [userFilter, setUserFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data: meetings = [], isLoading: meetingsLoading } = useQuery({
+  const { data: meetings = [] as any[], isLoading: meetingsLoading } = useQuery({
     queryKey: ["/api/weekly-meetings"],
   });
 
-  const { data: tasks = [], isLoading: tasksLoading } = useQuery({
+  const { data: tasks = [] as any[], isLoading: tasksLoading } = useQuery({
     queryKey: ["/api/weekly-meetings/all-tasks"],
   });
 
-  const { data: users = [], isLoading: usersLoading } = useQuery({
+  const { data: users = [] as any[], isLoading: usersLoading } = useQuery({
     queryKey: ["/api/users"],
   });
 
@@ -49,13 +49,13 @@ export default function WeeklyMeetingsDataPage() {
 
   // Get unique departments
   const departments = useMemo(() => {
-    const depts = new Set(tasks.map((t: any) => t.departmentName));
+    const depts = new Set((tasks || []).map((t: any) => t.departmentName));
     return Array.from(depts);
   }, [tasks]);
 
   // Filter tasks
   const filteredTasks = useMemo(() => {
-    return tasks.filter((task: any) => {
+    return (tasks || []).filter((task: any) => {
       const deptMatch = departmentFilter === "all" || task.departmentName === departmentFilter;
       const userMatch = userFilter === "all" || task.assignedUserId?.toString() === userFilter;
       const searchMatch = searchQuery === "" || task.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -68,12 +68,12 @@ export default function WeeklyMeetingsDataPage() {
     series: [
       {
         name: "Total Tasks",
-        data: departments.map((dept) => tasks.filter((t: any) => t.departmentName === dept).length),
+        data: departments.map((dept: any) => (tasks || []).filter((t: any) => t.departmentName === dept).length),
       },
       {
         name: "Assigned Tasks",
-        data: departments.map((dept) =>
-          tasks.filter((t: any) => t.departmentName === dept && t.assignedUserId).length
+        data: departments.map((dept: any) =>
+          (tasks || []).filter((t: any) => t.departmentName === dept && t.assignedUserId).length
         ),
       },
     ],
@@ -87,8 +87,8 @@ export default function WeeklyMeetingsDataPage() {
 
   // Chart data - Status distribution
   const statusDistribution = [
-    filteredTasks.filter((t: any) => !t.assignedUserId).length,
-    filteredTasks.filter((t: any) => t.assignedUserId).length,
+    (filteredTasks || []).filter((t: any) => !t.assignedUserId).length,
+    (filteredTasks || []).filter((t: any) => t.assignedUserId).length,
   ];
 
   const statusChart = {
@@ -103,22 +103,22 @@ export default function WeeklyMeetingsDataPage() {
 
   // Chart data - Tasks by Target Value Range
   const targetRanges = [
-    { range: "0-5", count: filteredTasks.filter((t: any) => t.targetValue >= 0 && t.targetValue <= 5).length },
-    { range: "5-10", count: filteredTasks.filter((t: any) => t.targetValue > 5 && t.targetValue <= 10).length },
-    { range: "10-15", count: filteredTasks.filter((t: any) => t.targetValue > 10 && t.targetValue <= 15).length },
-    { range: "15+", count: filteredTasks.filter((t: any) => t.targetValue > 15).length },
+    { range: "0-5", count: (filteredTasks || []).filter((t: any) => t.targetValue >= 0 && t.targetValue <= 5).length },
+    { range: "5-10", count: (filteredTasks || []).filter((t: any) => t.targetValue > 5 && t.targetValue <= 10).length },
+    { range: "10-15", count: (filteredTasks || []).filter((t: any) => t.targetValue > 10 && t.targetValue <= 15).length },
+    { range: "15+", count: (filteredTasks || []).filter((t: any) => t.targetValue > 15).length },
   ];
 
   const targetChart = {
     series: [
       {
         name: "Task Count",
-        data: targetRanges.map((r) => r.count),
+        data: targetRanges.map((r: any) => r.count),
       },
     ],
     options: {
       chart: { type: "area", toolbar: { show: true } },
-      xaxis: { categories: targetRanges.map((r) => r.range) },
+      xaxis: { categories: targetRanges.map((r: any) => r.range) },
       colors: ["#8b5cf6"],
       fill: { type: "gradient" },
     },
@@ -134,12 +134,12 @@ export default function WeeklyMeetingsDataPage() {
 
   const downloadCSV = () => {
     const headers = ["Task ID", "Title", "Department", "Target", "Assigned User"];
-    const rows = filteredTasks.map((t: any) => [
+    const rows = (filteredTasks || []).map((t: any) => [
       t.id,
       t.title,
       t.departmentName,
       t.targetValue,
-      t.assignedUserId ? (users.find((u: any) => u.id === t.assignedUserId)?.firstName || "") : "Unassigned",
+      t.assignedUserId ? ((users || []).find((u: any) => u.id === t.assignedUserId)?.firstName || "") : "Unassigned",
     ]);
 
     const csv = [headers, ...rows].map((row) => row.join(",")).join("\n");
@@ -203,8 +203,8 @@ export default function WeeklyMeetingsDataPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Users</SelectItem>
-                  {users.map((user: any) => (
-                    <SelectItem key={user.id} value={user.id.toString()}>
+                  {(users || []).map((user: any) => (
+                    <SelectItem key={user.id} value={String(user.id)}>
                       {user.firstName} {user.lastName}
                     </SelectItem>
                   ))}
@@ -417,7 +417,7 @@ export default function WeeklyMeetingsDataPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredTasks.map((task: any) => (
+                  {(filteredTasks || []).map((task: any) => (
                     <tr key={task.id} className="border-b hover:bg-slate-50 dark:hover:bg-slate-800">
                       <td className="py-2 px-4 font-medium">{task.title}</td>
                       <td className="py-2 px-4 text-slate-600 dark:text-slate-400">{task.departmentName}</td>
@@ -429,7 +429,7 @@ export default function WeeklyMeetingsDataPage() {
                       <td className="py-2 px-4">
                         {task.assignedUserId ? (
                           <span className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded text-xs">
-                            {users.find((u: any) => u.id === task.assignedUserId)?.firstName}
+                            {(users || []).find((u: any) => u.id === task.assignedUserId)?.firstName}
                           </span>
                         ) : (
                           <span className="text-slate-400">Unassigned</span>
