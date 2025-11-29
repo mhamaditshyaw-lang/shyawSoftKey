@@ -105,6 +105,7 @@ export const weeklyMeetings = pgTable("weekly_meetings", {
   weekNumber: integer("week_number").notNull(),
   year: integer("year").notNull(),
   meetingDate: timestamp("meeting_date").notNull(),
+  name: text("name"),
   status: meetingStatusEnum("status").notNull().default("planned"),
   createdById: integer("created_by_id").references(() => users.id).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),

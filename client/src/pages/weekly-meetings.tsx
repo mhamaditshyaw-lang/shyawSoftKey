@@ -74,7 +74,7 @@ export default function WeeklyMeetingsPage() {
   const updateMeetingNameMutation = useMutation({
     mutationFn: async ({ id, name }: { id: number; name: string }) => {
       return apiRequest("PATCH", `/api/weekly-meetings/${id}`, {
-        description: name,
+        name: name,
       });
     },
     onSuccess: () => {
@@ -321,7 +321,7 @@ export default function WeeklyMeetingsPage() {
                       <div>
                         <CardTitle className="flex items-center gap-2">
                           <Calendar className="h-4 w-4 text-indigo-600" />
-                          Week {meeting.weekNumber}
+                          {meeting.name || `Week ${meeting.weekNumber}`}
                         </CardTitle>
                         <CardDescription>{meeting.year}</CardDescription>
                       </div>
@@ -331,7 +331,7 @@ export default function WeeklyMeetingsPage() {
                     <button
                       onClick={() => {
                         setEditingWeekId(meeting.id);
-                        setEditingName(`Week ${meeting.weekNumber}`);
+                        setEditingName(meeting.name || `Week ${meeting.weekNumber}`);
                       }}
                       className="p-1 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 rounded transition-colors"
                       title="Edit name"

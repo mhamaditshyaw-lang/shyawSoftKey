@@ -1920,9 +1920,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/weekly-meetings/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const meetingId = parseInt(req.params.id);
-      const { status } = req.body;
+      const { status, name } = req.body;
       const updates: any = {};
       if (status !== undefined) updates.status = status;
+      if (name !== undefined) updates.name = name;
       
       // Get current meeting
       const meeting = await db.query.weeklyMeetings.findFirst({
