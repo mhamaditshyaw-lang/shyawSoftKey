@@ -1920,16 +1920,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/weekly-meetings/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const meetingId = parseInt(req.params.id);
-      const { description, status } = req.body;
+      const { status } = req.body;
       const updates: any = {};
-      if (description !== undefined) updates.description = description;
       if (status !== undefined) updates.status = status;
       
-      const result = await db.update(weeklyMeetings)
-        .set(updates)
-        .where(eq(weeklyMeetings.id, meetingId))
-        .returning();
-      res.json((result as any[])[0] || { message: "Not found" });
+      // Get current meeting
+      const meeting = await db.query.weeklyMeetings.findFirst({
+        where: eq(weeklyMeetings.id, meetingId)
+      });
+      
+      if (!meeting) {
+        return res.status(404).json({ message: "Meeting not found" });
+      }
+      
+      // Only execute update if there are fields to update
+      if (Object.keys(updates).length > 0) {
+        const result = await db.update(weeklyMeetings)
+          .set(updates)
+          .where(eq(weeklyMeetings.id, meetingId))
+          .returning();
+        res.json((result as any[])[0]);
+      } else {
+        // No database fields to update, just return the meeting
+        res.json(meeting);
+      }
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
