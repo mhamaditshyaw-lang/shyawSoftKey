@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Calendar, Plus, Archive, Eye, Loader2, Filter, ChevronDown, Search, X, Edit2, BarChart3, TrendingUp, Home } from "lucide-react";
+import { Calendar, Plus, Archive, Eye, Loader2, Filter, ChevronDown, Search, X, Edit2, BarChart3, TrendingUp, Home, Save } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { motion } from "framer-motion";
 import {
@@ -86,6 +86,14 @@ export default function WeeklyMeetingsPage() {
           <p className="text-slate-600 dark:text-slate-300 mt-1">Manage departmental work points and progress</p>
         </div>
         <div className="flex gap-2">
+          <Button
+            onClick={() => setLocation("/weekly-meetings-data")}
+            variant="outline"
+            className="gap-2"
+          >
+            <BarChart3 className="h-4 w-4" />
+            View Data
+          </Button>
           <Button
             onClick={() => setLocation("/")}
             variant="outline"
