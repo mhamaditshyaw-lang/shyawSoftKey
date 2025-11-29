@@ -43,6 +43,7 @@ import ManagerTodosPage from "@/pages/manager-todos";
 import ManagerDashboard from "@/pages/manager-dashboard";
 import WeeklyMeetingsPage from "@/pages/weekly-meetings";
 import WeeklyMeetingDetailPage from "@/pages/weekly-meeting-detail";
+import WeeklyMeetingsDataPage from "@/pages/weekly-meetings-data";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -183,6 +184,11 @@ function Router() {
       <Route path="/weekly-meetings/:id">
         <ProtectedRoute>
           <WeeklyMeetingDetailPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/weekly-meetings-data">
+        <ProtectedRoute>
+          <WeeklyMeetingsDataPage />
         </ProtectedRoute>
       </Route>
       <Route path="/notification-test">

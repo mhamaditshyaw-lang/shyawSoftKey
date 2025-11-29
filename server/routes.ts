@@ -1932,6 +1932,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/weekly-meetings/all-tasks", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const meetings = await storage.getWeeklyMeetings();
+      const allTasks: any[] = [];
+      for (const meeting of meetings) {
+        const tasks = await storage.getWeeklyMeetingTasks(meeting.id);
+        allTasks.push(...tasks);
+      }
+      res.json(allTasks);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.post("/api/weekly-meetings/tasks/:taskId/comments", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const comment = await storage.createTaskComment(
