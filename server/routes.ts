@@ -1,7 +1,9 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 
-import { storage, db, weeklyMeetings } from "./storage";
+import { storage } from "./storage";
+import { db } from "./db";
+import { weeklyMeetings } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
