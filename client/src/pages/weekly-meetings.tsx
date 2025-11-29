@@ -10,16 +10,6 @@ import { Calendar, Plus, Archive, Eye, Loader2, Filter, ChevronDown, Search, X, 
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { motion } from "framer-motion";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -79,14 +69,6 @@ export default function WeeklyMeetingsPage() {
       });
     },
   });
-
-  // Calculate analytics data
-  const analyticsData = meetings.map((meeting: any) => ({
-    week: `W${meeting.weekNumber}`,
-    completed: Math.floor(Math.random() * 10),
-    pending: Math.floor(Math.random() * 15),
-    inProgress: Math.floor(Math.random() * 12),
-  }));
 
   if (isLoading) {
     return (
@@ -204,39 +186,6 @@ export default function WeeklyMeetingsPage() {
               >
                 {meetings.length}
               </motion.p>
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
-
-      {/* Chart Section */}
-      {analyticsData.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-indigo-600" />
-                Task Analysis & Progress
-              </CardTitle>
-              <CardDescription>Weekly task completion and status breakdown</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={analyticsData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="week" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="completed" fill="#10b981" name="Completed" />
-                  <Bar dataKey="inProgress" fill="#3b82f6" name="In Progress" />
-                  <Bar dataKey="pending" fill="#f59e0b" name="Pending" />
-                </BarChart>
-              </ResponsiveContainer>
             </CardContent>
           </Card>
         </motion.div>
