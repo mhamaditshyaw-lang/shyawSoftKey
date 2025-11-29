@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Calendar, Plus, Archive, Eye, Loader2, Filter, ChevronDown, Search, X, Edit2, BarChart3, TrendingUp, Home, Save } from "lucide-react";
+import { Calendar, Plus, Archive, Eye, Loader2, Filter, ChevronDown, Search, X, Edit2, BarChart3, TrendingUp, Home, Save, PieChart } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { motion } from "framer-motion";
 import {
@@ -29,6 +29,7 @@ export default function WeeklyMeetingsPage() {
   const [dateTo, setDateTo] = useState("");
   const [editingWeekId, setEditingWeekId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState("");
+  const [expandedDataWeek, setExpandedDataWeek] = useState<number | null>(null);
 
   const { data: meetings = [], isLoading } = useQuery({
     queryKey: ["/api/weekly-meetings"],
@@ -356,14 +357,41 @@ export default function WeeklyMeetingsPage() {
                       variant="outline"
                       size="sm"
                       className="flex-1 gap-1"
-                      onClick={() => {
-                        toast({ title: "All Tasks", description: "Loading all tasks..." });
-                      }}
+                      onClick={() => setExpandedDataWeek(expandedDataWeek === meeting.id ? null : meeting.id)}
                     >
-                      <TrendingUp className="h-3 w-3" />
-                      All Tasks
+                      <PieChart className="h-3 w-3" />
+                      View Data
                     </Button>
                   </div>
+                  {expandedDataWeek === meeting.id && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 p-3 rounded border border-indigo-200 dark:border-indigo-800 space-y-2 text-xs"
+                    >
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-white dark:bg-slate-800 p-2 rounded">
+                          <p className="text-slate-600 dark:text-slate-400">Total Tasks</p>
+                          <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
+                            {meetings.find((m: any) => m.id === meeting.id)?.tasksCount || 0}
+                          </p>
+                        </div>
+                        <div className="bg-white dark:bg-slate-800 p-2 rounded">
+                          <p className="text-slate-600 dark:text-slate-400">Status</p>
+                          <p className="text-lg font-bold text-green-600 dark:text-green-400 capitalize">
+                            {meeting.status}
+                          </p>
+                        </div>
+                      </div>
+                      <Link href="/weekly-meetings-data" asChild>
+                        <Button size="sm" className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700">
+                          <BarChart3 className="h-3 w-3" />
+                          View Full Analysis
+                        </Button>
+                      </Link>
+                    </motion.div>
+                  )}
                   {meeting.status === "completed" && (
                     <Button
                       variant="outline"
