@@ -1914,6 +1914,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/weekly-meetings/all-tasks", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const meetings = await storage.getWeeklyMeetings();
+      const allTasks: any[] = [];
+      for (const meeting of meetings) {
+        const tasks = await storage.getWeeklyMeetingTasks(meeting.id);
+        allTasks.push(...tasks);
+      }
+      res.json(allTasks);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.post("/api/weekly-meetings/:id/tasks", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const task = await storage.createWeeklyMeetingTask(req.body);
@@ -1927,20 +1941,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const tasks = await storage.getWeeklyMeetingTasks(parseInt(req.params.id));
       res.json(tasks);
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
-  });
-
-  app.get("/api/weekly-meetings/all-tasks", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const meetings = await storage.getWeeklyMeetings();
-      const allTasks: any[] = [];
-      for (const meeting of meetings) {
-        const tasks = await storage.getWeeklyMeetingTasks(meeting.id);
-        allTasks.push(...tasks);
-      }
-      res.json(allTasks);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
