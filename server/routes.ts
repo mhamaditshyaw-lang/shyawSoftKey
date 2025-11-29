@@ -1,7 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 
-import { storage } from "./storage";
+import { storage, db, weeklyMeetings } from "./storage";
+import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { insertUserSchema, loginSchema, insertTodoListSchema, insertTodoItemSchema, insertInterviewRequestSchema, changePasswordSchema, updateUserPasswordSchema, insertReminderSchema, insertInterviewCommentSchema, PAGE_PERMISSIONS } from "@shared/schema";
@@ -1909,6 +1910,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const meeting = await storage.getWeeklyMeeting(parseInt(req.params.id));
       res.json(meeting || { message: "Not found" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.patch("/api/weekly-meetings/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const meetingId = parseInt(req.params.id);
+      const { description, status } = req.body;
+      const updates: any = {};
+      if (description !== undefined) updates.description = description;
+      if (status !== undefined) updates.status = status;
+      
+      const result = await db.update(weeklyMeetings)
+        .set(updates)
+        .where(eq(weeklyMeetings.id, meetingId))
+        .returning();
+      res.json((result as any[])[0] || { message: "Not found" });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }

@@ -71,6 +71,29 @@ export default function WeeklyMeetingsPage() {
     },
   });
 
+  const updateMeetingNameMutation = useMutation({
+    mutationFn: async ({ id, name }: { id: number; name: string }) => {
+      return apiRequest("PATCH", `/api/weekly-meetings/${id}`, {
+        description: name,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings"] });
+      setEditingWeekId(null);
+      toast({
+        title: "Success",
+        description: "Meeting name updated successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update meeting",
+        variant: "destructive",
+      });
+    },
+  });
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -279,8 +302,19 @@ export default function WeeklyMeetingsPage() {
                           placeholder="Week name"
                           className="h-8 text-sm"
                         />
-                        <Button size="sm" onClick={() => setEditingWeekId(null)} className="h-8 gap-1">
-                          <Save className="h-3 w-3" />
+                        <Button 
+                          size="sm" 
+                          onClick={() => {
+                            if (editingName.trim()) {
+                              updateMeetingNameMutation.mutate({ id: meeting.id, name: editingName });
+                            } else {
+                              setEditingWeekId(null);
+                            }
+                          }} 
+                          className="h-8 gap-1"
+                          disabled={updateMeetingNameMutation.isPending}
+                        >
+                          {updateMeetingNameMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
                         </Button>
                       </div>
                     ) : (
