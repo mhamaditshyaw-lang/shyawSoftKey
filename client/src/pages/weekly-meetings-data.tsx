@@ -41,10 +41,11 @@ export default function WeeklyMeetingsDataPage() {
     queryKey: ["/api/weekly-meetings/all-tasks"],
   });
 
-  const { data: users = [] as any[], isLoading: usersLoading } = useQuery({
+  const { data: usersData = [], isLoading: usersLoading } = useQuery({
     queryKey: ["/api/users"],
   });
 
+  const users = Array.isArray(usersData) ? usersData : (usersData as any)?.users || [];
   const isLoading = meetingsLoading || tasksLoading || usersLoading;
 
   // Get unique departments
