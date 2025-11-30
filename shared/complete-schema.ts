@@ -186,6 +186,7 @@ export const weeklyMeetings = pgTable("weekly_meetings", {
   weekNumber: integer("week_number").notNull(),
   year: integer("year").notNull(),
   meetingDate: timestamp("meeting_date").notNull(),
+  name: text("name"),
   status: meetingStatusEnum("status").notNull().default("planned"),
   createdById: integer("created_by_id").references(() => users.id).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -201,6 +202,17 @@ export const weeklyMeetingTasks = pgTable("weekly_meeting_tasks", {
   description: text("description"),
   targetValue: integer("target_value"),
   priority: priorityEnum("priority").notNull().default("medium"),
+  assignedUserId: integer("assigned_user_id").references(() => users.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Task Comments table
+export const taskComments = pgTable("task_comments", {
+  id: serial("id").primaryKey(),
+  taskId: integer("task_id").references(() => weeklyMeetingTasks.id, { onDelete: "cascade" }).notNull(),
+  authorId: integer("author_id").references(() => users.id).notNull(),
+  comment: text("comment").notNull(),
+  proofUrl: text("proof_url"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -347,7 +359,23 @@ export const weeklyMeetingTasksRelations = relations(weeklyMeetingTasks, ({ one,
     fields: [weeklyMeetingTasks.meetingId],
     references: [weeklyMeetings.id],
   }),
+  assignedUser: one(users, {
+    fields: [weeklyMeetingTasks.assignedUserId],
+    references: [users.id],
+  }),
   progress: many(departmentTaskProgress),
+  comments: many(taskComments),
+}));
+
+export const taskCommentsRelations = relations(taskComments, ({ one }) => ({
+  task: one(weeklyMeetingTasks, {
+    fields: [taskComments.taskId],
+    references: [weeklyMeetingTasks.id],
+  }),
+  author: one(users, {
+    fields: [taskComments.authorId],
+    references: [users.id],
+  }),
 }));
 
 export const departmentTaskProgressRelations = relations(departmentTaskProgress, ({ one }) => ({
