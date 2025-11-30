@@ -214,27 +214,38 @@ export default function WeeklyMeetingDetailPage() {
                 value={newTask.target}
                 onChange={(e) => setNewTask({ ...newTask, target: e.target.value })}
               />
-              <div className="border rounded p-2 max-h-32 overflow-y-auto">
-                <p className="text-xs font-medium mb-2 text-slate-600 dark:text-slate-400">Assign Users</p>
-                <div className="space-y-1">
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder={newTask.assignedUserIds.length > 0 ? `${newTask.assignedUserIds.length} user(s) assigned` : "Select users"} />
+                </SelectTrigger>
+                <SelectContent>
                   {Array.isArray(users) && users.map((u: any) => (
-                    <label key={u.id} className="flex items-center gap-2 text-xs cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={newTask.assignedUserIds.includes(u.id.toString())}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setNewTask({ ...newTask, assignedUserIds: [...newTask.assignedUserIds, u.id.toString()] });
-                          } else {
-                            setNewTask({ ...newTask, assignedUserIds: newTask.assignedUserIds.filter(id => id !== u.id.toString()) });
-                          }
-                        }}
-                      />
-                      {u.firstName} {u.lastName}
-                    </label>
+                    <SelectItem 
+                      key={u.id} 
+                      value={u.id.toString()}
+                      onClick={(e) => {
+                        const userId = u.id.toString();
+                        if (newTask.assignedUserIds.includes(userId)) {
+                          setNewTask({ ...newTask, assignedUserIds: newTask.assignedUserIds.filter(id => id !== userId) });
+                        } else {
+                          setNewTask({ ...newTask, assignedUserIds: [...newTask.assignedUserIds, userId] });
+                        }
+                      }}
+                      className="cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2">
+                        <input 
+                          type="checkbox" 
+                          checked={newTask.assignedUserIds.includes(u.id.toString())}
+                          readOnly
+                          className="pointer-events-none"
+                        />
+                        {u.firstName} {u.lastName}
+                      </div>
+                    </SelectItem>
                   ))}
-                </div>
-              </div>
+                </SelectContent>
+              </Select>
             </div>
             <Input
               placeholder="Task Title"
@@ -288,9 +299,17 @@ export default function WeeklyMeetingDetailPage() {
                           {task.isCompleted ? <Check className="h-4 w-4" /> : <div className="h-4 w-4" />}
                         </button>
                       </div>
-                      <div>
+                      <div className="flex-1">
                         <h4 className={`font-semibold ${task.isCompleted ? 'line-through text-green-700 dark:text-green-400' : 'text-slate-900 dark:text-white'}`}>{task.title}</h4>
                         <p className="text-sm text-slate-600 dark:text-slate-400">{task.departmentName}</p>
+                        {task.assignedUserIds && task.assignedUserIds.length > 0 && (
+                          <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-1">
+                            Assigned: {task.assignedUserIds.map((uid: number) => {
+                              const assignedUser = Array.isArray(users) && users.find((u: any) => u.id === uid);
+                              return assignedUser ? `${assignedUser.firstName} ${assignedUser.lastName}` : `User ${uid}`;
+                            }).join(", ")}
+                          </p>
+                        )}
                       </div>
                     </div>
                     <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-200 rounded text-xs font-medium">
