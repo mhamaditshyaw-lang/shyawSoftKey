@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2, Plus, Save, CheckCircle, Clock, Zap, Send, FileCheck, Eye, TrendingUp, Check } from "lucide-react";
+import { Loader2, Plus, Save, CheckCircle, Clock, Zap, Send, FileCheck, Eye, TrendingUp, Check, X } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import {
   Select,
@@ -35,6 +35,7 @@ export default function WeeklyMeetingDetailPage() {
   const [newComment, setNewComment] = useState("");
   const [expandedCommentId, setExpandedCommentId] = useState<number | null>(null);
   const [taskProgress, setTaskProgress] = useState<Record<number, {current: number, status: string}>>({});
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
 
   const { data: usersData = [] } = useQuery({
     queryKey: ["/api/users"],
@@ -214,38 +215,55 @@ export default function WeeklyMeetingDetailPage() {
                 value={newTask.target}
                 onChange={(e) => setNewTask({ ...newTask, target: e.target.value })}
               />
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder={newTask.assignedUserIds.length > 0 ? `${newTask.assignedUserIds.length} user(s) assigned` : "Select users"} />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.isArray(users) && users.map((u: any) => (
-                    <SelectItem 
-                      key={u.id} 
-                      value={u.id.toString()}
-                      onClick={(e) => {
-                        const userId = u.id.toString();
-                        if (newTask.assignedUserIds.includes(userId)) {
-                          setNewTask({ ...newTask, assignedUserIds: newTask.assignedUserIds.filter(id => id !== userId) });
-                        } else {
-                          setNewTask({ ...newTask, assignedUserIds: [...newTask.assignedUserIds, userId] });
-                        }
-                      }}
-                      className="cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        <input 
-                          type="checkbox" 
-                          checked={newTask.assignedUserIds.includes(u.id.toString())}
-                          readOnly
-                          className="pointer-events-none"
-                        />
-                        {u.firstName} {u.lastName}
+              <div className="relative">
+                <div className="border rounded p-2 min-h-10 bg-white dark:bg-slate-950 flex flex-wrap gap-1 items-center">
+                  {newTask.assignedUserIds.map((userId: string) => {
+                    const user = Array.isArray(users) && users.find((u: any) => u.id.toString() === userId);
+                    return (
+                      <div key={userId} className="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-2 py-1 rounded text-xs flex items-center gap-1">
+                        {user ? `${user.firstName} ${user.lastName}` : `User ${userId}`}
+                        <button
+                          onClick={() => setNewTask({ ...newTask, assignedUserIds: newTask.assignedUserIds.filter(id => id !== userId) })}
+                          className="hover:text-indigo-900 dark:hover:text-indigo-100"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
                       </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                    );
+                  })}
+                  <button
+                    onClick={() => setShowUserDropdown(!showUserDropdown)}
+                    className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
+                  >
+                    + Add User
+                  </button>
+                </div>
+                {showUserDropdown && (
+                  <div className="absolute top-full left-0 right-0 mt-1 border rounded bg-white dark:bg-slate-800 shadow-lg z-10">
+                    <div className="max-h-48 overflow-y-auto p-2 space-y-1">
+                      {Array.isArray(users) && users.map((u: any) => {
+                        const isSelected = newTask.assignedUserIds.includes(u.id.toString());
+                        return (
+                          <label key={u.id} className="flex items-center gap-2 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-xs cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setNewTask({ ...newTask, assignedUserIds: [...newTask.assignedUserIds, u.id.toString()] });
+                                } else {
+                                  setNewTask({ ...newTask, assignedUserIds: newTask.assignedUserIds.filter(id => id !== u.id.toString()) });
+                                }
+                              }}
+                            />
+                            {u.firstName} {u.lastName}
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
             <Input
               placeholder="Task Title"
