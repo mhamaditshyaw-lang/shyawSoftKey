@@ -111,14 +111,6 @@ export default function WeeklyMeetingsPage() {
         </div>
         <div className="flex gap-2">
           <Button
-            onClick={() => setLocation("/weekly-meetings-data")}
-            variant="outline"
-            className="gap-2"
-          >
-            <BarChart3 className="h-4 w-4" />
-            View Data
-          </Button>
-          <Button
             onClick={() => setLocation("/")}
             variant="outline"
             className="gap-2"
