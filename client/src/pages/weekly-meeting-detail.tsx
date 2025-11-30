@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2, Plus, Save, CheckCircle, Clock, Zap, Send, FileCheck, Eye, TrendingUp } from "lucide-react";
+import { Loader2, Plus, Save, CheckCircle, Clock, Zap, Send, FileCheck, Eye, TrendingUp, Check } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import {
   Select,
@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function WeeklyMeetingDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -124,6 +125,23 @@ export default function WeeklyMeetingDetailPage() {
     onSuccess: (_, { taskId, current, status }) => {
       setTaskProgress(prev => ({...prev, [taskId]: {current, status}}));
       toast({ title: "Success", description: "Progress updated successfully" });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const completeTaskMutation = useMutation({
+    mutationFn: async (taskId: number) => {
+      return apiRequest("PATCH", `/api/weekly-meetings/tasks/${taskId}/complete`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings", id, "tasks"] });
+      toast({ title: "Success", description: "Task marked as complete" });
     },
     onError: (error: any) => {
       toast({
@@ -244,12 +262,23 @@ export default function WeeklyMeetingDetailPage() {
         <CardContent>
           <div className="space-y-3">
             {tasks.map((task: any) => (
-              <Card key={task.id} className="bg-slate-50 dark:bg-slate-900">
+              <Card key={task.id} className={`${task.isCompleted ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : 'bg-slate-50 dark:bg-slate-900'}`}>
                 <CardContent className="pt-4">
                   <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h4 className="font-semibold text-slate-900 dark:text-white">{task.title}</h4>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">{task.departmentName}</p>
+                    <div className="flex items-start gap-3 flex-1">
+                      <div className="mt-1">
+                        <button
+                          onClick={() => completeTaskMutation.mutate(task.id)}
+                          disabled={completeTaskMutation.isPending}
+                          className={`p-1.5 rounded ${task.isCompleted ? 'bg-green-500 text-white' : 'border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500'} transition-all`}
+                        >
+                          {task.isCompleted ? <Check className="h-4 w-4" /> : <div className="h-4 w-4" />}
+                        </button>
+                      </div>
+                      <div>
+                        <h4 className={`font-semibold ${task.isCompleted ? 'line-through text-green-700 dark:text-green-400' : 'text-slate-900 dark:text-white'}`}>{task.title}</h4>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">{task.departmentName}</p>
+                      </div>
                     </div>
                     <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-200 rounded text-xs font-medium">
                       Target: {task.targetValue}
