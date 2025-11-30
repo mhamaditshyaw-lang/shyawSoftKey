@@ -1031,16 +1031,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getWeeklyMeetingTasks(meetingId: number): Promise<any[]> {
-    const tasks = await db.select().from(weeklyMeetingTasks).where(eq(weeklyMeetingTasks.meetingId, meetingId));
-    return Promise.all(tasks.map(async (task: any) => {
-      try {
-        const comments = await this.getTaskComments(task.id);
-        return { ...task, comments };
-      } catch (err) {
-        console.error(`Failed to fetch comments for task ${task.id}:`, err);
-        return { ...task, comments: [] };
-      }
-    }));
+    try {
+      const tasks = await db.select().from(weeklyMeetingTasks).where(eq(weeklyMeetingTasks.meetingId, meetingId));
+      return tasks;
+    } catch (err) {
+      console.error(`Failed to fetch tasks for meeting ${meetingId}:`, err);
+      return [];
+    }
   }
 
   async createTaskComment(taskId: number, authorId: number, comment: string, proofUrl?: string): Promise<any> {
