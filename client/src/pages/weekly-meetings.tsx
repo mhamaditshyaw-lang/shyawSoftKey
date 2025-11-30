@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Calendar, Plus, Archive, Eye, Loader2, Filter, ChevronDown, Search, X, Edit2, BarChart3, TrendingUp, Home, Save, PieChart } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { motion } from "framer-motion";
+import Chart from "react-apexcharts";
 import {
   Select,
   SelectContent,
@@ -30,9 +31,15 @@ export default function WeeklyMeetingsPage() {
   const [editingWeekId, setEditingWeekId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState("");
   const [expandedDataWeek, setExpandedDataWeek] = useState<number | null>(null);
+  const [showAnalysisModal, setShowAnalysisModal] = useState(false);
+  const [selectedMeetingId, setSelectedMeetingId] = useState<number | null>(null);
 
   const { data: meetings = [], isLoading } = useQuery({
     queryKey: ["/api/weekly-meetings"],
+  });
+
+  const { data: allTasks = [] } = useQuery({
+    queryKey: ["/api/weekly-meetings/all-tasks"],
   });
 
   const filteredMeetings = meetings.filter((meeting: any) => {
@@ -410,12 +417,17 @@ export default function WeeklyMeetingsPage() {
                           </p>
                         </div>
                       </div>
-                      <Link href="/weekly-meetings-data" asChild>
-                        <Button size="sm" className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700">
-                          <BarChart3 className="h-3 w-3" />
-                          View Full Analysis
-                        </Button>
-                      </Link>
+                      <Button 
+                        size="sm" 
+                        className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700"
+                        onClick={() => {
+                          setSelectedMeetingId(meeting.id);
+                          setShowAnalysisModal(true);
+                        }}
+                      >
+                        <BarChart3 className="h-3 w-3" />
+                        View Full Analysis
+                      </Button>
                     </motion.div>
                   )}
                   {meeting.status === "completed" && (
@@ -437,6 +449,97 @@ export default function WeeklyMeetingsPage() {
           </motion.div>
         ))}
       </div>
+
+      {showAnalysisModal && selectedMeetingId && (
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white dark:bg-slate-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Weekly Tasks Analysis</h2>
+              <button
+                onClick={() => setShowAnalysisModal(false)}
+                className="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-6">
+              {(() => {
+                const meetingTasks = allTasks.filter((t: any) => t.meeting_id === selectedMeetingId);
+                const departments = [...new Set(meetingTasks.map((t: any) => t.department_name))];
+                
+                return (
+                  <>
+                    <div className="grid grid-cols-3 gap-4">
+                      <Card>
+                        <CardContent className="pt-6">
+                          <p className="text-sm text-slate-600 dark:text-slate-400">Total Tasks</p>
+                          <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{meetingTasks.length}</p>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent className="pt-6">
+                          <p className="text-sm text-slate-600 dark:text-slate-400">Departments</p>
+                          <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{departments.length}</p>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent className="pt-6">
+                          <p className="text-sm text-slate-600 dark:text-slate-400">Assigned</p>
+                          <p className="text-2xl font-bold text-green-600 dark:text-green-400">{meetingTasks.filter((t: any) => t.assigned_user_id).length}</p>
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    {meetingTasks.length > 0 && (
+                      <>
+                        <div>
+                          <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Tasks by Department</h3>
+                          <Chart
+                            type="bar"
+                            series={[
+                              {
+                                name: "Tasks",
+                                data: departments.map((dept: any) => meetingTasks.filter((t: any) => t.department_name === dept).length),
+                              },
+                            ]}
+                            options={{
+                              chart: { type: "bar", toolbar: { show: false } },
+                              xaxis: { categories: departments },
+                              colors: ["#3b82f6"],
+                            }}
+                            height={300}
+                          />
+                        </div>
+
+                        <div>
+                          <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Assignment Status</h3>
+                          <Chart
+                            type="donut"
+                            series={[
+                              meetingTasks.filter((t: any) => !t.assigned_user_id).length,
+                              meetingTasks.filter((t: any) => t.assigned_user_id).length,
+                            ]}
+                            options={{
+                              chart: { type: "donut" },
+                              labels: ["Unassigned", "Assigned"],
+                              colors: ["#f59e0b", "#10b981"],
+                            }}
+                            height={300}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       {filteredMeetings.length === 0 && (
         <Card className="text-center py-12">
