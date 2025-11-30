@@ -29,7 +29,7 @@ export default function WeeklyMeetingDetailPage() {
     title: "",
     description: "",
     target: "",
-    assignedUserId: "",
+    assignedUserIds: [] as string[],
   });
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
   const [newComment, setNewComment] = useState("");
@@ -77,12 +77,12 @@ export default function WeeklyMeetingDetailPage() {
         title: newTask.title,
         description: newTask.description,
         targetValue: parseInt(newTask.target) || 0,
-        assignedUserId: newTask.assignedUserId ? parseInt(newTask.assignedUserId) : null,
+        assignedUserIds: newTask.assignedUserIds.map(id => parseInt(id)),
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings", id, "tasks"] });
-      setNewTask({ department: "", title: "", description: "", target: "", assignedUserId: "" });
+      setNewTask({ department: "", title: "", description: "", target: "", assignedUserIds: [] });
       toast({ title: "Success", description: "Task added successfully" });
     },
     onError: (error: any) => {
@@ -214,18 +214,27 @@ export default function WeeklyMeetingDetailPage() {
                 value={newTask.target}
                 onChange={(e) => setNewTask({ ...newTask, target: e.target.value })}
               />
-              <Select value={newTask.assignedUserId} onValueChange={(value) => setNewTask({ ...newTask, assignedUserId: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Assign User" />
-                </SelectTrigger>
-                <SelectContent>
+              <div className="border rounded p-2 max-h-32 overflow-y-auto">
+                <p className="text-xs font-medium mb-2 text-slate-600 dark:text-slate-400">Assign Users</p>
+                <div className="space-y-1">
                   {Array.isArray(users) && users.map((u: any) => (
-                    <SelectItem key={u.id} value={u.id.toString()}>
+                    <label key={u.id} className="flex items-center gap-2 text-xs cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={newTask.assignedUserIds.includes(u.id.toString())}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setNewTask({ ...newTask, assignedUserIds: [...newTask.assignedUserIds, u.id.toString()] });
+                          } else {
+                            setNewTask({ ...newTask, assignedUserIds: newTask.assignedUserIds.filter(id => id !== u.id.toString()) });
+                          }
+                        }}
+                      />
                       {u.firstName} {u.lastName}
-                    </SelectItem>
+                    </label>
                   ))}
-                </SelectContent>
-              </Select>
+                </div>
+              </div>
             </div>
             <Input
               placeholder="Task Title"
@@ -261,7 +270,11 @@ export default function WeeklyMeetingDetailPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {tasks.map((task: any) => (
+            {tasks.filter((task: any) => {
+              if (user?.role === "office" || user?.role === "manager" || user?.role === "admin") return true;
+              if (!task.assignedUserIds || task.assignedUserIds.length === 0) return true;
+              return task.assignedUserIds.includes(user?.id);
+            }).map((task: any) => (
               <Card key={task.id} className={`${task.isCompleted ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : 'bg-slate-50 dark:bg-slate-900'}`}>
                 <CardContent className="pt-4">
                   <div className="flex items-start justify-between mb-2">
