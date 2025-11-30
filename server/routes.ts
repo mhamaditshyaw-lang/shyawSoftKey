@@ -1976,7 +1976,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/weekly-meetings/:id/tasks", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const tasks = await storage.getWeeklyMeetingTasks(parseInt(req.params.id));
-      res.json(tasks);
+      const tasksWithComments = await Promise.all(
+        tasks.map(async (task: any) => ({
+          ...task,
+          comments: await storage.getTaskComments(task.id)
+        }))
+      );
+      res.json(tasksWithComments);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
