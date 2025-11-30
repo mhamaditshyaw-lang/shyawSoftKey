@@ -203,6 +203,8 @@ export const weeklyMeetingTasks = pgTable("weekly_meeting_tasks", {
   targetValue: integer("target_value"),
   priority: priorityEnum("priority").notNull().default("medium"),
   assignedUserId: integer("assigned_user_id").references(() => users.id, { onDelete: "set null" }),
+  isCompleted: boolean("is_completed").notNull().default(false),
+  completedAt: timestamp("completed_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

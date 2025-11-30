@@ -128,6 +128,7 @@ export interface IStorage {
   getWeeklyMeetingTasks(meetingId: number): Promise<any[]>;
   createTaskComment(taskId: number, authorId: number, comment: string, proofUrl?: string): Promise<any>;
   getTaskComments(taskId: number): Promise<any[]>;
+  completeTask(taskId: number): Promise<any>;
   updateDepartmentTaskProgress(taskId: number, departmentHeadId: number, updates: any): Promise<any>;
   getWeeklyMeetingArchive(meetingId: number): Promise<any[]>;
   archiveWeeklyMeeting(meetingId: number, archivedById: number, resultsData: any): Promise<any>;
@@ -1055,6 +1056,14 @@ export class DatabaseStorage implements IStorage {
     return comments.map((c: any) => ({
       ...c,
     }));
+  }
+
+  async completeTask(taskId: number): Promise<any> {
+    const result = await db.update(weeklyMeetingTasks)
+      .set({ isCompleted: true, completedAt: new Date() })
+      .where(eq(weeklyMeetingTasks.id, taskId))
+      .returning();
+    return (result as any[])[0];
   }
 
   async updateDepartmentTaskProgress(taskId: number, departmentHeadId: number, updates: any): Promise<any> {

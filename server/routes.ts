@@ -2032,6 +2032,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/weekly-meetings/tasks/:taskId/complete", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const taskId = parseInt(req.params.taskId);
+      const result = await storage.completeTask(taskId);
+      res.json(result || { message: "Task completed" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
