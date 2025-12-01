@@ -427,9 +427,12 @@ export default function WeeklyMeetingDetailPage() {
                                   {comment.proofUrl && (
                                     <button 
                                       onClick={() => setExpandedCommentId(expandedCommentId === comment.id ? null : comment.id)}
-                                      className="text-blue-600 dark:text-blue-400 hover:underline text-xs font-medium"
+                                      className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded transition-colors"
+                                      data-testid={`button-view-proof-${comment.id}`}
+                                      title={expandedCommentId === comment.id ? "Hide proof" : "Show proof"}
                                     >
-                                      {expandedCommentId === comment.id ? "Hide" : "View"} Proof
+                                      <Eye className="h-3.5 w-3.5" />
+                                      <span>{expandedCommentId === comment.id ? "Hide" : "View"}</span>
                                     </button>
                                   )}
                                   {user?.role !== "employee" && (
