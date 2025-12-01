@@ -128,6 +128,7 @@ export interface IStorage {
   getWeeklyMeetingTasks(meetingId: number): Promise<any[]>;
   createTaskComment(taskId: number, authorId: number, comment: string, proofUrl?: string): Promise<any>;
   getTaskComments(taskId: number): Promise<any[]>;
+  deleteTaskComment(commentId: number): Promise<any>;
   completeTask(taskId: number): Promise<any>;
   uncompleteTask(taskId: number): Promise<any>;
   updateTaskName(taskId: number, newTitle: string): Promise<any>;
@@ -1063,6 +1064,11 @@ export class DatabaseStorage implements IStorage {
     return comments.map((c: any) => ({
       ...c,
     }));
+  }
+
+  async deleteTaskComment(commentId: number): Promise<any> {
+    const result = await db.delete(taskComments).where(eq(taskComments.id, commentId)).returning();
+    return (result as any[])[0];
   }
 
   async completeTask(taskId: number, completedById?: number): Promise<any> {

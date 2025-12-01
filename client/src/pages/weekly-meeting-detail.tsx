@@ -37,6 +37,7 @@ export default function WeeklyMeetingDetailPage() {
   const [expandedCommentId, setExpandedCommentId] = useState<number | null>(null);
   const [expandedCommentsSection, setExpandedCommentsSection] = useState<Set<number>>(new Set());
   const [taskProgress, setTaskProgress] = useState<Record<number, {current: number, status: string}>>({});
+  const [deletingCommentId, setDeletingCommentId] = useState<number | null>(null);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
@@ -111,6 +112,24 @@ export default function WeeklyMeetingDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings", id, "tasks"] });
       setNewComment(prev => ({ ...prev, [taskId]: "" }));
       toast({ title: "Success", description: "Comment added successfully" });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteCommentMutation = useMutation({
+    mutationFn: async (commentId: number) => {
+      return apiRequest("DELETE", `/api/weekly-meetings/comments/${commentId}`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings", id, "tasks"] });
+      setDeletingCommentId(null);
+      toast({ title: "Success", description: "Comment deleted" });
     },
     onError: (error: any) => {
       toast({
@@ -404,14 +423,29 @@ export default function WeeklyMeetingDetailPage() {
                                   )}
                                 </div>
                                 <p className="text-slate-700 dark:text-slate-300 break-words mb-1">{comment.comment}</p>
-                                {comment.proofUrl && (
-                                  <button 
-                                    onClick={() => setExpandedCommentId(expandedCommentId === comment.id ? null : comment.id)}
-                                    className="text-blue-600 dark:text-blue-400 hover:underline text-xs font-medium"
-                                  >
-                                    {expandedCommentId === comment.id ? "Hide" : "View"} Proof
-                                  </button>
-                                )}
+                                <div className="flex items-center gap-2 mt-2">
+                                  {comment.proofUrl && (
+                                    <button 
+                                      onClick={() => setExpandedCommentId(expandedCommentId === comment.id ? null : comment.id)}
+                                      className="text-blue-600 dark:text-blue-400 hover:underline text-xs font-medium"
+                                    >
+                                      {expandedCommentId === comment.id ? "Hide" : "View"} Proof
+                                    </button>
+                                  )}
+                                  {user?.role !== "employee" && (
+                                    <button
+                                      onClick={() => {
+                                        if (confirm("Delete this comment?")) {
+                                          deleteCommentMutation.mutate(comment.id);
+                                        }
+                                      }}
+                                      disabled={deleteCommentMutation.isPending}
+                                      className="text-red-600 dark:text-red-400 hover:underline text-xs font-medium disabled:opacity-50"
+                                    >
+                                      Delete
+                                    </button>
+                                  )}
+                                </div>
                                 {expandedCommentId === comment.id && comment.proofUrl && (
                                   <div className="mt-1 p-2 bg-blue-50 dark:bg-blue-900/20 rounded border-l-2 border-blue-400">
                                     <a 

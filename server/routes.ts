@@ -2037,6 +2037,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/weekly-meetings/comments/:commentId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      if (req.user?.role === "employee") {
+        return res.status(403).json({ message: "Employee users cannot delete comments" });
+      }
+      const result = await storage.deleteTaskComment(parseInt(req.params.commentId));
+      res.json({ success: true, comment: result });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.get("/api/users", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const allUsers = await storage.getAllUsers();
