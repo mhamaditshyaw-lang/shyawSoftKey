@@ -112,37 +112,43 @@ export default function WeeklyMeetingsPage() {
   }
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Weekly Meeting Tasks</h1>
-          <p className="text-slate-600 dark:text-slate-300 mt-1">Manage departmental work points and progress</p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            onClick={() => setLocation("/")}
-            variant="outline"
-            className="gap-2"
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      <div className="space-y-6 p-6">
+        <div className="flex justify-between items-center">
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-gradient-to-r from-indigo-600 via-blue-600 to-teal-600 rounded-2xl p-6 w-full mr-4 shadow-lg"
           >
-            <Home className="h-4 w-4" />
-            Go Dashboard
-          </Button>
-          {(user?.role === "manager" || user?.role === "office" || user?.role === "staff_office") && (
+            <h1 className="text-4xl font-bold text-white drop-shadow-lg">Weekly Meeting Tasks</h1>
+            <p className="text-indigo-100 mt-1 text-lg">Manage departmental work points and progress</p>
+          </motion.div>
+          <div className="flex gap-2">
             <Button
-              onClick={() => createMeetingMutation.mutate()}
-              disabled={isCreating || createMeetingMutation.isPending}
-              className="gap-2 bg-indigo-600 hover:bg-indigo-700"
+              onClick={() => setLocation("/")}
+              variant="outline"
+              className="gap-2 border-2 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-semibold transition-all"
             >
-              {createMeetingMutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Plus className="h-4 w-4" />
-              )}
-              New Meeting
+              <Home className="h-4 w-4" />
+              Dashboard
             </Button>
-          )}
+            {(user?.role === "manager" || user?.role === "office" || user?.role === "staff_office") && (
+              <Button
+                onClick={() => createMeetingMutation.mutate()}
+                disabled={isCreating || createMeetingMutation.isPending}
+                className="gap-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all"
+              >
+                {createMeetingMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Plus className="h-4 w-4" />
+                )}
+                New Meeting
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
 
       {/* Analytics Section */}
       {meetings.length > 0 && (
@@ -224,12 +230,21 @@ export default function WeeklyMeetingsPage() {
         </motion.div>
       )}
 
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-slate-500" />
-          <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Filters:</span>
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-md border border-indigo-100 dark:border-indigo-900/30 space-y-3"
+      >
+        <div className="flex items-center gap-3">
+          <div className="bg-gradient-to-br from-indigo-500 to-blue-500 p-2 rounded-lg">
+            <Filter className="h-5 w-5 text-white" />
+          </div>
+          <span className="font-semibold text-slate-900 dark:text-white text-lg">Filters & Search</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40">
+            <SelectTrigger className="w-40 border-2 border-indigo-200 dark:border-indigo-800 focus:border-indigo-600 dark:focus:border-indigo-400">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -244,20 +259,20 @@ export default function WeeklyMeetingsPage() {
             placeholder="Search by week..."
             value={nameSearch}
             onChange={(e) => setNameSearch(e.target.value)}
-            className="w-40 h-9"
+            className="w-40 h-10 border-2 border-indigo-200 dark:border-indigo-800 focus:border-indigo-600 dark:focus:border-indigo-400 font-medium"
           />
           <Input
             type="date"
             value={dateFrom}
             onChange={(e) => setDateFrom(e.target.value)}
-            className="w-40 h-9"
+            className="w-40 h-10 border-2 border-indigo-200 dark:border-indigo-800 focus:border-indigo-600"
             placeholder="From"
           />
           <Input
             type="date"
             value={dateTo}
             onChange={(e) => setDateTo(e.target.value)}
-            className="w-40 h-9"
+            className="w-40 h-10 border-2 border-indigo-200 dark:border-indigo-800 focus:border-indigo-600"
             placeholder="To"
           />
           {(nameSearch || dateFrom || dateTo) && (
@@ -269,21 +284,21 @@ export default function WeeklyMeetingsPage() {
                 setDateFrom("");
                 setDateTo("");
               }}
-              className="gap-1"
+              className="gap-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 font-semibold"
             >
-              <X className="h-3 w-3" />
+              <X className="h-4 w-4" />
               Clear
             </Button>
           )}
           {filteredMeetings.length > 0 && (
-            <span className="text-sm text-slate-500 dark:text-slate-400 ml-auto">
-              {filteredMeetings.length} result{filteredMeetings.length !== 1 ? 's' : ''}
+            <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400 ml-auto bg-indigo-50 dark:bg-indigo-900/30 px-3 py-2 rounded-lg">
+              📊 {filteredMeetings.length} result{filteredMeetings.length !== 1 ? 's' : ''}
             </span>
           )}
         </div>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {filteredMeetings.map((meeting: any, index: number) => (
           <motion.div
             key={meeting.id}
@@ -291,8 +306,9 @@ export default function WeeklyMeetingsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: index * 0.05 }}
           >
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
+            <Card className="hover:shadow-2xl transition-all duration-300 border-2 border-indigo-100 dark:border-indigo-900/50 hover:border-indigo-400 dark:hover:border-indigo-600 overflow-hidden bg-white dark:bg-slate-800 hover:scale-105 transform">
+              <div className="h-1 bg-gradient-to-r from-indigo-500 via-blue-500 to-teal-500"></div>
+              <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     {editingWeekId === meeting.id ? (
@@ -301,7 +317,7 @@ export default function WeeklyMeetingsPage() {
                           value={editingName}
                           onChange={(e) => setEditingName(e.target.value)}
                           placeholder="Week name"
-                          className="h-8 text-sm"
+                          className="h-9 text-sm font-semibold border-2 border-indigo-300 dark:border-indigo-700"
                         />
                         <Button 
                           size="sm" 
@@ -312,7 +328,7 @@ export default function WeeklyMeetingsPage() {
                               setEditingWeekId(null);
                             }
                           }} 
-                          className="h-8 gap-1"
+                          className="h-9 gap-1 bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600"
                           disabled={updateMeetingNameMutation.isPending}
                         >
                           {updateMeetingNameMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
@@ -320,39 +336,39 @@ export default function WeeklyMeetingsPage() {
                       </div>
                     ) : (
                       <div>
-                        <CardTitle className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-indigo-600" />
+                        <CardTitle className="flex items-center gap-2 text-xl text-slate-900 dark:text-white">
+                          <Calendar className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                           {meeting.name || `Week ${meeting.weekNumber}`}
                         </CardTitle>
-                        <CardDescription>{meeting.year}</CardDescription>
+                        <CardDescription className="text-indigo-600 dark:text-indigo-400 font-semibold">{meeting.year}</CardDescription>
                       </div>
                     )}
                   </div>
-                  <div className="flex gap-1">
+                  <div className="flex gap-2">
                     <button
                       onClick={() => {
                         setEditingWeekId(meeting.id);
                         setEditingName(meeting.name || `Week ${meeting.weekNumber}`);
                       }}
-                      className="p-1 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 rounded transition-colors"
+                      className="p-2 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-lg transition-colors"
                       title="Edit name"
                     >
-                      <Edit2 className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />
+                      <Edit2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                     </button>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      meeting.status === "completed" ? "bg-green-100 text-green-800" :
-                      meeting.status === "archived" ? "bg-gray-100 text-gray-800" :
-                      "bg-blue-100 text-blue-800"
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                      meeting.status === "completed" ? "bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 dark:from-green-900/40 dark:to-emerald-900/40 dark:text-green-300" :
+                      meeting.status === "archived" ? "bg-gradient-to-r from-gray-100 to-slate-100 text-gray-800 dark:from-gray-900/40 dark:to-slate-900/40 dark:text-gray-300" :
+                      "bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 dark:from-blue-900/40 dark:to-indigo-900/40 dark:text-blue-300"
                     }`}>
-                      {meeting.status}
+                      {meeting.status.toUpperCase()}
                     </span>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="space-y-2">
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    {new Date(meeting.meetingDate).toLocaleDateString()}
+              <CardContent className="space-y-4">
+                <div className="space-y-2 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 p-3 rounded-lg">
+                  <p className="text-sm font-bold text-indigo-700 dark:text-indigo-300">
+                    📅 {new Date(meeting.meetingDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                   </p>
                   {meeting.description && (
                     <div className="bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded border border-indigo-200 dark:border-indigo-800">
