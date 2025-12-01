@@ -129,6 +129,10 @@ export interface IStorage {
   createTaskComment(taskId: number, authorId: number, comment: string, proofUrl?: string): Promise<any>;
   getTaskComments(taskId: number): Promise<any[]>;
   deleteTaskComment(commentId: number): Promise<any>;
+  createTaskProof(taskId: number, submittedById: number, proofType: string, proofUrl: string, description?: string): Promise<any>;
+  getTaskProofs(taskId: number): Promise<any[]>;
+  deleteTaskProof(proofId: number): Promise<any>;
+  verifyTaskProof(proofId: number, verifiedById: number, verificationNotes?: string): Promise<any>;
   completeTask(taskId: number): Promise<any>;
   uncompleteTask(taskId: number): Promise<any>;
   updateTaskName(taskId: number, newTitle: string): Promise<any>;

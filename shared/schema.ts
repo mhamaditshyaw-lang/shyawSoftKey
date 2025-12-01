@@ -139,6 +139,22 @@ export const taskComments = pgTable("task_comments", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Task Proof table - for tracking task completion evidence
+export const taskProof = pgTable("task_proof", {
+  id: serial("id").primaryKey(),
+  taskId: integer("task_id").references(() => weeklyMeetingTasks.id, { onDelete: "cascade" }).notNull(),
+  proofType: text("proof_type").notNull(), // 'file', 'image', 'document', 'report'
+  proofUrl: text("proof_url").notNull(),
+  description: text("description"),
+  submittedById: integer("submitted_by_id").references(() => users.id).notNull(),
+  submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+  isVerified: boolean("is_verified").notNull().default(false),
+  verifiedById: integer("verified_by_id").references(() => users.id, { onDelete: "set null" }),
+  verifiedAt: timestamp("verified_at"),
+  verificationNotes: text("verification_notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Department Task Progress table
 export const departmentTaskProgress = pgTable("department_task_progress", {
   id: serial("id").primaryKey(),
@@ -269,6 +285,21 @@ export const taskCommentsRelations = relations(taskComments, ({ one }) => ({
   }),
   author: one(users, {
     fields: [taskComments.authorId],
+    references: [users.id],
+  }),
+}));
+
+export const taskProofRelations = relations(taskProof, ({ one }) => ({
+  task: one(weeklyMeetingTasks, {
+    fields: [taskProof.taskId],
+    references: [weeklyMeetingTasks.id],
+  }),
+  submittedBy: one(users, {
+    fields: [taskProof.submittedById],
+    references: [users.id],
+  }),
+  verifiedBy: one(users, {
+    fields: [taskProof.verifiedById],
     references: [users.id],
   }),
 }));
