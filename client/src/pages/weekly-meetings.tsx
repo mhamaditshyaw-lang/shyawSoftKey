@@ -6,7 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Calendar, Plus, Archive, Eye, Loader2, Filter, ChevronDown, Search, X, Edit2, BarChart3, TrendingUp, Home, Save, PieChart } from "lucide-react";
+import { Calendar, Plus, Archive, Eye, Loader2, Filter, ChevronDown, Search, X, Edit2, BarChart3, TrendingUp, Home, Save, PieChart, Send } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { motion } from "framer-motion";
 import Chart from "react-apexcharts";
@@ -33,6 +34,16 @@ export default function WeeklyMeetingsPage() {
   const [expandedDataWeek, setExpandedDataWeek] = useState<number | null>(null);
   const [showAnalysisModal, setShowAnalysisModal] = useState(false);
   const [selectedMeetingId, setSelectedMeetingId] = useState<number | null>(null);
+  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
+  const [addTaskMeetingId, setAddTaskMeetingId] = useState<number | null>(null);
+  const [newTask, setNewTask] = useState({
+    department: "",
+    title: "",
+    description: "",
+    target: "",
+    assignedUserIds: [] as string[],
+  });
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
 
   const { data: meetings = [], isLoading } = useQuery({
     queryKey: ["/api/weekly-meetings"],
