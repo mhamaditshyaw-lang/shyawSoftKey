@@ -111,6 +111,28 @@ export default function WeeklyMeetingsPage() {
     },
   });
 
+  const updateMeetingStatusMutation = useMutation({
+    mutationFn: async ({ id, status }: { id: number; status: string }) => {
+      return apiRequest("PATCH", `/api/weekly-meetings/${id}`, {
+        status: status,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings"] });
+      toast({
+        title: "Success",
+        description: "Meeting status updated successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update status",
+        variant: "destructive",
+      });
+    },
+  });
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -299,7 +321,7 @@ export default function WeeklyMeetingsPage() {
                     </div>
                   )}
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-2">
                   <button
                     onClick={() => {
                       setEditingWeekId(meeting.id);
@@ -310,13 +332,17 @@ export default function WeeklyMeetingsPage() {
                   >
                     <Edit2 className="h-3 w-3 text-blue-600 dark:text-blue-400" />
                   </button>
-                  <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                    meeting.status === "completed" ? "bg-green-200 text-green-800 dark:bg-green-900 dark:text-green-200" :
-                    meeting.status === "archived" ? "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200" :
-                    "bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                  }`}>
-                    {meeting.status}
-                  </span>
+                  <Select value={meeting.status} onValueChange={(value) => updateMeetingStatusMutation.mutate({ id: meeting.id, status: value })}>
+                    <SelectTrigger className="h-7 w-28 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="planning">Planning</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
+                      <SelectItem value="completed">Complete</SelectItem>
+                      <SelectItem value="archived">Archived</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardHeader>
