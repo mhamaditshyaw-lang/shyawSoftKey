@@ -129,6 +129,9 @@ export interface IStorage {
   createTaskComment(taskId: number, authorId: number, comment: string, proofUrl?: string): Promise<any>;
   getTaskComments(taskId: number): Promise<any[]>;
   completeTask(taskId: number): Promise<any>;
+  uncompleteTask(taskId: number): Promise<any>;
+  updateTaskName(taskId: number, newTitle: string): Promise<any>;
+  deleteTask(taskId: number): Promise<any>;
   updateDepartmentTaskProgress(taskId: number, departmentHeadId: number, updates: any): Promise<any>;
   getWeeklyMeetingArchive(meetingId: number): Promise<any[]>;
   archiveWeeklyMeeting(meetingId: number, archivedById: number, resultsData: any): Promise<any>;
@@ -1061,6 +1064,30 @@ export class DatabaseStorage implements IStorage {
   async completeTask(taskId: number): Promise<any> {
     const result = await db.update(weeklyMeetingTasks)
       .set({ isCompleted: true, completedAt: new Date() })
+      .where(eq(weeklyMeetingTasks.id, taskId))
+      .returning();
+    return (result as any[])[0];
+  }
+
+  async uncompleteTask(taskId: number): Promise<any> {
+    const result = await db.update(weeklyMeetingTasks)
+      .set({ isCompleted: false, completedAt: null })
+      .where(eq(weeklyMeetingTasks.id, taskId))
+      .returning();
+    return (result as any[])[0];
+  }
+
+  async updateTaskName(taskId: number, newTitle: string): Promise<any> {
+    const result = await db.update(weeklyMeetingTasks)
+      .set({ title: newTitle })
+      .where(eq(weeklyMeetingTasks.id, taskId))
+      .returning();
+    return (result as any[])[0];
+  }
+
+  async deleteTask(taskId: number): Promise<any> {
+    await db.delete(taskComments).where(eq(taskComments.taskId, taskId));
+    const result = await db.delete(weeklyMeetingTasks)
       .where(eq(weeklyMeetingTasks.id, taskId))
       .returning();
     return (result as any[])[0];

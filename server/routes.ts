@@ -2048,6 +2048,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/weekly-meetings/tasks/:taskId/uncomplete", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const taskId = parseInt(req.params.taskId);
+      const result = await storage.uncompleteTask(taskId);
+      res.json(result || { message: "Task uncompleted" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.patch("/api/weekly-meetings/tasks/:taskId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const taskId = parseInt(req.params.taskId);
+      const { title } = req.body;
+      if (!title) {
+        return res.status(400).json({ message: "Title is required" });
+      }
+      const result = await storage.updateTaskName(taskId, title);
+      res.json(result || { message: "Task updated" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/weekly-meetings/tasks/:taskId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const taskId = parseInt(req.params.taskId);
+      const result = await storage.deleteTask(taskId);
+      res.json(result || { message: "Task deleted" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
