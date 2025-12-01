@@ -4,9 +4,16 @@
 
 This is a full-stack web application for internal employee management with role-based access control (admin, manager, security). It manages employees, todo lists, and internal interview/evaluation requests, focusing on employee affairs, performance reviews, internal role changes, and administrative tasks. The project's business vision is to streamline internal HR and operational processes, enhance employee management efficiency, and provide comprehensive reporting tools.
 
-## Recent Changes (November 2025)
+## Recent Changes (December 2025)
 
-- **Weekly Meetings Task Management - Complete Implementation** (Latest - VERIFIED WORKING):
+- **Role-Based Access Control for Weekly Meetings** (Latest - VERIFIED WORKING):
+  - ✅ Restricted weekly meeting creation to manager, office, and staff_office roles only
+  - ✅ Added backend role check on POST `/api/weekly-meetings` endpoint (returns 403 if unauthorized)
+  - ✅ Updated frontend "New Meeting" button to only show for allowed roles
+  - ✅ All task operations (create, complete, edit, delete) restricted to admin/manager roles
+  - ✅ Regular users can only view assigned tasks and add comments
+
+- **Weekly Meetings Task Management - Complete Implementation** (November 2025):
   - ✅ Task 1: Added `assignedUserId` field to weekly meeting tasks for user assignments
   - ✅ Task 2: Updated data storage - Created `taskComments` table with storage methods (`createTaskComment`, `getTaskComments`)
   - ✅ Task 3: Added connection endpoints - POST/GET `/api/weekly-meetings/tasks/:taskId/comments`, GET `/api/users`
