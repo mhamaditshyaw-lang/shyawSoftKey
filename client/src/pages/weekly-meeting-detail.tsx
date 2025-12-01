@@ -197,38 +197,24 @@ export default function WeeklyMeetingDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 space-y-6 p-6">
-      <Button variant="outline" onClick={() => setLocation("/weekly-meetings")} className="border-indigo-300 text-indigo-700 dark:text-indigo-400">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 space-y-6 p-6">
+      <Button variant="outline" onClick={() => setLocation("/weekly-meetings")} className="border-slate-300 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
         ← Back to Meetings
       </Button>
 
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-900/30 border-2 border-indigo-200 dark:border-indigo-800">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-indigo-700 dark:text-indigo-400">Week Number</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-300">{meeting?.weekNumber}</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30 border-2 border-blue-200 dark:border-blue-800">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-blue-700 dark:text-blue-400">Total Tasks</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-blue-600 dark:text-blue-300">{tasks.length}</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-gradient-to-br from-teal-50 to-cyan-100 dark:from-teal-900/20 dark:to-cyan-900/30 border-2 border-teal-200 dark:border-teal-800">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-teal-700 dark:text-teal-400">Meeting Status</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <span className="text-sm font-bold text-teal-600 dark:text-teal-300 bg-teal-100 dark:bg-teal-900/40 px-2 py-1 rounded">
-              {meeting?.status.toUpperCase()}
-            </span>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-3 gap-6">
+        <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 p-6 rounded-2xl shadow-xl">
+          <p className="text-indigo-100 text-sm font-semibold">Week Number</p>
+          <p className="text-4xl font-bold text-white mt-3">{meeting?.weekNumber}</p>
+        </div>
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl shadow-xl">
+          <p className="text-blue-100 text-sm font-semibold">Total Tasks</p>
+          <p className="text-4xl font-bold text-white mt-3">{tasks.length}</p>
+        </div>
+        <div className="bg-gradient-to-br from-teal-500 to-cyan-600 p-6 rounded-2xl shadow-xl">
+          <p className="text-teal-100 text-sm font-semibold">Meeting Status</p>
+          <p className="text-2xl font-bold text-white mt-3 uppercase">{meeting?.status}</p>
+        </div>
       </div>
 
 

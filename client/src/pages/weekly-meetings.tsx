@@ -112,12 +112,12 @@ export default function WeeklyMeetingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-800 p-6">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6">
       <div className="space-y-6 max-w-7xl mx-auto">
-        <div className="flex justify-between items-center bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md border-l-4 border-blue-600">
+        <div className="flex justify-between items-center bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-8 rounded-2xl shadow-2xl">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Weekly Meeting Tasks</h1>
-            <p className="text-slate-600 dark:text-slate-300 mt-1">Manage departmental work points and progress</p>
+            <h1 className="text-4xl font-bold text-white drop-shadow-lg">📊 Weekly Meeting Tasks</h1>
+            <p className="text-blue-100 mt-2 text-lg">Manage departmental work points and progress</p>
           </div>
           <div className="flex gap-2">
             <Button
@@ -147,56 +147,46 @@ export default function WeeklyMeetingsPage() {
 
       {/* Analytics Section */}
       {meetings.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-          <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-200 dark:border-green-800">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2 text-green-700 dark:text-green-400">
-                <TrendingUp className="h-4 w-4" />
-                Completed
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-green-600 dark:text-green-300">
-                {meetings.filter((m: any) => m.status === "completed").length}
-              </p>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="bg-gradient-to-br from-emerald-500 to-green-600 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-green-100 text-sm font-semibold">Completed</p>
+                <p className="text-4xl font-bold text-white mt-2">{meetings.filter((m: any) => m.status === "completed").length}</p>
+              </div>
+              <TrendingUp className="h-12 w-12 text-green-200 opacity-50" />
+            </div>
+          </div>
 
-          <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border-2 border-blue-200 dark:border-blue-800">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-blue-700 dark:text-blue-400">In Progress</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-blue-600 dark:text-blue-300">
-                {meetings.filter((m: any) => m.status === "in_progress").length}
-              </p>
-            </CardContent>
-          </Card>
+          <div className="bg-gradient-to-br from-blue-500 to-cyan-600 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-blue-100 text-sm font-semibold">In Progress</p>
+                <p className="text-4xl font-bold text-white mt-2">{meetings.filter((m: any) => m.status === "in_progress").length}</p>
+              </div>
+              <Clock className="h-12 w-12 text-blue-200 opacity-50" />
+            </div>
+          </div>
 
-          <Card className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-200 dark:border-purple-800">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-purple-700 dark:text-purple-400">Planned</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-purple-600 dark:text-purple-300">
-                {meetings.filter((m: any) => m.status === "planned").length}
-              </p>
-            </CardContent>
-          </Card>
+          <div className="bg-gradient-to-br from-purple-500 to-indigo-600 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-purple-100 text-sm font-semibold">Planned</p>
+                <p className="text-4xl font-bold text-white mt-2">{meetings.filter((m: any) => m.status === "planned").length}</p>
+              </div>
+              <Zap className="h-12 w-12 text-purple-200 opacity-50" />
+            </div>
+          </div>
 
-          <Card className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 border-2 border-orange-200 dark:border-orange-800">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2 text-orange-700 dark:text-orange-400">
-                <BarChart3 className="h-4 w-4" />
-                Total
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-orange-600 dark:text-orange-300">
-                {meetings.length}
-              </p>
-            </CardContent>
-          </Card>
+          <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-orange-100 text-sm font-semibold">Total Meetings</p>
+                <p className="text-4xl font-bold text-white mt-2">{meetings.length}</p>
+              </div>
+              <BarChart3 className="h-12 w-12 text-orange-200 opacity-50" />
+            </div>
+          </div>
         </div>
       )}
 
@@ -261,10 +251,11 @@ export default function WeeklyMeetingsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredMeetings.map((meeting: any, index: number) => (
-          <Card key={meeting.id} className="hover:shadow-lg transition-shadow border-l-4 border-blue-500 bg-white dark:bg-slate-800">
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+          <Card key={meeting.id} className="bg-white dark:bg-slate-800 hover:shadow-2xl transition-all duration-300 border-0 rounded-2xl overflow-hidden shadow-lg">
+            <div className="h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+            <CardHeader className="bg-gradient-to-b from-slate-50 to-white dark:from-slate-800 dark:to-slate-700">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   {editingWeekId === meeting.id ? (
