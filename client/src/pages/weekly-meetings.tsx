@@ -274,6 +274,7 @@ export default function WeeklyMeetingsPage() {
               <BarChart3 className="h-12 w-12 text-orange-200 opacity-50" />
             </div>
           </div>
+          </div>
         </TourStep>
       )}
 
@@ -283,7 +284,7 @@ export default function WeeklyMeetingsPage() {
             <Filter className="h-4 w-4 text-slate-500" />
             <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Filters:</span>
           </div>
-        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-40">
               <SelectValue />
