@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2, Plus, Save, CheckCircle, Clock, Zap, Send, FileCheck, Eye, TrendingUp, Check, X } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import { motion } from "framer-motion";
 import {
   Select,
   SelectContent,
@@ -36,6 +37,7 @@ export default function WeeklyMeetingDetailPage() {
   const [expandedCommentId, setExpandedCommentId] = useState<number | null>(null);
   const [taskProgress, setTaskProgress] = useState<Record<number, {current: number, status: string}>>({});
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
 
   const { data: usersData = [] } = useQuery({
     queryKey: ["/api/users"],
@@ -198,9 +200,21 @@ export default function WeeklyMeetingDetailPage() {
 
 
       <Card>
-        <CardHeader>
-          <CardTitle>Tasks</CardTitle>
-          <CardDescription>Department work points for this week</CardDescription>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle>Tasks</CardTitle>
+            <CardDescription>Department work points for this week</CardDescription>
+          </div>
+          {(user?.role === "admin" || user?.role === "manager") && meeting?.status === "planned" && (
+            <Button
+              onClick={() => setShowAddTaskModal(true)}
+              className="gap-2 bg-indigo-600 hover:bg-indigo-700"
+              size="sm"
+            >
+              <Plus className="h-4 w-4" />
+              Add Task
+            </Button>
+          )}
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -331,6 +345,104 @@ export default function WeeklyMeetingDetailPage() {
           </div>
         </CardContent>
       </Card>
+
+
+      {showAddTaskModal && (
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white dark:bg-slate-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Add New Task</h2>
+              <button
+                onClick={() => setShowAddTaskModal(false)}
+                className="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-3 gap-4">
+                <Input
+                  placeholder="Department"
+                  value={newTask.department}
+                  onChange={(e) => setNewTask({ ...newTask, department: e.target.value })}
+                />
+                <Input
+                  placeholder="Target Value"
+                  type="number"
+                  value={newTask.target}
+                  onChange={(e) => setNewTask({ ...newTask, target: e.target.value })}
+                />
+                <div className="relative">
+                  <div className="border rounded p-2 min-h-10 bg-white dark:bg-slate-950 flex flex-wrap gap-1 items-center">
+                    {newTask.assignedUserIds.map((userId: string) => {
+                      const u = Array.isArray(users) && users.find((u: any) => u.id.toString() === userId);
+                      return (
+                        <div key={userId} className="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-2 py-1 rounded text-xs flex items-center gap-1">
+                          {u ? `${u.firstName} ${u.lastName}` : `User ${userId}`}
+                          <button onClick={() => setNewTask({ ...newTask, assignedUserIds: newTask.assignedUserIds.filter(id => id !== userId) })}>
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      );
+                    })}
+                    <button onClick={() => setShowUserDropdown(!showUserDropdown)} className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700">
+                      + Add User
+                    </button>
+                  </div>
+                  {showUserDropdown && (
+                    <div className="absolute top-full left-0 right-0 mt-1 border rounded bg-white dark:bg-slate-800 shadow-lg z-10">
+                      <div className="max-h-48 overflow-y-auto p-2 space-y-1">
+                        {Array.isArray(users) && users.map((u: any) => (
+                          <label key={u.id} className="flex items-center gap-2 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-xs cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={newTask.assignedUserIds.includes(u.id.toString())}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setNewTask({ ...newTask, assignedUserIds: [...newTask.assignedUserIds, u.id.toString()] });
+                                } else {
+                                  setNewTask({ ...newTask, assignedUserIds: newTask.assignedUserIds.filter(id => id !== u.id.toString()) });
+                                }
+                              }}
+                            />
+                            {u.firstName} {u.lastName}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <Input
+                placeholder="Task Title"
+                value={newTask.title}
+                onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+              />
+              <Textarea
+                placeholder="Description"
+                value={newTask.description}
+                onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                rows={3}
+              />
+              <div className="flex gap-2 justify-end">
+                <Button variant="outline" onClick={() => setShowAddTaskModal(false)}>Cancel</Button>
+                <Button
+                  onClick={() => addTaskMutation.mutate()}
+                  disabled={!newTask.department || !newTask.title || addTaskMutation.isPending}
+                  className="gap-2"
+                >
+                  {addTaskMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                  Add Task
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
