@@ -338,6 +338,7 @@ export default function WeeklyMeetingsPage() {
             </span>
           )}
         </div>
+        </div>
         </TourStep>
 
       <TourStep id="meeting-cards">
