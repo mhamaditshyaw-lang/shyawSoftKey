@@ -344,6 +344,34 @@ export default function WeeklyMeetingDetailPage() {
                     <p className="text-xs text-slate-600 dark:text-slate-400 mb-3 line-clamp-2">{task.description}</p>
                   )}
 
+                  {/* Creator and Completer Info */}
+                  <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1 mb-3 pb-3 border-b border-slate-200 dark:border-slate-700">
+                    {task.createdById && (
+                      <div>
+                        <p className="text-xs">
+                          Created by: <span className="font-semibold text-slate-900 dark:text-white">
+                            {users.find((u: any) => u.id === task.createdById)?.firstName || 'User'} {users.find((u: any) => u.id === task.createdById)?.lastName || ''}
+                          </span>
+                          <span className="text-slate-500 dark:text-slate-400 ml-1">
+                            {new Date(task.createdAt).toLocaleDateString()}
+                          </span>
+                        </p>
+                      </div>
+                    )}
+                    {task.isCompleted && task.completedById && (
+                      <div>
+                        <p className="text-xs text-green-700 dark:text-green-400">
+                          Completed by: <span className="font-semibold">
+                            {users.find((u: any) => u.id === task.completedById)?.firstName || 'User'} {users.find((u: any) => u.id === task.completedById)?.lastName || ''}
+                          </span>
+                          <span className="ml-1">
+                            {new Date(task.completedAt).toLocaleDateString()}
+                          </span>
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Comments Toggle - Compact */}
                   <button
                     onClick={() => {

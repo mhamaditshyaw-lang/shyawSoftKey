@@ -1030,7 +1030,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createWeeklyMeetingTask(data: any): Promise<any> {
-    const result = await db.insert(weeklyMeetingTasks).values(data).returning();
+    const dataWithDefaults = {
+      ...data,
+      createdById: data.createdById || 1,
+    };
+    const result = await db.insert(weeklyMeetingTasks).values(dataWithDefaults).returning();
     return (result as any[])[0];
   }
 
@@ -1061,9 +1065,9 @@ export class DatabaseStorage implements IStorage {
     }));
   }
 
-  async completeTask(taskId: number): Promise<any> {
+  async completeTask(taskId: number, completedById?: number): Promise<any> {
     const result = await db.update(weeklyMeetingTasks)
-      .set({ isCompleted: true, completedAt: new Date() })
+      .set({ isCompleted: true, completedAt: new Date(), completedById: completedById || 1 })
       .where(eq(weeklyMeetingTasks.id, taskId))
       .returning();
     return (result as any[])[0];
@@ -1071,7 +1075,7 @@ export class DatabaseStorage implements IStorage {
 
   async uncompleteTask(taskId: number): Promise<any> {
     const result = await db.update(weeklyMeetingTasks)
-      .set({ isCompleted: false, completedAt: null })
+      .set({ isCompleted: false, completedAt: null, completedById: null })
       .where(eq(weeklyMeetingTasks.id, taskId))
       .returning();
     return (result as any[])[0];

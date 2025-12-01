@@ -124,6 +124,8 @@ export const weeklyMeetingTasks = pgTable("weekly_meeting_tasks", {
   assignedUserIds: integer("assigned_user_ids").array(),
   isCompleted: boolean("is_completed").notNull().default(false),
   completedAt: timestamp("completed_at"),
+  completedById: integer("completed_by_id").references(() => users.id, { onDelete: "set null" }),
+  createdById: integer("created_by_id").references(() => users.id).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

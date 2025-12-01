@@ -1966,7 +1966,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/weekly-meetings/:id/tasks", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const task = await storage.createWeeklyMeetingTask(req.body);
+      const task = await storage.createWeeklyMeetingTask({ ...req.body, createdById: req.user?.id || 1 });
       res.json(task);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -2041,7 +2041,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/weekly-meetings/tasks/:taskId/complete", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const taskId = parseInt(req.params.taskId);
-      const result = await storage.completeTask(taskId);
+      const result = await storage.completeTask(taskId, req.user?.id);
       res.json(result || { message: "Task completed" });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
