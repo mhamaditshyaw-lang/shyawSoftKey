@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { 
@@ -31,40 +30,20 @@ export default function UserActivityPage() {
   const [priorityFilter, setPriorityFilter] = useState("all");
 
   // Fetch data for user activities
-  const { data: todosData, isLoading: todosLoading } = useQuery({
+  const { data: todosData = { todoLists: [] }, isLoading: todosLoading } = useQuery({
     queryKey: ["/api/todos"],
-    queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/todos");
-      return await response.json();
-    },
-    refetchInterval: autoRefresh ? 30000 : false,
   });
 
-  const { data: feedbackData, isLoading: feedbackLoading } = useQuery({
+  const { data: feedbackData = { feedback: [] }, isLoading: feedbackLoading } = useQuery({
     queryKey: ["/api/feedback"],
-    queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/feedback");
-      return await response.json();
-    },
-    refetchInterval: autoRefresh ? 30000 : false,
   });
 
-  const { data: interviewsData, isLoading: interviewsLoading } = useQuery({
+  const { data: interviewsData = { requests: [] }, isLoading: interviewsLoading } = useQuery({
     queryKey: ["/api/interviews"],
-    queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/interviews");
-      return await response.json();
-    },
-    refetchInterval: autoRefresh ? 30000 : false,
   });
 
-  const { data: usersData } = useQuery({
+  const { data: usersData = { users: [] } } = useQuery({
     queryKey: ["/api/users"],
-    queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/users");
-      return await response.json();
-    },
-    refetchInterval: autoRefresh ? 30000 : false,
   });
 
   const isLoading = todosLoading || feedbackLoading || interviewsLoading;
