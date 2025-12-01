@@ -1973,6 +1973,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Only admin and manager can create tasks" });
       }
       const task = await storage.createWeeklyMeetingTask({ ...req.body, createdById: req.user?.id || 1 });
+      
+      // Send notifications to assigned users
+      if (req.body.assignedUserIds && Array.isArray(req.body.assignedUserIds) && req.body.assignedUserIds.length > 0) {
+        try {
+          const { DeviceNotificationService } = await import("./device-notification-service");
+          for (const userId of req.body.assignedUserIds) {
+            await DeviceNotificationService.createNotification({
+              userId: userId,
+              type: "task_assignment",
+              priority: "normal",
+              title: "New Task Assigned",
+              message: `You have a new task "${req.body.title}" assigned to you in this week's meeting.`,
+            });
+          }
+        } catch (notificationError: any) {
+          console.log("Note: Task created but notification sending had issues:", notificationError.message);
+          // Don't fail the task creation if notification fails
+        }
+      }
+      
       res.json(task);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
