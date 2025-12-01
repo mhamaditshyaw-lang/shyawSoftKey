@@ -269,12 +269,8 @@ export const weeklyMeetingTasksRelations = relations(weeklyMeetingTasks, ({ one,
     fields: [weeklyMeetingTasks.meetingId],
     references: [weeklyMeetings.id],
   }),
-  assignedUser: one(users, {
-    fields: [weeklyMeetingTasks.assignedUserId],
-    references: [users.id],
-    relationName: "assigned_user",
-  }),
   comments: many(taskComments),
+  proofs: many(taskProof),
   progress: many(departmentTaskProgress),
 }));
 
