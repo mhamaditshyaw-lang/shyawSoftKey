@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -6,11 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Calendar, Plus, Archive, Eye, Loader2, Filter, ChevronDown, Search, X, Edit2, BarChart3, TrendingUp, Home, Save, PieChart, Send, Clock, Zap } from "lucide-react";
+import { Calendar, Plus, Archive, Eye, Loader2, Filter, ChevronDown, Search, X, Edit2, BarChart3, TrendingUp, Home, Save, PieChart, Send, Clock, Zap, HelpCircle } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { motion } from "framer-motion";
 import Chart from "react-apexcharts";
+import { useTour } from "@/components/tour/TourProvider";
+import { TourStep } from "@/components/tour/TourStep";
 import {
   Select,
   SelectContent,
@@ -22,6 +24,7 @@ import {
 export default function WeeklyMeetingsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { setSteps, startTour } = useTour();
   const [, setLocation] = useLocation();
   const [isCreating, setIsCreating] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -36,6 +39,47 @@ export default function WeeklyMeetingsPage() {
   const [selectedMeetingId, setSelectedMeetingId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+
+  useEffect(() => {
+    const tourSteps = [
+      {
+        id: "header",
+        title: "Welcome to Weekly Meetings! 👋",
+        description: "Manage your departmental work points and track progress across all weekly meetings in one place.",
+        target: "header",
+        position: "bottom" as const,
+      },
+      {
+        id: "new-meeting-btn",
+        title: "Create New Meeting",
+        description: "Click here to create a new weekly meeting for your team. Only managers and admins can create meetings.",
+        target: "new-meeting-btn",
+        position: "bottom" as const,
+      },
+      {
+        id: "stats-cards",
+        title: "Quick Overview",
+        description: "See at a glance how many meetings are completed, in progress, or planned.",
+        target: "stats-cards",
+        position: "bottom" as const,
+      },
+      {
+        id: "filters",
+        title: "Smart Filtering",
+        description: "Filter meetings by status and search by name or date range to find exactly what you need.",
+        target: "filters",
+        position: "bottom" as const,
+      },
+      {
+        id: "meeting-cards",
+        title: "Meeting Cards",
+        description: "Each card shows meeting details. Click 'View Tasks' to see and manage tasks, or change the status using the dropdown.",
+        target: "meeting-cards",
+        position: "top" as const,
+      },
+    ];
+    setSteps(tourSteps);
+  }, [setSteps]);
 
   const { data: meetings = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/weekly-meetings"],
@@ -144,40 +188,53 @@ export default function WeeklyMeetingsPage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6">
       <div className="space-y-6 max-w-7xl mx-auto">
-        <div className="flex justify-between items-center bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-8 rounded-2xl shadow-2xl">
-          <div>
-            <h1 className="text-4xl font-bold text-white drop-shadow-lg">📊 Weekly Meeting Tasks</h1>
-            <p className="text-blue-100 mt-2 text-lg">Manage departmental work points and progress</p>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              onClick={() => setLocation("/")}
-              variant="outline"
-              className="gap-2"
-            >
-              <Home className="h-4 w-4" />
-              Dashboard
-            </Button>
-            {(user?.role === "admin" || user?.role === "manager" || user?.role === "office" || user?.role === "staff_office") && (
+        <TourStep id="header">
+          <div className="flex justify-between items-center bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-8 rounded-2xl shadow-2xl">
+            <div>
+              <h1 className="text-4xl font-bold text-white drop-shadow-lg">📊 Weekly Meeting Tasks</h1>
+              <p className="text-blue-100 mt-2 text-lg">Manage departmental work points and progress</p>
+            </div>
+            <div className="flex gap-2">
               <Button
-                onClick={() => createMeetingMutation.mutate()}
-                disabled={isCreating || createMeetingMutation.isPending}
-                className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={() => setLocation("/")}
+                variant="outline"
+                className="gap-2"
               >
-                {createMeetingMutation.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Plus className="h-4 w-4" />
-                )}
-                New Meeting
+                <Home className="h-4 w-4" />
+                Dashboard
               </Button>
-            )}
+              <Button
+                onClick={() => startTour()}
+                variant="outline"
+                className="gap-2"
+              >
+                <HelpCircle className="h-4 w-4" />
+                Tour
+              </Button>
+              {(user?.role === "admin" || user?.role === "manager" || user?.role === "office" || user?.role === "staff_office") && (
+                <TourStep id="new-meeting-btn">
+                  <Button
+                    onClick={() => createMeetingMutation.mutate()}
+                    disabled={isCreating || createMeetingMutation.isPending}
+                    className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    {createMeetingMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Plus className="h-4 w-4" />
+                    )}
+                    New Meeting
+                  </Button>
+                </TourStep>
+              )}
+            </div>
           </div>
-        </div>
+        </TourStep>
 
       {/* Analytics Section */}
       {meetings.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <TourStep id="stats-cards">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="bg-gradient-to-br from-emerald-500 to-green-600 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all">
             <div className="flex items-center justify-between">
               <div>
@@ -217,14 +274,15 @@ export default function WeeklyMeetingsPage() {
               <BarChart3 className="h-12 w-12 text-orange-200 opacity-50" />
             </div>
           </div>
-        </div>
+        </TourStep>
       )}
 
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-slate-500" />
-          <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Filters:</span>
-        </div>
+      <TourStep id="filters">
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-slate-500" />
+            <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Filters:</span>
+          </div>
         <div className="flex flex-wrap items-center gap-2">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-40">
@@ -279,9 +337,10 @@ export default function WeeklyMeetingsPage() {
             </span>
           )}
         </div>
-      </div>
+        </TourStep>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <TourStep id="meeting-cards">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {paginatedMeetings.map((meeting: any, index: number) => (
           <Card key={meeting.id} className="bg-white dark:bg-slate-800 hover:shadow-2xl transition-all duration-300 border-0 rounded-2xl overflow-hidden shadow-lg">
             <div className="h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
@@ -445,7 +504,8 @@ export default function WeeklyMeetingsPage() {
               </CardContent>
             </Card>
         ))}
-      </div>
+        </div>
+      </TourStep>
 
       {showAnalysisModal && selectedMeetingId && (
         <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">

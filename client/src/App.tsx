@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 
 import { ThemeProvider } from "@/hooks/use-theme";
+import { TourProvider } from "@/components/tour/TourProvider";
 import { queryClient } from "./lib/queryClient";
 import { PAGE_PERMISSIONS, type PermissionKey } from "@shared/schema";
 import LoginPage from "@/pages/login";
@@ -247,11 +248,13 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <DeviceNotificationProvider>
-            <TooltipProvider>
-              <RTLHandler />
-              <Toaster />
-              <Router />
-            </TooltipProvider>
+            <TourProvider>
+              <TooltipProvider>
+                <RTLHandler />
+                <Toaster />
+                <Router />
+              </TooltipProvider>
+            </TourProvider>
           </DeviceNotificationProvider>
         </AuthProvider>
       </QueryClientProvider>
