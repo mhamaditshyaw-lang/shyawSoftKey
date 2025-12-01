@@ -2049,6 +2049,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Task Proof endpoints
+  app.post("/api/weekly-meetings/tasks/:taskId/proof", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { proofType, proofUrl, description } = req.body;
+      if (!proofType || !proofUrl) {
+        return res.status(400).json({ message: "proofType and proofUrl are required" });
+      }
+      const proof = await storage.createTaskProof(
+        parseInt(req.params.taskId),
+        req.user?.id || 1,
+        proofType,
+        proofUrl,
+        description
+      );
+      res.json(proof);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/weekly-meetings/tasks/:taskId/proof", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const proofs = await storage.getTaskProofs(parseInt(req.params.taskId));
+      res.json(proofs);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/weekly-meetings/proof/:proofId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      if (req.user?.role === "employee") {
+        return res.status(403).json({ message: "Employee users cannot delete proof" });
+      }
+      const result = await storage.deleteTaskProof(parseInt(req.params.proofId));
+      res.json({ success: true, proof: result });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.patch("/api/weekly-meetings/proof/:proofId/verify", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      if (req.user?.role !== "admin" && req.user?.role !== "manager" && req.user?.role !== "office") {
+        return res.status(403).json({ message: "Only admin, manager, and office can verify proof" });
+      }
+      const { verificationNotes } = req.body;
+      const result = await storage.verifyTaskProof(
+        parseInt(req.params.proofId),
+        req.user?.id || 1,
+        verificationNotes
+      );
+      res.json(result);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.get("/api/users", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const allUsers = await storage.getAllUsers();

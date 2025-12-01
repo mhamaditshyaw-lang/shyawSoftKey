@@ -9,6 +9,7 @@ import {
   weeklyMeetings,
   weeklyMeetingTasks,
   taskComments,
+  taskProof,
   departmentTaskProgress,
   weeklyMeetingArchive,
   type User, 
@@ -1075,6 +1076,40 @@ export class DatabaseStorage implements IStorage {
     return (result as any[])[0];
   }
 
+  async createTaskProof(taskId: number, submittedById: number, proofType: string, proofUrl: string, description?: string): Promise<any> {
+    const result = await db.insert(taskProof).values({
+      taskId,
+      submittedById,
+      proofType,
+      proofUrl,
+      description,
+    } as any).returning();
+    return (result as any[])[0];
+  }
+
+  async getTaskProofs(taskId: number): Promise<any[]> {
+    const proofs = await db.select().from(taskProof).where(eq(taskProof.taskId, taskId)).orderBy(desc(taskProof.submittedAt));
+    return proofs;
+  }
+
+  async deleteTaskProof(proofId: number): Promise<any> {
+    const result = await db.delete(taskProof).where(eq(taskProof.id, proofId)).returning();
+    return (result as any[])[0];
+  }
+
+  async verifyTaskProof(proofId: number, verifiedById: number, verificationNotes?: string): Promise<any> {
+    const result = await db.update(taskProof)
+      .set({
+        isVerified: true,
+        verifiedById,
+        verifiedAt: new Date(),
+        verificationNotes,
+      })
+      .where(eq(taskProof.id, proofId))
+      .returning();
+    return (result as any[])[0];
+  }
+
   async completeTask(taskId: number, completedById?: number): Promise<any> {
     const result = await db.update(weeklyMeetingTasks)
       .set({ isCompleted: true, completedAt: new Date(), completedById: completedById || 1 })
@@ -1101,6 +1136,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteTask(taskId: number): Promise<any> {
     await db.delete(taskComments).where(eq(taskComments.taskId, taskId));
+    await db.delete(taskProof).where(eq(taskProof.taskId, taskId));
     const result = await db.delete(weeklyMeetingTasks)
       .where(eq(weeklyMeetingTasks.id, taskId))
       .returning();
