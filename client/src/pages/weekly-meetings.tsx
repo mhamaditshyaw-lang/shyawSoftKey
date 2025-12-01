@@ -337,7 +337,7 @@ export default function WeeklyMeetingsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="planning">Planning</SelectItem>
+                      <SelectItem value="planned">Planning</SelectItem>
                       <SelectItem value="in_progress">In Progress</SelectItem>
                       <SelectItem value="completed">Complete</SelectItem>
                       <SelectItem value="archived">Archived</SelectItem>
