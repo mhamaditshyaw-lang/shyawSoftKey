@@ -261,13 +261,20 @@ export default function WeeklyMeetingDetailPage() {
                   {/* Header with checkbox and actions */}
                   <div className="flex items-start justify-between gap-2 mb-3">
                     <div className="flex items-start gap-2 flex-1">
-                      <button
-                        onClick={() => completeTaskMutation.mutate({ taskId: task.id, isCompleted: task.isCompleted })}
-                        disabled={completeTaskMutation.isPending}
-                        className={`p-1 rounded flex-shrink-0 ${task.isCompleted ? 'bg-green-500 text-white' : 'border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500'} transition-all`}
-                      >
-                        {task.isCompleted ? <Check className="h-4 w-4" /> : <div className="h-4 w-4" />}
-                      </button>
+                      {(user?.role === "admin" || user?.role === "manager") ? (
+                        <button
+                          onClick={() => completeTaskMutation.mutate({ taskId: task.id, isCompleted: task.isCompleted })}
+                          disabled={completeTaskMutation.isPending}
+                          className={`p-1 rounded flex-shrink-0 ${task.isCompleted ? 'bg-green-500 text-white' : 'border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500'} transition-all cursor-pointer`}
+                          title="Mark complete/incomplete"
+                        >
+                          {task.isCompleted ? <Check className="h-4 w-4" /> : <div className="h-4 w-4" />}
+                        </button>
+                      ) : (
+                        <div className={`p-1 rounded flex-shrink-0 ${task.isCompleted ? 'bg-green-500 text-white' : 'border-2 border-slate-300 dark:border-slate-600'}`}>
+                          {task.isCompleted ? <Check className="h-4 w-4" /> : <div className="h-4 w-4" />}
+                        </div>
+                      )}
                       <div className="flex-1 min-w-0">
                         {editingTaskId === task.id ? (
                           <div className="flex gap-1 mb-2">

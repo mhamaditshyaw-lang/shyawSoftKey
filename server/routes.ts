@@ -1966,6 +1966,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/weekly-meetings/:id/tasks", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
+      if (req.user?.role !== "admin" && req.user?.role !== "manager") {
+        return res.status(403).json({ message: "Only admin and manager can create tasks" });
+      }
       const task = await storage.createWeeklyMeetingTask({ ...req.body, createdById: req.user?.id || 1 });
       res.json(task);
     } catch (error: any) {
@@ -2040,6 +2043,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/weekly-meetings/tasks/:taskId/complete", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
+      if (req.user?.role !== "admin" && req.user?.role !== "manager") {
+        return res.status(403).json({ message: "Only admin and manager can complete tasks" });
+      }
       const taskId = parseInt(req.params.taskId);
       const result = await storage.completeTask(taskId, req.user?.id);
       res.json(result || { message: "Task completed" });
@@ -2050,6 +2056,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/weekly-meetings/tasks/:taskId/uncomplete", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
+      if (req.user?.role !== "admin" && req.user?.role !== "manager") {
+        return res.status(403).json({ message: "Only admin and manager can uncomplete tasks" });
+      }
       const taskId = parseInt(req.params.taskId);
       const result = await storage.uncompleteTask(taskId);
       res.json(result || { message: "Task uncompleted" });
@@ -2060,6 +2069,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/weekly-meetings/tasks/:taskId", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
+      if (req.user?.role !== "admin" && req.user?.role !== "manager") {
+        return res.status(403).json({ message: "Only admin and manager can edit tasks" });
+      }
       const taskId = parseInt(req.params.taskId);
       const { title } = req.body;
       if (!title) {
@@ -2074,6 +2086,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/weekly-meetings/tasks/:taskId", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
+      if (req.user?.role !== "admin" && req.user?.role !== "manager") {
+        return res.status(403).json({ message: "Only admin and manager can delete tasks" });
+      }
       const taskId = parseInt(req.params.taskId);
       const result = await storage.deleteTask(taskId);
       res.json(result || { message: "Task deleted" });
