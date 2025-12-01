@@ -45,11 +45,11 @@ export default function WeeklyMeetingsPage() {
   });
   const [showUserDropdown, setShowUserDropdown] = useState(false);
 
-  const { data: meetings = [], isLoading } = useQuery({
+  const { data: meetings = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/weekly-meetings"],
   });
 
-  const { data: allTasks = [] } = useQuery({
+  const { data: allTasks = [] } = useQuery<any[]>({
     queryKey: ["/api/weekly-meetings/all-tasks"],
   });
 
