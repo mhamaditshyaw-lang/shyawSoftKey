@@ -34,6 +34,8 @@ export default function WeeklyMeetingsPage() {
   const [expandedDataWeek, setExpandedDataWeek] = useState<number | null>(null);
   const [showAnalysisModal, setShowAnalysisModal] = useState(false);
   const [selectedMeetingId, setSelectedMeetingId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   const { data: meetings = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/weekly-meetings"],
@@ -51,6 +53,12 @@ export default function WeeklyMeetingsPage() {
                       (!dateTo || new Date(meeting.meetingDate) <= new Date(dateTo));
     return statusMatch && nameMatch && dateMatch;
   });
+
+  const totalPages = Math.ceil(filteredMeetings.length / itemsPerPage);
+  const paginatedMeetings = filteredMeetings.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const createMeetingMutation = useMutation({
     mutationFn: async () => {
@@ -252,7 +260,7 @@ export default function WeeklyMeetingsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredMeetings.map((meeting: any, index: number) => (
+        {paginatedMeetings.map((meeting: any, index: number) => (
           <Card key={meeting.id} className="bg-white dark:bg-slate-800 hover:shadow-2xl transition-all duration-300 border-0 rounded-2xl overflow-hidden shadow-lg">
             <div className="h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
             <CardHeader className="bg-gradient-to-b from-slate-50 to-white dark:from-slate-800 dark:to-slate-700">
@@ -502,6 +510,52 @@ export default function WeeklyMeetingsPage() {
               })()}
             </div>
           </motion.div>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-8 pb-6">
+          <Button
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            variant="outline"
+            className="gap-1"
+          >
+            ← Previous
+          </Button>
+          
+          <div className="flex gap-1">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-2 rounded-lg font-medium transition-all ${
+                  currentPage === page
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg'
+                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+
+          <Button
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            variant="outline"
+            className="gap-1"
+          >
+            Next →
+          </Button>
+        </div>
+      )}
+
+      {/* Page info */}
+      {filteredMeetings.length > 0 && (
+        <div className="text-center text-sm text-slate-600 dark:text-slate-400 pb-4">
+          Showing {(currentPage - 1) * itemsPerPage + 1}–{Math.min(currentPage * itemsPerPage, filteredMeetings.length)} of {filteredMeetings.length} meetings
         </div>
       )}
 
