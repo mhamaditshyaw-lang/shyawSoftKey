@@ -1887,6 +1887,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Weekly Meetings Routes
   app.post("/api/weekly-meetings", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
+      if (req.user?.role !== "manager" && req.user?.role !== "office" && req.user?.role !== "staff_office") {
+        return res.status(403).json({ message: "Only manager, office, and staff_office users can create weekly meetings" });
+      }
       const meeting = await storage.createWeeklyMeeting({
         weekNumber: req.body.weekNumber,
         year: req.body.year,
