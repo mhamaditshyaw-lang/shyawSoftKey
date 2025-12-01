@@ -250,156 +250,156 @@ export default function WeeklyMeetingDetailPage() {
           )}
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {tasks.filter((task: any) => {
               if (user?.role === "office" || user?.role === "manager" || user?.role === "admin") return true;
               if (!task.assignedUserIds || task.assignedUserIds.length === 0) return true;
               return task.assignedUserIds.includes(user?.id);
             }).map((task: any) => (
-              <Card key={task.id} className={`${task.isCompleted ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : 'bg-slate-50 dark:bg-slate-900'}`}>
-                <CardContent className="pt-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-start gap-3 flex-1">
-                      <div className="mt-1">
-                        <button
-                          onClick={() => completeTaskMutation.mutate({ taskId: task.id, isCompleted: task.isCompleted })}
-                          disabled={completeTaskMutation.isPending}
-                          className={`p-1.5 rounded ${task.isCompleted ? 'bg-green-500 text-white' : 'border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500'} transition-all`}
-                        >
-                          {task.isCompleted ? <Check className="h-4 w-4" /> : <div className="h-4 w-4" />}
-                        </button>
-                      </div>
-                      <div className="flex-1">
+              <Card key={task.id} className={`flex flex-col ${task.isCompleted ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow'}`}>
+                <CardContent className="p-4 flex flex-col flex-1">
+                  {/* Header with checkbox and actions */}
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <div className="flex items-start gap-2 flex-1">
+                      <button
+                        onClick={() => completeTaskMutation.mutate({ taskId: task.id, isCompleted: task.isCompleted })}
+                        disabled={completeTaskMutation.isPending}
+                        className={`p-1 rounded flex-shrink-0 ${task.isCompleted ? 'bg-green-500 text-white' : 'border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500'} transition-all`}
+                      >
+                        {task.isCompleted ? <Check className="h-4 w-4" /> : <div className="h-4 w-4" />}
+                      </button>
+                      <div className="flex-1 min-w-0">
                         {editingTaskId === task.id ? (
-                          <div className="flex gap-2 mb-2">
+                          <div className="flex gap-1 mb-2">
                             <Input
                               value={editTaskName}
                               onChange={(e) => setEditTaskName(e.target.value)}
-                              className="text-sm"
+                              className="text-xs h-8"
                               autoFocus
                             />
                             <Button
                               size="sm"
                               onClick={() => updateTaskNameMutation.mutate({ taskId: task.id, newName: editTaskName })}
                               disabled={updateTaskNameMutation.isPending}
+                              className="text-xs h-8"
                             >
                               Save
                             </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => setEditingTaskId(null)}
-                            >
-                              Cancel
-                            </Button>
                           </div>
                         ) : (
-                          <h4 className={`font-semibold ${task.isCompleted ? 'line-through text-green-700 dark:text-green-400' : 'text-slate-900 dark:text-white'}`}>{task.title}</h4>
-                        )}
-                        <p className="text-sm text-slate-600 dark:text-slate-400">{task.departmentName}</p>
-                        {task.assignedUserIds && task.assignedUserIds.length > 0 && (
-                          <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-1">
-                            Assigned: {task.assignedUserIds.map((uid: number) => {
-                              const assignedUser = Array.isArray(users) && users.find((u: any) => u.id === uid);
-                              return assignedUser ? `${assignedUser.firstName} ${assignedUser.lastName}` : `User ${uid}`;
-                            }).join(", ")}
-                          </p>
+                          <h4 className={`text-sm font-semibold break-words ${task.isCompleted ? 'line-through text-green-700 dark:text-green-400' : 'text-slate-900 dark:text-white'}`}>{task.title}</h4>
                         )}
                       </div>
                     </div>
-                    <div className="flex gap-2 items-start">
-                      <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-200 rounded text-xs font-medium">
-                        Target: {task.targetValue}
-                      </span>
-                      {(user?.role === "admin" || user?.role === "manager") && editingTaskId !== task.id && (
+                    {!editingTaskId && (user?.role === "admin" || user?.role === "manager") && (
+                      <div className="flex gap-1 flex-shrink-0">
                         <button
                           onClick={() => {
                             setEditingTaskId(task.id);
                             setEditTaskName(task.title);
                           }}
-                          className="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
-                          title="Edit task name"
+                          className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
+                          title="Edit"
                         >
-                          <Edit2 className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+                          <Edit2 className="h-3 w-3 text-slate-600 dark:text-slate-400" />
                         </button>
-                      )}
-                      {(user?.role === "admin" || user?.role === "manager") && editingTaskId !== task.id && (
                         <button
                           onClick={() => {
                             if (confirm("Delete this task?")) {
                               deleteTaskMutation.mutate(task.id);
                             }
                           }}
-                          className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors"
-                          title="Delete task"
+                          className="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors"
+                          title="Delete"
                         >
-                          <X className="h-4 w-4 text-red-600 dark:text-red-400" />
+                          <X className="h-3 w-3 text-red-600 dark:text-red-400" />
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
-                  {task.description && (
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">{task.description}</p>
+
+                  {/* Department and Target */}
+                  <div className="mb-3 pb-3 border-b border-slate-200 dark:border-slate-700">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">{task.departmentName}</p>
+                    <span className="inline-block px-2 py-1 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 rounded text-xs font-medium">
+                      Target: {task.targetValue}
+                    </span>
+                  </div>
+
+                  {/* Assigned Users */}
+                  {task.assignedUserIds && task.assignedUserIds.length > 0 && (
+                    <div className="mb-3 pb-3 border-b border-slate-200 dark:border-slate-700">
+                      <p className="text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Assigned to:</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400">
+                        {task.assignedUserIds.map((uid: number) => {
+                          const assignedUser = Array.isArray(users) && users.find((u: any) => u.id === uid);
+                          return assignedUser ? `${assignedUser.firstName} ${assignedUser.lastName}` : `User ${uid}`;
+                        }).join(", ")}
+                      </p>
+                    </div>
                   )}
-                  <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
-                    <button
-                      onClick={() => {
-                        const newSet = new Set(expandedCommentsSection);
-                        if (newSet.has(task.id)) newSet.delete(task.id);
-                        else newSet.add(task.id);
-                        setExpandedCommentsSection(newSet);
-                      }}
-                      className="flex items-center gap-2 hover:opacity-75 transition-opacity w-full"
-                    >
-                      <ChevronDown 
-                        className={`h-4 w-4 text-indigo-600 transition-transform ${expandedCommentsSection.has(task.id) ? 'rotate-180' : ''}`}
-                      />
-                      <FileCheck className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                      <p className="font-semibold text-slate-900 dark:text-white">Comments & Progress</p>
-                    </button>
-                    {expandedCommentsSection.has(task.id) && (
-                    <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/30 dark:to-blue-900/30 rounded-lg border border-indigo-200 dark:border-indigo-700 p-4 space-y-4 mt-3">
+
+                  {/* Description */}
+                  {task.description && (
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mb-3 line-clamp-2">{task.description}</p>
+                  )}
+
+                  {/* Comments Toggle - Compact */}
+                  <button
+                    onClick={() => {
+                      const newSet = new Set(expandedCommentsSection);
+                      if (newSet.has(task.id)) newSet.delete(task.id);
+                      else newSet.add(task.id);
+                      setExpandedCommentsSection(newSet);
+                    }}
+                    className="flex items-center gap-1 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
+                  >
+                    <ChevronDown 
+                      className={`h-3 w-3 transition-transform ${expandedCommentsSection.has(task.id) ? 'rotate-180' : ''}`}
+                    />
+                    <FileCheck className="h-3 w-3" />
+                    <span>Updates ({task.comments?.length || 0})</span>
+                  </button>
+
+                  {expandedCommentsSection.has(task.id) && (
+                    <div className="bg-slate-100 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 p-3 space-y-3 mt-2">
                       
                       {task.comments && task.comments.length > 0 && (
-                        <div className="space-y-3 max-h-64 overflow-y-auto border-l-4 border-indigo-400 dark:border-indigo-600 pl-3">
+                        <div className="space-y-2 max-h-48 overflow-y-auto">
                           {task.comments.map((comment: any) => {
                             const commenter = Array.isArray(users) && users.find((u: any) => u.id === comment.authorId);
                             return (
-                              <div key={comment.id} className={`p-3 rounded-lg text-sm transition-all ${comment.proofUrl ? 'bg-green-50 dark:bg-green-900/20 border-l-2 border-green-500' : 'bg-slate-100 dark:bg-slate-700/50'}`}>
-                                <div className="flex items-start justify-between gap-2 mb-2">
-                                  <div className="flex-1">
-                                    <p className="font-semibold text-slate-900 dark:text-white text-sm">
-                                      {commenter ? `${commenter.firstName} ${commenter.lastName}` : `User ${comment.authorId}`}
-                                    </p>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400">{new Date(comment.createdAt).toLocaleString()}</p>
+                              <div key={comment.id} className={`p-2 rounded text-xs ${comment.proofUrl ? 'bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700'}`}>
+                                <div className="flex items-start justify-between gap-1 mb-1">
+                                  <div>
+                                    <p className="font-semibold text-slate-900 dark:text-white">{commenter ? `${commenter.firstName}` : `User`}</p>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">{new Date(comment.createdAt).toLocaleTimeString()}</p>
                                   </div>
                                   {comment.proofUrl && (
-                                    <span className="flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900/60 text-green-700 dark:text-green-300 rounded text-xs font-semibold whitespace-nowrap">
-                                      <FileCheck className="h-3 w-3" />
+                                    <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-green-600 text-white rounded text-xs whitespace-nowrap font-semibold">
+                                      <FileCheck className="h-2.5 w-2.5" />
                                       Proof
                                     </span>
                                   )}
                                 </div>
-                                <p className="text-slate-700 dark:text-slate-200 whitespace-pre-wrap mb-2">{comment.comment}</p>
+                                <p className="text-slate-700 dark:text-slate-300 break-words mb-1">{comment.comment}</p>
                                 {comment.proofUrl && (
                                   <button 
                                     onClick={() => setExpandedCommentId(expandedCommentId === comment.id ? null : comment.id)}
-                                    className="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 text-xs font-medium transition-colors"
+                                    className="text-blue-600 dark:text-blue-400 hover:underline text-xs font-medium"
                                   >
-                                    <Eye className="h-3 w-3" />
-                                    {expandedCommentId === comment.id ? "Hide Proof" : "View Proof"}
+                                    {expandedCommentId === comment.id ? "Hide" : "View"} Proof
                                   </button>
                                 )}
                                 {expandedCommentId === comment.id && comment.proofUrl && (
-                                  <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/30 rounded border-l-2 border-blue-400 dark:border-blue-600">
-                                    <p className="text-xs font-semibold text-blue-900 dark:text-blue-200 mb-2">📎 Proof File Link:</p>
+                                  <div className="mt-1 p-2 bg-blue-50 dark:bg-blue-900/20 rounded border-l-2 border-blue-400">
                                     <a 
                                       href={comment.proofUrl} 
                                       target="_blank" 
                                       rel="noopener noreferrer"
-                                      className="text-xs text-blue-600 dark:text-blue-400 hover:underline break-all font-medium"
+                                      className="text-xs text-blue-600 dark:text-blue-400 hover:underline break-all"
                                     >
-                                      {comment.proofUrl.length > 60 ? comment.proofUrl.substring(0, 60) + "..." : comment.proofUrl}
+                                      {comment.proofUrl.length > 40 ? comment.proofUrl.substring(0, 40) + "..." : comment.proofUrl}
                                     </a>
                                   </div>
                                 )}
@@ -409,34 +409,30 @@ export default function WeeklyMeetingDetailPage() {
                         </div>
                       )}
 
-                      <div className="space-y-2 pt-2 border-t border-indigo-200 dark:border-indigo-700">
-                        <p className="text-xs font-medium text-slate-700 dark:text-slate-300">Add Update</p>
-                        <div className="flex gap-2">
-                          <Textarea
-                            placeholder="Write your comment or progress update..."
-                            value={newComment[task.id] || ""}
-                            onChange={(e) => setNewComment(prev => ({ ...prev, [task.id]: e.target.value }))}
-                            rows={2}
-                            className="text-sm flex-1 resize-none"
-                          />
-                          <Button
-                            size="sm"
-                            onClick={() => addCommentMutation.mutate(task.id)}
-                            disabled={!newComment[task.id]?.trim() || addCommentMutation.isPending}
-                            className="gap-2 self-end px-4"
-                          >
-                            {addCommentMutation.isPending ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Send className="h-4 w-4" />
-                            )}
-                            Send
-                          </Button>
+                      <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+                        <Textarea
+                          placeholder="Add update..."
+                          value={newComment[task.id] || ""}
+                          onChange={(e) => setNewComment(prev => ({ ...prev, [task.id]: e.target.value }))}
+                          rows={1}
+                          className="text-xs resize-none h-20"
+                        />
+                        <Button
+                          size="sm"
+                          onClick={() => addCommentMutation.mutate(task.id)}
+                          disabled={!newComment[task.id]?.trim() || addCommentMutation.isPending}
+                          className="w-full gap-1 text-xs h-7"
+                        >
+                          {addCommentMutation.isPending ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <Send className="h-3 w-3" />
+                          )}
+                          Send
+                        </Button>
                       </div>
                     </div>
-                    </div>
-                    )}
-                  </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
