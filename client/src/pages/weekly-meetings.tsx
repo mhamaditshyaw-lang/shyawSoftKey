@@ -333,12 +333,11 @@ export default function WeeklyMeetingsPage() {
                     <Edit2 className="h-3 w-3 text-blue-600 dark:text-blue-400" />
                   </button>
                   <Select value={meeting.status} onValueChange={(value) => updateMeetingStatusMutation.mutate({ id: meeting.id, status: value })}>
-                    <SelectTrigger className="h-7 w-28 text-xs">
+                    <SelectTrigger className="h-7 w-32 text-xs">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="planned">Planning</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
                       <SelectItem value="completed">Complete</SelectItem>
                       <SelectItem value="archived">Archived</SelectItem>
                     </SelectContent>
