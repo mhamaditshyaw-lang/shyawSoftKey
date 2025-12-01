@@ -436,7 +436,6 @@ export default function WeeklyMeetingDetailPage() {
                     </div>
                     )}
                   </div>
-                </div>
                 </CardContent>
               </Card>
             ))}
