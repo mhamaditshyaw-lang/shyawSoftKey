@@ -571,6 +571,7 @@ export default function WeeklyMeetingsPage() {
         </Card>
       )}
 
+      </div>
     </div>
   );
 }
