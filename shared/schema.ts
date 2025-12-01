@@ -24,7 +24,7 @@ export const users = pgTable("users", {
   position: text("position"),
   phoneNumber: text("phone_number"),
   comments: text("comments"),
-  managerId: integer("manager_id").references(() => users.id, { onDelete: "set null" }),
+  managerId: integer("manager_id").references((): any => users.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   lastActiveAt: timestamp("last_active_at"),
 });
