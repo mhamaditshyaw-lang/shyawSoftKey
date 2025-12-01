@@ -35,9 +35,12 @@ export default function WeeklyMeetingDetailPage() {
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
   const [newComment, setNewComment] = useState<Record<number, string>>({});
   const [expandedCommentId, setExpandedCommentId] = useState<number | null>(null);
+  const [expandedCommentsSection, setExpandedCommentsSection] = useState<Set<number>>(new Set());
   const [taskProgress, setTaskProgress] = useState<Record<number, {current: number, status: string}>>({});
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
+  const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
+  const [editTaskName, setEditTaskName] = useState("");
 
   const { data: usersData = [] } = useQuery({
     queryKey: ["/api/users"],
@@ -139,12 +142,15 @@ export default function WeeklyMeetingDetailPage() {
   });
 
   const completeTaskMutation = useMutation({
-    mutationFn: async (taskId: number) => {
+    mutationFn: async ({ taskId, isCompleted }: { taskId: number; isCompleted: boolean }) => {
+      if (isCompleted && (user?.role === "office" || user?.role === "manager" || user?.role === "admin")) {
+        return apiRequest("PATCH", `/api/weekly-meetings/tasks/${taskId}/uncomplete`, {});
+      }
       return apiRequest("PATCH", `/api/weekly-meetings/tasks/${taskId}/complete`, {});
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings", id, "tasks"] });
-      toast({ title: "Success", description: "Task marked as complete" });
+      toast({ title: "Success", description: "Task updated" });
     },
     onError: (error: any) => {
       toast({
@@ -152,6 +158,33 @@ export default function WeeklyMeetingDetailPage() {
         description: error.message,
         variant: "destructive",
       });
+    },
+  });
+
+  const updateTaskNameMutation = useMutation({
+    mutationFn: async ({ taskId, newName }: { taskId: number; newName: string }) => {
+      return apiRequest("PATCH", `/api/weekly-meetings/tasks/${taskId}`, { title: newName });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings", id, "tasks"] });
+      setEditingTaskId(null);
+      toast({ title: "Success", description: "Task name updated" });
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const deleteTaskMutation = useMutation({
+    mutationFn: async (taskId: number) => {
+      return apiRequest("DELETE", `/api/weekly-meetings/tasks/${taskId}`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings", id, "tasks"] });
+      toast({ title: "Success", description: "Task deleted" });
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
     },
   });
 
@@ -229,7 +262,7 @@ export default function WeeklyMeetingDetailPage() {
                     <div className="flex items-start gap-3 flex-1">
                       <div className="mt-1">
                         <button
-                          onClick={() => completeTaskMutation.mutate(task.id)}
+                          onClick={() => completeTaskMutation.mutate({ taskId: task.id, isCompleted: task.isCompleted })}
                           disabled={completeTaskMutation.isPending}
                           className={`p-1.5 rounded ${task.isCompleted ? 'bg-green-500 text-white' : 'border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500'} transition-all`}
                         >
@@ -237,7 +270,32 @@ export default function WeeklyMeetingDetailPage() {
                         </button>
                       </div>
                       <div className="flex-1">
-                        <h4 className={`font-semibold ${task.isCompleted ? 'line-through text-green-700 dark:text-green-400' : 'text-slate-900 dark:text-white'}`}>{task.title}</h4>
+                        {editingTaskId === task.id ? (
+                          <div className="flex gap-2 mb-2">
+                            <Input
+                              value={editTaskName}
+                              onChange={(e) => setEditTaskName(e.target.value)}
+                              className="text-sm"
+                              autoFocus
+                            />
+                            <Button
+                              size="sm"
+                              onClick={() => updateTaskNameMutation.mutate({ taskId: task.id, newName: editTaskName })}
+                              disabled={updateTaskNameMutation.isPending}
+                            >
+                              Save
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setEditingTaskId(null)}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        ) : (
+                          <h4 className={`font-semibold ${task.isCompleted ? 'line-through text-green-700 dark:text-green-400' : 'text-slate-900 dark:text-white'}`}>{task.title}</h4>
+                        )}
                         <p className="text-sm text-slate-600 dark:text-slate-400">{task.departmentName}</p>
                         {task.assignedUserIds && task.assignedUserIds.length > 0 && (
                           <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-1">
@@ -249,19 +307,58 @@ export default function WeeklyMeetingDetailPage() {
                         )}
                       </div>
                     </div>
-                    <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-200 rounded text-xs font-medium">
-                      Target: {task.targetValue}
-                    </span>
+                    <div className="flex gap-2 items-start">
+                      <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-200 rounded text-xs font-medium">
+                        Target: {task.targetValue}
+                      </span>
+                      {(user?.role === "admin" || user?.role === "manager") && editingTaskId !== task.id && (
+                        <button
+                          onClick={() => {
+                            setEditingTaskId(task.id);
+                            setEditTaskName(task.title);
+                          }}
+                          className="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
+                          title="Edit task name"
+                        >
+                          <Edit2 className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+                        </button>
+                      )}
+                      {(user?.role === "admin" || user?.role === "manager") && editingTaskId !== task.id && (
+                        <button
+                          onClick={() => {
+                            if (confirm("Delete this task?")) {
+                              deleteTaskMutation.mutate(task.id);
+                            }
+                          }}
+                          className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors"
+                          title="Delete task"
+                        >
+                          <X className="h-4 w-4 text-red-600 dark:text-red-400" />
+                        </button>
+                      )}
+                    </div>
                   </div>
                   {task.description && (
                     <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">{task.description}</p>
                   )}
                   <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
-                    <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/30 dark:to-blue-900/30 rounded-lg border border-indigo-200 dark:border-indigo-700 p-4 space-y-4">
-                      <div className="flex items-center gap-2">
-                        <FileCheck className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                        <p className="font-semibold text-slate-900 dark:text-white">Comments & Progress</p>
-                      </div>
+                    <button
+                      onClick={() => {
+                        const newSet = new Set(expandedCommentsSection);
+                        if (newSet.has(task.id)) newSet.delete(task.id);
+                        else newSet.add(task.id);
+                        setExpandedCommentsSection(newSet);
+                      }}
+                      className="flex items-center gap-2 hover:opacity-75 transition-opacity w-full"
+                    >
+                      <ChevronDown 
+                        className={`h-4 w-4 text-indigo-600 transition-transform ${expandedCommentsSection.has(task.id) ? 'rotate-180' : ''}`}
+                      />
+                      <FileCheck className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                      <p className="font-semibold text-slate-900 dark:text-white">Comments & Progress</p>
+                    </button>
+                    {expandedCommentsSection.has(task.id) && (
+                    <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/30 dark:to-blue-900/30 rounded-lg border border-indigo-200 dark:border-indigo-700 p-4 space-y-4 mt-3">
                       
                       {task.comments && task.comments.length > 0 && (
                         <div className="space-y-3 max-h-64 overflow-y-auto border-l-4 border-indigo-400 dark:border-indigo-600 pl-3">
@@ -337,6 +434,7 @@ export default function WeeklyMeetingDetailPage() {
                           </Button>
                       </div>
                     </div>
+                    )}
                   </div>
                 </div>
                 </CardContent>
