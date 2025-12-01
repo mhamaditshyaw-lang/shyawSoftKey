@@ -197,35 +197,35 @@ export default function WeeklyMeetingDetailPage() {
   }
 
   return (
-    <div className="space-y-6 p-6">
-      <Button variant="outline" onClick={() => setLocation("/weekly-meetings")}>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 space-y-6 p-6">
+      <Button variant="outline" onClick={() => setLocation("/weekly-meetings")} className="border-indigo-300 text-indigo-700 dark:text-indigo-400">
         ← Back to Meetings
       </Button>
 
       <div className="grid grid-cols-3 gap-4">
-        <Card>
+        <Card className="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-900/30 border-2 border-indigo-200 dark:border-indigo-800">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Week Number</CardTitle>
+            <CardTitle className="text-sm text-indigo-700 dark:text-indigo-400">Week Number</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-indigo-600">{meeting?.weekNumber}</p>
+            <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-300">{meeting?.weekNumber}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30 border-2 border-blue-200 dark:border-blue-800">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Total Tasks</CardTitle>
+            <CardTitle className="text-sm text-blue-700 dark:text-blue-400">Total Tasks</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-blue-600">{tasks.length}</p>
+            <p className="text-2xl font-bold text-blue-600 dark:text-blue-300">{tasks.length}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-gradient-to-br from-teal-50 to-cyan-100 dark:from-teal-900/20 dark:to-cyan-900/30 border-2 border-teal-200 dark:border-teal-800">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Meeting Status</CardTitle>
+            <CardTitle className="text-sm text-teal-700 dark:text-teal-400">Meeting Status</CardTitle>
           </CardHeader>
           <CardContent>
-            <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">
-              {meeting?.status}
+            <span className="text-sm font-bold text-teal-600 dark:text-teal-300 bg-teal-100 dark:bg-teal-900/40 px-2 py-1 rounded">
+              {meeting?.status.toUpperCase()}
             </span>
           </CardContent>
         </Card>

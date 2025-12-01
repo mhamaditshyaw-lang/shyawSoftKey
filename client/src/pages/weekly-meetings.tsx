@@ -112,12 +112,12 @@ export default function WeeklyMeetingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-800 p-6">
       <div className="space-y-6 max-w-7xl mx-auto">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md border-l-4 border-blue-600">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Weekly Meeting Tasks</h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1">Manage departmental work points and progress</p>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Weekly Meeting Tasks</h1>
+            <p className="text-slate-600 dark:text-slate-300 mt-1">Manage departmental work points and progress</p>
           </div>
           <div className="flex gap-2">
             <Button
@@ -148,51 +148,51 @@ export default function WeeklyMeetingsPage() {
       {/* Analytics Section */}
       {meetings.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-          <Card>
+          <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-200 dark:border-green-800">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
+              <CardTitle className="text-sm flex items-center gap-2 text-green-700 dark:text-green-400">
                 <TrendingUp className="h-4 w-4" />
                 Completed
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">
+              <p className="text-2xl font-bold text-green-600 dark:text-green-300">
                 {meetings.filter((m: any) => m.status === "completed").length}
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border-2 border-blue-200 dark:border-blue-800">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">In Progress</CardTitle>
+              <CardTitle className="text-sm text-blue-700 dark:text-blue-400">In Progress</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">
+              <p className="text-2xl font-bold text-blue-600 dark:text-blue-300">
                 {meetings.filter((m: any) => m.status === "in_progress").length}
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-200 dark:border-purple-800">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Planned</CardTitle>
+              <CardTitle className="text-sm text-purple-700 dark:text-purple-400">Planned</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">
+              <p className="text-2xl font-bold text-purple-600 dark:text-purple-300">
                 {meetings.filter((m: any) => m.status === "planned").length}
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 border-2 border-orange-200 dark:border-orange-800">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
+              <CardTitle className="text-sm flex items-center gap-2 text-orange-700 dark:text-orange-400">
                 <BarChart3 className="h-4 w-4" />
                 Total
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">
+              <p className="text-2xl font-bold text-orange-600 dark:text-orange-300">
                 {meetings.length}
               </p>
             </CardContent>
@@ -263,8 +263,8 @@ export default function WeeklyMeetingsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredMeetings.map((meeting: any, index: number) => (
-          <Card key={meeting.id} className="hover:shadow-lg transition-shadow">
-            <CardHeader>
+          <Card key={meeting.id} className="hover:shadow-lg transition-shadow border-l-4 border-blue-500 bg-white dark:bg-slate-800">
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   {editingWeekId === meeting.id ? (
@@ -273,7 +273,7 @@ export default function WeeklyMeetingsPage() {
                         value={editingName}
                         onChange={(e) => setEditingName(e.target.value)}
                         placeholder="Week name"
-                        className="h-8 text-sm"
+                        className="h-8 text-sm border-blue-300"
                       />
                       <Button 
                         size="sm" 
@@ -284,7 +284,7 @@ export default function WeeklyMeetingsPage() {
                             setEditingWeekId(null);
                           }
                         }} 
-                        className="h-8 gap-1"
+                        className="h-8 gap-1 bg-blue-600 hover:bg-blue-700"
                         disabled={updateMeetingNameMutation.isPending}
                       >
                         {updateMeetingNameMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
@@ -292,11 +292,11 @@ export default function WeeklyMeetingsPage() {
                     </div>
                   ) : (
                     <div>
-                      <CardTitle className="flex items-center gap-2">
+                      <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-300">
                         <Calendar className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                         {meeting.name || `Week ${meeting.weekNumber}`}
                       </CardTitle>
-                      <CardDescription>{meeting.year}</CardDescription>
+                      <CardDescription className="text-indigo-600 dark:text-indigo-400">{meeting.year}</CardDescription>
                     </div>
                   )}
                 </div>
@@ -306,15 +306,15 @@ export default function WeeklyMeetingsPage() {
                       setEditingWeekId(meeting.id);
                       setEditingName(meeting.name || `Week ${meeting.weekNumber}`);
                     }}
-                    className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
+                    className="p-1 hover:bg-blue-200 dark:hover:bg-blue-700 rounded transition-colors"
                     title="Edit name"
                   >
-                    <Edit2 className="h-3 w-3 text-slate-600 dark:text-slate-400" />
+                    <Edit2 className="h-3 w-3 text-blue-600 dark:text-blue-400" />
                   </button>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    meeting.status === "completed" ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" :
-                    meeting.status === "archived" ? "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300" :
-                    "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                  <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                    meeting.status === "completed" ? "bg-green-200 text-green-800 dark:bg-green-900 dark:text-green-200" :
+                    meeting.status === "archived" ? "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200" :
+                    "bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
                   }`}>
                     {meeting.status}
                   </span>

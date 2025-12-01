@@ -6,7 +6,15 @@ This is a full-stack web application for internal employee management with role-
 
 ## Recent Changes (December 2025)
 
-- **Role-Based Access Control for Weekly Meetings** (Latest - VERIFIED WORKING):
+- **Colorful Design for Weekly Meetings Pages** (Latest - VERIFIED WORKING):
+  - ✅ Added gradient backgrounds to both Weekly Meetings and Weekly Meeting Detail pages
+  - ✅ Colored stat cards with green (completed), blue (in progress), purple (planned), orange (total)
+  - ✅ Blue gradient header with left accent border on meeting cards
+  - ✅ Colored indicators for meeting status (green, blue, gray)
+  - ✅ Gradient stat cards (indigo, blue, teal) on detail page showing week number, task count, status
+  - ✅ Clean, modern color scheme with dark mode support
+
+- **Role-Based Access Control for Weekly Meetings**:
   - ✅ Restricted weekly meeting creation to manager, office, and staff_office roles only
   - ✅ Added backend role check on POST `/api/weekly-meetings` endpoint (returns 403 if unauthorized)
   - ✅ Updated frontend "New Meeting" button to only show for allowed roles
