@@ -224,7 +224,7 @@ export default function WeeklyMeetingDetailPage() {
             <CardTitle>Tasks</CardTitle>
             <CardDescription>Department work points for this week</CardDescription>
           </div>
-          {(user?.role === "admin" || user?.role === "manager") && meeting?.status === "planned" && (
+          {(user?.role === "admin" || user?.role === "manager") && (
             <Button
               onClick={() => setShowAddTaskModal(true)}
               className="gap-2 bg-indigo-600 hover:bg-indigo-700"
