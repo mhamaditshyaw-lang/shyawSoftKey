@@ -29,7 +29,6 @@ export default function WeeklyMeetingDetailPage() {
     department: "",
     title: "",
     description: "",
-    target: "",
     assignedUserIds: [] as string[],
   });
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
@@ -83,13 +82,12 @@ export default function WeeklyMeetingDetailPage() {
         departmentName: newTask.department,
         title: newTask.title,
         description: newTask.description,
-        targetValue: parseInt(newTask.target) || 0,
         assignedUserIds: newTask.assignedUserIds.map(id => parseInt(id)),
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings", id, "tasks"] });
-      setNewTask({ department: "", title: "", description: "", target: "", assignedUserIds: [] });
+      setNewTask({ department: "", title: "", description: "", assignedUserIds: [] });
       toast({ title: "Success", description: "Task added successfully" });
     },
     onError: (error: any) => {
@@ -330,12 +328,9 @@ export default function WeeklyMeetingDetailPage() {
                     )}
                   </div>
 
-                  {/* Department and Target */}
+                  {/* Department */}
                   <div className="mb-3 pb-3 border-b border-slate-200 dark:border-slate-700">
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">{task.departmentName}</p>
-                    <span className="inline-block px-2 py-1 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 rounded text-xs font-medium">
-                      Target: {task.targetValue}
-                    </span>
+                    <p className="text-xs text-slate-600 dark:text-slate-400">{task.departmentName}</p>
                   </div>
 
                   {/* Assigned Users */}
@@ -516,17 +511,11 @@ export default function WeeklyMeetingDetailPage() {
               </button>
             </div>
             <div className="p-6 space-y-4">
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <Input
                   placeholder="Department"
                   value={newTask.department}
                   onChange={(e) => setNewTask({ ...newTask, department: e.target.value })}
-                />
-                <Input
-                  placeholder="Target Value"
-                  type="number"
-                  value={newTask.target}
-                  onChange={(e) => setNewTask({ ...newTask, target: e.target.value })}
                 />
                 <div className="relative">
                   <div className="border rounded p-2 min-h-10 bg-white dark:bg-slate-950 flex flex-wrap gap-1 items-center">

@@ -24,7 +24,6 @@ interface Task {
   description: string;
   departmentName: string;
   assignedUserId?: number;
-  targetValue: number;
 }
 
 export default function WeeklyMeetingsDataPage() {
@@ -102,29 +101,6 @@ export default function WeeklyMeetingsDataPage() {
     },
   };
 
-  // Chart data - Tasks by Target Value Range
-  const targetRanges = [
-    { range: "0-5", count: (filteredTasks || []).filter((t: any) => t.targetValue >= 0 && t.targetValue <= 5).length },
-    { range: "5-10", count: (filteredTasks || []).filter((t: any) => t.targetValue > 5 && t.targetValue <= 10).length },
-    { range: "10-15", count: (filteredTasks || []).filter((t: any) => t.targetValue > 10 && t.targetValue <= 15).length },
-    { range: "15+", count: (filteredTasks || []).filter((t: any) => t.targetValue > 15).length },
-  ];
-
-  const targetChart = {
-    series: [
-      {
-        name: "Task Count",
-        data: targetRanges.map((r: any) => r.count),
-      },
-    ],
-    options: {
-      chart: { type: "area", toolbar: { show: true } },
-      xaxis: { categories: targetRanges.map((r: any) => r.range) },
-      colors: ["#8b5cf6"],
-      fill: { type: "gradient" },
-    },
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -134,12 +110,11 @@ export default function WeeklyMeetingsDataPage() {
   }
 
   const downloadCSV = () => {
-    const headers = ["Task ID", "Title", "Department", "Target", "Assigned User"];
+    const headers = ["Task ID", "Title", "Department", "Assigned User"];
     const rows = (filteredTasks || []).map((t: any) => [
       t.id,
       t.title,
       t.departmentName,
-      t.targetValue,
       t.assignedUserId ? ((users || []).find((u: any) => u.id === t.assignedUserId)?.firstName || "") : "Unassigned",
     ]);
 
@@ -372,29 +347,6 @@ export default function WeeklyMeetingsDataPage() {
         </motion.div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-      >
-        <Card>
-          <CardHeader>
-            <CardTitle>Tasks by Target Value Range</CardTitle>
-            <CardDescription>Distribution of tasks based on target values</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {typeof Chart !== "undefined" && (
-              <Chart
-                type="area"
-                series={targetChart.series}
-                options={targetChart.options as any}
-                height={300}
-              />
-            )}
-          </CardContent>
-        </Card>
-      </motion.div>
-
       {/* Tasks Table */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -413,7 +365,6 @@ export default function WeeklyMeetingsDataPage() {
                   <tr className="border-b">
                     <th className="text-left py-2 px-4">Task</th>
                     <th className="text-left py-2 px-4">Department</th>
-                    <th className="text-left py-2 px-4">Target</th>
                     <th className="text-left py-2 px-4">Assigned To</th>
                   </tr>
                 </thead>
@@ -422,11 +373,6 @@ export default function WeeklyMeetingsDataPage() {
                     <tr key={task.id} className="border-b hover:bg-slate-50 dark:hover:bg-slate-800">
                       <td className="py-2 px-4 font-medium">{task.title}</td>
                       <td className="py-2 px-4 text-slate-600 dark:text-slate-400">{task.departmentName}</td>
-                      <td className="py-2 px-4">
-                        <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded text-xs">
-                          {task.targetValue}
-                        </span>
-                      </td>
                       <td className="py-2 px-4">
                         {task.assignedUserId ? (
                           <span className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded text-xs">
