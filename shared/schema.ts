@@ -119,7 +119,6 @@ export const weeklyMeetingTasks = pgTable("weekly_meeting_tasks", {
   departmentName: text("department_name").notNull(),
   title: text("title").notNull(),
   description: text("description"),
-  targetValue: integer("target_value"),
   priority: priorityEnum("priority").notNull().default("medium"),
   assignedUserIds: integer("assigned_user_ids").array(),
   isCompleted: boolean("is_completed").notNull().default(false),

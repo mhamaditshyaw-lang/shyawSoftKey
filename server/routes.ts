@@ -1955,13 +1955,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/weekly-meetings/all-tasks", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
+      const userRole = req.user?.role;
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+      
       const meetings = await storage.getWeeklyMeetings();
       const allTasks: any[] = [];
       for (const meeting of meetings) {
         const tasks = await storage.getWeeklyMeetingTasks(meeting.id);
         allTasks.push(...tasks);
       }
-      res.json(allTasks);
+      
+      // Admin, manager, office, and office_team can see all tasks
+      const fullAccessRoles = ["admin", "manager", "office", "office_team"];
+      if (fullAccessRoles.includes(userRole || "")) {
+        res.json(allTasks);
+      } else {
+        // Other users can only see tasks assigned to them
+        const filteredTasks = allTasks.filter((task: any) => {
+          return task.assignedUserIds && Array.isArray(task.assignedUserIds) && task.assignedUserIds.includes(userId);
+        });
+        res.json(filteredTasks);
+      }
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -2001,9 +2019,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/weekly-meetings/:id/tasks", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
+      const userRole = req.user?.role;
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+      
       const tasks = await storage.getWeeklyMeetingTasks(parseInt(req.params.id));
+      
+      // Admin, manager, office, and office_team can see all tasks
+      const fullAccessRoles = ["admin", "manager", "office", "office_team"];
+      let filteredTasks = tasks;
+      
+      if (!fullAccessRoles.includes(userRole || "")) {
+        // Other users can only see tasks assigned to them
+        filteredTasks = tasks.filter((task: any) => {
+          return task.assignedUserIds && Array.isArray(task.assignedUserIds) && task.assignedUserIds.includes(userId);
+        });
+      }
+      
       const tasksWithComments = await Promise.all(
-        tasks.map(async (task: any) => ({
+        filteredTasks.map(async (task: any) => ({
           ...task,
           comments: await storage.getTaskComments(task.id)
         }))
