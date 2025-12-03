@@ -116,11 +116,11 @@ async function assertTodoListInScope(todoListId: number, accessibleUserIds: numb
   if (!todoList) {
     throw new Error('Todo list not found');
   }
-  
+
   const isInScope = 
     accessibleUserIds.includes(todoList.createdById) ||
     (todoList.assignedToId && accessibleUserIds.includes(todoList.assignedToId));
-  
+
   if (!isInScope) {
     throw new Error('Todo list not in your accessible scope');
   }
@@ -131,7 +131,7 @@ async function assertTodoItemInScope(todoItemId: number, accessibleUserIds: numb
   if (!todoItem) {
     throw new Error('Todo item not found');
   }
-  
+
   await assertTodoListInScope(todoItem.todoListId, accessibleUserIds);
 }
 
@@ -140,11 +140,11 @@ async function assertInterviewInScope(interviewId: number, accessibleUserIds: nu
   if (!interview) {
     throw new Error('Interview request not found');
   }
-  
+
   const isInScope = 
     accessibleUserIds.includes(interview.requestedById) ||
     (interview.managerId && accessibleUserIds.includes(interview.managerId));
-  
+
   if (!isInScope) {
     throw new Error('Interview request not in your accessible scope');
   }
@@ -289,7 +289,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       const isAdmin = req.user?.role === 'admin';
-      
+
       // Define allowed fields based on role
       const allowedFields = isAdmin 
         ? ['firstName', 'lastName', 'email', 'role', 'status', 'permissions', 'department', 'position', 'phoneNumber', 'managerId', 'comments']
@@ -524,7 +524,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/managers/:managerId/staff", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const managerId = parseInt(req.params.managerId);
-      
+
       // Only allow admin or the manager themselves to view their staff
       if (req.user?.role !== 'admin' && req.user?.id !== managerId) {
         return res.status(403).json({ message: 'Insufficient permissions' });
@@ -600,7 +600,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/staff/:staffId/manager", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const staffId = parseInt(req.params.staffId);
-      
+
       // Allow admin, the staff member themselves, or their manager to view this
       const staff = await storage.getUser(staffId);
       if (!staff) {
@@ -702,7 +702,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/todos/:id/items", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const todoListId = parseInt(req.params.id);
-      
+
       // Verify todoList is in accessible scope (for non-admin roles)
       if (req.user?.role !== 'admin') {
         await assertTodoListInScope(todoListId, req.accessibleUserIds!);
@@ -727,7 +727,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Only allow specific fields to be updated
       const allowedFields = ['isCompleted', 'title', 'description', 'priority', 'dueDate', 'reminderDate', 'completedByNote'];
-      
+
       for (const field of allowedFields) {
         if (req.body[field] !== undefined) {
           updates[field] = req.body[field];
@@ -760,7 +760,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/todos/items/:id", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const id = parseInt(req.params.id);
-      
+
       // Verify todo item is in accessible scope - only allow deletion for same department
       if (req.user?.role !== 'admin') {
         await assertTodoItemInScope(id, req.accessibleUserIds!);
@@ -782,7 +782,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/todos/:id/items", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const todoListId = parseInt(req.params.id);
-      
+
       // Verify todoList is in accessible scope (for non-admin roles)
       if (req.user?.role !== 'admin') {
         await assertTodoListInScope(todoListId, req.accessibleUserIds!);
@@ -805,7 +805,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/todos/:id", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const todoListId = parseInt(req.params.id);
-      
+
       // Verify todoList is in accessible scope (for non-admin roles)
       if (req.user?.role !== 'admin') {
         await assertTodoListInScope(todoListId, req.accessibleUserIds!);
@@ -827,7 +827,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/todos/:id", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const todoListId = parseInt(req.params.id);
-      
+
       // Verify todoList is in accessible scope (for non-admin roles)
       if (req.user?.role !== 'admin') {
         await assertTodoListInScope(todoListId, req.accessibleUserIds!);
@@ -880,7 +880,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
-      
+
       const reminders = await storage.getRemindersByDateRange(req.user?.id || 0, today, tomorrow);
       res.json({ reminders });
     } catch (error: any) {
@@ -905,7 +905,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const reminderData = insertReminderSchema.parse(cleanedData);
       const reminder = await storage.createReminder(reminderData);
-      
+
       console.log("Reminder created successfully:", reminder);
       res.status(201).json({ reminder });
     } catch (error: any) {
@@ -1106,7 +1106,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Managers should NOT see unassigned requests from other managers
       const includeUnassigned = false; // Changed to prevent managers seeing other managers' unassigned requests
       const requests = await storage.getInterviewRequests(req.accessibleUserIds, includeUnassigned);
-      
+
       res.json({ requests });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -1184,7 +1184,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       await storage.updateInterviewRequest(id, updates);
-      
+
       // Fetch the updated request with all relations to return to client
       const request = await storage.getInterviewRequest(id);
       if (!request) {
@@ -1227,17 +1227,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         totalUsers: userStats.totalUsers || 0,
         activeUsers: userStats.activeUsers || 0,
         pendingUsers: userStats.pendingUsers || 0,
-        
+
         // Todo stats
         totalTodos: todoStats.totalTodos || 0,
         completedTodos: todoStats.completedTodos || 0,
         pendingTodos: todoStats.pendingTodos || 0,
-        
+
         // Interview stats
         totalRequests: interviewStats.totalRequests || 0,
         pendingRequests: interviewStats.pendingRequests || 0,
         approvedRequests: interviewStats.approvedRequests || 0,
-        
+
         // Keep original nested structure for compatibility
         users: userStats,
         todos: todoStats,
@@ -1265,7 +1265,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log("Fetching feedback for user:", req.user?.id, "role:", req.user?.role);
       let feedback;
-      
+
       if (req.user?.role === 'admin' || req.user?.role === 'office' || req.user?.role === 'office_team') {
         // Admin and office roles can see all feedback
         feedback = await storage.getAllFeedback();
@@ -1279,7 +1279,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         feedback = await storage.getFeedbackByAccessibleUsers(req.accessibleUserIds!);
         console.log("Manager/scoped feedback:", feedback);
       }
-      
+
       console.log("Returning feedback count:", feedback?.length || 0);
       res.json({ feedback });
     } catch (error: any) {
@@ -1305,7 +1305,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const feedbackId = parseInt(req.params.id);
       const success = await storage.deleteFeedback(feedbackId);
-      
+
       if (!success) {
         return res.status(404).json({ message: "Feedback not found" });
       }
@@ -1522,7 +1522,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/operational-data", authenticateToken, async (req: AuthRequest, res) => {
     try {
       let entries = await storage.getOperationalData();
-      
+
       // Filter data based on manager-staff relationships
       if (req.user?.role === 'admin') {
         // Admin can see all data
@@ -1692,7 +1692,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { DeviceNotificationService } = await import("./device-notification-service");
-      
+
       // Get all active users count for response
       const allUsers = await storage.getAllUsers();
       const usersCount = allUsers.length;
@@ -1834,7 +1834,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { URL } = await import('url');
 
       const { backupData } = req.body;
-      
+
       if (!backupData || typeof backupData !== 'string') {
         return res.status(400).json({ message: "No valid backup data provided" });
       }
@@ -1956,16 +1956,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updates: any = {};
       if (status !== undefined) updates.status = status;
       if (name !== undefined) updates.name = name;
-      
+
       // Get current meeting
       const meeting = await db.query.weeklyMeetings.findFirst({
         where: eq(weeklyMeetings.id, meetingId)
       });
-      
+
       if (!meeting) {
         return res.status(404).json({ message: "Meeting not found" });
       }
-      
+
       // Only execute update if there are fields to update
       if (Object.keys(updates).length > 0) {
         const result = await db.update(weeklyMeetings)
@@ -1986,18 +1986,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userRole = req.user?.role;
       const userId = req.user?.id;
-      
+
       if (!userId) {
         return res.status(401).json({ message: "Authentication required" });
       }
-      
+
       const meetings = await storage.getWeeklyMeetings();
       const allTasks: any[] = [];
       for (const meeting of meetings) {
         const tasks = await storage.getWeeklyMeetingTasks(meeting.id);
         allTasks.push(...tasks);
       }
-      
+
       // Admin, manager, office, and office_team can see all tasks
       const fullAccessRoles = ["admin", "manager", "office", "office_team"];
       if (fullAccessRoles.includes(userRole || "")) {
@@ -2020,7 +2020,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Only admin and manager can create tasks" });
       }
       const task = await storage.createWeeklyMeetingTask({ ...req.body, createdById: req.user?.id || 1 });
-      
+
       // Send notifications to assigned users
       if (req.body.assignedUserIds && Array.isArray(req.body.assignedUserIds) && req.body.assignedUserIds.length > 0) {
         try {
@@ -2039,7 +2039,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Don't fail the task creation if notification fails
         }
       }
-      
+
       res.json(task);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -2050,24 +2050,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userRole = req.user?.role;
       const userId = req.user?.id;
-      
+
       if (!userId) {
         return res.status(401).json({ message: "Authentication required" });
       }
-      
+
       const tasks = await storage.getWeeklyMeetingTasks(parseInt(req.params.id));
-      
+
       // Admin, manager, office, and office_team can see all tasks
       const fullAccessRoles = ["admin", "manager", "office", "office_team"];
       let filteredTasks = tasks;
-      
+
       if (!fullAccessRoles.includes(userRole || "")) {
         // Other users can only see tasks assigned to them
         filteredTasks = tasks.filter((task: any) => {
           return task.assignedUserIds && Array.isArray(task.assignedUserIds) && task.assignedUserIds.includes(userId);
         });
       }
-      
+
       const tasksWithComments = await Promise.all(
         filteredTasks.map(async (task: any) => ({
           ...task,
@@ -2106,24 +2106,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/weekly-meetings/comments/:commentId", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const commentId = parseInt(req.params.commentId);
-      
+
       // Get the comment to check ownership
       const comment = await storage.getTaskCommentById(commentId);
-      
+
       if (!comment) {
         return res.status(404).json({ message: "Comment not found" });
       }
-      
+
       // Only allow deletion if:
       // 1. User is admin, manager, or office
       // 2. User is the author of the comment
       const isAdmin = req.user?.role === "admin" || req.user?.role === "manager" || req.user?.role === "office";
       const isAuthor = comment.authorId === req.user?.id;
-      
+
       if (!isAdmin && !isAuthor) {
         return res.status(403).json({ message: "You can only delete your own comments" });
       }
-      
+
       const result = await storage.deleteTaskComment(commentId);
       res.json({ success: true, comment: result });
     } catch (error: any) {
@@ -2202,7 +2202,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const taskId = parseInt(req.params.taskId);
       const { current, status } = req.body;
-      
+
       // Store progress in task comments as a special entry
       const comment = await storage.createTaskComment(
         taskId,
