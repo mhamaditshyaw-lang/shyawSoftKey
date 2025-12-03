@@ -476,10 +476,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/pages/available", authenticateToken, requireRole(['admin']), async (req: AuthRequest, res) => {
     try {
+      const pageLabels: Record<string, string> = {
+        "/": "Dashboard",
+        "/interviews": "Interview Requests",
+        "/todos": "Todo Lists",
+        "/reminders": "Reminders",
+        "/feedback": "Feedback",
+        "/metrics": "Metrics",
+        "/users": "User Management",
+        "/employee-management": "Employee Management",
+        "/department-management": "Department Management",
+        "/add-employee": "Add Employee",
+        "/data-view": "Data View",
+        "/reports": "Reports",
+        "/archive": "Archive",
+        "/all-data": "All Data",
+        "/user-activity": "User Activity",
+        "/page-access-management": "Page Access Management",
+        "/notification-management": "Notification Management",
+        "/notification-test": "Notification Test",
+        "/broadcast-notification": "Broadcast Notification",
+        "/weekly-meetings": "Weekly Meetings",
+        "/weekly-meetings-data": "Weekly Meetings Data",
+        "/backup-restore": "Backup & Restore",
+        "/partitions": "Partition Browser",
+        "/manager-todos": "Manager Todos",
+        "/manager-dashboard": "Manager Dashboard",
+        "/multilingual-demo": "Multilingual Demo"
+      };
+
       const pages = Object.entries(PAGE_PERMISSIONS).map(([path, permission]) => ({
         path,
         permission,
-        label: path === '/' ? 'Dashboard' : path.split('/').pop()?.split('-').map(word => 
+        label: pageLabels[path] || path.split('/').pop()?.split('-').map(word => 
           word.charAt(0).toUpperCase() + word.slice(1)
         ).join(' ') || path
       }));
