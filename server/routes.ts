@@ -2105,10 +2105,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/weekly-meetings/comments/:commentId", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      if (req.user?.role === "employee") {
-        return res.status(403).json({ message: "Employee users cannot delete comments" });
+      const commentId = parseInt(req.params.commentId);
+      
+      // Get the comment to check ownership
+      const comment = await storage.getTaskCommentById(commentId);
+      
+      if (!comment) {
+        return res.status(404).json({ message: "Comment not found" });
       }
-      const result = await storage.deleteTaskComment(parseInt(req.params.commentId));
+      
+      // Only allow deletion if:
+      // 1. User is admin, manager, or office
+      // 2. User is the author of the comment
+      const isAdmin = req.user?.role === "admin" || req.user?.role === "manager" || req.user?.role === "office";
+      const isAuthor = comment.authorId === req.user?.id;
+      
+      if (!isAdmin && !isAuthor) {
+        return res.status(403).json({ message: "You can only delete your own comments" });
+      }
+      
+      const result = await storage.deleteTaskComment(commentId);
       res.json({ success: true, comment: result });
     } catch (error: any) {
       res.status(500).json({ message: error.message });

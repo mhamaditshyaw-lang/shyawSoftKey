@@ -1,7 +1,7 @@
-import { 
-  users, 
-  todoLists, 
-  todoItems, 
+import {
+  users,
+  todoLists,
+  todoItems,
   reminders,
   interviewRequests,
   interviewComments,
@@ -12,7 +12,7 @@ import {
   taskProof,
   departmentTaskProgress,
   weeklyMeetingArchive,
-  type User, 
+  type User,
   type InsertUser,
   type TodoList,
   type InsertTodoList,
@@ -49,14 +49,14 @@ export interface IStorage {
   getUsersByRole(role: string): Promise<User[]>;
   updateUserPageAccess(userId: number, pagePermissions: Record<string, boolean>): Promise<User>;
   getUserPageAccess(userId: number): Promise<Record<string, boolean>>;
-  
+
   // Manager-staff relationship methods
   getStaffForManager(managerId: number): Promise<User[]>;
   assignStaffToManager(staffId: number, managerId: number): Promise<User | undefined>;
   removeStaffFromManager(staffId: number): Promise<User | undefined>;
   getManagerForStaff(staffId: number): Promise<User | undefined>;
   getAccessibleUserIds(userId: number, role: string): Promise<number[]>;
-  
+
   // Todo methods
   getTodoLists(accessibleUserIds?: number[]): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]>;
   getTodoListsByUser(userId: number): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]>;
@@ -70,14 +70,14 @@ export interface IStorage {
   deleteTodoItem(id: number): Promise<boolean>;
   deleteAllTodoItems(todoListId: number): Promise<boolean>;
   getTodoStatsByUser(userId: number): Promise<{ totalTodos: number; completedTodos: number; pendingTodos: number }>;
-  
+
   // Reminder methods
   getReminders(userId: number): Promise<Reminder[]>;
   getRemindersByDateRange(userId: number, startDate: Date, endDate: Date): Promise<Reminder[]>;
   createReminder(reminder: InsertReminder): Promise<Reminder>;
   updateReminder(id: number, updates: Partial<Reminder>): Promise<Reminder | undefined>;
   deleteReminder(id: number): Promise<boolean>;
-  
+
   // Interview request methods
   getInterviewRequests(accessibleUserIds?: number[], includeUnassigned?: boolean): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[]>;
   getInterviewRequestsByManager(managerId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[]>;
@@ -88,33 +88,34 @@ export interface IStorage {
   // Interview comment methods
   getInterviewComments(interviewRequestId: number): Promise<(InterviewComment & { author: User })[]>;
   createInterviewComment(comment: InsertInterviewComment): Promise<InterviewComment>;
-  
+
   // Analytics methods
   getUserStats(): Promise<{ totalUsers: number; activeUsers: number; pendingUsers: number }>;
   getTodoStats(): Promise<{ totalTodos: number; completedTodos: number; pendingTodos: number }>;
   getInterviewStats(): Promise<{ totalRequests: number; pendingRequests: number; approvedRequests: number }>;
-  
 
-  
+
+
   // Feedback methods
   createFeedback(feedbackData: any): Promise<any>;
   getAllFeedback(): Promise<any[]>;
   getFeedbackByUser(userId: number): Promise<any[]>;
+  getFeedbackByAccessibleUsers(accessibleUserIds: number[]): Promise<any[]>;
   deleteFeedback(feedbackId: number): Promise<boolean>;
-  
+
   // Feedback type methods
   createFeedbackType(feedbackTypeData: any): Promise<any>;
   getAllFeedbackTypes(): Promise<any[]>;
   updateFeedbackType(typeId: number, updates: any): Promise<any>;
   deleteFeedbackType(typeId: number): Promise<void>;
-  
+
   // Archive methods
   archiveItem(itemType: string, itemId: number, itemData: any, archivedById: number, reason?: string): Promise<any>;
   getArchivedItems(): Promise<any[]>;
   updateArchivedItem(archiveId: number, updates: any): Promise<any>;
   restoreArchivedItem(archiveId: number, itemType: string): Promise<void>;
   deleteArchivedItem(archiveId: number): Promise<boolean>;
-  
+
   // Operational data methods
   createOperationalData(data: any): Promise<any>;
   getOperationalData(): Promise<any[]>;
@@ -129,12 +130,13 @@ export interface IStorage {
   getWeeklyMeetingTasks(meetingId: number): Promise<any[]>;
   createTaskComment(taskId: number, authorId: number, comment: string, proofUrl?: string): Promise<any>;
   getTaskComments(taskId: number): Promise<any[]>;
+  getTaskCommentById(commentId: number): Promise<any | null>;
   deleteTaskComment(commentId: number): Promise<any>;
   createTaskProof(taskId: number, submittedById: number, proofType: string, proofUrl: string, description?: string): Promise<any>;
   getTaskProofs(taskId: number): Promise<any[]>;
   deleteTaskProof(proofId: number): Promise<any>;
   verifyTaskProof(proofId: number, verifiedById: number, verificationNotes?: string): Promise<any>;
-  completeTask(taskId: number): Promise<any>;
+  completeTask(taskId: number, completedById?: number): Promise<any>;
   uncompleteTask(taskId: number): Promise<any>;
   updateTaskName(taskId: number, newTitle: string): Promise<any>;
   deleteTask(taskId: number): Promise<any>;
@@ -223,7 +225,7 @@ export class DatabaseStorage implements IStorage {
           .delete(users)
           .where(eq(users.id, id))
           .returning();
-        
+
         return (result as User[]).length > 0;
       });
     } catch (error) {
@@ -262,7 +264,7 @@ export class DatabaseStorage implements IStorage {
 
       const result = await db
         .update(users)
-        .set({ 
+        .set({
           permissions: updatedPermissions,
           lastActiveAt: new Date()
         })
@@ -286,7 +288,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       const permissions = (user.permissions as Record<string, any>) || {};
-      
+
       const pagePermissions: Record<string, boolean> = {};
       Object.keys(permissions).forEach(key => {
         if (key.startsWith('canView')) {
@@ -375,7 +377,7 @@ export class DatabaseStorage implements IStorage {
   async getTodoLists(accessibleUserIds?: number[]): Promise<(TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[]> {
     return await executeWithRetry(async () => {
       let todoListsResult;
-      
+
       if (accessibleUserIds && accessibleUserIds.length > 0) {
         todoListsResult = await db.query.todoLists.findMany({
           where: (todoLists, { or, inArray }) => or(
@@ -397,7 +399,7 @@ export class DatabaseStorage implements IStorage {
           orderBy: (todoLists, { desc }) => [desc(todoLists.createdAt)],
         });
       }
-      
+
       // Manually fetch items with all columns using raw SQL
       const result = await Promise.all(
         todoListsResult.map(async (list: any) => {
@@ -416,7 +418,7 @@ export class DatabaseStorage implements IStorage {
           } as TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] };
         })
       );
-      
+
       return result as (TodoList & { createdBy: User; assignedTo: User | null; items: TodoItem[] })[];
     });
   }
@@ -434,7 +436,7 @@ export class DatabaseStorage implements IStorage {
         },
         orderBy: (todoLists, { desc }) => [desc(todoLists.createdAt)],
       });
-      
+
       const result = await Promise.all(
         todoListsResult.map(async (list: any) => {
           const items = await db.select().from(todoItems).where(eq(todoItems.todoListId, list.id)).orderBy(desc(todoItems.createdAt));
@@ -475,9 +477,9 @@ export class DatabaseStorage implements IStorage {
           assignedTo: true,
         },
       });
-      
+
       if (!list) return undefined;
-      
+
       const items = await db.select().from(todoItems).where(eq(todoItems.todoListId, id)).orderBy(desc(todoItems.createdAt));
       const typedList = list as any;
       return {
@@ -536,7 +538,7 @@ export class DatabaseStorage implements IStorage {
       if (updates.isCompleted !== undefined) {
         updateData.completedAt = updates.isCompleted ? new Date() : null;
       }
-      
+
       const result = await db
         .update(todoItems)
         .set(updateData)
@@ -578,17 +580,17 @@ export class DatabaseStorage implements IStorage {
         const existingList = await tx.select({ id: todoLists.id })
           .from(todoLists)
           .where(eq(todoLists.id, id));
-        
+
         if (existingList.length === 0) {
           return false; // List not found
         }
 
         // Delete all associated items first (defensive approach)
         await tx.delete(todoItems).where(eq(todoItems.todoListId, id));
-        
+
         // Then delete the list
         const result = await tx.delete(todoLists).where(eq(todoLists.id, id)).returning();
-        
+
         return result.length > 0;
       });
     } catch (error) {
@@ -635,7 +637,7 @@ export class DatabaseStorage implements IStorage {
       });
       return (result as any[]) as (InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[];
     }
-    
+
     const result = await db.query.interviewRequests.findMany({
       with: {
         requestedBy: true,
@@ -726,7 +728,7 @@ export class DatabaseStorage implements IStorage {
         .innerJoin(users, eq(interviewComments.authorId, users.id))
         .where(eq(interviewComments.interviewRequestId, interviewRequestId))
         .orderBy(desc(interviewComments.createdAt));
-      
+
       return result as any;
     });
   }
@@ -750,7 +752,7 @@ export class DatabaseStorage implements IStorage {
           pendingUsers: sql<number>`count(*) filter (where status = 'pending')`,
         })
         .from(users);
-      
+
       return {
         totalUsers: Number(stats.totalUsers),
         activeUsers: Number(stats.activeUsers),
@@ -768,7 +770,7 @@ export class DatabaseStorage implements IStorage {
           pendingTodos: sql<number>`count(*) filter (where is_completed = false)`,
         })
         .from(todoItems);
-      
+
       return {
         totalTodos: Number(stats.totalTodos),
         completedTodos: Number(stats.completedTodos),
@@ -793,7 +795,7 @@ export class DatabaseStorage implements IStorage {
             eq(todoLists.assignedToId, userId)
           )
         );
-      
+
       return {
         totalTodos: Number(stats.totalTodos),
         completedTodos: Number(stats.completedTodos),
@@ -870,7 +872,7 @@ export class DatabaseStorage implements IStorage {
         approvedRequests: sql<number>`count(*) filter (where status = 'approved')`,
       })
       .from(interviewRequests);
-    
+
     return {
       totalRequests: Number(stats.totalRequests),
       pendingRequests: Number(stats.pendingRequests),
@@ -1065,10 +1067,32 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getTaskComments(taskId: number): Promise<any[]> {
-    const comments = await db.select().from(taskComments).where(eq(taskComments.taskId, taskId)).orderBy(desc(taskComments.createdAt));
-    return comments.map((c: any) => ({
-      ...c,
-    }));
+    const comments = await db.query.taskComments.findMany({
+      where: eq(taskComments.taskId, taskId),
+      with: {
+        author: {
+          columns: {
+            password: false,
+          },
+        },
+      },
+      orderBy: (taskComments, { desc }) => [desc(taskComments.createdAt)],
+    });
+    return comments;
+  }
+
+  async getTaskCommentById(commentId: number): Promise<any | null> {
+    const comment = await db.query.taskComments.findFirst({
+      where: eq(taskComments.id, commentId),
+      with: {
+        author: {
+          columns: {
+            password: false,
+          },
+        },
+      },
+    });
+    return comment || null;
   }
 
   async deleteTaskComment(commentId: number): Promise<any> {
