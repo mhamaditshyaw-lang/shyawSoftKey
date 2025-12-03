@@ -407,7 +407,7 @@ export default function WeeklyMeetingDetailPage() {
                               <div key={comment.id} className={`p-2 rounded text-xs ${comment.proofUrl ? 'bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700'}`}>
                                 <div className="flex items-start justify-between gap-1 mb-1">
                                   <div>
-                                    <p className="font-semibold text-slate-900 dark:text-white">User</p>
+                                    <p className="font-semibold text-slate-900 dark:text-white">{commenter ? `${commenter.firstName} ${commenter.lastName}` : `User ${comment.authorId}`}</p>
                                     <p className="text-xs text-slate-500 dark:text-slate-400">{new Date(comment.createdAt).toLocaleTimeString()}</p>
                                   </div>
                                   {comment.proofUrl && (
