@@ -82,6 +82,11 @@ const NAVIGATION: Navigation = [
     ],
   },
   {
+    segment: 'weekly-meetings',
+    title: 'Weekly Meetings',
+    icon: <Calendar className="w-5 h-5" />,
+  },
+  {
     segment: 'data-view',
     title: 'Operational Data',
     icon: <Database className="w-5 h-5" />,
@@ -138,16 +143,16 @@ export default function StructuredNavigation({ className }: StructuredNavigation
   const { user } = useAuth();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  
+
   const isAdmin = user?.role === 'admin';
-  
+
   const hasPermission = (segment: string): boolean => {
     if (isAdmin) return true;
-    
+
     const href = segment === '' ? '/' : `/${segment}`;
     const permissionKey = PAGE_PERMISSIONS[href as keyof typeof PAGE_PERMISSIONS];
     if (!permissionKey) return false;
-    
+
     const permissions = user?.permissions as Record<string, boolean> | undefined;
     return permissions?.[permissionKey] === true;
   };
@@ -284,9 +289,9 @@ export default function StructuredNavigation({ className }: StructuredNavigation
           <div className="ml-4 mt-2 space-y-1 animate-fade-in">
             {item.children?.map((child, childIndex) => {
               if (!hasAccess(child)) return null;
-              
+
               const childActive = child.segment && isActive(child.segment);
-              
+
               return (
                 <Link key={childIndex} href={`/${child.segment}`}>
                   <div className={cn(
