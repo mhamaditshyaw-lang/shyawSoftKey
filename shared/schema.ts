@@ -433,14 +433,25 @@ export const PAGE_PERMISSIONS = {
   "/feedback": "manage_feedback",
   "/metrics": "view_metrics",
   "/users": "manage_users",
+  "/employee-management": "manage_employees",
   "/department-management": "manage_departments",
+  "/add-employee": "add_employees",
   "/data-view": "view_data",
   "/reports": "view_reports",
   "/archive": "view_archive",
   "/all-data": "view_all_data",
   "/user-activity": "view_user_activity",
   "/page-access-management": "manage_page_access",
-  "/notification-management": "manage_notifications"
+  "/notification-management": "manage_notifications",
+  "/notification-test": "view_notification_test",
+  "/broadcast-notification": "manage_broadcast",
+  "/weekly-meetings": "view_weekly_meetings",
+  "/weekly-meetings-data": "view_weekly_meetings_data",
+  "/backup-restore": "manage_backup",
+  "/partitions": "view_partitions",
+  "/manager-todos": "view_manager_todos",
+  "/manager-dashboard": "view_manager_dashboard",
+  "/multilingual-demo": "view_multilingual_demo"
 } as const;
 
 export type PagePath = keyof typeof PAGE_PERMISSIONS;

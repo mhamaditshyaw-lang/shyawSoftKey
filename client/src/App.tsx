@@ -43,6 +43,7 @@ import ManagerTodosPage from "@/pages/manager-todos";
 import ManagerDashboard from "@/pages/manager-dashboard";
 import WeeklyMeetingsPage from "@/pages/weekly-meetings";
 import WeeklyMeetingDetailPage from "@/pages/weekly-meeting-detail";
+import WeeklyMeetingsDataPage from "@/pages/weekly-meetings-data";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -119,23 +120,23 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/users">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="manage_users">
           <UsersPage />
         </ProtectedRoute>
       </Route>
       
       <Route path="/employee-management">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="manage_employees">
           <EmployeeManagementPage />
         </ProtectedRoute>
       </Route>
       <Route path="/department-management">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="manage_departments">
           <DepartmentManagementPage />
         </ProtectedRoute>
       </Route>
       <Route path="/add-employee">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="add_employees">
           <AddEmployeePage />
         </ProtectedRoute>
       </Route>
@@ -176,22 +177,27 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/weekly-meetings">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="view_weekly_meetings">
           <WeeklyMeetingsPage />
         </ProtectedRoute>
       </Route>
       <Route path="/weekly-meetings/:id">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="view_weekly_meetings">
           <WeeklyMeetingDetailPage />
         </ProtectedRoute>
       </Route>
+      <Route path="/weekly-meetings-data">
+        <ProtectedRoute requiredPermission="view_weekly_meetings_data">
+          <WeeklyMeetingsDataPage />
+        </ProtectedRoute>
+      </Route>
       <Route path="/notification-test">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="view_notification_test">
           <NotificationTestPage />
         </ProtectedRoute>
       </Route>
       <Route path="/broadcast-notification">
-        <ProtectedRoute requiredPermission="manage_users">
+        <ProtectedRoute requiredPermission="manage_broadcast">
           <BroadcastNotificationPage />
         </ProtectedRoute>
       </Route>
@@ -201,33 +207,33 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/multilingual-demo">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="view_multilingual_demo">
           <MultilingualDemoPage />
         </ProtectedRoute>
       </Route>
       
       <Route path="/page-access-management">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="manage_page_access">
           <PageAccessManagement />
         </ProtectedRoute>
       </Route>
       <Route path="/backup-restore">
-        <ProtectedRoute requiredPermission="manage_users">
+        <ProtectedRoute requiredPermission="manage_backup">
           <BackupRestorePage />
         </ProtectedRoute>
       </Route>
       <Route path="/partitions">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="view_partitions">
           <PartitionBrowserPage />
         </ProtectedRoute>
       </Route>
       <Route path="/manager-todos">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="view_manager_todos">
           <ManagerTodosPage />
         </ProtectedRoute>
       </Route>
       <Route path="/manager-dashboard">
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="view_manager_dashboard">
           <ManagerDashboard />
         </ProtectedRoute>
       </Route>
