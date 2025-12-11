@@ -360,6 +360,7 @@ export default function EmployeeManagementPage() {
                       <SelectItem value="office">{t("office")}</SelectItem>
                       <SelectItem value="secretary">{t("secretary")}</SelectItem>
                       <SelectItem value="office_team">{t("officeTeam")}</SelectItem>
+                      <SelectItem value="employee">{t("employee")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
