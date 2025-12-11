@@ -36,6 +36,23 @@ export default function WeeklyMeetingsPage() {
   const [selectedMeetingId, setSelectedMeetingId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  const [monthFilter, setMonthFilter] = useState<string>("all");
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+
+  const months = [
+    { value: "1", label: "January" },
+    { value: "2", label: "February" },
+    { value: "3", label: "March" },
+    { value: "4", label: "April" },
+    { value: "5", label: "May" },
+    { value: "6", label: "June" },
+    { value: "7", label: "July" },
+    { value: "8", label: "August" },
+    { value: "9", label: "September" },
+    { value: "10", label: "October" },
+    { value: "11", label: "November" },
+    { value: "12", label: "December" },
+  ];
 
   const { data: meetings = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/weekly-meetings"],
@@ -51,7 +68,16 @@ export default function WeeklyMeetingsPage() {
     const nameMatch = nameSearch === "" || `Week ${meeting.weekNumber}`.toLowerCase().includes(nameSearch.toLowerCase());
     const dateMatch = (!dateFrom || new Date(meeting.meetingDate) >= new Date(dateFrom)) &&
                       (!dateTo || new Date(meeting.meetingDate) <= new Date(dateTo));
-    return statusMatch && nameMatch && dateMatch;
+    
+    // Month and Year filter
+    const meetingDate = new Date(meeting.meetingDate);
+    const meetingMonth = meetingDate.getMonth() + 1;
+    const meetingYear = meetingDate.getFullYear();
+    
+    const yearMatch = meetingYear === selectedYear;
+    const monthMatch = monthFilter === "all" || meetingMonth === parseInt(monthFilter);
+    
+    return statusMatch && nameMatch && dateMatch && monthMatch && yearMatch;
   });
 
   const totalPages = Math.ceil(filteredMeetings.length / itemsPerPage);
@@ -83,6 +109,41 @@ export default function WeeklyMeetingsPage() {
       toast({
         title: "Error",
         description: error.message || "Failed to create meeting",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Create 4 weeks for a selected month
+  const createMonthWeeksMutation = useMutation({
+    mutationFn: async ({ month, year }: { month: number; year: number }) => {
+      const results = [];
+      for (let week = 1; week <= 4; week++) {
+        // Calculate approximate date for each week of the month
+        const day = Math.min((week - 1) * 7 + 1, 28);
+        const meetingDate = new Date(year, month - 1, day);
+        
+        const result = await apiRequest("POST", "/api/weekly-meetings", {
+          weekNumber: week,
+          year: year,
+          meetingDate: meetingDate.toISOString(),
+          name: `Week ${week} - ${months[month - 1].label} ${year}`,
+        });
+        results.push(result);
+      }
+      return results;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings"] });
+      toast({
+        title: "Success",
+        description: "4 weeks created successfully for the selected month",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create weeks",
         variant: "destructive",
       });
     },
@@ -226,6 +287,43 @@ export default function WeeklyMeetingsPage() {
           <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Filters:</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <Select value={monthFilter} onValueChange={(value) => { setMonthFilter(value); setCurrentPage(1); }}>
+            <SelectTrigger className="w-40" data-testid="select-month-filter">
+              <SelectValue placeholder="All Months" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Months</SelectItem>
+              {months.map((month) => (
+                <SelectItem key={month.value} value={month.value}>{month.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={selectedYear.toString()} onValueChange={(value) => { setSelectedYear(parseInt(value)); setCurrentPage(1); }}>
+            <SelectTrigger className="w-28" data-testid="select-year-filter">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {[2023, 2024, 2025, 2026, 2027].map((year) => (
+                <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {monthFilter !== "all" && (user?.role === "admin" || user?.role === "manager" || user?.role === "office") && (
+            <Button
+              onClick={() => createMonthWeeksMutation.mutate({ month: parseInt(monthFilter), year: selectedYear })}
+              disabled={createMonthWeeksMutation.isPending}
+              size="sm"
+              className="gap-1 bg-green-600 hover:bg-green-700 text-white"
+              data-testid="button-create-4-weeks"
+            >
+              {createMonthWeeksMutation.isPending ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <Plus className="h-3 w-3" />
+              )}
+              Create 4 Weeks
+            </Button>
+          )}
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-40">
               <SelectValue />
@@ -258,7 +356,7 @@ export default function WeeklyMeetingsPage() {
             className="w-40 h-9"
             placeholder="To"
           />
-          {(nameSearch || dateFrom || dateTo) && (
+          {(nameSearch || dateFrom || dateTo || monthFilter !== "all") && (
             <Button
               variant="ghost"
               size="sm"
@@ -266,6 +364,7 @@ export default function WeeklyMeetingsPage() {
                 setNameSearch("");
                 setDateFrom("");
                 setDateTo("");
+                setMonthFilter("all");
               }}
               className="gap-1"
             >
