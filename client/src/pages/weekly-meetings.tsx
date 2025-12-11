@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Calendar, Plus, Archive, Eye, Loader2, Filter, ChevronDown, Search, X, Edit2, BarChart3, TrendingUp, Home, Save, PieChart, Send, Clock, Zap } from "lucide-react";
+import { Calendar, Plus, Archive, Eye, Loader2, Filter, ChevronDown, Search, X, Edit2, BarChart3, TrendingUp, Home, Save, PieChart, Send, Clock, Zap, Trash2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { motion } from "framer-motion";
@@ -189,6 +189,26 @@ export default function WeeklyMeetingsPage() {
       toast({
         title: "Error",
         description: error.message || "Failed to update status",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteMeetingMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return apiRequest("DELETE", `/api/weekly-meetings/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings"] });
+      toast({
+        title: "Success",
+        description: "Meeting deleted successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete meeting",
         variant: "destructive",
       });
     },
@@ -431,6 +451,21 @@ export default function WeeklyMeetingsPage() {
                   >
                     <Edit2 className="h-3 w-3 text-blue-600 dark:text-blue-400" />
                   </button>
+                  {user?.role === "admin" && (
+                    <button
+                      onClick={() => {
+                        if (confirm("Are you sure you want to delete this week?")) {
+                          deleteMeetingMutation.mutate(meeting.id);
+                        }
+                      }}
+                      className="p-1 hover:bg-red-200 dark:hover:bg-red-700 rounded transition-colors"
+                      title="Delete week"
+                      disabled={deleteMeetingMutation.isPending}
+                      data-testid={`button-delete-week-${meeting.id}`}
+                    >
+                      <Trash2 className="h-3 w-3 text-red-600 dark:text-red-400" />
+                    </button>
+                  )}
                   <Select value={meeting.status} onValueChange={(value) => updateMeetingStatusMutation.mutate({ id: meeting.id, status: value })}>
                     <SelectTrigger className="h-7 w-32 text-xs">
                       <SelectValue />
