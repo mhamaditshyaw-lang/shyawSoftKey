@@ -27,8 +27,6 @@ export default function WeeklyMeetingsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [expandedMeetings, setExpandedMeetings] = useState<Set<number>>(new Set());
   const [nameSearch, setNameSearch] = useState("");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
   const [editingWeekId, setEditingWeekId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState("");
   const [expandedDataWeek, setExpandedDataWeek] = useState<number | null>(null);
@@ -38,7 +36,6 @@ export default function WeeklyMeetingsPage() {
   const itemsPerPage = 6;
   const [monthFilter, setMonthFilter] = useState<string>(String(new Date().getMonth() + 1));
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-  const [selectedWeekNumber, setSelectedWeekNumber] = useState<number>(1);
 
   const months = [
     { value: "1", label: "January" },
@@ -67,8 +64,6 @@ export default function WeeklyMeetingsPage() {
   const filteredMeetings = meetings.filter((meeting: any) => {
     const statusMatch = statusFilter === "all" ? true : meeting.status === statusFilter;
     const nameMatch = nameSearch === "" || `Week ${meeting.weekNumber}`.toLowerCase().includes(nameSearch.toLowerCase());
-    const dateMatch = (!dateFrom || new Date(meeting.meetingDate) >= new Date(dateFrom)) &&
-                      (!dateTo || new Date(meeting.meetingDate) <= new Date(dateTo));
     
     // Month and Year filter
     const meetingDate = new Date(meeting.meetingDate);
@@ -78,7 +73,7 @@ export default function WeeklyMeetingsPage() {
     const yearMatch = meetingYear === selectedYear;
     const monthMatch = monthFilter === "all" || meetingMonth === parseInt(monthFilter);
     
-    return statusMatch && nameMatch && dateMatch && monthMatch && yearMatch;
+    return statusMatch && nameMatch && monthMatch && yearMatch;
   });
 
   const totalPages = Math.ceil(filteredMeetings.length / itemsPerPage);
@@ -325,34 +320,27 @@ export default function WeeklyMeetingsPage() {
             </SelectContent>
           </Select>
           {monthFilter !== "all" && (user?.role === "admin" || user?.role === "manager" || user?.role === "office") && (
-            <>
-              <Select value={selectedWeekNumber.toString()} onValueChange={(value) => setSelectedWeekNumber(parseInt(value))}>
-                <SelectTrigger className="w-24" data-testid="select-week-number">
-                  <SelectValue placeholder="Week" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">Week 1</SelectItem>
-                  <SelectItem value="2">Week 2</SelectItem>
-                  <SelectItem value="3">Week 3</SelectItem>
-                  <SelectItem value="4">Week 4</SelectItem>
-                  <SelectItem value="5">Week 5</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button
-                onClick={() => createWeekMutation.mutate({ month: parseInt(monthFilter), year: selectedYear, weekNumber: selectedWeekNumber })}
-                disabled={createWeekMutation.isPending}
-                size="sm"
-                className="gap-1 bg-green-600 hover:bg-green-700 text-white"
-                data-testid="button-create-week"
-              >
-                {createWeekMutation.isPending ? (
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                ) : (
-                  <Plus className="h-3 w-3" />
-                )}
-                Create Week
-              </Button>
-            </>
+            <Button
+              onClick={() => {
+                const existingWeeks = meetings.filter((m: any) => {
+                  const d = new Date(m.meetingDate);
+                  return d.getMonth() + 1 === parseInt(monthFilter) && d.getFullYear() === selectedYear;
+                });
+                const nextWeek = existingWeeks.length + 1;
+                createWeekMutation.mutate({ month: parseInt(monthFilter), year: selectedYear, weekNumber: nextWeek });
+              }}
+              disabled={createWeekMutation.isPending}
+              size="sm"
+              className="gap-1 bg-green-600 hover:bg-green-700 text-white"
+              data-testid="button-create-week"
+            >
+              {createWeekMutation.isPending ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <Plus className="h-3 w-3" />
+              )}
+              Create Week
+            </Button>
           )}
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-40">
@@ -372,28 +360,12 @@ export default function WeeklyMeetingsPage() {
             onChange={(e) => setNameSearch(e.target.value)}
             className="w-40 h-9"
           />
-          <Input
-            type="date"
-            value={dateFrom}
-            onChange={(e) => setDateFrom(e.target.value)}
-            className="w-40 h-9"
-            placeholder="From"
-          />
-          <Input
-            type="date"
-            value={dateTo}
-            onChange={(e) => setDateTo(e.target.value)}
-            className="w-40 h-9"
-            placeholder="To"
-          />
-          {(nameSearch || dateFrom || dateTo || monthFilter !== "all") && (
+          {(nameSearch || monthFilter !== "all") && (
             <Button
               variant="ghost"
               size="sm"
               onClick={() => {
                 setNameSearch("");
-                setDateFrom("");
-                setDateTo("");
                 setMonthFilter("all");
               }}
               className="gap-1"
