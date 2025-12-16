@@ -2294,6 +2294,116 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // IT Support Tickets Routes
+  app.get("/api/it-support", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userRole = req.user?.role;
+      const userId = req.user?.id;
+      
+      // Admin, manager, and office can see all tickets
+      if (userRole === "admin" || userRole === "manager" || userRole === "office") {
+        const tickets = await storage.getItSupportTickets();
+        // Enrich with user info
+        const enrichedTickets = await Promise.all(tickets.map(async (ticket: any) => {
+          const requestedBy = await storage.getUser(ticket.requestedById);
+          const assignedTo = ticket.assignedToId ? await storage.getUser(ticket.assignedToId) : null;
+          const completedBy = ticket.completedById ? await storage.getUser(ticket.completedById) : null;
+          return {
+            ...ticket,
+            requestedBy: requestedBy ? { id: requestedBy.id, firstName: requestedBy.firstName, lastName: requestedBy.lastName } : null,
+            assignedTo: assignedTo ? { id: assignedTo.id, firstName: assignedTo.firstName, lastName: assignedTo.lastName } : null,
+            completedBy: completedBy ? { id: completedBy.id, firstName: completedBy.firstName, lastName: completedBy.lastName } : null,
+          };
+        }));
+        res.json(enrichedTickets);
+      } else {
+        // Other users can only see their own tickets
+        const tickets = await storage.getItSupportTicketsByUser(userId!);
+        const enrichedTickets = await Promise.all(tickets.map(async (ticket: any) => {
+          const requestedBy = await storage.getUser(ticket.requestedById);
+          const assignedTo = ticket.assignedToId ? await storage.getUser(ticket.assignedToId) : null;
+          return {
+            ...ticket,
+            requestedBy: requestedBy ? { id: requestedBy.id, firstName: requestedBy.firstName, lastName: requestedBy.lastName } : null,
+            assignedTo: assignedTo ? { id: assignedTo.id, firstName: assignedTo.firstName, lastName: assignedTo.lastName } : null,
+          };
+        }));
+        res.json(enrichedTickets);
+      }
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/it-support", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const ticket = await storage.createItSupportTicket({
+        ...req.body,
+        requestedById: req.user?.id,
+      });
+      res.json(ticket);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/it-support/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const ticket = await storage.getItSupportTicket(parseInt(req.params.id));
+      if (!ticket) {
+        return res.status(404).json({ message: "Ticket not found" });
+      }
+      res.json(ticket);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.patch("/api/it-support/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userRole = req.user?.role;
+      const ticketId = parseInt(req.params.id);
+      
+      // Only admin, manager, office can update tickets (except status updates by the requester)
+      if (userRole !== "admin" && userRole !== "manager" && userRole !== "office") {
+        const ticket = await storage.getItSupportTicket(ticketId);
+        if (!ticket || ticket.requestedById !== req.user?.id) {
+          return res.status(403).json({ message: "You can only update your own tickets" });
+        }
+        // Regular users can only cancel their own tickets
+        if (req.body.status && req.body.status !== "cancelled") {
+          return res.status(403).json({ message: "You can only cancel your own tickets" });
+        }
+      }
+      
+      const updates: any = { ...req.body };
+      
+      // If marking as completed, set completedById and completedAt
+      if (updates.status === "completed") {
+        updates.completedById = req.user?.id;
+        updates.completedAt = new Date();
+      }
+      
+      const result = await storage.updateItSupportTicket(ticketId, updates);
+      res.json(result);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/it-support/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userRole = req.user?.role;
+      if (userRole !== "admin" && userRole !== "manager") {
+        return res.status(403).json({ message: "Only admin and manager can delete tickets" });
+      }
+      const result = await storage.deleteItSupportTicket(parseInt(req.params.id));
+      res.json({ success: result });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
