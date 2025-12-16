@@ -491,7 +491,7 @@ export const itSupportTickets = pgTable("it_support_tickets", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   priority: priorityEnum("priority").notNull().default("medium"),
-  status: itSupportStatusEnum("it_support_status").notNull().default("pending"),
+  status: itSupportStatusEnum("status").notNull().default("pending"),
   category: text("category").notNull().default("general"),
   requestedById: integer("requested_by_id").references(() => users.id).notNull(),
   assignedToId: integer("assigned_to_id").references(() => users.id),
