@@ -70,10 +70,10 @@ export default function UserItSupportRequestPage() {
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Monitor className="h-10 w-10 text-blue-600" />
-            <h1 className="text-4xl font-bold text-gray-800 dark:text-white">IT Support Request</h1>
+            <h1 className="text-4xl font-bold text-gray-800 dark:text-white">IT Helpdesk Request</h1>
           </div>
           <p className="text-gray-600 dark:text-gray-300 text-lg">
-            Submit a support request and our IT team will help you shortly
+            Submit a helpdesk request and our IT team will help you shortly
           </p>
         </div>
 

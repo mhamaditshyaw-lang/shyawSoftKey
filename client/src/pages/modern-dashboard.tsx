@@ -96,11 +96,11 @@ export default function ModernDashboard() {
       description: "Book employee evaluation"
     },
     {
-      title: "Request IT Support",
+      title: "Request Helpdesk",
       icon: HelpCircle,
       href: "/it-support-request",
       color: "bg-blue-500 text-white",
-      description: "Submit IT support request"
+      description: "Submit IT helpdesk request"
     },
     {
       title: "View Reports",

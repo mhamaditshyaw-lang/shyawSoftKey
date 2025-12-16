@@ -200,10 +200,10 @@ export default function ItSupportPage() {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Monitor className="h-8 w-8 text-blue-600" />
-            IT Support
+            IT Helpdesk
           </h1>
           <p className="text-muted-foreground mt-1">
-            {isManager ? "Manage IT support requests and tasks" : "Submit and track your IT support requests"}
+            {isManager ? "Manage IT helpdesk requests and tasks" : "Submit and track your IT helpdesk requests"}
           </p>
         </div>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
