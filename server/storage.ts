@@ -12,6 +12,7 @@ import {
   taskProof,
   departmentTaskProgress,
   weeklyMeetingArchive,
+  itSupportTickets,
   type User,
   type InsertUser,
   type TodoList,
@@ -23,7 +24,9 @@ import {
   type InterviewRequest,
   type InsertInterviewRequest,
   type InterviewComment,
-  type InsertInterviewComment
+  type InsertInterviewComment,
+  type ItSupportTicket,
+  type InsertItSupportTicket
 } from "@shared/schema";
 
 import {
@@ -143,6 +146,14 @@ export interface IStorage {
   updateDepartmentTaskProgress(taskId: number, departmentHeadId: number, updates: any): Promise<any>;
   getWeeklyMeetingArchive(meetingId: number): Promise<any[]>;
   archiveWeeklyMeeting(meetingId: number, archivedById: number, resultsData: any): Promise<any>;
+
+  // IT Support methods
+  createItSupportTicket(data: InsertItSupportTicket): Promise<ItSupportTicket>;
+  getItSupportTickets(): Promise<ItSupportTicket[]>;
+  getItSupportTicketsByUser(userId: number): Promise<ItSupportTicket[]>;
+  getItSupportTicket(id: number): Promise<ItSupportTicket | undefined>;
+  updateItSupportTicket(id: number, updates: Partial<ItSupportTicket>): Promise<ItSupportTicket | undefined>;
+  deleteItSupportTicket(id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1190,6 +1201,52 @@ export class DatabaseStorage implements IStorage {
     } as any).returning();
     await db.update(weeklyMeetings).set({ status: "archived" as any }).where(eq(weeklyMeetings.id, meetingId));
     return (result as any[])[0];
+  }
+
+  // IT Support methods
+  async createItSupportTicket(data: InsertItSupportTicket): Promise<ItSupportTicket> {
+    return await executeWithRetry(async () => {
+      const result = await db.insert(itSupportTickets).values(data as any).returning();
+      return (result as ItSupportTicket[])[0];
+    });
+  }
+
+  async getItSupportTickets(): Promise<ItSupportTicket[]> {
+    return await executeWithRetry(async () => {
+      return await db.select().from(itSupportTickets).orderBy(desc(itSupportTickets.createdAt)) as ItSupportTicket[];
+    });
+  }
+
+  async getItSupportTicketsByUser(userId: number): Promise<ItSupportTicket[]> {
+    return await executeWithRetry(async () => {
+      return await db.select().from(itSupportTickets)
+        .where(eq(itSupportTickets.requestedById, userId))
+        .orderBy(desc(itSupportTickets.createdAt)) as ItSupportTicket[];
+    });
+  }
+
+  async getItSupportTicket(id: number): Promise<ItSupportTicket | undefined> {
+    return await executeWithRetry(async () => {
+      const result = await db.select().from(itSupportTickets).where(eq(itSupportTickets.id, id));
+      return (result as ItSupportTicket[])[0] || undefined;
+    });
+  }
+
+  async updateItSupportTicket(id: number, updates: Partial<ItSupportTicket>): Promise<ItSupportTicket | undefined> {
+    return await executeWithRetry(async () => {
+      const result = await db.update(itSupportTickets)
+        .set({ ...updates, updatedAt: new Date() } as any)
+        .where(eq(itSupportTickets.id, id))
+        .returning();
+      return (result as ItSupportTicket[])[0] || undefined;
+    });
+  }
+
+  async deleteItSupportTicket(id: number): Promise<boolean> {
+    return await executeWithRetry(async () => {
+      const result = await db.delete(itSupportTickets).where(eq(itSupportTickets.id, id)).returning();
+      return result.length > 0;
+    });
   }
 }
 

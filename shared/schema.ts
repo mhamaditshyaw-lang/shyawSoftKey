@@ -483,6 +483,52 @@ export type LoginCredentials = z.infer<typeof loginSchema>;
 export type ChangePasswordData = z.infer<typeof changePasswordSchema>;
 export type UpdateUserPasswordData = z.infer<typeof updateUserPasswordSchema>;
 
+// IT Support Tickets table
+export const itSupportStatusEnum = pgEnum("it_support_status", ["pending", "in_progress", "completed", "cancelled"]);
+
+export const itSupportTickets = pgTable("it_support_tickets", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  priority: priorityEnum("priority").notNull().default("medium"),
+  status: itSupportStatusEnum("it_support_status").notNull().default("pending"),
+  category: text("category").notNull().default("general"),
+  requestedById: integer("requested_by_id").references(() => users.id).notNull(),
+  assignedToId: integer("assigned_to_id").references(() => users.id),
+  completedById: integer("completed_by_id").references(() => users.id),
+  completedAt: timestamp("completed_at"),
+  notes: text("notes"),
+  plannedDate: timestamp("planned_date"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const itSupportTicketsRelations = relations(itSupportTickets, ({ one }) => ({
+  requestedBy: one(users, {
+    fields: [itSupportTickets.requestedById],
+    references: [users.id],
+  }),
+  assignedTo: one(users, {
+    fields: [itSupportTickets.assignedToId],
+    references: [users.id],
+  }),
+  completedBy: one(users, {
+    fields: [itSupportTickets.completedById],
+    references: [users.id],
+  }),
+}));
+
+export const insertItSupportTicketSchema = createInsertSchema(itSupportTickets).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  completedAt: true,
+  completedById: true,
+});
+
+export type ItSupportTicket = typeof itSupportTickets.$inferSelect;
+export type InsertItSupportTicket = z.infer<typeof insertItSupportTicketSchema>;
+
 // Operational data table
 export const operationalData = pgTable("operational_data", {
   id: serial("id").primaryKey(),
