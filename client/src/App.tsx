@@ -44,6 +44,7 @@ import ManagerDashboard from "@/pages/manager-dashboard";
 import WeeklyMeetingsPage from "@/pages/weekly-meetings";
 import WeeklyMeetingDetailPage from "@/pages/weekly-meeting-detail";
 import WeeklyMeetingsDataPage from "@/pages/weekly-meetings-data";
+import ItSupportPage from "@/pages/it-support";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -220,6 +221,11 @@ function Router() {
       <Route path="/backup-restore">
         <ProtectedRoute requiredPermission="manage_backup">
           <BackupRestorePage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/it-support">
+        <ProtectedRoute>
+          <ItSupportPage />
         </ProtectedRoute>
       </Route>
       <Route path="/partitions">
