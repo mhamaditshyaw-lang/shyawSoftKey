@@ -1982,6 +1982,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/weekly-meetings/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      if (req.user?.role !== "admin" && req.user?.role !== "manager" && req.user?.role !== "office") {
+        return res.status(403).json({ message: "Only admin, manager, and office users can delete weekly meetings" });
+      }
+      const meetingId = parseInt(req.params.id);
+      
+      // Delete the meeting
+      const result = await db.delete(weeklyMeetings)
+        .where(eq(weeklyMeetings.id, meetingId))
+        .returning();
+      
+      if (result.length === 0) {
+        return res.status(404).json({ message: "Meeting not found" });
+      }
+      
+      res.json({ message: "Meeting deleted successfully", meeting: result[0] });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.get("/api/weekly-meetings/all-tasks", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const userRole = req.user?.role;
