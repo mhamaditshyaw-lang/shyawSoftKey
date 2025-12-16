@@ -45,6 +45,7 @@ import WeeklyMeetingsPage from "@/pages/weekly-meetings";
 import WeeklyMeetingDetailPage from "@/pages/weekly-meeting-detail";
 import WeeklyMeetingsDataPage from "@/pages/weekly-meetings-data";
 import ItSupportPage from "@/pages/it-support";
+import UserItSupportRequestPage from "@/pages/user-it-support-request";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -226,6 +227,11 @@ function Router() {
       <Route path="/it-support">
         <ProtectedRoute>
           <ItSupportPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/it-support-request">
+        <ProtectedRoute>
+          <UserItSupportRequestPage />
         </ProtectedRoute>
       </Route>
       <Route path="/partitions">

@@ -90,6 +90,8 @@ export default function ItSupportPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [dateFrom, setDateFrom] = useState<string>("");
+  const [dateTo, setDateTo] = useState<string>("");
   const [editingTicket, setEditingTicket] = useState<ItSupportTicket | null>(null);
 
   const [newTicket, setNewTicket] = useState({
@@ -156,6 +158,16 @@ export default function ItSupportPage() {
     if (statusFilter !== "all" && ticket.status !== statusFilter) return false;
     if (priorityFilter !== "all" && ticket.priority !== priorityFilter) return false;
     if (categoryFilter !== "all" && ticket.category !== categoryFilter) return false;
+    if (dateFrom) {
+      const ticketDate = new Date(ticket.createdAt).getTime();
+      const fromDate = new Date(dateFrom).getTime();
+      if (ticketDate < fromDate) return false;
+    }
+    if (dateTo) {
+      const ticketDate = new Date(ticket.createdAt).getTime();
+      const toDate = new Date(dateTo).setHours(23, 59, 59, 999);
+      if (ticketDate > toDate) return false;
+    }
     return true;
   });
 
@@ -373,6 +385,20 @@ export default function ItSupportPage() {
                   ))}
                 </SelectContent>
               </Select>
+              <Input
+                type="date"
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+                placeholder="From Date"
+                data-testid="filter-date-from"
+              />
+              <Input
+                type="date"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+                placeholder="To Date"
+                data-testid="filter-date-to"
+              />
             </div>
           </div>
         </CardHeader>
