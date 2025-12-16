@@ -38,6 +38,7 @@ export default function WeeklyMeetingsPage() {
   const itemsPerPage = 6;
   const [monthFilter, setMonthFilter] = useState<string>(String(new Date().getMonth() + 1));
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [selectedWeekNumber, setSelectedWeekNumber] = useState<number>(1);
 
   const months = [
     { value: "1", label: "January" },
@@ -114,36 +115,31 @@ export default function WeeklyMeetingsPage() {
     },
   });
 
-  // Create 4 weeks for a selected month
-  const createMonthWeeksMutation = useMutation({
-    mutationFn: async ({ month, year }: { month: number; year: number }) => {
-      const results = [];
-      for (let week = 1; week <= 4; week++) {
-        // Calculate approximate date for each week of the month
-        const day = Math.min((week - 1) * 7 + 1, 28);
-        const meetingDate = new Date(year, month - 1, day);
-        
-        const result = await apiRequest("POST", "/api/weekly-meetings", {
-          weekNumber: week,
-          year: year,
-          meetingDate: meetingDate.toISOString(),
-          name: `Week ${week} - ${months[month - 1].label} ${year}`,
-        });
-        results.push(result);
-      }
-      return results;
+  // Create single week for a selected month
+  const createWeekMutation = useMutation({
+    mutationFn: async ({ month, year, weekNumber }: { month: number; year: number; weekNumber: number }) => {
+      // Calculate approximate date for the week of the month
+      const day = Math.min((weekNumber - 1) * 7 + 1, 28);
+      const meetingDate = new Date(year, month - 1, day);
+      
+      return apiRequest("POST", "/api/weekly-meetings", {
+        weekNumber: weekNumber,
+        year: year,
+        meetingDate: meetingDate.toISOString(),
+        name: `Week ${weekNumber} - ${months[month - 1].label} ${year}`,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings"] });
       toast({
         title: "Success",
-        description: "4 weeks created successfully for the selected month",
+        description: "Week created successfully",
       });
     },
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to create weeks",
+        description: error.message || "Failed to create week",
         variant: "destructive",
       });
     },
@@ -329,20 +325,34 @@ export default function WeeklyMeetingsPage() {
             </SelectContent>
           </Select>
           {monthFilter !== "all" && (user?.role === "admin" || user?.role === "manager" || user?.role === "office") && (
-            <Button
-              onClick={() => createMonthWeeksMutation.mutate({ month: parseInt(monthFilter), year: selectedYear })}
-              disabled={createMonthWeeksMutation.isPending}
-              size="sm"
-              className="gap-1 bg-green-600 hover:bg-green-700 text-white"
-              data-testid="button-create-4-weeks"
-            >
-              {createMonthWeeksMutation.isPending ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
-              ) : (
-                <Plus className="h-3 w-3" />
-              )}
-              Create 4 Weeks
-            </Button>
+            <>
+              <Select value={selectedWeekNumber.toString()} onValueChange={(value) => setSelectedWeekNumber(parseInt(value))}>
+                <SelectTrigger className="w-24" data-testid="select-week-number">
+                  <SelectValue placeholder="Week" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">Week 1</SelectItem>
+                  <SelectItem value="2">Week 2</SelectItem>
+                  <SelectItem value="3">Week 3</SelectItem>
+                  <SelectItem value="4">Week 4</SelectItem>
+                  <SelectItem value="5">Week 5</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                onClick={() => createWeekMutation.mutate({ month: parseInt(monthFilter), year: selectedYear, weekNumber: selectedWeekNumber })}
+                disabled={createWeekMutation.isPending}
+                size="sm"
+                className="gap-1 bg-green-600 hover:bg-green-700 text-white"
+                data-testid="button-create-week"
+              >
+                {createWeekMutation.isPending ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <Plus className="h-3 w-3" />
+                )}
+                Create Week
+              </Button>
+            </>
           )}
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-40">
