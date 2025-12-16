@@ -36,7 +36,7 @@ export default function WeeklyMeetingsPage() {
   const [selectedMeetingId, setSelectedMeetingId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
-  const [monthFilter, setMonthFilter] = useState<string>("all");
+  const [monthFilter, setMonthFilter] = useState<string>(String(new Date().getMonth() + 1));
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
 
   const months = [
