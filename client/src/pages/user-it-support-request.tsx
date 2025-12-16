@@ -157,12 +157,6 @@ export default function UserItSupportRequestPage() {
                 </div>
               </div>
 
-              <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  <strong>Submitted by:</strong> {user?.firstName} {user?.lastName}
-                </p>
-              </div>
-
               <Button
                 onClick={handleSubmit}
                 disabled={createTicketMutation.isPending}

@@ -24,6 +24,8 @@ import {
   TrendingUp,
   Activity,
   Zap,
+  Monitor,
+  HelpCircle,
 } from "lucide-react";
 
 export default function ModernDashboard() {
@@ -92,6 +94,13 @@ export default function ModernDashboard() {
       href: "/interviews",
       color: "bg-dashboard-accent text-white",
       description: "Book employee evaluation"
+    },
+    {
+      title: "Request IT Support",
+      icon: HelpCircle,
+      href: "/it-support-request",
+      color: "bg-blue-500 text-white",
+      description: "Submit IT support request"
     },
     {
       title: "View Reports",
