@@ -69,7 +69,6 @@ export const MENU_PARTITIONS: MenuPartition[] = [
     description: "System administration and maintenance",
     items: [
       { labelKey: "menu_itSupport", label: "IT Helpdesk", path: "/it-support", iconName: "Monitor", description: "IT helpdesk requests and tasks" },
-      { labelKey: "menu_itSupportList", label: "View Requests", path: "/it-support-list", iconName: "List", description: "View all IT helpdesk requests" },
       { labelKey: "menu_itSupportRequest", label: "Request Helpdesk", path: "/it-support-request", iconName: "HelpCircle", description: "Submit an IT helpdesk request" },
       { labelKey: "menu_broadcastNotification", label: "Broadcast Notification", path: "/broadcast-notification", iconName: "Radio", description: "Send messages to all users" },
       { labelKey: "menu_notifications", label: "Notifications", path: "/notification-management", iconName: "Bell", description: "Manage notifications" },
