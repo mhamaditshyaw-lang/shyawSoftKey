@@ -18,7 +18,7 @@ export const MENU_PARTITIONS: MenuPartition[] = [
   {
     titleKey: "menu_taskManagement",
     title: "Task Management",
-    iconName: "ListTodo",
+    iconName: "ClipboardList",
     description: "Daily tasks, reminders, and activity tracking",
     items: [
       { labelKey: "menu_dailyTasks", label: "Daily Tasks", path: "/todos", iconName: "CheckCircle2", description: "Manage and complete daily tasks" },

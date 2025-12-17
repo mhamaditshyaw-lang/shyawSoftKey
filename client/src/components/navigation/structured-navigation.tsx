@@ -7,7 +7,7 @@ import {
   Home,
   Users,
   Calendar,
-  ListTodo,
+  ClipboardList,
   MessageSquare,
   BarChart3,
   Archive,
@@ -50,7 +50,7 @@ const NAVIGATION: Navigation = [
   {
     segment: 'todos',
     title: 'Task Management',
-    icon: <ListTodo className="w-5 h-5" />,
+    icon: <ClipboardList className="w-5 h-5" />,
   },
   {
     segment: 'reminders',
