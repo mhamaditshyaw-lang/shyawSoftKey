@@ -22,11 +22,11 @@ export const MENU_PARTITIONS: MenuPartition[] = [
     description: "Daily tasks, reminders, and activity tracking",
     items: [
       { labelKey: "menu_dailyTasks", label: "Daily Tasks", path: "/todos", iconName: "CheckCircle2", description: "Manage and complete daily tasks" },
-      { labelKey: "menu_weeklyMeetingTasks", label: "Weekly Meeting Tasks", path: "/weekly-meetings", iconName: "CheckSquare", description: "Manage weekly meeting department tasks" },
+      { labelKey: "menu_weeklyMeetingTasks", label: "Weekly Meeting Tasks", path: "/weekly-meetings", iconName: "Calendar", description: "Manage weekly meeting department tasks" },
       { labelKey: "menu_reminders", label: "Reminders", path: "/reminders", iconName: "Clock", description: "Set and manage task reminders" },
       { labelKey: "menu_userActivity", label: "User Activity", path: "/user-activity", iconName: "Activity", description: "Track user activity logs" },
-      { labelKey: "menu_itSupport", label: "IT Helpdesk", path: "/it-support", iconName: "Monitor", description: "IT helpdesk requests and tasks" },
-      { labelKey: "menu_itSupportRequest", label: "Request Helpdesk", path: "/it-support-request", iconName: "HelpCircle", description: "Submit an IT helpdesk request" },
+      { labelKey: "menu_itSupport", label: "IT Helpdesk", path: "/it-support", iconName: "Headphones", description: "IT helpdesk requests and tasks" },
+      { labelKey: "menu_itSupportRequest", label: "Request Helpdesk", path: "/it-support-request", iconName: "Send", description: "Submit an IT helpdesk request" },
     ],
   },
   {
