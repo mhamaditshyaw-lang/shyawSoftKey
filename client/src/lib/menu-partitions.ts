@@ -47,7 +47,6 @@ export const MENU_PARTITIONS: MenuPartition[] = [
     items: [
       { labelKey: "menu_interviews", label: "Interviews", path: "/interviews", iconName: "MessageCircle", description: "Schedule and manage interviews" },
       { labelKey: "menu_feedback", label: "Feedback", path: "/feedback", iconName: "MessageSquare", description: "Collect and review feedback" },
-      { labelKey: "menu_weeklyMeetings", label: "Weekly Meetings", path: "/weekly-meetings", iconName: "Calendar", description: "Manage department weekly meetings and tasks" },
       { labelKey: "menu_performanceArchive", label: "Performance Archive", path: "/archive", iconName: "Archive", description: "Archive performance reviews" },
       { labelKey: "menu_pageAccess", label: "Page Access", path: "/page-access-management", iconName: "Lock", description: "Manage page permissions" },
     ],
