@@ -7,7 +7,7 @@ import {
   Home,
   Users,
   Calendar,
-  CheckSquare,
+  ListTodo,
   MessageSquare,
   BarChart3,
   Archive,
@@ -56,7 +56,7 @@ const NAVIGATION: Navigation = [
   {
     segment: 'todos',
     title: 'Task Management',
-    icon: <CheckSquare className="w-5 h-5" />,
+    icon: <ListTodo className="w-5 h-5" />,
   },
   {
     kind: 'divider',
