@@ -293,13 +293,7 @@ export default function ItSupportPage() {
         </Dialog>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full max-w-md grid-cols-2">
-          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-          <TabsTrigger value="request">IT Support Request</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="dashboard" className="space-y-6">
+      <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card>
               <CardContent className="pt-6">
@@ -555,90 +549,7 @@ export default function ItSupportPage() {
           })
         )}
         </div>
-        </TabsContent>
-
-        <TabsContent value="request" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Submit IT Helpdesk Request</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <label className="block text-sm font-semibold mb-2">
-                  Issue Title <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  placeholder="e.g., Laptop won't connect to WiFi"
-                  value={newTicket.title}
-                  onChange={(e) => setNewTicket({ ...newTicket, title: e.target.value })}
-                  data-testid="input-support-title-tab"
-                  className="text-base"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-2">
-                  Description <span className="text-red-500">*</span>
-                </label>
-                <Textarea
-                  placeholder="Please describe your issue in detail..."
-                  value={newTicket.description}
-                  onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
-                  rows={5}
-                  data-testid="input-support-description-tab"
-                  className="resize-none"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-semibold mb-2">Category</label>
-                  <Select value={newTicket.category} onValueChange={(value) => setNewTicket({ ...newTicket, category: value })}>
-                    <SelectTrigger data-testid="select-category-tab">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((cat) => (
-                        <SelectItem key={cat.value} value={cat.value}>
-                          {cat.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold mb-2">Priority</label>
-                  <Select value={newTicket.priority} onValueChange={(value) => setNewTicket({ ...newTicket, priority: value })}>
-                    <SelectTrigger data-testid="select-priority-tab">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {priorities.map((pri) => (
-                        <SelectItem key={pri.value} value={pri.value}>
-                          {pri.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <Button
-                className="w-full"
-                onClick={() => createTicketMutation.mutate(newTicket)}
-                disabled={!newTicket.title || !newTicket.description || createTicketMutation.isPending}
-                data-testid="button-submit-request-tab"
-              >
-                {createTicketMutation.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : null}
-                Submit Request
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      </div>
 
       <Dialog open={!!editingTicket} onOpenChange={() => setEditingTicket(null)}>
         <DialogContent>
