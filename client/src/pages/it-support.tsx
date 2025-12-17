@@ -296,7 +296,7 @@ export default function ItSupportPage() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full max-w-md grid-cols-2">
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-          <TabsTrigger value="list">List View</TabsTrigger>
+          <TabsTrigger value="request">IT Support Request</TabsTrigger>
         </TabsList>
 
         <TabsContent value="dashboard" className="space-y-6">
@@ -557,59 +557,86 @@ export default function ItSupportPage() {
         </div>
         </TabsContent>
 
-        <TabsContent value="list" className="space-y-4">
-          {tickets.length === 0 ? (
-            <Card>
-              <CardContent className="pt-6 text-center text-muted-foreground">
-                <AlertCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p>No IT helpdesk requests found</p>
-              </CardContent>
-            </Card>
-          ) : (
-            tickets.map((ticket: ItSupportTicket) => {
-              const priorityInfo = getPriorityInfo(ticket.priority);
-              const statusInfo = getStatusInfo(ticket.status);
-              return (
-                <Card key={ticket.id} className="hover:shadow-lg transition-shadow">
-                  <CardContent className="pt-6">
-                    <div className="space-y-3">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-lg">{ticket.title}</h3>
-                          <p className="text-muted-foreground text-sm mt-1">{ticket.description}</p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Badge className={priorityInfo.color}>{priorityInfo.label}</Badge>
-                          <Badge className={statusInfo.color}>{statusInfo.label}</Badge>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <AlertCircle className="h-4 w-4" />
-                          <span>{ticket.category}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <User className="h-4 w-4" />
-                          <span>
-                            {ticket.requestedBy
-                              ? `${ticket.requestedBy.firstName} ${ticket.requestedBy.lastName}`
-                              : "Unknown"}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <Calendar className="h-4 w-4" />
-                          <span>{format(new Date(ticket.createdAt), "MMM dd, yyyy")}</span>
-                        </div>
-                        <div className="text-muted-foreground">
-                          <span className="text-xs">ID: {ticket.id}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })
-          )}
+        <TabsContent value="request" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Submit IT Helpdesk Request</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div>
+                <label className="block text-sm font-semibold mb-2">
+                  Issue Title <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  placeholder="e.g., Laptop won't connect to WiFi"
+                  value={newTicket.title}
+                  onChange={(e) => setNewTicket({ ...newTicket, title: e.target.value })}
+                  data-testid="input-support-title-tab"
+                  className="text-base"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2">
+                  Description <span className="text-red-500">*</span>
+                </label>
+                <Textarea
+                  placeholder="Please describe your issue in detail..."
+                  value={newTicket.description}
+                  onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
+                  rows={5}
+                  data-testid="input-support-description-tab"
+                  className="resize-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Category</label>
+                  <Select value={newTicket.category} onValueChange={(value) => setNewTicket({ ...newTicket, category: value })}>
+                    <SelectTrigger data-testid="select-category-tab">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.value} value={cat.value}>
+                          {cat.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Priority</label>
+                  <Select value={newTicket.priority} onValueChange={(value) => setNewTicket({ ...newTicket, priority: value })}>
+                    <SelectTrigger data-testid="select-priority-tab">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {priorities.map((pri) => (
+                        <SelectItem key={pri.value} value={pri.value}>
+                          {pri.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <Button
+                className="w-full"
+                onClick={() => createTicketMutation.mutate(newTicket)}
+                disabled={!newTicket.title || !newTicket.description || createTicketMutation.isPending}
+                data-testid="button-submit-request-tab"
+              >
+                {createTicketMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : null}
+                Submit Request
+              </Button>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
 
