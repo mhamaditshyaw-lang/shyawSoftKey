@@ -4,103 +4,105 @@
 
 @layer base {
   :root {
-    --background: 245 246 250;
-    --foreground: 51 51 51;
+    --background: #F5F6FA;
+    --foreground: #333333;
     
-    --card: 255 255 255;
-    --card-foreground: 51 51 51;
+    --card: #FFFFFF;
+    --card-foreground: #333333;
     
-    --popover: 255 255 255;
-    --popover-foreground: 51 51 51;
+    --popover: #FFFFFF;
+    --popover-foreground: #333333;
     
-    --primary: 47 128 237;
-    --primary-foreground: 255 255 255;
+    --primary: #2F80ED;
+    --primary-foreground: #FFFFFF;
     
-    --secondary: 39 174 96;
-    --secondary-foreground: 255 255 255;
+    --secondary: #27AE60;
+    --secondary-foreground: #FFFFFF;
     
-    --muted: 130 130 130;
-    --muted-foreground: 130 130 130;
+    --muted: #828282;
+    --muted-foreground: #828282;
     
-    --accent: 242 201 76;
-    --accent-foreground: 51 51 51;
+    --accent: #F2994A;
+    --accent-foreground: #333333;
     
-    --destructive: 242 153 74;
-    --destructive-foreground: 255 255 255;
+    --destructive: #F2994A;
+    --destructive-foreground: #FFFFFF;
     
-    --success: 39 174 96;
-    --success-foreground: 255 255 255;
+    --success: #27AE60;
+    --success-foreground: #FFFFFF;
     
-    --warning: 242 153 74;
-    --warning-foreground: 51 51 51;
+    --warning: #F2994A;
+    --warning-foreground: #333333;
     
-    --border: 240 240 240;
-    --input: 245 246 250;
-    --ring: 47 128 237;
+    --border: #F0F0F0;
+    --input: #F5F6FA;
+    --ring: #2F80ED;
     
-    --radius: 0.75rem;
+    --radius: 12px;
     
-    --sidebar-background: 24 29 47;
-    --sidebar-foreground: 255 255 255;
-    --sidebar-primary: 47 128 237;
-    --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 44 58 88;
-    --sidebar-accent-foreground: 255 255 255;
-    --sidebar-border: 44 58 88;
-    --sidebar-ring: 47 128 237;
+    --sidebar-background: #181D2F;
+    --sidebar-foreground: #FFFFFF;
+    --sidebar-primary: #2F80ED;
+    --sidebar-primary-foreground: #FFFFFF;
+    --sidebar-accent: #2C3A58;
+    --sidebar-accent-foreground: #FFFFFF;
+    --sidebar-border: #2C3A58;
+    --sidebar-ring: #2F80ED;
   }
 
   .dark {
-    --background: 15 18 30;
-    --foreground: 240 240 240;
+    --background: #0F121E;
+    --foreground: #F0F0F0;
     
-    --card: 30 35 55;
-    --card-foreground: 240 240 240;
+    --card: #1E2337;
+    --card-foreground: #F0F0F0;
     
-    --popover: 30 35 55;
-    --popover-foreground: 240 240 240;
+    --popover: #1E2337;
+    --popover-foreground: #F0F0F0;
     
-    --primary: 47 128 237;
-    --primary-foreground: 255 255 255;
+    --primary: #2F80ED;
+    --primary-foreground: #FFFFFF;
     
-    --secondary: 39 174 96;
-    --secondary-foreground: 255 255 255;
+    --secondary: #27AE60;
+    --secondary-foreground: #FFFFFF;
     
-    --muted: 90 100 130;
-    --muted-foreground: 150 160 190;
+    --muted: #5A6482;
+    --muted-foreground: #96A0BE;
     
-    --accent: 242 201 76;
-    --accent-foreground: 51 51 51;
+    --accent: #F2994A;
+    --accent-foreground: #333333;
     
-    --destructive: 242 153 74;
-    --destructive-foreground: 255 255 255;
+    --destructive: #F2994A;
+    --destructive-foreground: #FFFFFF;
     
-    --success: 39 174 96;
-    --success-foreground: 255 255 255;
+    --success: #27AE60;
+    --success-foreground: #FFFFFF;
     
-    --warning: 242 153 74;
-    --warning-foreground: 51 51 51;
+    --warning: #F2994A;
+    --warning-foreground: #333333;
     
-    --border: 44 50 70;
-    --input: 25 30 50;
-    --ring: 47 128 237;
+    --border: #2C3246;
+    --input: #191E32;
+    --ring: #2F80ED;
     
-    --sidebar-background: 20 25 40;
-    --sidebar-foreground: 240 240 240;
-    --sidebar-primary: 47 128 237;
-    --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 40 50 75;
-    --sidebar-accent-foreground: 240 240 240;
-    --sidebar-border: 40 50 75;
-    --sidebar-ring: 47 128 237;
+    --sidebar-background: #141928;
+    --sidebar-foreground: #F0F0F0;
+    --sidebar-primary: #2F80ED;
+    --sidebar-primary-foreground: #FFFFFF;
+    --sidebar-accent: #28324B;
+    --sidebar-accent-foreground: #F0F0F0;
+    --sidebar-border: #28324B;
+    --sidebar-ring: #2F80ED;
   }
 
   * {
-    @apply border-border;
+    border-color: var(--border);
   }
   
   body {
-    @apply bg-background text-foreground antialiased;
+    background-color: var(--background);
+    color: var(--foreground);
+    @apply antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
@@ -136,7 +138,8 @@
 
 @layer components {
   .trello-card {
-    @apply bg-card rounded-2xl border border-border transition-all duration-300;
+    @apply bg-card rounded-3xl border transition-all duration-300;
+    border-color: var(--border);
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.06);
   }
   
@@ -149,7 +152,8 @@
   }
   
   .trello-card-hover:hover {
-    @apply bg-muted border-primary;
+    background-color: var(--input);
+    border-color: var(--primary);
   }
   
   .trello-btn {
@@ -157,7 +161,8 @@
   }
   
   .trello-btn:focus {
-    @apply outline-none ring-2 ring-ring ring-offset-2;
+    @apply outline-none;
+    box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--primary);
   }
   
   .trello-btn:disabled {
@@ -165,8 +170,8 @@
   }
   
   .trello-btn-primary {
-    background-color: rgb(var(--primary));
-    color: rgb(var(--primary-foreground));
+    background-color: var(--primary);
+    color: var(--primary-foreground);
     box-shadow: 0px 4px 12px rgba(47, 128, 237, 0.15);
   }
   
@@ -176,8 +181,8 @@
   }
   
   .trello-btn-secondary {
-    background-color: rgb(var(--secondary));
-    color: rgb(var(--secondary-foreground));
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
     box-shadow: 0px 4px 12px rgba(39, 174, 96, 0.15);
   }
   
@@ -187,23 +192,29 @@
   }
   
   .trello-btn-ghost {
-    @apply trello-btn text-foreground hover:bg-muted;
+    @apply text-foreground;
   }
   
   .trello-btn-ghost:hover {
-    @apply bg-muted text-foreground;
+    background-color: var(--input);
   }
   
   .trello-input {
-    @apply w-full rounded-lg border border-border bg-input px-4 py-2.5 text-sm ring-offset-background transition-all duration-200;
+    @apply w-full rounded-lg border px-4 py-2.5 text-sm transition-all duration-200;
+    background-color: var(--input);
+    border-color: var(--border);
+    color: var(--foreground);
   }
   
   .trello-input::placeholder {
-    color: rgb(var(--muted));
+    color: var(--muted);
   }
   
   .trello-input:focus {
-    @apply outline-none ring-2 ring-primary bg-card border-primary;
+    @apply outline-none;
+    background-color: var(--card);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.1);
   }
   
   .trello-input:disabled {
@@ -216,12 +227,15 @@
   }
 
   .form-label {
-    @apply block text-sm font-medium text-foreground mb-2;
+    @apply block text-sm font-medium mb-2;
+    color: var(--foreground);
   }
 
   /* Modern container styling */
   .modern-card {
-    @apply rounded-2xl border border-border bg-card p-6 transition-all duration-300;
+    @apply rounded-3xl border p-6 transition-all duration-300;
+    background-color: var(--card);
+    border-color: var(--border);
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.06);
   }
 
@@ -235,24 +249,29 @@
 
   /* Glassmorphism card */
   .glass-card {
-    @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl;
+    @apply rounded-3xl border backdrop-blur-xl;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.06);
   }
 
   /* Stats card styling */
   .stats-card {
-    @apply rounded-2xl border border-border bg-card p-6 transition-all duration-300;
+    @apply rounded-3xl border p-6 transition-all duration-300;
+    background-color: var(--card);
+    border-color: var(--border);
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.06);
   }
 
   .stats-card:hover {
-    border-color: rgb(var(--primary));
+    border-color: var(--primary);
     box-shadow: 0px 6px 16px rgba(47, 128, 237, 0.12);
   }
 
   /* Gradient text */
   .gradient-text {
-    @apply bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent;
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(to right, var(--primary), var(--secondary), var(--accent));
   }
 
   /* Modern badge */
@@ -263,15 +282,15 @@
 
   /* Glow effect */
   .glow-primary {
-    box-shadow: 0 0 20px rgb(47 128 237 / 0.3);
+    box-shadow: 0 0 20px rgba(47, 128, 237, 0.3);
   }
 
   .glow-secondary {
-    box-shadow: 0 0 20px rgb(39 174 96 / 0.3);
+    box-shadow: 0 0 20px rgba(39, 174, 96, 0.3);
   }
 
   .glow-accent {
-    box-shadow: 0 0 20px rgb(242 201 76 / 0.3);
+    box-shadow: 0 0 20px rgba(242, 153, 74, 0.3);
   }
   
   .trello-badge {
@@ -279,77 +298,81 @@
   }
   
   .trello-badge-blue {
-    background-color: rgb(47 128 237 / 0.1);
-    color: rgb(47 128 237);
+    background-color: rgba(47, 128, 237, 0.1);
+    color: #2F80ED;
   }
   
   .dark .trello-badge-blue {
-    background-color: rgb(47 128 237 / 0.15);
-    color: rgb(100 180 255);
+    background-color: rgba(47, 128, 237, 0.15);
+    color: #64B4FF;
   }
   
   .trello-badge-green {
-    background-color: rgb(39 174 96 / 0.1);
-    color: rgb(39 174 96);
+    background-color: rgba(39, 174, 96, 0.1);
+    color: #27AE60;
   }
   
   .dark .trello-badge-green {
-    background-color: rgb(39 174 96 / 0.15);
-    color: rgb(100 220 150);
+    background-color: rgba(39, 174, 96, 0.15);
+    color: #64DC96;
   }
   
   .trello-badge-yellow {
-    background-color: rgb(242 201 76 / 0.1);
-    color: rgb(220 160 40);
+    background-color: rgba(242, 153, 74, 0.1);
+    color: #DC802F;
   }
   
   .dark .trello-badge-yellow {
-    background-color: rgb(242 201 76 / 0.15);
-    color: rgb(255 230 120);
+    background-color: rgba(242, 153, 74, 0.15);
+    color: #FFBE82;
   }
   
   .trello-badge-red {
-    background-color: rgb(242 153 74 / 0.1);
-    color: rgb(242 153 74);
+    background-color: rgba(242, 153, 74, 0.1);
+    color: #F2994A;
   }
   
   .dark .trello-badge-red {
-    background-color: rgb(242 153 74 / 0.15);
-    color: rgb(255 190 130);
+    background-color: rgba(242, 153, 74, 0.15);
+    color: #FFBE82;
   }
   
   .trello-badge-purple {
-    background-color: rgb(168 85 247 / 0.1);
-    color: rgb(168 85 247);
+    background-color: rgba(168, 85, 247, 0.1);
+    color: #A855F7;
   }
   
   .dark .trello-badge-purple {
-    background-color: rgb(168 85 247 / 0.15);
-    color: rgb(220 150 255);
+    background-color: rgba(168, 85, 247, 0.15);
+    color: #DC96FF;
   }
   
   .trello-badge-gray {
-    background-color: rgb(130 130 130 / 0.1);
-    color: rgb(130 130 130);
+    background-color: rgba(130, 130, 130, 0.1);
+    color: #828282;
   }
   
   .trello-section {
     @apply rounded-2xl p-4;
-    background-color: rgb(var(--input));
+    background-color: var(--input);
   }
   
   .trello-list {
-    @apply bg-input rounded-2xl p-3;
+    @apply rounded-2xl p-3;
+    background-color: var(--input);
     min-width: 272px;
     max-width: 272px;
   }
   
   .trello-list-header {
-    @apply font-medium text-sm text-foreground px-2 py-1 mb-2;
+    @apply font-medium text-sm px-2 py-1 mb-2;
+    color: var(--foreground);
   }
   
   .trello-list-card {
-    @apply bg-card rounded-lg p-3 border border-border cursor-pointer transition-all duration-150 mb-2;
+    @apply rounded-lg p-3 border cursor-pointer transition-all duration-150 mb-2;
+    background-color: var(--card);
+    border-color: var(--border);
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.04);
   }
   
@@ -358,13 +381,13 @@
   }
   
   .trello-list-card:hover {
-    border-color: rgb(var(--primary));
+    border-color: var(--primary);
     box-shadow: 0px 4px 12px rgba(47, 128, 237, 0.12);
   }
   
   .trello-sidebar {
-    background-color: rgb(var(--sidebar-background));
-    color: rgb(var(--sidebar-foreground));
+    background-color: var(--sidebar-background);
+    color: var(--sidebar-foreground);
   }
   
   .trello-sidebar-item {
@@ -372,36 +395,40 @@
   }
   
   .trello-sidebar-item:hover {
-    background-color: rgb(var(--sidebar-accent));
+    background-color: var(--sidebar-accent);
   }
   
   .trello-sidebar-item-active {
-    background-color: rgb(var(--sidebar-accent));
-    color: rgb(var(--sidebar-primary));
+    background-color: var(--sidebar-accent);
+    color: var(--sidebar-primary);
   }
   
   .trello-header {
-    background-color: rgb(var(--primary) / 0.95);
-    color: rgb(var(--primary-foreground));
+    background-color: var(--primary);
+    color: var(--primary-foreground);
     backdrop-filter: blur(4px);
   }
   
   .trello-stat-card {
-    @apply trello-card p-6 flex flex-col gap-3;
+    @apply rounded-3xl border p-6 flex flex-col gap-3;
+    background-color: var(--card);
+    border-color: var(--border);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.06);
   }
   
   .trello-stat-value {
-    @apply text-3xl font-bold text-foreground;
+    @apply text-3xl font-bold;
+    color: var(--foreground);
   }
   
   .trello-stat-label {
     @apply text-sm font-medium;
-    color: rgb(var(--muted));
+    color: var(--muted);
   }
   
   .trello-stat-icon {
     @apply w-12 h-12 rounded-lg flex items-center justify-center;
-    background-color: rgb(var(--primary) / 0.1);
+    background-color: rgba(47, 128, 237, 0.1);
   }
   
   .trello-table {
@@ -409,21 +436,26 @@
   }
   
   .trello-table th {
-    @apply text-left font-semibold text-foreground px-4 py-3 border-b border-border;
-    background-color: rgb(var(--input) / 0.5);
+    @apply text-left font-semibold px-4 py-3 border-b;
+    color: var(--foreground);
+    border-color: var(--border);
+    background-color: rgba(47, 128, 237, 0.05);
   }
   
   .trello-table td {
     @apply px-4 py-3;
-    border-bottom: 1px solid rgb(var(--border) / 0.5);
+    border-bottom: 1px solid;
+    border-color: var(--border);
   }
   
   .trello-table tr:hover td {
-    background-color: rgb(var(--input) / 0.3);
+    background-color: var(--input);
   }
   
   .trello-dropdown {
-    @apply bg-popover text-popover-foreground rounded-lg border border-border p-1;
+    @apply rounded-lg border p-1;
+    background-color: var(--popover);
+    border-color: var(--border);
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.06);
   }
   
@@ -432,16 +464,19 @@
   }
   
   .trello-dropdown-item:hover {
-    background-color: rgb(var(--primary) / 0.1);
+    background-color: rgba(47, 128, 237, 0.1);
   }
   
   .trello-modal {
-    @apply bg-card rounded-2xl border border-border;
+    @apply rounded-3xl border;
+    background-color: var(--card);
+    border-color: var(--border);
     box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.12);
   }
   
   .trello-modal-header {
-    @apply p-6 border-b border-border;
+    @apply p-6 border-b;
+    border-color: var(--border);
   }
   
   .trello-modal-body {
@@ -449,12 +484,13 @@
   }
   
   .trello-modal-footer {
-    @apply p-6 border-t border-border flex justify-end gap-3;
+    @apply p-6 border-t flex justify-end gap-3;
+    border-color: var(--border);
   }
   
   .trello-avatar {
-    background-color: rgb(var(--primary));
-    color: rgb(var(--primary-foreground));
+    background-color: var(--primary);
+    color: var(--primary-foreground);
     @apply rounded-full flex items-center justify-center font-semibold;
   }
   
@@ -471,22 +507,24 @@
   }
   
   .trello-progress {
-    @apply h-2 bg-input rounded-full overflow-hidden;
+    @apply h-2 rounded-full overflow-hidden;
+    background-color: var(--input);
   }
   
   .trello-progress-bar {
-    background-color: rgb(var(--primary));
+    background-color: var(--primary);
     @apply h-full rounded-full transition-all duration-300;
   }
   
   .trello-chip {
     @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium;
-    background-color: rgb(var(--input));
-    color: rgb(var(--muted));
+    background-color: var(--input);
+    color: var(--muted);
   }
   
   .trello-divider {
-    @apply h-px bg-border my-4;
+    @apply h-px my-4;
+    background-color: var(--border);
   }
   
   .trello-empty-state {
@@ -495,51 +533,55 @@
   
   .trello-empty-icon {
     @apply w-16 h-16 mb-4;
-    color: rgb(var(--muted) / 0.4);
+    color: rgba(130, 130, 130, 0.4);
   }
   
   .trello-empty-title {
-    @apply text-lg font-semibold text-foreground mb-2;
+    @apply text-lg font-semibold mb-2;
+    color: var(--foreground);
   }
   
   .trello-empty-desc {
     @apply text-sm max-w-sm;
-    color: rgb(var(--muted));
+    color: var(--muted);
   }
   
   .trello-tabs {
-    @apply flex gap-2 border-b border-border;
+    @apply flex gap-2 border-b;
+    border-color: var(--border);
   }
   
   .trello-tab {
     @apply px-4 py-3 text-sm font-medium border-b-2 border-transparent transition-all cursor-pointer;
-    color: rgb(var(--muted));
+    color: var(--muted);
   }
   
   .trello-tab:hover {
-    @apply text-foreground;
+    color: var(--foreground);
   }
   
   .trello-tab-active {
-    color: rgb(var(--primary));
+    color: var(--primary);
     @apply font-semibold;
-    border-color: rgb(var(--primary));
+    border-bottom-color: var(--primary);
   }
   
   .trello-notification {
-    @apply flex items-start gap-3 p-4 rounded-lg bg-card border border-border transition-all cursor-pointer;
+    @apply flex items-start gap-3 p-4 rounded-lg border transition-all cursor-pointer;
+    background-color: var(--card);
+    border-color: var(--border);
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.04);
   }
   
   .trello-notification:hover {
-    background-color: rgb(var(--primary) / 0.05);
-    border-color: rgb(var(--primary) / 0.3);
+    background-color: rgba(47, 128, 237, 0.05);
+    border-color: rgba(47, 128, 237, 0.3);
     box-shadow: 0px 4px 12px rgba(47, 128, 237, 0.12);
   }
   
   .trello-notification-unread {
-    border-left: 4px solid rgb(var(--primary));
-    background-color: rgb(var(--primary) / 0.08);
+    border-left: 4px solid var(--primary);
+    background-color: rgba(47, 128, 237, 0.08);
   }
   
   .animate-fade-in {
