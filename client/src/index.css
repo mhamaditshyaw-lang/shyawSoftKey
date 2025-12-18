@@ -4,95 +4,95 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 0 0% 8%;
+    --background: 0 0% 97%;
+    --foreground: 0 0% 12%;
     
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 8%;
+    --card-foreground: 0 0% 12%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 8%;
+    --popover-foreground: 0 0% 12%;
     
-    --primary: 217 91% 60%;
+    --primary: 217 92% 57%;
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 264 100% 61%;
+    --secondary: 168 86% 44%;
     --secondary-foreground: 0 0% 100%;
     
-    --muted: 0 0% 93%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 0 0% 92%;
+    --muted-foreground: 0 0% 48%;
     
-    --accent: 63 100% 50%;
-    --accent-foreground: 0 0% 8%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 0 0% 12%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
-    --success: 142 76% 45%;
+    --success: 168 86% 44%;
     --success-foreground: 0 0% 100%;
     
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 0%;
+    --warning-foreground: 0 0% 12%;
     
-    --border: 0 0% 92%;
+    --border: 0 0% 90%;
     --input: 0 0% 95%;
-    --ring: 217 91% 60%;
+    --ring: 217 92% 57%;
     
-    --radius: 0.75rem;
+    --radius: 0.5rem;
     
-    --sidebar-background: 0 0% 9%;
+    --sidebar-background: 30 13% 15%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary: 217 92% 57%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 18%;
+    --sidebar-accent: 0 0% 25%;
     --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 18%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-border: 0 0% 25%;
+    --sidebar-ring: 217 92% 57%;
   }
 
   .dark {
-    --background: 0 0% 5%;
+    --background: 0 0% 8%;
     --foreground: 0 0% 96%;
     
-    --card: 0 0% 11%;
+    --card: 0 0% 14%;
     --card-foreground: 0 0% 96%;
     
-    --popover: 0 0% 11%;
+    --popover: 0 0% 14%;
     --popover-foreground: 0 0% 96%;
     
-    --primary: 217 91% 60%;
+    --primary: 217 92% 57%;
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 264 100% 61%;
+    --secondary: 168 86% 44%;
     --secondary-foreground: 0 0% 100%;
     
-    --muted: 0 0% 18%;
-    --muted-foreground: 0 0% 64%;
+    --muted: 0 0% 24%;
+    --muted-foreground: 0 0% 65%;
     
-    --accent: 63 100% 50%;
-    --accent-foreground: 0 0% 8%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 0 0% 12%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
-    --success: 142 76% 45%;
+    --success: 168 86% 44%;
     --success-foreground: 0 0% 100%;
     
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 0%;
+    --warning-foreground: 0 0% 12%;
     
-    --border: 0 0% 16%;
-    --input: 0 0% 13%;
-    --ring: 217 91% 60%;
+    --border: 0 0% 20%;
+    --input: 0 0% 16%;
+    --ring: 217 92% 57%;
     
-    --sidebar-background: 0 0% 5%;
+    --sidebar-background: 0 0% 10%;
     --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary: 217 92% 57%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 14%;
+    --sidebar-accent: 0 0% 20%;
     --sidebar-accent-foreground: 0 0% 96%;
-    --sidebar-border: 0 0% 14%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 217 92% 57%;
   }
 
   * {
@@ -136,11 +136,11 @@
 
 @layer components {
   .trello-card {
-    @apply bg-card backdrop-blur-xl rounded-2xl border border-border shadow-lg transition-all duration-300;
+    @apply bg-card rounded-xl border border-border shadow-sm transition-all duration-300;
   }
   
   .trello-card:hover {
-    @apply shadow-xl;
+    @apply shadow-md;
   }
   
   .trello-card-hover {
@@ -164,19 +164,19 @@
   }
   
   .trello-btn-primary {
-    @apply trello-btn bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:scale-105;
+    @apply trello-btn bg-primary text-primary-foreground shadow-md hover:shadow-lg hover:scale-105;
   }
   
   .trello-btn-primary:hover {
-    @apply shadow-xl;
+    @apply shadow-lg;
   }
   
   .trello-btn-secondary {
-    @apply trello-btn bg-secondary text-secondary-foreground shadow-lg hover:shadow-xl hover:scale-105;
+    @apply trello-btn bg-secondary text-secondary-foreground shadow-md hover:shadow-lg hover:scale-105;
   }
   
   .trello-btn-secondary:hover {
-    @apply shadow-xl;
+    @apply shadow-lg;
   }
   
   .trello-btn-ghost {
@@ -188,7 +188,7 @@
   }
   
   .trello-input {
-    @apply w-full rounded-lg border border-border bg-input px-4 py-3 text-sm ring-offset-background transition-all duration-200;
+    @apply w-full rounded-lg border border-border bg-input px-4 py-2.5 text-sm ring-offset-background transition-all duration-200;
   }
   
   .trello-input::placeholder {
@@ -228,7 +228,7 @@
 
   /* Stats card styling */
   .stats-card {
-    @apply rounded-xl border border-border bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/50;
+    @apply rounded-xl border border-border bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/40;
   }
 
   /* Gradient text */
@@ -243,15 +243,15 @@
 
   /* Glow effect */
   .glow-primary {
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+    box-shadow: 0 0 16px hsl(var(--primary) / 0.25);
   }
 
   .glow-secondary {
-    box-shadow: 0 0 20px hsl(var(--secondary) / 0.3);
+    box-shadow: 0 0 16px hsl(var(--secondary) / 0.25);
   }
 
   .glow-accent {
-    box-shadow: 0 0 20px hsl(var(--accent) / 0.3);
+    box-shadow: 0 0 16px hsl(var(--accent) / 0.25);
   }
   
   .trello-badge {
@@ -259,23 +259,23 @@
   }
   
   .trello-badge-blue {
-    background-color: hsl(217 91% 90%);
-    color: hsl(217 91% 40%);
+    background-color: hsl(217 92% 92%);
+    color: hsl(217 92% 40%);
   }
   
   .dark .trello-badge-blue {
-    background-color: hsl(217 91% 20%);
-    color: hsl(217 91% 70%);
+    background-color: hsl(217 92% 18%);
+    color: hsl(217 92% 65%);
   }
   
   .trello-badge-green {
-    background-color: hsl(142 76% 90%);
-    color: hsl(142 76% 35%);
+    background-color: hsl(168 86% 88%);
+    color: hsl(168 86% 35%);
   }
   
   .dark .trello-badge-green {
-    background-color: hsl(142 76% 20%);
-    color: hsl(142 76% 70%);
+    background-color: hsl(168 86% 18%);
+    color: hsl(168 86% 65%);
   }
   
   .trello-badge-yellow {
@@ -284,28 +284,28 @@
   }
   
   .dark .trello-badge-yellow {
-    background-color: hsl(38 92% 20%);
-    color: hsl(38 92% 70%);
+    background-color: hsl(38 92% 18%);
+    color: hsl(38 92% 65%);
   }
   
   .trello-badge-red {
     background-color: hsl(0 84% 90%);
-    color: hsl(0 84% 40%);
+    color: hsl(0 84% 35%);
   }
   
   .dark .trello-badge-red {
-    background-color: hsl(0 84% 20%);
-    color: hsl(0 84% 70%);
+    background-color: hsl(0 84% 18%);
+    color: hsl(0 84% 65%);
   }
   
   .trello-badge-purple {
-    background-color: hsl(264 100% 90%);
-    color: hsl(264 100% 40%);
+    background-color: hsl(268 100% 92%);
+    color: hsl(268 100% 40%);
   }
   
   .dark .trello-badge-purple {
-    background-color: hsl(264 100% 20%);
-    color: hsl(264 100% 70%);
+    background-color: hsl(268 100% 18%);
+    color: hsl(268 100% 65%);
   }
   
   .trello-badge-gray {
@@ -314,7 +314,7 @@
   
   .trello-section {
     @apply rounded-lg p-4;
-    background-color: hsl(var(--muted) / 0.4);
+    background-color: hsl(var(--muted) / 0.3);
   }
   
   .trello-list {
@@ -336,7 +336,7 @@
   }
   
   .trello-list-card:hover {
-    border-color: hsl(var(--primary) / 0.5);
+    border-color: hsl(var(--primary) / 0.4);
   }
   
   .trello-sidebar {
@@ -385,7 +385,7 @@
   
   .trello-table th {
     @apply text-left font-semibold text-foreground px-4 py-3 border-b border-border;
-    background-color: hsl(var(--muted) / 0.3);
+    background-color: hsl(var(--muted) / 0.2);
   }
   
   .trello-table td {
@@ -394,7 +394,7 @@
   }
   
   .trello-table tr:hover td {
-    background-color: hsl(var(--muted) / 0.2);
+    background-color: hsl(var(--muted) / 0.15);
   }
   
   .trello-dropdown {
@@ -463,7 +463,7 @@
   
   .trello-empty-icon {
     @apply w-16 h-16 mb-4;
-    color: hsl(var(--muted-foreground) / 0.4);
+    color: hsl(var(--muted-foreground) / 0.35);
   }
   
   .trello-empty-title {
@@ -475,7 +475,7 @@
   }
   
   .trello-tabs {
-    @apply flex gap-2 border-b border-border;
+    @apply flex gap-1 border-b border-border;
   }
   
   .trello-tab {
@@ -496,13 +496,13 @@
   }
   
   .trello-notification:hover {
-    background-color: hsl(var(--accent) / 0.15);
-    border-color: hsl(var(--accent) / 0.5);
+    background-color: hsl(var(--accent) / 0.12);
+    border-color: hsl(var(--accent) / 0.4);
   }
   
   .trello-notification-unread {
     border-left: 4px solid hsl(var(--primary));
-    background-color: hsl(var(--primary) / 0.08);
+    background-color: hsl(var(--primary) / 0.06);
   }
   
   .animate-fade-in {
