@@ -214,11 +214,16 @@
 
   /* Modern container styling */
   .modern-card {
-    @apply rounded-xl border border-border bg-card p-6 shadow-sm transition-all duration-200 hover:shadow-md;
+    @apply rounded-xl border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5 p-6 shadow-md transition-all duration-200 hover:shadow-lg;
   }
 
   .modern-form {
     @apply space-y-6;
+  }
+
+  /* Form dialog background */
+  .form-dialog {
+    @apply bg-gradient-to-br from-primary/10 to-secondary/10 backdrop-blur-sm;
   }
   
   .trello-badge {
