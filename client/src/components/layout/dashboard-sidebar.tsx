@@ -36,7 +36,9 @@ import {
   Layers,
   Radio,
   Play,
-  TestTube
+  TestTube,
+  Wrench,
+  ClipboardList
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -57,6 +59,7 @@ const SidebarMenuButton = ({ children, asChild }: { children: React.ReactNode; a
 // Icon mapping for menu partitions
 const partitionIconMap: Record<string, LucideIcon> = {
   ListTodo,
+  ClipboardList,
   Users,
   Briefcase,
   TrendingUp,
@@ -84,6 +87,9 @@ const itemIconMap: Record<string, LucideIcon> = {
   HardDrive,
   Play,
   TestTube,
+  Zap,
+  Users,
+  Wrench,
 };
 
 const getPartitionIcon = (iconName: string): LucideIcon => {
