@@ -1,5 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { 
   Users, 
   CheckSquare, 
@@ -7,7 +5,7 @@ import {
   TrendingUp,
   ArrowUpRight,
   ArrowDownRight,
-  Minus
+  LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
@@ -19,9 +17,9 @@ interface StatsCardProps {
     value: number;
     type: "increase" | "decrease" | "neutral";
   };
-  icon: React.ElementType;
+  icon: LucideIcon;
   description?: string;
-  color?: "primary" | "accent" | "secondary" | "error";
+  color?: "blue" | "green" | "purple" | "orange";
 }
 
 export function StatsCard({ 
@@ -30,103 +28,72 @@ export function StatsCard({
   change, 
   icon: Icon, 
   description,
-  color = "primary" 
+  color = "blue" 
 }: StatsCardProps) {
   const getColorClasses = (color: string) => {
     switch (color) {
-      case "primary":
+      case "blue":
         return {
-          iconBg: "bg-dashboard-primary/10",
-          iconColor: "text-dashboard-primary",
-          gradient: "from-dashboard-primary/5 to-transparent"
+          iconBg: "bg-[#e4f0f6] dark:bg-[#1d3557]",
+          iconColor: "text-[#0079bf]",
         };
-      case "accent":
+      case "green":
         return {
-          iconBg: "bg-dashboard-accent/10",
-          iconColor: "text-dashboard-accent",
-          gradient: "from-dashboard-accent/5 to-transparent"
+          iconBg: "bg-[#e4f7e4] dark:bg-[#1a4025]",
+          iconColor: "text-[#61bd4f]",
         };
-      case "secondary":
+      case "purple":
         return {
-          iconBg: "bg-dashboard-secondary/10",
-          iconColor: "text-dashboard-secondary",
-          gradient: "from-dashboard-secondary/5 to-transparent"
+          iconBg: "bg-[#f4e8fc] dark:bg-[#3d2952]",
+          iconColor: "text-[#9c5bb5]",
         };
-      case "error":
+      case "orange":
         return {
-          iconBg: "bg-dashboard-error/10",
-          iconColor: "text-dashboard-error",
-          gradient: "from-dashboard-error/5 to-transparent"
+          iconBg: "bg-[#fff4e5] dark:bg-[#3d2d1a]",
+          iconColor: "text-[#ff9f1a]",
         };
       default:
         return {
-          iconBg: "bg-dashboard-primary/10",
-          iconColor: "text-dashboard-primary",
-          gradient: "from-dashboard-primary/5 to-transparent"
+          iconBg: "bg-[#e4f0f6] dark:bg-[#1d3557]",
+          iconColor: "text-[#0079bf]",
         };
     }
   };
 
   const colorClasses = getColorClasses(color);
 
-  const getChangeIcon = (type: string) => {
-    switch (type) {
-      case "increase":
-        return <ArrowUpRight className="h-3 w-3" />;
-      case "decrease":
-        return <ArrowDownRight className="h-3 w-3" />;
-      default:
-        return <Minus className="h-3 w-3" />;
-    }
-  };
-
-  const getChangeColor = (type: string) => {
-    switch (type) {
-      case "increase":
-        return "text-dashboard-accent bg-dashboard-accent/10";
-      case "decrease":
-        return "text-dashboard-error bg-dashboard-error/10";
-      default:
-        return "text-dashboard-secondary bg-dashboard-secondary/10";
-    }
-  };
-
   return (
-    <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-dashboard-primary/5 border-dashboard-secondary/10">
-      <div className={cn("absolute inset-0 bg-gradient-to-br", colorClasses.gradient)} />
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-        <CardTitle className="text-sm font-medium text-dashboard-secondary dark:text-dashboard-text-dark">
-          {title}
-        </CardTitle>
-        <div className={cn("p-2 rounded-md", colorClasses.iconBg)}>
-          <Icon className={cn("h-4 w-4", colorClasses.iconColor)} />
+    <div className="trello-card p-5" data-testid={`stat-card-${title.toLowerCase().replace(/\s+/g, '-')}`}>
+      <div className="flex items-start justify-between mb-3">
+        <div className={cn("trello-stat-icon", colorClasses.iconBg)}>
+          <Icon className={cn("w-5 h-5", colorClasses.iconColor)} />
         </div>
-      </CardHeader>
-      <CardContent className="relative">
-        <div className="text-2xl font-bold text-dashboard-text-light dark:text-dashboard-text-dark">
-          {value}
-        </div>
-        {description && (
-          <p className="text-xs text-dashboard-secondary/60 dark:text-dashboard-text-dark/60 mt-1">
-            {description}
-          </p>
-        )}
-        {change && (
-          <div className="flex items-center mt-2">
-            <Badge 
-              variant="secondary" 
-              className={cn("text-xs px-2 py-1 flex items-center gap-1", getChangeColor(change.type))}
-            >
-              {getChangeIcon(change.type)}
-              {Math.abs(change.value)}%
-            </Badge>
-            <span className="text-xs text-dashboard-secondary/60 dark:text-dashboard-text-dark/60 ml-2">
-              vs last period
-            </span>
+        {change && change.value !== 0 && (
+          <div className={cn(
+            "flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full",
+            change.type === "increase" 
+              ? "text-[#61bd4f] bg-[#e4f7e4] dark:bg-[#1a4025]" 
+              : change.type === "decrease"
+              ? "text-[#eb5a46] bg-[#fce4e4] dark:bg-[#4a1f1f]"
+              : "text-muted-foreground bg-muted"
+          )}>
+            {change.type === "increase" ? (
+              <ArrowUpRight className="w-3 h-3" />
+            ) : change.type === "decrease" ? (
+              <ArrowDownRight className="w-3 h-3" />
+            ) : null}
+            {Math.abs(change.value)}%
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+      
+      <div className="trello-stat-value">{value}</div>
+      <div className="trello-stat-label">{title}</div>
+      
+      {description && (
+        <p className="text-xs text-muted-foreground mt-2">{description}</p>
+      )}
+    </div>
   );
 }
 
@@ -148,9 +115,9 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
 
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-32 bg-dashboard-secondary/5 rounded-xl animate-pulse" />
+          <div key={i} className="h-32 bg-muted rounded-lg animate-pulse" />
         ))}
       </div>
     );
@@ -160,51 +127,59 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
     ? Math.round(((stats.completedTodos || 0) / stats.totalTodos) * 100)
     : 0;
 
+  const taskRate = stats?.totalTodos 
+    ? Math.round(((stats.pendingTodos || 0) / stats.totalTodos) * 100) 
+    : 0;
+  
+  const reviewRate = stats?.totalRequests 
+    ? Math.round(((stats.pendingRequests || 0) / stats.totalRequests) * 100) 
+    : 0;
+
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
       <StatsCard
         title={t("totalUsers")}
         value={stats?.totalUsers || 0}
         icon={Users}
         description="Active employees"
-        color="primary"
-        change={{
-          value: Math.round((stats?.totalUsers || 0) > 1 ? (((stats?.totalUsers || 0) - 1) / 1) * 100 : 0),
-          type: (stats?.totalUsers || 0) > 1 ? "increase" : "neutral"
-        }}
+        color="blue"
+        change={stats?.activeUsers ? {
+          value: Math.round((stats.activeUsers / Math.max(stats.totalUsers || 1, 1)) * 100),
+          type: stats.activeUsers >= (stats.totalUsers || 0) ? "increase" : "neutral"
+        } : undefined}
       />
       <StatsCard
         title={t("activeTasks")}
         value={stats?.pendingTodos || 0}
         icon={CheckSquare}
         description="Tasks in progress"
-        color="accent"
-        change={{
-          value: Math.round((stats?.pendingTodos || 0) > 0 ? (((stats?.pendingTodos || 0) / Math.max(stats?.totalTodos || 1, 1)) * 100) : 0),
-          type: (stats?.pendingTodos || 0) > 0 ? "increase" : "neutral"
-        }}
+        color="green"
+        change={taskRate > 0 ? {
+          value: taskRate,
+          type: taskRate > 50 ? "increase" : "neutral"
+        } : undefined}
       />
       <StatsCard
         title={t("completionRate")}
         value={`${completionRate}%`}
         icon={TrendingUp}
         description="Task completion rate"
-        color="secondary"
-        change={{
+        color="purple"
+        change={completionRate > 0 ? {
           value: completionRate,
-          type: completionRate > 50 ? "increase" : completionRate > 0 ? "neutral" : "decrease"
-        }}
+          type: completionRate >= 50 ? "increase" : completionRate > 0 ? "neutral" : "decrease"
+        } : undefined}
       />
       <StatsCard
         title={t("pendingReviews")}
         value={stats?.pendingRequests || 0}
         icon={Calendar}
         description="Employee evaluations"
-        color="error"
-        change={{
-          value: Math.round((stats?.pendingRequests || 0) > 0 ? (((stats?.pendingRequests || 0) / Math.max(stats?.totalRequests || 1, 1)) * 100) : 0),
-          type: (stats?.pendingRequests || 0) > (stats?.totalRequests || 0) / 2 ? "increase" : "decrease"
-        }}
+        color="orange"
+        change={reviewRate > 0 ? {
+          value: reviewRate,
+          type: reviewRate > 50 ? "increase" : "decrease"
+        } : undefined}
       />
     </div>
   );

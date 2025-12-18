@@ -3,8 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { Menu, Settings, User, LogOut, Lock, Shield, Activity, Search } from "lucide-react";
-import { HelpTooltip, FeatureTooltip, RoleTooltip } from "@/components/ui/help-tooltip";
+import { Menu, Settings, LogOut, Lock, Search, ChevronDown } from "lucide-react";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import NotificationCenter from "@/components/device-notifications/notification-center";
 import {
@@ -34,80 +33,74 @@ export function DashboardHeader({ onMenuClick, notificationCount = 0 }: Dashboar
 
   return (
     <>
-      <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-800">
-        <div className="flex items-center space-x-4">
-          {/* Mobile Menu Button */}
+      <header className="flex items-center justify-between h-14 px-4 border-b bg-card">
+        <div className="flex items-center gap-3">
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
             onClick={onMenuClick}
-            className="lg:hidden"
+            className="lg:hidden h-9 w-9"
+            data-testid="btn-mobile-menu"
           >
             <Menu className="h-5 w-5" />
           </Button>
           
-          <div className="flex items-center space-x-3">
-            {/* Logo and Dashboard Title */}
-            {/* Logo removed */}
+          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-muted rounded-md w-64">
+            <Search className="h-4 w-4 text-muted-foreground" />
+            <input 
+              type="text" 
+              placeholder="Search..."
+              className="bg-transparent border-none outline-none text-sm w-full placeholder:text-muted-foreground"
+              data-testid="input-search"
+            />
           </div>
-          <HelpTooltip
-            content="Welcome to your dashboard! Here you can view system statistics, manage employees, and access all major features."
-            type="info"
-          />
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center gap-2">
           <LanguageSwitcher />
-
-          <RoleTooltip
-            role={user.role}
-            permissions={
-              user.role === "admin" 
-                ? ["Manage all users", "Access all data", "System settings", "Reports"] 
-                : user.role === "manager"
-                ? ["Manage employees", "View reports", "Approve interviews", "Data access"]
-                : ["View assigned tasks", "Submit interviews", "Basic operations"]
-            }
-          >
-            <Badge variant="secondary" className="shadow-sm">
-              <Shield className="w-3 h-3 mr-1" />
-              {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-            </Badge>
-          </RoleTooltip>
-
+          
           <NotificationCenter />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="shadow-sm">
-                <Settings className="w-4 h-4" />
+              <Button variant="ghost" size="sm" className="gap-2 h-9" data-testid="btn-user-menu">
+                <div className="trello-avatar trello-avatar-sm">
+                  {user.username?.charAt(0).toUpperCase()}
+                </div>
+                <span className="hidden md:inline text-sm font-medium">{user.username}</span>
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <div className="px-2 py-1.5 text-sm font-medium">
-                {user.username}
-              </div>
-              <div className="px-2 py-1 text-xs text-muted-foreground">
-                {user.email}
+              <div className="px-3 py-2">
+                <p className="text-sm font-medium">{user.username}</p>
+                <p className="text-xs text-muted-foreground">{user.email}</p>
+                <Badge variant="secondary" className="mt-2 text-xs capitalize">
+                  {user.role}
+                </Badge>
               </div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setChangePasswordOpen(true)}>
+              <DropdownMenuItem onClick={() => setChangePasswordOpen(true)} data-testid="btn-change-password">
                 <Lock className="w-4 h-4 mr-2" />
                 Change Password
               </DropdownMenuItem>
+              <DropdownMenuItem data-testid="btn-settings">
+                <Settings className="w-4 h-4 mr-2" />
+                Settings
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="text-red-600 dark:text-red-400">
+              <DropdownMenuItem 
+                onClick={handleLogout} 
+                className="text-destructive focus:text-destructive"
+                data-testid="btn-logout"
+              >
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-medium text-sm shadow-lg">
-            {user.username?.charAt(0).toUpperCase()}
-          </div>
         </div>
-      </div>
+      </header>
 
       <ChangePasswordModal
         open={changePasswordOpen}

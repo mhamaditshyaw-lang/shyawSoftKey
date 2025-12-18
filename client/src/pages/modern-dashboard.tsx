@@ -6,26 +6,19 @@ import { useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { StatsCards } from "@/components/dashboard/stats-cards";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { motion } from "framer-motion";
 import {
-  Users,
-  Clock,
   CheckCircle,
   Calendar,
   PlusCircle,
   BarChart3,
-  MessageSquare,
   ArrowRight,
-  Sparkles,
-  TrendingUp,
   Activity,
-  Zap,
-  Monitor,
   HelpCircle,
+  ListTodo,
+  Users,
 } from "lucide-react";
 
 export default function ModernDashboard() {
@@ -34,7 +27,6 @@ export default function ModernDashboard() {
   const { t } = useTranslation();
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Update time every minute
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -42,7 +34,6 @@ export default function ModernDashboard() {
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch dashboard data
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ["/api/stats"],
     queryFn: async () => {
@@ -67,8 +58,6 @@ export default function ModernDashboard() {
     },
   });
 
-  // Remove old notifications query - using device notifications now
-
   const getGreeting = () => {
     const hour = currentTime.getHours();
     if (hour < 12) return "Good Morning";
@@ -78,44 +67,36 @@ export default function ModernDashboard() {
 
   const recentTodosList = recentTodos?.todoLists?.slice(0, 5) || [];
   const recentInterviews = interviewsData?.requests?.slice(0, 3) || [];
-  const unreadNotifications = []; // Remove notifications from modern dashboard
 
   const quickActions = [
     {
       title: "Create Task",
       icon: PlusCircle,
       href: "/todos",
-      color: "bg-dashboard-primary text-white",
-      description: "Add new task or assignment"
+      color: "bg-[#0079bf]",
+      description: "Add new task"
     },
     {
       title: "Schedule Review",
       icon: Calendar,
       href: "/interviews",
-      color: "bg-dashboard-accent text-white",
-      description: "Book employee evaluation"
+      color: "bg-[#61bd4f]",
+      description: "Book evaluation"
     },
     {
-      title: "Request Helpdesk",
+      title: "IT Helpdesk",
       icon: HelpCircle,
       href: "/it-support-request",
-      color: "bg-blue-500 text-white",
-      description: "Submit IT helpdesk request"
+      color: "bg-[#c377e0]",
+      description: "Submit request"
     },
     {
       title: "View Reports",
       icon: BarChart3,
       href: "/reports",
-      color: "bg-dashboard-secondary text-white",
-      description: "Analytics and insights",
+      color: "bg-[#ff9f1a]",
+      description: "Analytics",
       adminOnly: true
-    },
-    {
-      title: "Data Overview",
-      icon: Activity,
-      href: "/data-view",
-      color: "bg-dashboard-error text-white",
-      description: "Operational data view"
     }
   ];
 
@@ -124,200 +105,146 @@ export default function ModernDashboard() {
   );
 
   return (
-    <DashboardLayout notificationCount={unreadNotifications.length}>
-      <div className="mobile-container space-y-4 sm:space-y-6">
-        {/* Welcome Section with Shyaw Branding - Mobile Optimized */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mobile-card relative overflow-hidden rounded-lg sm:rounded-xl bg-gradient-to-br from-dashboard-primary/5 via-dashboard-accent/5 to-dashboard-primary/10 p-3 sm:p-8 border border-dashboard-primary/10 dark:from-dashboard-primary/10 dark:via-dashboard-accent/10 dark:to-dashboard-primary/20 dark:border-dashboard-primary/20"
-        >
-          {/* Background decorations - smaller on mobile */}
-          <div className="absolute top-0 right-0 w-16 h-16 sm:w-32 sm:h-32 bg-dashboard-primary/5 rounded-full -translate-y-8 sm:-translate-y-16 translate-x-8 sm:translate-x-16"></div>
-          <div className="absolute bottom-0 left-0 w-12 h-12 sm:w-24 sm:h-24 bg-dashboard-accent/5 rounded-full translate-y-6 sm:translate-y-12 -translate-x-6 sm:-translate-x-12"></div>
-          
-          <div className="relative z-10">
-            {/* Mobile-first layout */}
-            <div className="flex items-start justify-between mb-2 sm:mb-0">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <Sparkles className="w-4 h-4 sm:w-6 sm:h-6 text-dashboard-primary" />
-                <h1 className="text-base sm:text-2xl font-bold text-dashboard-text-light dark:text-dashboard-text-dark">
-                  <span className="sm:hidden">{getGreeting()}!</span>
-                  <span className="hidden sm:inline">{getGreeting()}, {user?.username}!</span>
-                </h1>
-              </div>
-              
-              {/* Mobile: Role badge in top right */}
-              <Badge variant="secondary" className="sm:hidden bg-dashboard-primary/10 text-dashboard-primary text-xs px-2 py-1">
-                {user?.role}
-              </Badge>
+    <DashboardLayout>
+      <div className="space-y-6">
+        <div className="trello-card p-6" data-testid="card-welcome">
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-foreground mb-1">
+                {getGreeting()}, {user?.username}!
+              </h1>
+              <p className="text-muted-foreground">
+                {currentTime.toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </p>
             </div>
-            
-            {/* Mobile: Simplified date and welcome text */}
-            <div className="sm:flex sm:items-center sm:justify-between">
-              <div className="flex-1">
-                <p className="text-xs sm:text-base text-dashboard-secondary dark:text-dashboard-text-dark/70 mb-1">
-                  <span className="sm:hidden">
-                    {currentTime.toLocaleDateString('en-US', { 
-                      weekday: 'short', 
-                      month: 'short', 
-                      day: 'numeric' 
-                    })}
-                  </span>
-                  <span className="hidden sm:inline">
-                    {currentTime.toLocaleDateString('en-US', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </span>
-                </p>
-                <p className="text-xs sm:text-sm text-dashboard-secondary/60 dark:text-dashboard-text-dark/60">
-                  <span className="sm:hidden">Welcome, {user?.username}</span>
-                  <span className="hidden sm:inline">{t("welcomeBack")} {user?.username}</span>
-                </p>
+            <Badge className="trello-badge-blue capitalize">{user?.role}</Badge>
+          </div>
+        </div>
+
+        <StatsCards stats={stats} isLoading={statsLoading} />
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {filteredActions.map((action) => {
+            const Icon = action.icon;
+            return (
+              <Link key={action.href} href={action.href}>
+                <div className="trello-card trello-card-hover p-4 text-center group" data-testid={`action-${action.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                  <div className={`${action.color} w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
+                    <Icon className="w-5 h-5 text-white" />
+                  </div>
+                  <p className="font-medium text-sm text-foreground">{action.title}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{action.description}</p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="trello-card" data-testid="card-recent-tasks">
+            <div className="p-4 border-b border-border flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ListTodo className="w-5 h-5 text-[#0079bf]" />
+                <h3 className="font-semibold">Recent Tasks</h3>
               </div>
-              
-              {/* Desktop: Role badges */}
-              <div className="hidden sm:flex items-center gap-2">
-                <Badge variant="secondary" className="bg-dashboard-primary/10 text-dashboard-primary">
-                  {user?.role}
-                </Badge>
-                <Badge variant="secondary" className="bg-dashboard-accent/10 text-dashboard-accent">
-                  Active
-                </Badge>
-              </div>
+              <Button variant="ghost" size="sm" onClick={() => setLocation("/todos")} data-testid="btn-view-all-tasks">
+                View All <ArrowRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+            <div className="p-4">
+              {todosLoading ? (
+                <div className="space-y-3">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="h-14 bg-muted rounded-lg animate-pulse" />
+                  ))}
+                </div>
+              ) : recentTodosList.length > 0 ? (
+                <div className="space-y-2">
+                  {recentTodosList.map((todo: any) => (
+                    <div key={todo.id} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors" data-testid={`task-item-${todo.id}`}>
+                      <CheckCircle className="w-4 h-4 text-[#61bd4f] flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">{todo.title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {todo.assignedTo ? `Assigned to ${todo.assignedTo.username}` : 'Unassigned'}
+                        </p>
+                      </div>
+                      <Badge className={`text-xs ${
+                        todo.priority === 'high' ? 'trello-badge-red' : 
+                        todo.priority === 'medium' ? 'trello-badge-yellow' : 
+                        'trello-badge-gray'
+                      }`}>
+                        {todo.priority}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="trello-empty-state">
+                  <ListTodo className="trello-empty-icon" />
+                  <p className="trello-empty-title">No tasks yet</p>
+                  <p className="trello-empty-desc">Create your first task to get started</p>
+                </div>
+              )}
             </div>
           </div>
-        </motion.div>
 
-        {/* Stats Cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          <StatsCards stats={stats} isLoading={statsLoading} />
-        </motion.div>
-
-
-
-        {/* Recent Activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-          {/* Recent Tasks */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between text-dashboard-text-light dark:text-dashboard-text-dark">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-dashboard-accent" />
-                    Recent Tasks
-                  </div>
-                  <Button variant="ghost" size="sm" onClick={() => setLocation("/todos")}>
-                    View All <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {todosLoading ? (
-                  <div className="space-y-3">
-                    {[...Array(3)].map((_, i) => (
-                      <div key={i} className="h-12 bg-dashboard-secondary/5 rounded animate-pulse" />
-                    ))}
-                  </div>
-                ) : recentTodosList.length > 0 ? (
-                  <div className="space-y-3">
-                    {recentTodosList.map((todo: any) => (
-                      <div key={todo.id} className="flex items-center gap-3 p-3 rounded-lg bg-dashboard-bg-light/50 dark:bg-dashboard-secondary/10">
-                        <div className="w-2 h-2 rounded-full bg-dashboard-primary"></div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm text-dashboard-text-light dark:text-dashboard-text-dark truncate">
-                            {todo.title}
-                          </p>
-                          <p className="text-xs text-dashboard-secondary/60 dark:text-dashboard-text-dark/60">
-                            {todo.assignedTo ? `Assigned to ${todo.assignedTo.username}` : 'Unassigned'}
-                          </p>
-                        </div>
-                        <Badge variant="secondary" className="text-xs">
-                          {todo.priority}
-                        </Badge>
+          <div className="trello-card" data-testid="card-recent-reviews">
+            <div className="p-4 border-b border-border flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-[#c377e0]" />
+                <h3 className="font-semibold">Recent Reviews</h3>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => setLocation("/interviews")} data-testid="btn-view-all-reviews">
+                View All <ArrowRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+            <div className="p-4">
+              {interviewsLoading ? (
+                <div className="space-y-3">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="h-14 bg-muted rounded-lg animate-pulse" />
+                  ))}
+                </div>
+              ) : recentInterviews.length > 0 ? (
+                <div className="space-y-2">
+                  {recentInterviews.map((interview: any) => (
+                    <div key={interview.id} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors" data-testid={`review-item-${interview.id}`}>
+                      <div className="trello-avatar trello-avatar-sm bg-[#c377e0]">
+                        {interview.requestedBy?.username?.charAt(0).toUpperCase() || '?'}
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center text-dashboard-secondary/60 dark:text-dashboard-text-dark/60 py-8">
-                    No recent tasks found
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Recent Reviews */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between text-dashboard-text-light dark:text-dashboard-text-dark">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-dashboard-error" />
-                    Recent Reviews
-                  </div>
-                  <Button variant="ghost" size="sm" onClick={() => setLocation("/interviews")}>
-                    View All <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {interviewsLoading ? (
-                  <div className="space-y-3">
-                    {[...Array(3)].map((_, i) => (
-                      <div key={i} className="h-12 bg-dashboard-secondary/5 rounded animate-pulse" />
-                    ))}
-                  </div>
-                ) : recentInterviews.length > 0 ? (
-                  <div className="space-y-3">
-                    {recentInterviews.map((interview: any) => (
-                      <div key={interview.id} className="flex items-center gap-3 p-3 rounded-lg bg-dashboard-bg-light/50 dark:bg-dashboard-secondary/10">
-                        <div className="w-2 h-2 rounded-full bg-dashboard-error"></div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm text-dashboard-text-light dark:text-dashboard-text-dark truncate">
-                            {interview.requestedBy?.username || 'Unknown'}
-                          </p>
-                          <p className="text-xs text-dashboard-secondary/60 dark:text-dashboard-text-dark/60">
-                            {interview.position || 'Position not specified'}
-                          </p>
-                        </div>
-                        <Badge 
-                          variant="secondary" 
-                          className={`text-xs ${
-                            interview.status === 'approved' ? 'bg-dashboard-accent/10 text-dashboard-accent' :
-                            interview.status === 'rejected' ? 'bg-dashboard-error/10 text-dashboard-error' :
-                            'bg-dashboard-secondary/10 text-dashboard-secondary'
-                          }`}
-                        >
-                          {interview.status}
-                        </Badge>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">
+                          {interview.requestedBy?.username || 'Unknown'}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {interview.position || 'Position not specified'}
+                        </p>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center text-dashboard-secondary/60 dark:text-dashboard-text-dark/60 py-8">
-                    No recent reviews found
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
+                      <Badge className={`text-xs ${
+                        interview.status === 'approved' ? 'trello-badge-green' :
+                        interview.status === 'rejected' ? 'trello-badge-red' :
+                        'trello-badge-yellow'
+                      }`}>
+                        {interview.status}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="trello-empty-state">
+                  <Users className="trello-empty-icon" />
+                  <p className="trello-empty-title">No reviews yet</p>
+                  <p className="trello-empty-desc">Schedule a review to get started</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </DashboardLayout>
