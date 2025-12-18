@@ -244,7 +244,9 @@
   }
 
   .modern-form {
-    @apply space-y-6;
+    @apply space-y-6 rounded-3xl border p-8;
+    background-color: var(--input);
+    border-color: var(--border);
   }
 
   /* Glassmorphism card */
