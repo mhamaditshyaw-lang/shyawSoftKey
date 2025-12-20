@@ -10,32 +10,32 @@
     --card-foreground: #6B7280;
     --popover: #FFFFFF;
     --popover-foreground: #6B7280;
-    --primary: #2F80ED;
+    --primary: #8B5CF6;
     --primary-foreground: #FFFFFF;
-    --secondary: #2F80ED;
+    --secondary: #8B5CF6;
     --secondary-foreground: #FFFFFF;
     --muted: #6B7280;
     --muted-foreground: #6B7280;
-    --accent: #2F80ED;
+    --accent: #8B5CF6;
     --accent-foreground: #FFFFFF;
-    --destructive: #2F80ED;
+    --destructive: #8B5CF6;
     --destructive-foreground: #FFFFFF;
-    --success: #2F80ED;
+    --success: #8B5CF6;
     --success-foreground: #FFFFFF;
-    --warning: #2F80ED;
+    --warning: #8B5CF6;
     --warning-foreground: #FFFFFF;
     --border: #E5E7EB;
     --input: #F5F6FA;
-    --ring: #2F80ED;
+    --ring: #8B5CF6;
     --radius: 12px;
     --sidebar-background: #111827;
     --sidebar-foreground: #FFFFFF;
-    --sidebar-primary: #2F80ED;
+    --sidebar-primary: #8B5CF6;
     --sidebar-primary-foreground: #FFFFFF;
     --sidebar-accent: #1F2937;
     --sidebar-accent-foreground: #FFFFFF;
     --sidebar-border: #1F2937;
-    --sidebar-ring: #2F80ED;
+    --sidebar-ring: #8B5CF6;
   }
 
   .dark {
@@ -45,31 +45,31 @@
     --card-foreground: #9CA3AF;
     --popover: #1E293B;
     --popover-foreground: #9CA3AF;
-    --primary: #2F80ED;
+    --primary: #8B5CF6;
     --primary-foreground: #FFFFFF;
-    --secondary: #2F80ED;
+    --secondary: #8B5CF6;
     --secondary-foreground: #FFFFFF;
     --muted: #6B7280;
     --muted-foreground: #9CA3AF;
-    --accent: #2F80ED;
+    --accent: #8B5CF6;
     --accent-foreground: #FFFFFF;
-    --destructive: #2F80ED;
+    --destructive: #8B5CF6;
     --destructive-foreground: #FFFFFF;
-    --success: #2F80ED;
+    --success: #8B5CF6;
     --success-foreground: #FFFFFF;
-    --warning: #2F80ED;
+    --warning: #8B5CF6;
     --warning-foreground: #FFFFFF;
     --border: #334155;
     --input: #0F172A;
-    --ring: #2F80ED;
+    --ring: #8B5CF6;
     --sidebar-background: #111827;
     --sidebar-foreground: #FFFFFF;
-    --sidebar-primary: #2F80ED;
+    --sidebar-primary: #8B5CF6;
     --sidebar-primary-foreground: #FFFFFF;
     --sidebar-accent: #1F2937;
     --sidebar-accent-foreground: #FFFFFF;
     --sidebar-border: #1F2937;
-    --sidebar-ring: #2F80ED;
+    --sidebar-ring: #8B5CF6;
   }
 
   * {
@@ -149,23 +149,23 @@
   .trello-btn-primary {
     background-color: var(--primary);
     color: var(--primary-foreground);
-    box-shadow: 0px 2px 4px rgba(47, 128, 237, 0.15);
+    box-shadow: 0px 2px 4px rgba(139, 92, 246, 0.15);
   }
   
   .trello-btn-primary:hover {
     filter: brightness(0.95);
-    box-shadow: 0px 4px 12px rgba(47, 128, 237, 0.25);
+    box-shadow: 0px 4px 12px rgba(139, 92, 246, 0.25);
   }
   
   .trello-btn-secondary {
     background-color: var(--secondary);
     color: var(--secondary-foreground);
-    box-shadow: 0px 2px 4px rgba(47, 128, 237, 0.15);
+    box-shadow: 0px 2px 4px rgba(139, 92, 246, 0.15);
   }
   
   .trello-btn-secondary:hover {
     filter: brightness(0.95);
-    box-shadow: 0px 4px 12px rgba(47, 128, 237, 0.25);
+    box-shadow: 0px 4px 12px rgba(139, 92, 246, 0.25);
   }
   
   .trello-btn-ghost {
@@ -191,7 +191,7 @@
     @apply outline-none;
     background-color: var(--card);
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.1);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
   }
   
   .trello-input:disabled {
@@ -240,7 +240,7 @@
 
   .stats-card:hover {
     border-color: var(--primary);
-    box-shadow: 0px 6px 16px rgba(47, 128, 237, 0.12);
+    box-shadow: 0px 6px 16px rgba(139, 92, 246, 0.12);
   }
 
   .gradient-text {
@@ -254,15 +254,15 @@
   }
 
   .glow-primary {
-    box-shadow: 0 0 20px rgba(47, 128, 237, 0.3);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
   }
 
   .glow-secondary {
-    box-shadow: 0 0 20px rgba(47, 128, 237, 0.3);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
   }
 
   .glow-accent {
-    box-shadow: 0 0 20px rgba(47, 128, 237, 0.3);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
   }
   
   .trello-badge {
@@ -270,53 +270,53 @@
   }
   
   .trello-badge-blue {
-    background-color: rgba(47, 128, 237, 0.1);
-    color: #2F80ED;
+    background-color: rgba(139, 92, 246, 0.1);
+    color: #8B5CF6;
   }
   
   .dark .trello-badge-blue {
-    background-color: rgba(47, 128, 237, 0.2);
-    color: #64B4FF;
+    background-color: rgba(139, 92, 246, 0.2);
+    color: #D8B4FE;
   }
   
   .trello-badge-green {
-    background-color: rgba(47, 128, 237, 0.1);
-    color: #2F80ED;
+    background-color: rgba(139, 92, 246, 0.1);
+    color: #8B5CF6;
   }
   
   .dark .trello-badge-green {
-    background-color: rgba(47, 128, 237, 0.2);
-    color: #64B4FF;
+    background-color: rgba(139, 92, 246, 0.2);
+    color: #D8B4FE;
   }
   
   .trello-badge-yellow {
-    background-color: rgba(47, 128, 237, 0.1);
-    color: #2F80ED;
+    background-color: rgba(139, 92, 246, 0.1);
+    color: #8B5CF6;
   }
   
   .dark .trello-badge-yellow {
-    background-color: rgba(47, 128, 237, 0.2);
-    color: #64B4FF;
+    background-color: rgba(139, 92, 246, 0.2);
+    color: #D8B4FE;
   }
   
   .trello-badge-red {
-    background-color: rgba(47, 128, 237, 0.1);
-    color: #2F80ED;
+    background-color: rgba(139, 92, 246, 0.1);
+    color: #8B5CF6;
   }
   
   .dark .trello-badge-red {
-    background-color: rgba(47, 128, 237, 0.2);
-    color: #64B4FF;
+    background-color: rgba(139, 92, 246, 0.2);
+    color: #D8B4FE;
   }
   
   .trello-badge-purple {
-    background-color: rgba(47, 128, 237, 0.1);
-    color: #2F80ED;
+    background-color: rgba(139, 92, 246, 0.1);
+    color: #8B5CF6;
   }
   
   .dark .trello-badge-purple {
-    background-color: rgba(47, 128, 237, 0.2);
-    color: #64B4FF;
+    background-color: rgba(139, 92, 246, 0.2);
+    color: #D8B4FE;
   }
   
   .trello-badge-gray {
@@ -354,7 +354,7 @@
   
   .trello-list-card:hover {
     border-color: var(--primary);
-    box-shadow: 0px 4px 12px rgba(47, 128, 237, 0.12);
+    box-shadow: 0px 4px 12px rgba(139, 92, 246, 0.12);
   }
   
   .trello-sidebar {
@@ -400,7 +400,7 @@
   
   .trello-stat-icon {
     @apply w-12 h-12 rounded-lg flex items-center justify-center;
-    background-color: rgba(47, 128, 237, 0.1);
+    background-color: rgba(139, 92, 246, 0.1);
   }
   
   .trello-table {
@@ -411,7 +411,7 @@
     @apply text-left font-semibold px-4 py-3 border-b;
     color: var(--foreground);
     border-color: var(--border);
-    background-color: rgba(47, 128, 237, 0.05);
+    background-color: rgba(139, 92, 246, 0.05);
   }
   
   .trello-table td {
@@ -436,7 +436,7 @@
   }
   
   .trello-dropdown-item:hover {
-    background-color: rgba(47, 128, 237, 0.1);
+    background-color: rgba(139, 92, 246, 0.1);
   }
   
   .trello-modal {
