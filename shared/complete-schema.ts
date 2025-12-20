@@ -117,6 +117,15 @@ export const interviewRequests = pgTable("interview_requests", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Interview Comments table
+export const interviewComments = pgTable("interview_comments", {
+  id: serial("id").primaryKey(),
+  interviewRequestId: integer("interview_request_id").references(() => interviewRequests.id, { onDelete: "cascade" }).notNull(),
+  authorId: integer("author_id").references(() => users.id).notNull(),
+  comment: text("comment").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Operational Data table
 export const operationalData = pgTable("operational_data", {
   id: serial("id").primaryKey(),
@@ -306,7 +315,19 @@ export const interviewRequestsRelations = relations(interviewRequests, ({ one, m
     references: [users.id],
     relationName: "action_taken_by",
   }),
+  comments: many(interviewComments),
   feedback: many(feedback),
+}));
+
+export const interviewCommentsRelations = relations(interviewComments, ({ one }) => ({
+  interviewRequest: one(interviewRequests, {
+    fields: [interviewComments.interviewRequestId],
+    references: [interviewRequests.id],
+  }),
+  author: one(users, {
+    fields: [interviewComments.authorId],
+    references: [users.id],
+  }),
 }));
 
 export const operationalDataRelations = relations(operationalData, ({ one }) => ({
@@ -445,6 +466,11 @@ export const insertInterviewRequestSchema = createInsertSchema(interviewRequests
   description: data.description && data.description.trim() !== "" ? data.description : undefined,
 }));
 
+export const insertInterviewCommentSchema = createInsertSchema(interviewComments).omit({
+  id: true,
+  createdAt: true,
+});
+
 export const insertOperationalDataSchema = createInsertSchema(operationalData).omit({
   id: true,
   createdAt: true,
@@ -527,6 +553,8 @@ export type Reminder = typeof reminders.$inferSelect;
 export type InsertReminder = z.infer<typeof insertReminderSchema>;
 export type InterviewRequest = typeof interviewRequests.$inferSelect;
 export type InsertInterviewRequest = z.infer<typeof insertInterviewRequestSchema>;
+export type InterviewComment = typeof interviewComments.$inferSelect;
+export type InsertInterviewComment = z.infer<typeof insertInterviewCommentSchema>;
 export type OperationalData = typeof operationalData.$inferSelect;
 export type InsertOperationalData = z.infer<typeof insertOperationalDataSchema>;
 export type FeedbackType = typeof feedbackTypes.$inferSelect;
