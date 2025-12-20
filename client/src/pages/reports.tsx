@@ -73,25 +73,25 @@ interface ReportsData {
 }
 
 const COLORS = {
-  primary: "#3B82F6",
-  secondary: "#10B981",
-  warning: "#F59E0B",
-  danger: "#EF4444",
+  primary: "#8B5CF6",
+  secondary: "#8B5CF6",
+  warning: "#8B5CF6",
+  danger: "#8B5CF6",
   purple: "#8B5CF6",
-  indigo: "#6366F1",
-  pink: "#EC4899",
-  teal: "#14B8A6",
+  indigo: "#8B5CF6",
+  pink: "#8B5CF6",
+  teal: "#8B5CF6",
 };
 
 const PIE_COLORS = [
   COLORS.primary,
-  COLORS.secondary,
-  COLORS.warning,
-  COLORS.danger,
-  COLORS.purple,
-  COLORS.indigo,
-  COLORS.pink,
-  COLORS.teal,
+  "#A78BFA",
+  "#C4B5FD",
+  "#DDD6FE",
+  "#EDE9FE",
+  "#F3E8FF",
+  "#8B5CF6",
+  "#7C3AED",
 ];
 
 export default function Reports() {

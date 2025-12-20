@@ -24,13 +24,13 @@ export default function Header({ onMenuClick }: HeaderProps) {
   const getRoleBadgeClass = (role: string) => {
     switch (role) {
       case "admin":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
       case "manager":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
       case "security":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
     }
   };
 
@@ -50,11 +50,11 @@ export default function Header({ onMenuClick }: HeaderProps) {
               <Menu className="h-5 w-5" />
             </Button>
             
-            <div className="logo w-7 h-7 sm:w-10 sm:h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-md">
+            <div className="logo w-7 h-7 sm:w-10 sm:h-10 bg-[#8B5CF6] rounded-lg sm:rounded-xl flex items-center justify-center shadow-md">
               <Building2 className="w-3 h-3 sm:w-6 sm:h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-sm sm:text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-sm sm:text-xl font-bold text-[#8B5CF6]">
                 <span className="sm:hidden">Shyaw</span>
                 <span className="hidden sm:inline">HR Management System</span>
               </h1>
@@ -88,7 +88,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
                 className="relative hover:bg-muted/50 touch-target p-2"
               >
                 <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground hover:text-foreground" />
-                <Badge className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 p-0 flex items-center justify-center bg-orange-500 text-white text-xs">
+                <Badge className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 p-0 flex items-center justify-center bg-[#8B5CF6] text-white text-xs">
                   3
                 </Badge>
               </Button>
@@ -113,8 +113,8 @@ export default function Header({ onMenuClick }: HeaderProps) {
               </div>
               
               {/* Mobile: Smaller avatar */}
-              <Avatar className="h-7 w-7 sm:h-10 sm:w-10 ring-1 sm:ring-2 ring-indigo-200 dark:ring-indigo-700 touch-target">
-                <AvatarFallback className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold text-xs sm:text-sm">
+              <Avatar className="h-7 w-7 sm:h-10 sm:w-10 ring-1 sm:ring-2 ring-purple-200 dark:ring-purple-700 touch-target">
+                <AvatarFallback className="bg-[#8B5CF6] text-white font-bold text-xs sm:text-sm">
                   {user.username.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
