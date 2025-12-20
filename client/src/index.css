@@ -134,7 +134,7 @@
   }
   
   .trello-btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-300 ease-out;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors duration-200;
   }
   
   .trello-btn:focus {
@@ -149,23 +149,19 @@
   .trello-btn-primary {
     background-color: var(--primary);
     color: var(--primary-foreground);
-    box-shadow: 0px 2px 4px rgba(139, 92, 246, 0.15);
   }
   
   .trello-btn-primary:hover {
-    filter: brightness(0.95);
-    box-shadow: 0px 4px 12px rgba(139, 92, 246, 0.25);
+    opacity: 0.9;
   }
   
   .trello-btn-secondary {
     background-color: var(--secondary);
     color: var(--secondary-foreground);
-    box-shadow: 0px 2px 4px rgba(139, 92, 246, 0.15);
   }
   
   .trello-btn-secondary:hover {
-    filter: brightness(0.95);
-    box-shadow: 0px 4px 12px rgba(139, 92, 246, 0.25);
+    opacity: 0.9;
   }
   
   .trello-btn-ghost {
