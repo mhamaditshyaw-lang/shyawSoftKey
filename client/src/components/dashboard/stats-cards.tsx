@@ -34,28 +34,28 @@ export function StatsCard({
     switch (color) {
       case "blue":
         return {
-          iconBg: "bg-[#e4f0f6] dark:bg-[#1d3557]",
-          iconColor: "text-[#0079bf]",
+          iconBg: "bg-[#f3e8ff] dark:bg-[#3d2d52]",
+          iconColor: "text-[#8B5CF6]",
         };
       case "green":
         return {
-          iconBg: "bg-[#e4f7e4] dark:bg-[#1a4025]",
-          iconColor: "text-[#61bd4f]",
+          iconBg: "bg-[#f3e8ff] dark:bg-[#3d2d52]",
+          iconColor: "text-[#8B5CF6]",
         };
       case "purple":
         return {
-          iconBg: "bg-[#f4e8fc] dark:bg-[#3d2952]",
-          iconColor: "text-[#9c5bb5]",
+          iconBg: "bg-[#f3e8ff] dark:bg-[#3d2d52]",
+          iconColor: "text-[#8B5CF6]",
         };
       case "orange":
         return {
-          iconBg: "bg-[#fff4e5] dark:bg-[#3d2d1a]",
-          iconColor: "text-[#ff9f1a]",
+          iconBg: "bg-[#f3e8ff] dark:bg-[#3d2d52]",
+          iconColor: "text-[#8B5CF6]",
         };
       default:
         return {
-          iconBg: "bg-[#e4f0f6] dark:bg-[#1d3557]",
-          iconColor: "text-[#0079bf]",
+          iconBg: "bg-[#f3e8ff] dark:bg-[#3d2d52]",
+          iconColor: "text-[#8B5CF6]",
         };
     }
   };
@@ -72,9 +72,9 @@ export function StatsCard({
           <div className={cn(
             "flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full",
             change.type === "increase" 
-              ? "text-[#61bd4f] bg-[#e4f7e4] dark:bg-[#1a4025]" 
+              ? "text-[#8B5CF6] bg-[#f3e8ff] dark:bg-[#3d2d52]" 
               : change.type === "decrease"
-              ? "text-[#eb5a46] bg-[#fce4e4] dark:bg-[#4a1f1f]"
+              ? "text-[#8B5CF6] bg-[#f3e8ff] dark:bg-[#3d2d52]"
               : "text-muted-foreground bg-muted"
           )}>
             {change.type === "increase" ? (
@@ -142,7 +142,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
         value={stats?.totalUsers || 0}
         icon={Users}
         description="Active employees"
-        color="blue"
+        color="purple"
         change={stats?.activeUsers ? {
           value: Math.round((stats.activeUsers / Math.max(stats.totalUsers || 1, 1)) * 100),
           type: stats.activeUsers >= (stats.totalUsers || 0) ? "increase" : "neutral"
@@ -153,7 +153,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
         value={stats?.pendingTodos || 0}
         icon={CheckSquare}
         description="Tasks in progress"
-        color="green"
+        color="purple"
         change={taskRate > 0 ? {
           value: taskRate,
           type: taskRate > 50 ? "increase" : "neutral"
@@ -175,7 +175,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
         value={stats?.pendingRequests || 0}
         icon={Calendar}
         description="Employee evaluations"
-        color="orange"
+        color="purple"
         change={reviewRate > 0 ? {
           value: reviewRate,
           type: reviewRate > 50 ? "increase" : "decrease"

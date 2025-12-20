@@ -12,10 +12,10 @@ export default {
       },
       colors: {
         // Dashboard color palette
-        'dashboard-primary': '#2563EB', // blue-600
+        'dashboard-primary': '#8B5CF6', // purple-500
         'dashboard-secondary': '#374151', // gray-700
-        'dashboard-accent': '#10B981', // emerald-500
-        'dashboard-error': '#DC2626', // red-600
+        'dashboard-accent': '#8B5CF6', // purple-500
+        'dashboard-error': '#8B5CF6', // purple-500
         'dashboard-bg-light': '#F9FAFB', // gray-50
         'dashboard-bg-dark': '#1F2937', // gray-900
         'dashboard-text-light': '#111827',

@@ -73,28 +73,28 @@ export default function ModernDashboard() {
       title: "Create Task",
       icon: PlusCircle,
       href: "/todos",
-      color: "bg-[#0079bf]",
+      color: "bg-[#8B5CF6]",
       description: "Add new task"
     },
     {
       title: "Schedule Review",
       icon: Calendar,
       href: "/interviews",
-      color: "bg-[#61bd4f]",
+      color: "bg-[#8B5CF6]",
       description: "Book evaluation"
     },
     {
       title: "IT Helpdesk",
       icon: HelpCircle,
       href: "/it-support-request",
-      color: "bg-[#c377e0]",
+      color: "bg-[#8B5CF6]",
       description: "Submit request"
     },
     {
       title: "View Reports",
       icon: BarChart3,
       href: "/reports",
-      color: "bg-[#ff9f1a]",
+      color: "bg-[#8B5CF6]",
       description: "Analytics",
       adminOnly: true
     }
@@ -149,7 +149,7 @@ export default function ModernDashboard() {
           <div className="trello-card" data-testid="card-recent-tasks">
             <div className="p-4 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ListTodo className="w-5 h-5 text-[#0079bf]" />
+                <ListTodo className="w-5 h-5 text-[#8B5CF6]" />
                 <h3 className="font-semibold">Recent Tasks</h3>
               </div>
               <Button variant="ghost" size="sm" onClick={() => setLocation("/todos")} data-testid="btn-view-all-tasks">
@@ -167,7 +167,7 @@ export default function ModernDashboard() {
                 <div className="space-y-2">
                   {recentTodosList.map((todo: any) => (
                     <div key={todo.id} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors" data-testid={`task-item-${todo.id}`}>
-                      <CheckCircle className="w-4 h-4 text-[#61bd4f] flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-[#8B5CF6] flex-shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm truncate">{todo.title}</p>
                         <p className="text-xs text-muted-foreground">
@@ -197,7 +197,7 @@ export default function ModernDashboard() {
           <div className="trello-card" data-testid="card-recent-reviews">
             <div className="p-4 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-[#c377e0]" />
+                <Users className="w-5 h-5 text-[#8B5CF6]" />
                 <h3 className="font-semibold">Recent Reviews</h3>
               </div>
               <Button variant="ghost" size="sm" onClick={() => setLocation("/interviews")} data-testid="btn-view-all-reviews">
@@ -215,7 +215,7 @@ export default function ModernDashboard() {
                 <div className="space-y-2">
                   {recentInterviews.map((interview: any) => (
                     <div key={interview.id} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors" data-testid={`review-item-${interview.id}`}>
-                      <div className="trello-avatar trello-avatar-sm bg-[#c377e0]">
+                      <div className="trello-avatar trello-avatar-sm bg-[#8B5CF6]">
                         {interview.requestedBy?.username?.charAt(0).toUpperCase() || '?'}
                       </div>
                       <div className="flex-1 min-w-0">
