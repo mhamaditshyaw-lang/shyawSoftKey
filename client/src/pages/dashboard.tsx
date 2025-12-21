@@ -446,29 +446,15 @@ export default function DashboardPage() {
         <Card className="border-purple-100 shadow-lg bg-gradient-to-r from-purple-50 to-purple-50">
           <CardContent className="p-6">
             <div className="space-y-6">
-              {/* Search Bar */}
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-purple-500" />
-                    <Input
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 border-purple-200 focus:border-purple-500 focus:ring-purple-500"
-                    />
-                  </div>
-                </div>
-              </div>
-
               {/* Date Filter Controls */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white/50 p-4 rounded-lg border border-purple-200">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded-lg border border-purple-200">
                 <div className="space-y-2">
-                  <Label htmlFor="date-filter" className="text-sm font-medium flex items-center gap-2 text-purple-700">
+                  <Label htmlFor="date-filter" className="text-sm font-medium flex items-center gap-2 text-gray-700">
                     <Calendar className="w-4 h-4" />
                     Date Filter
                   </Label>
                   <Select value={dateFilter} onValueChange={setDateFilter}>
-                    <SelectTrigger id="date-filter" className="border-purple-200 focus:border-purple-500">
+                    <SelectTrigger id="date-filter" className="border-gray-300 focus:border-purple-500 bg-white text-gray-700">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -488,7 +474,7 @@ export default function DashboardPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <Label htmlFor="custom-date" className="text-sm font-medium text-purple-700">
+                    <Label htmlFor="custom-date" className="text-sm font-medium text-gray-700">
                       Select Date
                     </Label>
                     <Input
@@ -496,13 +482,13 @@ export default function DashboardPage() {
                       type="date"
                       value={customDate}
                       onChange={(e) => setCustomDate(e.target.value)}
-                      className="border-purple-200 focus:border-purple-500 focus:ring-purple-500"
+                      className="border-gray-300 focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-700"
                     />
                   </motion.div>
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="auto-refresh" className="text-sm font-medium flex items-center gap-2 text-purple-700">
+                  <Label htmlFor="auto-refresh" className="text-sm font-medium flex items-center gap-2 text-gray-700">
                     <RefreshCw className={`w-4 h-4 ${autoRefresh ? 'animate-spin text-purple-600' : 'text-gray-400'}`} />
                     Auto Refresh
                   </Label>
@@ -512,7 +498,7 @@ export default function DashboardPage() {
                       checked={autoRefresh}
                       onCheckedChange={setAutoRefresh}
                     />
-                    <span className="text-sm text-purple-600">
+                    <span className="text-sm text-gray-700">
                       {autoRefresh ? 'Every 30s' : 'Disabled'}
                     </span>
                   </div>
