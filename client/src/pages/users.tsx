@@ -465,7 +465,7 @@ export default function UsersPage() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="firstName" className="text-blue-700 dark:text-blue-300">First Name</Label>
+                  <Label htmlFor="firstName" className="text-white dark:text-white">First Name</Label>
                   <Input
                     id="firstName"
                     value={editingUser.firstName}
@@ -474,7 +474,7 @@ export default function UsersPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="lastName" className="text-blue-700 dark:text-blue-300">Last Name</Label>
+                  <Label htmlFor="lastName" className="text-white dark:text-white">Last Name</Label>
                   <Input
                     id="lastName"
                     value={editingUser.lastName}
@@ -485,7 +485,7 @@ export default function UsersPage() {
               </div>
 
               <div>
-                <Label htmlFor="email" className="text-blue-700 dark:text-blue-300">Email</Label>
+                <Label htmlFor="email" className="text-white dark:text-white">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -496,7 +496,7 @@ export default function UsersPage() {
               </div>
 
               <div>
-                <Label htmlFor="newPassword" className="text-blue-700 dark:text-blue-300">New Password (optional)</Label>
+                <Label htmlFor="newPassword" className="text-white dark:text-white">New Password (optional)</Label>
                 <Input
                   id="newPassword"
                   type="password"
@@ -508,7 +508,7 @@ export default function UsersPage() {
               </div>
 
               <div>
-                <Label htmlFor="role" className="text-blue-700 dark:text-blue-300">Role</Label>
+                <Label htmlFor="role" className="text-white dark:text-white">Role</Label>
                 <Select 
                   value={editingUser.role} 
                   onValueChange={(value) => setEditingUser({...editingUser, role: value})}
@@ -529,7 +529,7 @@ export default function UsersPage() {
               </div>
 
               <div>
-                <Label htmlFor="status" className="text-blue-700 dark:text-blue-300">Status</Label>
+                <Label htmlFor="status" className="text-white dark:text-white">Status</Label>
                 <Select 
                   value={editingUser.status} 
                   onValueChange={(value) => setEditingUser({...editingUser, status: value})}
@@ -546,7 +546,7 @@ export default function UsersPage() {
               </div>
 
               <div>
-                <Label htmlFor="manager" className="text-blue-700 dark:text-blue-300">Manager</Label>
+                <Label htmlFor="manager" className="text-white dark:text-white">Manager</Label>
                 <Select 
                   value={editingUser.managerId?.toString() || "none"} 
                   onValueChange={(value) => setEditingUser({...editingUser, managerId: value === "none" ? null : parseInt(value)})}
@@ -569,7 +569,7 @@ export default function UsersPage() {
               </div>
 
               <div>
-                <Label htmlFor="comments" className="text-blue-700 dark:text-blue-300">Comments</Label>
+                <Label htmlFor="comments" className="text-white dark:text-white">Comments</Label>
                 <Textarea
                   id="comments"
                   value={editingUser.comments || ''}
