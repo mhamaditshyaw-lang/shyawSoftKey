@@ -372,7 +372,7 @@ export default function ArchivePage() {
             </div>
 
             {/* Date Filter Controls */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-white/50 rounded-lg border border-green-200">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-white rounded-lg border border-purple-200">
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-purple-700 flex items-center gap-2">
                   <Calendar className="w-4 h-4" />

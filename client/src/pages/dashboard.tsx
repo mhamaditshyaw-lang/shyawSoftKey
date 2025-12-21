@@ -443,11 +443,11 @@ export default function DashboardPage() {
         variants={cardVariants}
         className="mb-8"
       >
-        <Card className="border-purple-100 shadow-lg bg-gradient-to-r from-purple-50 to-purple-50">
+        <Card className="border-purple-100 shadow-lg bg-white">
           <CardContent className="p-6">
             <div className="space-y-6">
               {/* Date Filter Controls */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded-lg border border-purple-200">
                 <div className="space-y-2">
                   <Label htmlFor="date-filter" className="text-sm font-medium flex items-center gap-2 text-purple-700">
                     <Calendar className="w-4 h-4" />
