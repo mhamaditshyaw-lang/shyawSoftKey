@@ -372,9 +372,9 @@ export default function ArchivePage() {
             </div>
 
             {/* Date Filter Controls */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg border border-purple-200">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg border border-blue-200">
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-purple-700 flex items-center gap-2">
+                <Label className="text-sm font-medium text-blue-700 flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
                   Date Filter
                 </Label>
@@ -395,7 +395,7 @@ export default function ArchivePage() {
 
               {dateFilter === 'custom' && (
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-purple-700">Select Date</Label>
+                  <Label className="text-sm font-medium text-blue-700">Select Date</Label>
                   <Input
                     type="date"
                     value={customDate}
@@ -408,7 +408,7 @@ export default function ArchivePage() {
               {dateFilter === 'range' && (
                 <>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-purple-700">Start Date</Label>
+                    <Label className="text-sm font-medium text-blue-700">Start Date</Label>
                     <Input
                       type="date"
                       value={startDate}
@@ -417,7 +417,7 @@ export default function ArchivePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-purple-700">End Date</Label>
+                    <Label className="text-sm font-medium text-blue-700">End Date</Label>
                     <Input
                       type="date"
                       value={endDate}
@@ -631,20 +631,20 @@ export default function ArchivePage() {
                       <div className="bg-green-50 p-4 rounded-lg">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
-                            <Label className="text-sm font-medium text-purple-700">Archive Date</Label>
+                            <Label className="text-sm font-medium text-blue-700">Archive Date</Label>
                             <p className="text-sm text-gray-900">{new Date(item.archivedAt).toLocaleDateString()}</p>
                           </div>
                           <div>
-                            <Label className="text-sm font-medium text-purple-700">Archived By</Label>
+                            <Label className="text-sm font-medium text-blue-700">Archived By</Label>
                             <p className="text-sm text-gray-900">{item.archivedBy.firstName} {item.archivedBy.lastName}</p>
                           </div>
                           <div>
-                            <Label className="text-sm font-medium text-purple-700">Item Type</Label>
+                            <Label className="text-sm font-medium text-blue-700">Item Type</Label>
                             <p className="text-sm text-gray-900 capitalize">{item.itemType}</p>
                           </div>
                           {item.reason && (
                             <div className="md:col-span-3">
-                              <Label className="text-sm font-medium text-purple-700">Archive Reason</Label>
+                              <Label className="text-sm font-medium text-blue-700">Archive Reason</Label>
                               <p className="text-sm text-gray-900">{item.reason}</p>
                             </div>
                           )}
@@ -662,7 +662,7 @@ export default function ArchivePage() {
                         <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
                           <div className="space-y-4">
                             <div className="space-y-2">
-                              <Label className="text-sm font-medium text-purple-700" htmlFor={`report-desc-${item.id}`}>{t("reportDescriptionLabel")}</Label>
+                              <Label className="text-sm font-medium text-blue-700" htmlFor={`report-desc-${item.id}`}>{t("reportDescriptionLabel")}</Label>
                               <Textarea
                                 id={`report-desc-${item.id}`}
                                 value={newReports[item.id]?.description || ""}
@@ -674,7 +674,7 @@ export default function ArchivePage() {
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div className="space-y-2">
-                                <Label className="text-sm font-medium text-purple-700" htmlFor={`rating-${item.id}`}>{t("performanceRatingLabel")}</Label>
+                                <Label className="text-sm font-medium text-blue-700" htmlFor={`rating-${item.id}`}>{t("performanceRatingLabel")}</Label>
                                 <Select 
                                   value={newReports[item.id]?.rating || ""} 
                                   onValueChange={(value) => updateNewReport(item.id, "rating", value)}
