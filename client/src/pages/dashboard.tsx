@@ -320,16 +320,16 @@ export default function DashboardPage() {
     >
       {/* Modern Dashboard Header */}
       <motion.div 
-        className="mb-8 relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-50 via-purple-50 to-teal-50 p-8 shadow-lg border border-indigo-100"
+        className="mb-8 relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-50 via-purple-50 to-purple-50 p-8 shadow-lg border border-purple-100"
         variants={welcomeVariants}
         initial="hidden"
         animate="visible"
       >
         {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/5 to-purple-600/5"></div>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-l from-indigo-200/20 to-transparent rounded-full -translate-y-32 translate-x-32"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-r from-teal-200/20 to-transparent rounded-full translate-y-24 -translate-x-24"></div>
-        <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-teal-300/10 rounded-full"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/5 to-purple-600/5"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-l from-purple-200/20 to-transparent rounded-full -translate-y-32 translate-x-32"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-r from-purple-200/20 to-transparent rounded-full translate-y-24 -translate-x-24"></div>
+        <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-purple-300/10 rounded-full"></div>
 
         <div className="relative z-10">
           <motion.div
@@ -342,11 +342,11 @@ export default function DashboardPage() {
               animate={{ rotate: [0, 10, -10, 0] }}
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
             >
-              <Sparkles className="w-8 h-8 text-indigo-500" />
+              <Sparkles className="w-8 h-8 text-purple-500" />
             </motion.div>
             <div>
               <div className="flex items-center space-x-3">
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-600 bg-clip-text text-transparent">
                   {getGreeting()}, {user?.firstName || user?.username}!
                 </h1>
                 <HelpTooltip
@@ -366,7 +366,7 @@ export default function DashboardPage() {
           </motion.div>
 
           <motion.p 
-            className="text-indigo-700 text-lg mb-6"
+            className="text-purple-700 text-lg mb-6"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
@@ -406,12 +406,12 @@ export default function DashboardPage() {
 
             {dateFilter === "today" && (
               <motion.div 
-                className="flex items-center space-x-2 bg-indigo-100/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm border border-indigo-200"
+                className="flex items-center space-x-2 bg-purple-100/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm border border-purple-200"
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <Calendar className="w-4 h-4 text-indigo-600" />
-                <span className="text-sm font-medium text-indigo-700">
+                <Calendar className="w-4 h-4 text-purple-600" />
+                <span className="text-sm font-medium text-purple-700">
                   Today's Data Only
                 </span>
               </motion.div>
@@ -443,32 +443,32 @@ export default function DashboardPage() {
         variants={cardVariants}
         className="mb-8"
       >
-        <Card className="border-green-100 shadow-lg bg-gradient-to-r from-green-50 to-emerald-50">
+        <Card className="border-purple-100 shadow-lg bg-gradient-to-r from-purple-50 to-purple-50">
           <CardContent className="p-6">
             <div className="space-y-6">
               {/* Search Bar */}
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
                   <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-green-500" />
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-purple-500" />
                     <Input
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 border-green-200 focus:border-green-500 focus:ring-green-500"
+                      className="pl-10 border-purple-200 focus:border-purple-500 focus:ring-purple-500"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Date Filter Controls */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white/50 p-4 rounded-lg border border-green-200">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white/50 p-4 rounded-lg border border-purple-200">
                 <div className="space-y-2">
-                  <Label htmlFor="date-filter" className="text-sm font-medium flex items-center gap-2 text-green-700">
+                  <Label htmlFor="date-filter" className="text-sm font-medium flex items-center gap-2 text-purple-700">
                     <Calendar className="w-4 h-4" />
                     Date Filter
                   </Label>
                   <Select value={dateFilter} onValueChange={setDateFilter}>
-                    <SelectTrigger id="date-filter" className="border-green-200 focus:border-green-500">
+                    <SelectTrigger id="date-filter" className="border-purple-200 focus:border-purple-500">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -488,7 +488,7 @@ export default function DashboardPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <Label htmlFor="custom-date" className="text-sm font-medium text-green-700">
+                    <Label htmlFor="custom-date" className="text-sm font-medium text-purple-700">
                       Select Date
                     </Label>
                     <Input
@@ -496,14 +496,14 @@ export default function DashboardPage() {
                       type="date"
                       value={customDate}
                       onChange={(e) => setCustomDate(e.target.value)}
-                      className="border-green-200 focus:border-green-500 focus:ring-green-500"
+                      className="border-purple-200 focus:border-purple-500 focus:ring-purple-500"
                     />
                   </motion.div>
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="auto-refresh" className="text-sm font-medium flex items-center gap-2 text-green-700">
-                    <RefreshCw className={`w-4 h-4 ${autoRefresh ? 'animate-spin text-green-600' : 'text-gray-400'}`} />
+                  <Label htmlFor="auto-refresh" className="text-sm font-medium flex items-center gap-2 text-purple-700">
+                    <RefreshCw className={`w-4 h-4 ${autoRefresh ? 'animate-spin text-purple-600' : 'text-gray-400'}`} />
                     Auto Refresh
                   </Label>
                   <div className="flex items-center space-x-2">
@@ -512,7 +512,7 @@ export default function DashboardPage() {
                       checked={autoRefresh}
                       onCheckedChange={setAutoRefresh}
                     />
-                    <span className="text-sm text-green-600">
+                    <span className="text-sm text-purple-600">
                       {autoRefresh ? 'Every 30s' : 'Disabled'}
                     </span>
                   </div>
@@ -529,30 +529,30 @@ export default function DashboardPage() {
           variants={containerVariants}
         >
           <motion.div variants={itemVariants}>
-            <Card className="hover:shadow-xl transition-all duration-300 border-green-100 bg-gradient-to-br from-green-50 to-emerald-50">
+            <Card className="hover:shadow-xl transition-all duration-300 border-purple-100 bg-gradient-to-br from-purple-50 to-purple-50">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-green-600">Total Employees</p>
+                    <p className="text-sm font-medium text-purple-600">Total Employees</p>
                     <motion.p 
-                      className="text-3xl font-bold text-green-800 mt-2"
+                      className="text-3xl font-bold text-purple-800 mt-2"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
                     >
                       {stats.users.totalUsers}
                     </motion.p>
-                    <p className="text-sm text-green-600 mt-2 flex items-center">
+                    <p className="text-sm text-purple-600 mt-2 flex items-center">
                       <ArrowUp className="w-4 h-4 mr-1" />
                       {stats.users.activeUsers} active
                     </p>
                   </div>
                   <motion.div 
-                    className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center"
+                    className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
-                    <Users className="w-6 h-6 text-green-600" />
+                    <Users className="w-6 h-6 text-purple-600" />
                   </motion.div>
                 </div>
               </CardContent>
@@ -560,30 +560,30 @@ export default function DashboardPage() {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="hover:shadow-xl transition-all duration-300 border-emerald-100 bg-gradient-to-br from-emerald-50 to-teal-50">
+            <Card className="hover:shadow-xl transition-all duration-300 border-purple-100 bg-gradient-to-br from-purple-50 to-purple-50">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-emerald-600">Pending Reviews</p>
+                    <p className="text-sm font-medium text-purple-600">Pending Reviews</p>
                     <motion.p 
-                      className="text-3xl font-bold text-emerald-800 mt-2"
+                      className="text-3xl font-bold text-purple-800 mt-2"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
                     >
                       {stats.interviews.pendingRequests}
                     </motion.p>
-                    <p className="text-sm text-emerald-600 mt-2 flex items-center">
+                    <p className="text-sm text-purple-600 mt-2 flex items-center">
                       <Clock className="w-4 h-4 mr-1" />
                       Needs attention
                     </p>
                   </div>
                   <motion.div 
-                    className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center"
+                    className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center"
                     whileHover={{ scale: 1.1, rotate: -5 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
-                    <Clock className="w-6 h-6 text-emerald-600" />
+                    <Clock className="w-6 h-6 text-purple-600" />
                   </motion.div>
                 </div>
               </CardContent>
@@ -591,30 +591,30 @@ export default function DashboardPage() {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="hover:shadow-xl transition-all duration-300 border-teal-100 bg-gradient-to-br from-teal-50 to-cyan-50">
+            <Card className="hover:shadow-xl transition-all duration-300 border-purple-100 bg-gradient-to-br from-purple-50 to-purple-50">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-teal-600">Completed Tasks</p>
+                    <p className="text-sm font-medium text-purple-600">Completed Tasks</p>
                     <motion.p 
-                      className="text-3xl font-bold text-teal-800 mt-2"
+                      className="text-3xl font-bold text-purple-800 mt-2"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.7, type: "spring", stiffness: 200 }}
                     >
                       {stats.todos.completedTodos}
                     </motion.p>
-                    <p className="text-sm text-teal-600 mt-2 flex items-center">
+                    <p className="text-sm text-purple-600 mt-2 flex items-center">
                       <CheckCircle className="w-4 h-4 mr-1" />
                       This period
                     </p>
                   </div>
                   <motion.div 
-                    className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center"
+                    className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center"
                     whileHover={{ scale: 1.1, rotate: 10 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
-                    <CheckCircle className="w-6 h-6 text-teal-600" />
+                    <CheckCircle className="w-6 h-6 text-purple-600" />
                   </motion.div>
                 </div>
               </CardContent>
@@ -622,30 +622,30 @@ export default function DashboardPage() {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="hover:shadow-xl transition-all duration-300 border-cyan-100 bg-gradient-to-br from-cyan-50 to-sky-50">
+            <Card className="hover:shadow-xl transition-all duration-300 border-purple-100 bg-gradient-to-br from-purple-50 to-purple-50">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-cyan-600">System Health</p>
+                    <p className="text-sm font-medium text-purple-600">System Health</p>
                     <motion.p 
-                      className="text-3xl font-bold text-cyan-800 mt-2"
+                      className="text-3xl font-bold text-purple-800 mt-2"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
                     >
                       98%
                     </motion.p>
-                    <p className="text-sm text-cyan-600 mt-2 flex items-center">
+                    <p className="text-sm text-purple-600 mt-2 flex items-center">
                       <ArrowUp className="w-4 h-4 mr-1" />
                       All systems operational
                     </p>
                   </div>
                   <motion.div 
-                    className="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center"
+                    className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center"
                     whileHover={{ scale: 1.1, rotate: -10 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
-                    <Server className="w-6 h-6 text-cyan-600" />
+                    <Server className="w-6 h-6 text-purple-600" />
                   </motion.div>
                 </div>
               </CardContent>
@@ -689,7 +689,7 @@ export default function DashboardPage() {
                     whileHover={{ x: 5 }}
                   >
                     <motion.div 
-                      className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0"
+                      className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0"
                       whileHover={{ scale: 1.1 }}
                     >
                       <Calendar className="w-4 h-4 text-primary" />
@@ -719,10 +719,10 @@ export default function DashboardPage() {
                     whileHover={{ x: 5 }}
                   >
                     <motion.div 
-                      className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0"
+                      className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0"
                       whileHover={{ scale: 1.1 }}
                     >
-                      <CheckCircle className="w-4 h-4 text-green-600" />
+                      <CheckCircle className="w-4 h-4 text-purple-600" />
                     </motion.div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-gray-900">Task list updated: {list.title}</p>
@@ -742,14 +742,14 @@ export default function DashboardPage() {
 
         {/* Modern Quick Actions */}
         <motion.div variants={itemVariants}>
-          <Card className="hover:shadow-xl transition-all duration-300 border-green-100 bg-gradient-to-br from-green-50 to-emerald-50">
+          <Card className="hover:shadow-xl transition-all duration-300 border-purple-100 bg-gradient-to-br from-purple-50 to-purple-50">
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2 text-green-800">
+              <CardTitle className="flex items-center space-x-2 text-purple-800">
                 <motion.div
                   animate={{ scale: [1, 1.1, 1] }}
                   transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
                 >
-                  <Sparkles className="w-5 h-5 text-green-600" />
+                  <Sparkles className="w-5 h-5 text-purple-600" />
                 </motion.div>
                 <span>{t("quickActions")}</span>
               </CardTitle>
@@ -767,7 +767,7 @@ export default function DashboardPage() {
                   >
                     <Button
                       variant="outline"
-                      className="p-6 h-auto flex-col space-y-2 w-full border-2 border-green-200 hover:border-green-400 hover:bg-green-100 bg-white/80 text-green-700 hover:text-green-800 transition-all duration-300 shadow-sm hover:shadow-md"
+                      className="p-6 h-auto flex-col space-y-2 w-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 bg-white/80 text-purple-700 hover:text-purple-800 transition-all duration-300 shadow-sm hover:shadow-md"
                       onClick={() => setLocation("/users")}
                     >
                       <motion.div variants={iconVariants}>
@@ -788,7 +788,7 @@ export default function DashboardPage() {
                 >
                   <Button
                     variant="outline"
-                    className="p-6 h-auto flex-col space-y-2 w-full border-2 border-emerald-200 hover:border-emerald-400 hover:bg-emerald-100 bg-white/80 text-emerald-700 hover:text-emerald-800 transition-all duration-300 shadow-sm hover:shadow-md"
+                    className="p-6 h-auto flex-col space-y-2 w-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 bg-white/80 text-purple-700 hover:text-purple-800 transition-all duration-300 shadow-sm hover:shadow-md"
                     onClick={() => setLocation("/interviews")}
                   >
                     <motion.div variants={iconVariants}>
@@ -810,7 +810,7 @@ export default function DashboardPage() {
                 >
                   <Button
                     variant="outline"
-                    className="p-6 h-auto flex-col space-y-2 w-full border-2 border-teal-200 hover:border-teal-400 hover:bg-teal-100 bg-white/80 text-teal-700 hover:text-teal-800 transition-all duration-300 shadow-sm hover:shadow-md"
+                    className="p-6 h-auto flex-col space-y-2 w-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 bg-white/80 text-purple-700 hover:text-purple-800 transition-all duration-300 shadow-sm hover:shadow-md"
                     onClick={() => setLocation("/todos")}
                   >
                     <motion.div variants={iconVariants}>
@@ -831,7 +831,7 @@ export default function DashboardPage() {
                   >
                     <Button
                       variant="outline"
-                      className="p-6 h-auto flex-col space-y-2 w-full border-2 border-cyan-200 hover:border-cyan-400 hover:bg-cyan-100 bg-white/80 text-cyan-700 hover:text-cyan-800 transition-all duration-300 shadow-sm hover:shadow-md"
+                      className="p-6 h-auto flex-col space-y-2 w-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 bg-white/80 text-purple-700 hover:text-purple-800 transition-all duration-300 shadow-sm hover:shadow-md"
                       onClick={() => setLocation("/reports")}
                     >
                       <motion.div variants={iconVariants}>
