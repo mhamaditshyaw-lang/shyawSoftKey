@@ -98,11 +98,11 @@ export default function ManagerTodosPage() {
     );
   }
 
-  const shouldShowPasswordDialog = showPasswordDialog && user?.role !== "admin";
+  const shouldShowPasswordDialog = false;
 
-  // Auto-verify if admin
+  // Auto-verify if manager or admin
   useEffect(() => {
-    if (user?.role === "admin") {
+    if (user?.role === "admin" || user?.role === "manager") {
       setIsPasswordVerified(true);
       setShowPasswordDialog(false);
     }
