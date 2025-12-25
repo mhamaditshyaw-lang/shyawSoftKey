@@ -6,6 +6,11 @@ This is a full-stack web application for internal employee management with role-
 
 ## Recent Changes (December 2025)
 
+- **Auth Fixes**:
+  - ✅ Created/Restored 'admin' user with username 'admin' and password 'admin123'
+  - ✅ Verified 'admin' user has 'admin' role and 'active' status
+  - ✅ Ensured proper password hashing using bcrypt (cost 12)
+
 **Task Proof System Implementation** (Latest - COMPLETE):
   - ✅ Created `task_proof` database table with full audit trail
   - ✅ Implemented 4 storage methods: `createTaskProof`, `getTaskProofs`, `deleteTaskProof`, `verifyTaskProof`
