@@ -52,15 +52,15 @@ export default function AppBar({}: AppBarProps) {
       color: "from-green-500 to-green-600"
     },
     { 
-      title: "Employee Reviews", 
-      subtitle: "& Evaluations",
-      icon: Users, 
-      href: "/interviews",
+      title: "Task Management", 
+      subtitle: "Employee Tasks",
+      icon: CheckSquare, 
+      href: "/todos",
       color: "from-blue-500 to-blue-600"
     },
     { 
       title: "Employee Affairs", 
-      subtitle: "Tasks",
+      subtitle: "Manager Tasks",
       icon: Briefcase, 
       href: "/manager-todos",
       color: "from-purple-500 to-purple-600"
@@ -132,6 +132,21 @@ export default function AppBar({}: AppBarProps) {
 
         {/* Right Section - Notifications & User Menu */}
         <div className="flex items-center space-x-3">
+          {/* Manager Tasks Quick Access */}
+          {(user?.role === 'admin' || user?.role === 'manager') && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              asChild
+              className="hover:bg-purple-50 dark:hover:bg-purple-900/50 transition-all duration-300 hover:scale-110 rounded-xl px-2"
+              title="Manager Tasks"
+            >
+              <Link href="/manager-todos">
+                <Briefcase className="h-5 w-5 text-purple-600" />
+              </Link>
+            </Button>
+          )}
+
           {/* Notifications */}
           <DropdownMenu open={showNotifications} onOpenChange={setShowNotifications}>
             <DropdownMenuTrigger asChild>
