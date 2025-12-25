@@ -664,20 +664,6 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                {/* Meeting Notes Section */}
-                <div className="bg-purple-500/30 p-4 rounded-lg border border-purple-400/50">
-                  <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
-                    <FileText className="w-4 h-4" />
-                    Meeting Notes
-                  </h4>
-                  <p className="text-purple-100 text-sm italic">
-                    "Discussed Q1 roadmap and departmental resource allocation. Team to follow up on hiring plan by Friday."
-                  </p>
-                  <div className="mt-2 text-xs text-purple-200">
-                    Last update: Today, 10:30 AM
-                  </div>
-                </div>
-
                 <div className="space-y-4">
                   {recentTodos?.todoLists?.slice(0, 3).map((list: any) => (
                     <div key={list.id} className="flex items-center gap-3">
