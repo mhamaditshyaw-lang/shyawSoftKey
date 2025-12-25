@@ -51,12 +51,12 @@ export default function ManagerTodosPage() {
     }
   }, [user, toast, t]);
 
-  // Fetch todos data
+  // Fetch manager-specific todos data (only for this manager's team)
   const { data: todosData, isLoading } = useQuery({
-    queryKey: ["/api/todos"],
+    queryKey: ["/api/manager-todos"],
     queryFn: async () => {
-      const response = await authenticatedRequest("GET", "/api/todos");
-      if (!response.ok) throw new Error("Failed to fetch todos");
+      const response = await authenticatedRequest("GET", "/api/manager-todos");
+      if (!response.ok) throw new Error("Failed to fetch manager todos");
       return response.json();
     },
     enabled: isPasswordVerified,

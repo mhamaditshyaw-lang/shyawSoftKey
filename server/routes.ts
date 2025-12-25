@@ -632,6 +632,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Manager-specific todos endpoint - only shows todos for manager's team
+  app.get("/api/manager-todos", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      if (req.user?.role !== 'manager') {
+        return res.status(403).json({ message: 'Only managers can access this endpoint' });
+      }
+
+      // Get staff members where this manager is their manager
+      const staff = await storage.getStaffForManager(req.user.id);
+      const staffIds = staff.map(s => s.id);
+
+      // Get todos assigned to or created by the manager's staff
+      const allTodos = await storage.getTodoLists();
+      const filteredTodos = allTodos.filter(todo => 
+        staffIds.includes(todo.assignedToId || 0) || 
+        staffIds.includes(todo.createdById)
+      );
+
+      const sanitizedTodos = sanitizeTodoLists(filteredTodos);
+      res.json({ todoLists: sanitizedTodos });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.post("/api/todos", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
     try {
       const todoData = insertTodoListSchema.parse({
