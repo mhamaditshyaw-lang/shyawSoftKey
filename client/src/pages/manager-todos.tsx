@@ -64,7 +64,11 @@ export default function ManagerTodosPage() {
   // Create todo list mutation
   const createTodoListMutation = useMutation({
     mutationFn: async (data: { title: string; description: string; priority: string }) => {
-      const response = await authenticatedRequest("POST", "/api/todos", data);
+      // Prefix title to identify it as a manager task
+      const response = await authenticatedRequest("POST", "/api/todos", {
+        ...data,
+        title: `[MANAGER] ${data.title}`
+      });
       if (!response.ok) throw new Error("Failed to create task list");
       return response.json();
     },
@@ -76,7 +80,7 @@ export default function ManagerTodosPage() {
       setNewListPriority("medium");
       toast({
         title: "Success",
-        description: "Task list created successfully!",
+        description: "Manager task list created successfully!",
       });
     },
     onError: (error: any) => {
@@ -145,8 +149,9 @@ export default function ManagerTodosPage() {
   };
 
   const filteredTodoLists = (todosData?.todoLists || []).filter((list: TodoList) => {
+    const listTitle = list.title.replace("[MANAGER] ", "");
     const matchesSearch = searchTerm === "" || 
-      list.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      listTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (list.createdBy?.firstName + " " + list.createdBy?.lastName).toLowerCase().includes(searchTerm.toLowerCase());
     const matchesPriority = priorityFilter === "all" || list.priority === priorityFilter;
     let matchesStatus = true;
@@ -302,6 +307,8 @@ export default function ManagerTodosPage() {
             {filteredTodoLists.map((list: TodoList, index: number) => {
               const completionPercentage = getCompletionPercentage(list.items);
               const isCompleted = completionPercentage === 100;
+              const displayTitle = list.title.replace("[MANAGER] ", "");
+              
               return (
                 <motion.div
                   key={list.id}
@@ -318,7 +325,7 @@ export default function ManagerTodosPage() {
                             <span className="p-1.5 bg-green-100 dark:bg-green-900/30 rounded-lg">
                               <Award className="w-5 h-5 text-green-600" />
                             </span>
-                            {list.title}
+                            {displayTitle}
                             {isToday(list.createdAt) && (
                               <Badge className="bg-indigo-100 text-indigo-700 border-indigo-200">Today</Badge>
                             )}

@@ -641,8 +641,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Filter todos by accessible users in same department
       const todoLists = await storage.getTodoLists(req.accessibleUserIds);
-      // Sanitize user data to remove passwords and other sensitive information
-      const sanitizedTodoLists = sanitizeTodoLists(todoLists);
+      // EXCLUDE manager tasks from daily tasks view for regular users
+      const sanitizedTodoLists = sanitizeTodoLists(todoLists.filter(list => !list.title.startsWith("[MANAGER] ")));
       res.json({ todoLists: sanitizedTodoLists });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -661,20 +661,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       let filteredTodos;
       if (isAdmin) {
-        // Admins can see all todos
-        filteredTodos = await storage.getTodoLists();
+        // Admins can see all manager todos
+        const allTodos = await storage.getTodoLists();
+        filteredTodos = allTodos.filter(todo => todo.title.startsWith("[MANAGER] "));
       } else {
-        // Managers see their own todos PLUS their staff's todos
+        // Managers see their own manager todos PLUS their staff's manager todos
         const staff = await storage.getStaffForManager(req.user!.id);
         const staffIds = staff.map(s => s.id);
         const managerId = req.user!.id;
 
         const allTodos = await storage.getTodoLists();
         filteredTodos = allTodos.filter(todo => 
-          todo.createdById === managerId ||
-          todo.assignedToId === managerId ||
-          staffIds.includes(todo.assignedToId || 0) || 
-          staffIds.includes(todo.createdById)
+          todo.title.startsWith("[MANAGER] ") && (
+            todo.createdById === managerId ||
+            todo.assignedToId === managerId ||
+            staffIds.includes(todo.assignedToId || 0) || 
+            staffIds.includes(todo.createdById)
+          )
         );
       }
 
