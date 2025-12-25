@@ -652,24 +652,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Manager-specific todos endpoint - only shows todos for manager's team
   app.get("/api/manager-todos", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      if (req.user?.role !== 'manager') {
-        return res.status(403).json({ message: 'Only managers can access this endpoint' });
+      const isAdmin = req.user?.role === 'admin';
+      const isManager = req.user?.role === 'manager';
+
+      if (!isAdmin && !isManager) {
+        return res.status(403).json({ message: 'Only managers and admins can access this endpoint' });
       }
 
-      // Get staff members where this manager is their manager
-      const staff = await storage.getStaffForManager(req.user.id);
-      const staffIds = staff.map(s => s.id);
+      let filteredTodos;
+      if (isAdmin) {
+        // Admins can see all todos
+        filteredTodos = await storage.getTodoLists();
+      } else {
+        // Get staff members where this manager is their manager
+        const staff = await storage.getStaffForManager(req.user!.id);
+        const staffIds = staff.map(s => s.id);
 
-      // Get todos assigned to or created by the manager's staff
-      const allTodos = await storage.getTodoLists();
-      const filteredTodos = allTodos.filter(todo => 
-        staffIds.includes(todo.assignedToId || 0) || 
-        staffIds.includes(todo.createdById)
-      );
+        // Get todos assigned to or created by the manager's staff
+        const allTodos = await storage.getTodoLists();
+        filteredTodos = allTodos.filter(todo => 
+          staffIds.includes(todo.assignedToId || 0) || 
+          staffIds.includes(todo.createdById)
+        );
+      }
 
-      const sanitizedTodos = sanitizeTodoLists(filteredTodos);
+      const sanitizedTodos = await Promise.all(filteredTodos.map(async (list) => {
+        const items = await storage.getTodoItems(list.id);
+        const creator = await storage.getUser(list.createdById);
+        return {
+          ...list,
+          items,
+          createdBy: toPublicUser(creator)
+        };
+      }));
+
       res.json({ todoLists: sanitizedTodos });
     } catch (error: any) {
+      console.error("Error getting manager todos:", error);
       res.status(500).json({ message: error.message });
     }
   });

@@ -40,18 +40,18 @@ export default function ManagerTodosPage() {
   const [password, setPassword] = useState("");
   const [showPasswordDialog, setShowPasswordDialog] = useState(true);
 
-  // Check if user is manager
+  // Check if user is manager or admin
   useEffect(() => {
-    if (user?.role !== "manager") {
+    if (user?.role !== "manager" && user?.role !== "admin") {
       toast({
         title: t("error") || "Error",
-        description: "Only managers can access this page",
+        description: "Only managers and admins can access this page",
         variant: "destructive",
       });
     }
   }, [user, toast, t]);
 
-  // Fetch manager-specific todos data (only for this manager's team)
+  // Fetch manager-specific todos data (only for this manager's team or all for admin)
   const { data: todosData, isLoading } = useQuery({
     queryKey: ["/api/manager-todos"],
     queryFn: async () => {
@@ -59,7 +59,7 @@ export default function ManagerTodosPage() {
       if (!response.ok) throw new Error("Failed to fetch manager todos");
       return response.json();
     },
-    enabled: isPasswordVerified,
+    enabled: isPasswordVerified || user?.role === "admin",
   });
 
   const handlePasswordSubmit = () => {
@@ -80,7 +80,7 @@ export default function ManagerTodosPage() {
     }
   };
 
-  if (user?.role !== "manager") {
+  if (user?.role !== "manager" && user?.role !== "admin") {
     return (
       <DashboardLayout>
         <div className="p-8 flex items-center justify-center">
@@ -88,7 +88,7 @@ export default function ManagerTodosPage() {
             <CardContent className="pt-6">
               <div className="flex items-center gap-3 text-red-700">
                 <AlertCircle className="w-5 h-5" />
-                <span>Only managers can access this page</span>
+                <span>Only managers and admins can access this page</span>
               </div>
             </CardContent>
           </Card>
@@ -97,21 +97,31 @@ export default function ManagerTodosPage() {
     );
   }
 
+  const shouldShowPasswordDialog = showPasswordDialog && user?.role !== "admin";
+
   return (
     <DashboardLayout>
       <div className="space-y-6 p-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-              <Lock className="w-8 h-8 text-amber-600" />
+              {user?.role === "admin" ? (
+                <Sparkles className="w-8 h-8 text-dashboard-primary" />
+              ) : (
+                <Lock className="w-8 h-8 text-amber-600" />
+              )}
               {t("managerTodos") || "Manager Todo List"}
             </h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">Password-protected todo management</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">
+              {user?.role === "admin" 
+                ? "Admin overview of manager todo lists" 
+                : "Password-protected todo management"}
+            </p>
           </div>
         </div>
 
         {/* Password Dialog */}
-        <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
+        <Dialog open={shouldShowPasswordDialog} onOpenChange={setShowPasswordDialog}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
@@ -146,7 +156,7 @@ export default function ManagerTodosPage() {
         </Dialog>
 
         {/* Todo Lists */}
-        {isPasswordVerified && (
+        {(isPasswordVerified || user?.role === "admin") && (
           <>
             {isLoading ? (
               <Card>
