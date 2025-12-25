@@ -29,7 +29,8 @@ interface TodoList {
   createdBy: any;
 }
 
-const MANAGER_PASSWORD = "manager123"; // Change this to a secure password
+// Manager password from environment variable or default
+const MANAGER_PASSWORD = import.meta.env.VITE_MANAGER_PASSWORD || "manager123";
 
 export default function ManagerTodosPage() {
   const { user } = useAuth();

@@ -54,3 +54,8 @@ localPort = 5000
 externalPort = 80
 
 [agent]
+
+[userenv]
+
+[userenv.shared]
+VITE_MANAGER_PASSWORD = "manager123"
