@@ -114,6 +114,14 @@ export default function NavigationBar() {
       color: "from-green-500 to-green-600"
     },
     {
+      id: "manager-todos",
+      title: "Manage Tasks",
+      subtitle: "Overview",
+      icon: CheckSquare,
+      href: "/manager-todos",
+      color: "from-indigo-500 to-indigo-600"
+    },
+    {
       id: "todos",
       title: "Daily Tasks",
       subtitle: "Management",

@@ -20,7 +20,6 @@ const resources = {
 
       // Menu partitions
       managerTodos: "Manager Tasks",
-      menu_manageTasks: "Manage Tasks",
       menu_taskManagement: "Task Management",
       menu_manageTasks: "Manage Tasks",
       menu_dailyTasks: "Daily Tasks",

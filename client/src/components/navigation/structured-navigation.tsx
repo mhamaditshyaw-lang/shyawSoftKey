@@ -48,6 +48,11 @@ const NAVIGATION: Navigation = [
     icon: <Home className="w-5 h-5" />,
   },
   {
+    segment: 'manager-todos',
+    title: 'Manage Tasks',
+    icon: <CheckSquare className="w-5 h-5" />,
+  },
+  {
     segment: 'todos',
     title: 'Task Management',
     icon: <ClipboardList className="w-5 h-5" />,
