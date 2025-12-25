@@ -14,8 +14,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
-import { AlertCircle, CheckCircle2, Circle, Sparkles, Eye, Search, Filter, Plus, RefreshCw } from "lucide-react";
-import { motion } from "framer-motion";
+import { AlertCircle, CheckCircle2, Circle, Sparkles, Eye, Search, Filter, Plus, RefreshCw, Clock, User, Award, Trash2, Edit, X, Bell } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface TodoItem {
   id: number;
@@ -23,6 +23,7 @@ interface TodoItem {
   isCompleted: boolean;
   completedByNote?: string;
   priority: "low" | "medium" | "high";
+  createdAt: string;
 }
 
 interface TodoList {
@@ -47,6 +48,7 @@ export default function ManagerTodosPage() {
   const [newListTitle, setNewListTitle] = useState("");
   const [newListDescription, setNewListDescription] = useState("");
   const [newListPriority, setNewListPriority] = useState<"low" | "medium" | "high">("medium");
+  const [newItemTexts, setNewItemTexts] = useState<Record<number, string>>({});
 
   // Fetch manager-specific todos data
   const { data: todosData, isLoading, refetch } = useQuery({
@@ -86,6 +88,32 @@ export default function ManagerTodosPage() {
     },
   });
 
+  const addTodoItemMutation = useMutation({
+    mutationFn: async (data: { todoListId: number; text: string; priority: string }) => {
+      const response = await authenticatedRequest("POST", "/api/todos/items", data);
+      if (!response.ok) throw new Error("Failed to add task");
+      return response.json();
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/manager-todos"] });
+      setNewItemTexts(prev => ({ ...prev, [variables.todoListId]: "" }));
+      toast({
+        title: "Success",
+        description: "Task added successfully!",
+      });
+    },
+  });
+
+  const toggleTodoItemMutation = useMutation({
+    mutationFn: async (data: { itemId: number; isCompleted: boolean }) => {
+      const response = await authenticatedRequest("PATCH", `/api/todos/items/${data.itemId}`, { isCompleted: data.isCompleted });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/manager-todos"] });
+    },
+  });
+
   const handleCreateTodoList = () => {
     if (!newListTitle.trim()) return;
     createTodoListMutation.mutate({
@@ -95,21 +123,38 @@ export default function ManagerTodosPage() {
     });
   };
 
-  // Filter logic
+  const getCompletionPercentage = (items: TodoItem[]) => {
+    if (items.length === 0) return 0;
+    const completed = items.filter(item => item.isCompleted).length;
+    return Math.round((completed / items.length) * 100);
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "high": return "text-red-600 bg-red-100 border-red-200";
+      case "medium": return "text-yellow-600 bg-yellow-100 border-yellow-200";
+      case "low": return "text-green-600 bg-green-100 border-green-200";
+      default: return "text-gray-600 bg-gray-100 border-gray-200";
+    }
+  };
+
+  const isToday = (date: string): boolean => {
+    const today = new Date();
+    const entryDate = new Date(date);
+    return entryDate.toDateString() === today.toDateString();
+  };
+
   const filteredTodoLists = (todosData?.todoLists || []).filter((list: TodoList) => {
     const matchesSearch = searchTerm === "" || 
       list.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (list.createdBy?.firstName + " " + list.createdBy?.lastName).toLowerCase().includes(searchTerm.toLowerCase());
-    
     const matchesPriority = priorityFilter === "all" || list.priority === priorityFilter;
-    
     let matchesStatus = true;
     if (statusFilter === "completed") {
       matchesStatus = list.items.length > 0 && list.items.every(item => item.isCompleted);
     } else if (statusFilter === "pending") {
       matchesStatus = list.items.some(item => !item.isCompleted);
     }
-
     return matchesSearch && matchesPriority && matchesStatus;
   });
 
@@ -247,80 +292,143 @@ export default function ManagerTodosPage() {
           </DialogContent>
         </Dialog>
 
-        {/* Todo Lists Display */}
+        {/* Todo Lists Grid - Matching screenshot look */}
         {isLoading ? (
           <div className="flex justify-center p-12">
             <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-300 border-t-blue-600" />
           </div>
         ) : filteredTodoLists.length > 0 ? (
-          <div className="grid gap-6">
-            {filteredTodoLists.map((list: TodoList) => (
-              <motion.div
-                key={list.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                <Card className="bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-900 overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-                  <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/40 border-b border-blue-100 dark:border-blue-800/50">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-2xl text-gray-900 dark:text-white">
-                          {list.title}
-                        </CardTitle>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                          by {list.createdBy?.firstName} {list.createdBy?.lastName}
-                          {list.assignedTo && ` • Assigned to ${list.assignedTo.firstName} ${list.assignedTo.lastName}`}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant={list.priority === "high" ? "destructive" : "secondary"}>
-                          {list.priority.toUpperCase()}
-                        </Badge>
-                        <Badge variant="outline">{list.items.length} tasks</Badge>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pt-6">
-                    {list.description && (
-                      <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm bg-gray-50 dark:bg-gray-700/30 p-3 rounded-lg border border-gray-100 dark:border-gray-700">
-                        {list.description}
-                      </p>
-                    )}
-                    <div className="space-y-3">
-                      {list.items.map((item: TodoItem) => (
-                        <div
-                          key={item.id}
-                          className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
-                            item.isCompleted
-                              ? "bg-green-50/50 dark:bg-green-900/10 border-green-200 dark:border-green-900/30"
-                              : "bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600"
-                          }`}
-                        >
-                          {item.isCompleted ? (
-                            <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
-                          ) : (
-                            <Circle className="w-5 h-5 text-gray-400 shrink-0" />
-                          )}
-                          <div className="flex-1">
-                            <p className={item.isCompleted ? "text-green-700 dark:text-green-300 line-through opacity-70" : "text-gray-900 dark:text-white font-medium"}>
-                              {item.title}
-                            </p>
-                          </div>
-                          {item.isCompleted && item.completedByNote && (
-                            <div className="flex items-center gap-1.5 px-2 py-1 bg-green-100 dark:bg-green-900/30 rounded text-xs text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800">
-                              <Eye className="w-3 h-3" />
-                              <span className="max-w-[150px] truncate" title={item.completedByNote}>
-                                {item.completedByNote}
-                              </span>
-                            </div>
-                          )}
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredTodoLists.map((list: TodoList, index: number) => {
+              const completionPercentage = getCompletionPercentage(list.items);
+              const isCompleted = completionPercentage === 100;
+              return (
+                <motion.div
+                  key={list.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileHover={{ y: -5 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                >
+                  <Card className={`hover:shadow-lg transition-all duration-300 border-2 ${isCompleted ? 'ring-2 ring-green-200 bg-green-50/30 border-green-200' : 'border-blue-100 dark:border-blue-900/30'}`}>
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                            <span className="p-1.5 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                              <Award className="w-5 h-5 text-green-600" />
+                            </span>
+                            {list.title}
+                            {isToday(list.createdAt) && (
+                              <Badge className="bg-indigo-100 text-indigo-700 border-indigo-200">Today</Badge>
+                            )}
+                          </CardTitle>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{list.description}</p>
                         </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                        <Badge className={`${getPriorityColor(list.priority)} text-xs px-3 py-1`}>
+                          {list.priority}
+                        </Badge>
+                      </div>
+
+                      {/* Progress Bar */}
+                      <div className="mt-4">
+                        <div className="flex items-center justify-between text-xs text-gray-500 mb-1.5 font-medium">
+                          <span>Progress</span>
+                          <span>{completionPercentage}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
+                          <motion.div
+                            className={`h-full rounded-full ${isCompleted ? 'bg-green-500' : 'bg-green-500'}`}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${completionPercentage}%` }}
+                            transition={{ duration: 0.8 }}
+                          />
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="space-y-3">
+                      {/* Todo Items */}
+                      <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+                        {list.items.map((item: TodoItem) => (
+                          <div
+                            key={item.id}
+                            className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
+                              item.isCompleted 
+                                ? 'bg-white dark:bg-gray-800 border-green-200 dark:border-green-900/30 shadow-sm' 
+                                : 'bg-gray-50 dark:bg-gray-700/30 border-gray-200 dark:border-gray-600'
+                            }`}
+                          >
+                            <button
+                              onClick={() => toggleTodoItemMutation.mutate({ itemId: item.id, isCompleted: !item.isCompleted })}
+                              className="flex-shrink-0 focus:outline-none"
+                            >
+                              {item.isCompleted ? (
+                                <div className="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center border border-green-500">
+                                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                                </div>
+                              ) : (
+                                <div className="w-6 h-6 rounded-full border-2 border-gray-300 dark:border-gray-500" />
+                              )}
+                            </button>
+                            <span className={`flex-1 text-sm font-medium ${item.isCompleted ? 'text-green-700 dark:text-green-300 line-through opacity-70' : 'text-gray-900 dark:text-white'}`}>
+                              {item.title}
+                            </span>
+                            <div className="flex items-center gap-1">
+                              <Sparkles className="w-4 h-4 text-green-500 opacity-60" />
+                              <div className="p-1.5 rounded-lg border border-amber-200 bg-amber-50 text-amber-600">
+                                <Bell className="w-4 h-4" />
+                              </div>
+                              <div className="p-1.5 rounded-lg border border-red-200 bg-red-50 text-red-600">
+                                <X className="w-4 h-4" />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Add Item Input */}
+                      <div className="flex gap-2 pt-2 border-t border-gray-100 dark:border-gray-700 mt-2">
+                        <Input
+                          placeholder="Add new task..."
+                          className="flex-1 bg-gray-50 dark:bg-gray-900/50 rounded-xl"
+                          value={newItemTexts[list.id] || ""}
+                          onChange={(e) => setNewItemTexts(prev => ({ ...prev, [list.id]: e.target.value }))}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && newItemTexts[list.id]?.trim()) {
+                              addTodoItemMutation.mutate({ todoListId: list.id, text: newItemTexts[list.id].trim(), priority: "medium" });
+                            }
+                          }}
+                        />
+                        <Button 
+                          size="icon" 
+                          className="rounded-xl bg-indigo-200 hover:bg-indigo-300 text-indigo-700"
+                          onClick={() => {
+                            if (newItemTexts[list.id]?.trim()) {
+                              addTodoItemMutation.mutate({ todoListId: list.id, text: newItemTexts[list.id].trim(), priority: "medium" });
+                            }
+                          }}
+                        >
+                          <Plus className="w-5 h-5" />
+                        </Button>
+                      </div>
+
+                      {/* Footer Info */}
+                      <div className="flex items-center justify-between pt-4 mt-2 border-t border-gray-50 dark:border-gray-700 text-[11px] text-gray-500 font-medium">
+                        <div className="flex items-center gap-1.5">
+                          <User className="w-3.5 h-3.5" />
+                          <span>{list.createdBy?.firstName || 'System'}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>{new Date(list.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </div>
         ) : (
           <Card className="bg-gray-50 dark:bg-gray-800/50 border-dashed border-2">
