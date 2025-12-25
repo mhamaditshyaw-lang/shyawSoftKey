@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Shield, Save, Users, Lock, ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
+import { Badge } from "@/components/ui/badge";
 import type { User } from "@shared/schema";
 
 interface Page {
@@ -45,6 +46,8 @@ export default function PageAccessManagement() {
     queryKey: ["/api/pages/available"],
     enabled: currentUser?.role === "admin",
   });
+
+  const users = usersData?.users || [];
 
   // Fetch page access for selected user
   const { data: pageAccessData, isLoading: isLoadingPageAccess } = useQuery<PageAccessResponse>({
@@ -107,7 +110,6 @@ export default function PageAccessManagement() {
     );
   }
 
-  const users = usersData?.users || [];
   const pages = pagesData?.pages || [];
   const isLoading = isLoadingUsers || isLoadingPages;
 
