@@ -265,16 +265,34 @@ export default function WeeklyMeetingDetailPage() {
                   onChange={(e) => setMeetingNote(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                      const lines = meetingNote.split('\n');
+                      const textarea = e.currentTarget;
+                      const start = textarea.selectionStart;
+                      const end = textarea.selectionEnd;
+                      const value = meetingNote;
+                      
+                      // Get all lines and find current line index based on cursor position
+                      const lines = value.substring(0, start).split('\n');
                       const currentLine = lines[lines.length - 1];
+                      
                       const match = currentLine.match(/^(\d+)\.\s/);
                       if (match) {
                         e.preventDefault();
                         const nextNumber = parseInt(match[1]) + 1;
-                        setMeetingNote(meetingNote + '\n' + nextNumber + '. ');
-                      } else if (meetingNote.trim() === "") {
+                        const insertion = `\n${nextNumber}. `;
+                        const newValue = value.substring(0, start) + insertion + value.substring(end);
+                        setMeetingNote(newValue);
+                        
+                        // Set cursor position after the state update
+                        setTimeout(() => {
+                          textarea.selectionStart = textarea.selectionEnd = start + insertion.length;
+                        }, 0);
+                      } else if (value.trim() === "" || (start === 0 && value.length === 0)) {
                         e.preventDefault();
-                        setMeetingNote("1. ");
+                        const insertion = "1. ";
+                        setMeetingNote(insertion + value);
+                        setTimeout(() => {
+                          textarea.selectionStart = textarea.selectionEnd = insertion.length;
+                        }, 0);
                       }
                     }
                   }}
