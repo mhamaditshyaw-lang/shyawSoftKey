@@ -246,9 +246,8 @@ export default function WeeklyMeetingDetailPage() {
             </h4>
             {!isEditingNote && (
               <Button 
-                variant="ghost" 
                 size="sm" 
-                className="text-purple-600 hover:bg-purple-50 gap-2"
+                className="bg-purple-600 text-white hover:bg-purple-700 border-none shadow-none gap-2"
                 onClick={() => setIsEditingNote(true)}
               >
                 <Plus className="h-4 w-4" />
@@ -276,7 +275,7 @@ export default function WeeklyMeetingDetailPage() {
                 </Button>
                 <Button 
                   size="sm" 
-                  className="bg-purple-600 text-white hover:bg-purple-700"
+                  className="bg-purple-600 text-white hover:bg-purple-700 border-none shadow-none"
                   onClick={() => setIsEditingNote(false)}
                 >
                   Save Note
