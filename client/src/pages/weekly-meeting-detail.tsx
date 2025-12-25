@@ -262,15 +262,7 @@ export default function WeeklyMeetingDetailPage() {
                 <p className="text-xs text-purple-600 font-medium">Use numbering (1., 2., 3.) for each point</p>
                 <Textarea 
                   value={meetingNote}
-                  onChange={(e) => {
-                    const newValue = e.target.value;
-                    // Ensure the note always starts with "1. "
-                    if (!newValue.startsWith("1. ")) {
-                      setMeetingNote("1. " + newValue.replace(/^\d+\.\s*/, ""));
-                    } else {
-                      setMeetingNote(newValue);
-                    }
-                  }}
+                  onChange={(e) => setMeetingNote(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       const textarea = e.currentTarget;
@@ -322,19 +314,28 @@ export default function WeeklyMeetingDetailPage() {
                   className="bg-purple-600 text-white hover:bg-purple-700 border-none shadow-none"
                   onClick={() => setIsEditingNote(false)}
                 >
-                  Save Note
+                  Update
                 </Button>
               </div>
             </div>
           ) : (
             <>
               {meetingNote ? (
-                <div className="space-y-1">
+                <div className="space-y-1 group relative">
                   {meetingNote.split('\n').map((line, index) => (
                     <p key={index} className="text-purple-900 text-sm">
                       {line}
                     </p>
                   ))}
+                  <Button 
+                    size="sm" 
+                    variant="ghost"
+                    className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 text-purple-600 hover:bg-purple-100"
+                    onClick={() => setIsEditingNote(true)}
+                  >
+                    <Edit2 className="h-4 w-4 mr-2" />
+                    Update
+                  </Button>
                 </div>
               ) : (
                 <p className="text-purple-400 text-sm italic">
