@@ -546,9 +546,13 @@ export class DatabaseStorage implements IStorage {
 
   async updateTodoItem(id: number, updates: Partial<TodoItem>): Promise<TodoItem | undefined> {
     return await executeWithRetry(async () => {
-      const updateData = { ...updates };
+      const updateData: any = { ...updates };
       if (updates.isCompleted !== undefined) {
         updateData.completedAt = updates.isCompleted ? new Date() : null;
+        if (!updates.isCompleted) {
+          updateData.completedByNote = null;
+          updateData.completedById = null;
+        }
       }
 
       const result = await db
