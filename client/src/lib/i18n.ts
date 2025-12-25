@@ -20,6 +20,7 @@ const resources = {
 
       // Menu partitions
       managerTodos: "Manager Tasks",
+      menu_manageTasks: "Manage Tasks",
       menu_taskManagement: "Task Management",
       menu_manageTasks: "Manage Tasks",
       menu_dailyTasks: "Daily Tasks",
@@ -932,6 +933,7 @@ const resources = {
 
       // Menu partitions
       managerTodos: "ئەرکەکانی بەڕێوەبەر",
+      menu_manageTasks: "بەڕێوەبردنی ئەرکەکان",
       menu_taskManagement: "بەڕێوەبردنی ئەرکە",
       menu_dailyTasks: "ئەرکەکانی ڕۆژانە",
       menu_reminders: "یادآوریەکان",
