@@ -263,6 +263,21 @@ export default function WeeklyMeetingDetailPage() {
                 <Textarea 
                   value={meetingNote}
                   onChange={(e) => setMeetingNote(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const lines = meetingNote.split('\n');
+                      const currentLine = lines[lines.length - 1];
+                      const match = currentLine.match(/^(\d+)\.\s/);
+                      if (match) {
+                        e.preventDefault();
+                        const nextNumber = parseInt(match[1]) + 1;
+                        setMeetingNote(meetingNote + '\n' + nextNumber + '. ');
+                      } else if (meetingNote.trim() === "") {
+                        e.preventDefault();
+                        setMeetingNote("1. ");
+                      }
+                    }
+                  }}
                   placeholder="1. First item&#10;2. Second item..."
                   className="bg-white border-purple-200 text-purple-900 placeholder:text-purple-300 min-h-[150px] focus:border-purple-500 focus:ring-purple-500"
                 />
