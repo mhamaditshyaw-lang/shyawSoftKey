@@ -1,18 +1,21 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { authenticatedRequest } from "@/lib/auth";
-import { AlertCircle, Lock, CheckCircle2, Circle, Sparkles, Eye, Bell, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { queryClient } from "@/lib/queryClient";
+import { AlertCircle, CheckCircle2, Circle, Sparkles, Eye, Search, Filter, Plus, RefreshCw } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface TodoItem {
   id: number;
@@ -25,61 +28,90 @@ interface TodoItem {
 interface TodoList {
   id: number;
   title: string;
+  description: string;
+  priority: "low" | "medium" | "high";
+  createdAt: string;
   items: TodoItem[];
   createdBy: any;
+  assignedTo: any;
 }
-
-// Manager password from environment variable or default
-const MANAGER_PASSWORD = import.meta.env.VITE_MANAGER_PASSWORD || "manager123";
 
 export default function ManagerTodosPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { t } = useTranslation();
-  const [isPasswordVerified, setIsPasswordVerified] = useState(false);
-  const [password, setPassword] = useState("");
-  const [showPasswordDialog, setShowPasswordDialog] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [newListTitle, setNewListTitle] = useState("");
+  const [newListDescription, setNewListDescription] = useState("");
+  const [newListPriority, setNewListPriority] = useState<"low" | "medium" | "high">("medium");
 
-  // Check if user is manager or admin
-  useEffect(() => {
-    if (user?.role !== "manager" && user?.role !== "admin") {
-      toast({
-        title: t("error") || "Error",
-        description: "Only managers and admins can access this page",
-        variant: "destructive",
-      });
-    }
-  }, [user, toast, t]);
-
-  // Fetch manager-specific todos data (only for this manager's team or all for admin)
-  const { data: todosData, isLoading } = useQuery({
+  // Fetch manager-specific todos data
+  const { data: todosData, isLoading, refetch } = useQuery({
     queryKey: ["/api/manager-todos"],
     queryFn: async () => {
       const response = await authenticatedRequest("GET", "/api/manager-todos");
       if (!response.ok) throw new Error("Failed to fetch manager todos");
       return response.json();
     },
-    enabled: isPasswordVerified || user?.role === "admin",
+    enabled: !!user && (user.role === "admin" || user.role === "manager"),
   });
 
-  const handlePasswordSubmit = () => {
-    // Both manager and admin passwords are accepted
-    if (password === MANAGER_PASSWORD || password === "manager" || password === "admin123") {
-      setIsPasswordVerified(true);
-      setShowPasswordDialog(false);
+  // Create todo list mutation
+  const createTodoListMutation = useMutation({
+    mutationFn: async (data: { title: string; description: string; priority: string }) => {
+      const response = await authenticatedRequest("POST", "/api/todos", data);
+      if (!response.ok) throw new Error("Failed to create task list");
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/manager-todos"] });
+      setShowCreateForm(false);
+      setNewListTitle("");
+      setNewListDescription("");
+      setNewListPriority("medium");
       toast({
         title: "Success",
-        description: "Password verified. Access granted.",
+        description: "Task list created successfully!",
       });
-    } else {
+    },
+    onError: (error: any) => {
       toast({
         title: "Error",
-        description: "Incorrect password",
+        description: error.message || "Failed to create task list",
         variant: "destructive",
       });
-      setPassword("");
-    }
+    },
+  });
+
+  const handleCreateTodoList = () => {
+    if (!newListTitle.trim()) return;
+    createTodoListMutation.mutate({
+      title: newListTitle,
+      description: newListDescription,
+      priority: newListPriority,
+    });
   };
+
+  // Filter logic
+  const filteredTodoLists = (todosData?.todoLists || []).filter((list: TodoList) => {
+    const matchesSearch = searchTerm === "" || 
+      list.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (list.createdBy?.firstName + " " + list.createdBy?.lastName).toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesPriority = priorityFilter === "all" || list.priority === priorityFilter;
+    
+    let matchesStatus = true;
+    if (statusFilter === "completed") {
+      matchesStatus = list.items.length > 0 && list.items.every(item => item.isCompleted);
+    } else if (statusFilter === "pending") {
+      matchesStatus = list.items.some(item => !item.isCompleted);
+    }
+
+    return matchesSearch && matchesPriority && matchesStatus;
+  });
 
   if (user?.role !== "manager" && user?.role !== "admin") {
     return (
@@ -98,159 +130,210 @@ export default function ManagerTodosPage() {
     );
   }
 
-  const shouldShowPasswordDialog = false;
-
-  // Auto-verify if manager or admin
-  useEffect(() => {
-    if (user?.role === "admin" || user?.role === "manager") {
-      setIsPasswordVerified(true);
-      setShowPasswordDialog(false);
-    }
-  }, [user]);
-
   return (
     <DashboardLayout>
       <div className="space-y-6 p-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-              {user?.role === "admin" ? (
-                <Sparkles className="w-8 h-8 text-dashboard-primary" />
-              ) : (
-                <Lock className="w-8 h-8 text-amber-600" />
-              )}
-              {t("managerTodos") || "Manager Todo List"}
+              <Sparkles className="w-8 h-8 text-dashboard-primary" />
+              {t("managerTodos") || "Manager Tasks"}
             </h1>
             <p className="text-gray-600 dark:text-gray-300 mt-2">
-              {user?.role === "admin" 
-                ? "Admin overview of manager todo lists" 
-                : "Password-protected todo management"}
+              Management overview of team todo lists and progress
             </p>
           </div>
+          <Button
+            onClick={() => setShowCreateForm(true)}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            {t("createNewList") || "New Task List"}
+          </Button>
         </div>
 
-        {/* Password Dialog */}
-        <Dialog open={shouldShowPasswordDialog} onOpenChange={setShowPasswordDialog}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Lock className="w-5 h-5" />
-                Manager Access Required
-              </DialogTitle>
-              <DialogDescription>
-                Enter the manager password to access the protected todo list
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+        {/* Search and Filters */}
+        <Card className="border-2 border-blue-50 dark:border-gray-700 shadow-sm">
+          <CardContent className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                 <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handlePasswordSubmit()}
-                  placeholder="Enter manager password"
-                  className="border-2"
+                  placeholder={t("searchPlaceholder") || "Search tasks..."}
+                  className="pl-9"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <Button
-                onClick={handlePasswordSubmit}
-                className="w-full bg-blue-600 hover:bg-blue-700"
-              >
-                Unlock Access
+              <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                <SelectTrigger>
+                  <Filter className="w-4 h-4 mr-2" />
+                  <SelectValue placeholder="Priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Priorities</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="low">Low</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger>
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button variant="outline" onClick={() => refetch()} className="flex items-center gap-2">
+                <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+                {t("refresh") || "Refresh"}
               </Button>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Create List Dialog */}
+        <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>{t("createNewList") || "Create New Task List"}</DialogTitle>
+              <DialogDescription>
+                Create a new todo list for management or team assignment.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label>{t("title") || "Title"}</Label>
+                <Input
+                  value={newListTitle}
+                  onChange={(e) => setNewListTitle(e.target.value)}
+                  placeholder="Enter list title"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("description") || "Description"}</Label>
+                <Textarea
+                  value={newListDescription}
+                  onChange={(e) => setNewListDescription(e.target.value)}
+                  placeholder="Enter list description"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("priority") || "Priority"}</Label>
+                <Select value={newListPriority} onValueChange={(v: any) => setNewListPriority(v)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowCreateForm(false)}>
+                {t("cancel") || "Cancel"}
+              </Button>
+              <Button onClick={handleCreateTodoList} disabled={createTodoListMutation.isPending}>
+                {createTodoListMutation.isPending ? "Creating..." : "Create List"}
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
 
-        {/* Todo Lists */}
-        {(isPasswordVerified || user?.role === "admin") && (
-          <>
-            {isLoading ? (
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-300 border-t-blue-600 mx-auto" />
-                </CardContent>
-              </Card>
-            ) : todosData?.todoLists && todosData.todoLists.length > 0 ? (
-              <div className="grid gap-6">
-                {todosData.todoLists.map((list: TodoList) => (
-                  <motion.div
-                    key={list.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                  >
-                    <Card className="bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-900">
-                      <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900 dark:to-indigo-900">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <CardTitle className="text-2xl text-gray-900 dark:text-white">
-                              {list.title}
-                            </CardTitle>
-                            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                              by {list.createdBy?.firstName} {list.createdBy?.lastName}
+        {/* Todo Lists Display */}
+        {isLoading ? (
+          <div className="flex justify-center p-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-300 border-t-blue-600" />
+          </div>
+        ) : filteredTodoLists.length > 0 ? (
+          <div className="grid gap-6">
+            {filteredTodoLists.map((list: TodoList) => (
+              <motion.div
+                key={list.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <Card className="bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-900 overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                  <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/40 border-b border-blue-100 dark:border-blue-800/50">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-2xl text-gray-900 dark:text-white">
+                          {list.title}
+                        </CardTitle>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                          by {list.createdBy?.firstName} {list.createdBy?.lastName}
+                          {list.assignedTo && ` • Assigned to ${list.assignedTo.firstName} ${list.assignedTo.lastName}`}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={list.priority === "high" ? "destructive" : "secondary"}>
+                          {list.priority.toUpperCase()}
+                        </Badge>
+                        <Badge variant="outline">{list.items.length} tasks</Badge>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-6">
+                    {list.description && (
+                      <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm bg-gray-50 dark:bg-gray-700/30 p-3 rounded-lg border border-gray-100 dark:border-gray-700">
+                        {list.description}
+                      </p>
+                    )}
+                    <div className="space-y-3">
+                      {list.items.map((item: TodoItem) => (
+                        <div
+                          key={item.id}
+                          className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+                            item.isCompleted
+                              ? "bg-green-50/50 dark:bg-green-900/10 border-green-200 dark:border-green-900/30"
+                              : "bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600"
+                          }`}
+                        >
+                          {item.isCompleted ? (
+                            <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+                          ) : (
+                            <Circle className="w-5 h-5 text-gray-400 shrink-0" />
+                          )}
+                          <div className="flex-1">
+                            <p className={item.isCompleted ? "text-green-700 dark:text-green-300 line-through opacity-70" : "text-gray-900 dark:text-white font-medium"}>
+                              {item.title}
                             </p>
                           </div>
-                          <Badge variant="secondary">{list.items.length} tasks</Badge>
+                          {item.isCompleted && item.completedByNote && (
+                            <div className="flex items-center gap-1.5 px-2 py-1 bg-green-100 dark:bg-green-900/30 rounded text-xs text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800">
+                              <Eye className="w-3 h-3" />
+                              <span className="max-w-[150px] truncate" title={item.completedByNote}>
+                                {item.completedByNote}
+                              </span>
+                            </div>
+                          )}
                         </div>
-                      </CardHeader>
-                      <CardContent className="pt-6">
-                        <div className="space-y-3">
-                          {list.items.map((item: TodoItem) => (
-                            <motion.div
-                              key={item.id}
-                              className={`flex items-center gap-3 p-3 rounded-lg ${
-                                item.isCompleted
-                                  ? "bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800"
-                                  : "bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600"
-                              }`}
-                            >
-                              <button>
-                                {item.isCompleted ? (
-                                  <CheckCircle2 className="w-5 h-5 text-green-600" />
-                                ) : (
-                                  <Circle className="w-5 h-5 text-gray-400" />
-                                )}
-                              </button>
-                              <div className="flex-1">
-                                <p
-                                  className={`${
-                                    item.isCompleted
-                                      ? "text-green-700 dark:text-green-300"
-                                      : "text-gray-900 dark:text-white"
-                                  }`}
-                                >
-                                  {item.title}
-                                </p>
-                              </div>
-                              {item.isCompleted && <Sparkles className="w-4 h-4 text-green-500" />}
-                              {item.completedByNote && (
-                                <motion.div
-                                  initial={{ scale: 0 }}
-                                  animate={{ scale: 1 }}
-                                  className="bg-green-100 dark:bg-green-900/50 p-1.5 rounded border border-green-300 dark:border-green-700"
-                                  title={item.completedByNote}
-                                >
-                                  <Eye className="w-4 h-4 text-green-700 dark:text-green-300" />
-                                </motion.div>
-                              )}
-                            </motion.div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <Card className="bg-gray-50 dark:bg-gray-800/50 border-dashed border-2">
+            <CardContent className="flex flex-col items-center justify-center p-12 text-center">
+              <div className="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-full mb-4">
+                <Filter className="w-8 h-8 text-blue-600" />
               </div>
-            ) : (
-              <Card>
-                <CardContent className="pt-6">
-                  <p className="text-center text-gray-500">No todo lists found</p>
-                </CardContent>
-              </Card>
-            )}
-          </>
+              <h3 className="text-xl font-semibold mb-2">{t("noResultsFound") || "No tasks found"}</h3>
+              <p className="text-gray-500 max-w-sm">
+                Try adjusting your filters or search terms to find what you're looking for.
+              </p>
+            </CardContent>
+          </Card>
         )}
       </div>
     </DashboardLayout>
