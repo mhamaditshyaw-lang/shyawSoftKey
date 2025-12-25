@@ -33,7 +33,8 @@ import {
   ArrowRight,
   ArrowUp,
   Server,
-  Radio
+  Radio,
+  FileText
 } from "lucide-react";
 import { HelpTooltip, FeatureTooltip, StatusTooltip } from "@/components/ui/help-tooltip";
 import { useTranslation } from "react-i18next";
@@ -644,83 +645,57 @@ export default function DashboardPage() {
         className="grid grid-cols-1 xl:grid-cols-2 gap-8"
         variants={containerVariants}
       >
-        {/* Recent Activity */}
+        {/* Top Tasks & Meeting Notes */}
         <motion.div variants={itemVariants}>
-          <Card className="hover:shadow-lg transition-shadow duration-300">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <motion.div
-                  animate={{ rotate: [0, 360] }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                >
-                  <Clock className="w-5 h-5 text-blue-600" />
-                </motion.div>
-                <span>{t("recentActivity")}</span>
-                <FeatureTooltip
-                  feature="Activity Feed"
-                  description="Live view of recent system activities including interview requests, task updates, and employee changes. Updates automatically with real-time data."
-                  shortcut="Auto-refreshes every 30s"
-                />
+          <Card className="h-full border-purple-100 shadow-lg bg-purple-600">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 text-white">
+                <CheckCircle className="w-5 h-5" />
+                Top Tasks
               </CardTitle>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-white hover:bg-purple-500"
+                onClick={() => setLocation("/todos")}
+              >
+                View Tasks
+              </Button>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {recentInterviews?.requests?.slice(0, 3).map((request: any, index: number) => (
-                  <motion.div 
-                    key={request.id} 
-                    className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: index * 0.1 + 1, duration: 0.4 }}
-                    whileHover={{ x: 5 }}
-                  >
-                    <motion.div 
-                      className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0"
-                      whileHover={{ scale: 1.1 }}
-                    >
-                      <Calendar className="w-4 h-4 text-primary" />
-                    </motion.div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-900">Employee review for {request.position}</p>
-                      <p className="text-xs text-gray-600 mt-1">
-                        {request.candidateName} - {request.requestedBy.firstName} {request.requestedBy.lastName}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {getRelativeTime(request.createdAt)}
-                      </p>
-                    </div>
-                    <Badge variant={request.status === "pending" ? "secondary" : request.status === "approved" ? "default" : "destructive"}>
-                      {request.status}
-                    </Badge>
-                  </motion.div>
-                ))}
+              <div className="space-y-6">
+                {/* Meeting Notes Section */}
+                <div className="bg-purple-500/30 p-4 rounded-lg border border-purple-400/50">
+                  <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+                    <FileText className="w-4 h-4" />
+                    Meeting Notes
+                  </h4>
+                  <p className="text-purple-100 text-sm italic">
+                    "Discussed Q1 roadmap and departmental resource allocation. Team to follow up on hiring plan by Friday."
+                  </p>
+                  <div className="mt-2 text-xs text-purple-200">
+                    Last update: Today, 10:30 AM
+                  </div>
+                </div>
 
-                {recentTodos?.todoLists?.slice(0, 2).map((list: any, index: number) => (
-                  <motion.div 
-                    key={list.id} 
-                    className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: (index + 3) * 0.1 + 1, duration: 0.4 }}
-                    whileHover={{ x: 5 }}
-                  >
-                    <motion.div 
-                      className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0"
-                      whileHover={{ scale: 1.1 }}
-                    >
-                      <CheckCircle className="w-4 h-4 text-white" />
-                    </motion.div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-900">Task list updated: {list.title}</p>
-                      <p className="text-xs text-gray-600 mt-1">
-                        {list.items.length} tasks - {list.createdBy.firstName} {list.createdBy.lastName}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {getRelativeTime(list.createdAt)}
-                      </p>
+                <div className="space-y-4">
+                  {recentTodos?.todoLists?.slice(0, 3).map((list: any) => (
+                    <div key={list.id} className="flex items-center gap-3">
+                      <motion.div 
+                        className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0"
+                        whileHover={{ scale: 1.1 }}
+                      >
+                        <CheckCircle className="w-4 h-4 text-purple-600" />
+                      </motion.div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-white font-medium truncate">{list.title}</p>
+                        <p className="text-xs text-purple-200">
+                          {list.items.length} items • {getRelativeTime(list.createdAt)}
+                        </p>
+                      </div>
                     </div>
-                  </motion.div>
-                ))}
+                  ))}
+                </div>
               </div>
             </CardContent>
           </Card>
