@@ -341,7 +341,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/users/:id/password", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const userId = parseInt(req.params.id);
-      const passwordData = changePasswordSchema.parse(req.body);
+      // Validate only the fields being sent from frontend
+      const passwordData = z.object({
+        currentPassword: z.string().min(1, "Current password is required"),
+        newPassword: z.string().min(6, "New password must be at least 6 characters"),
+      }).parse(req.body);
 
       // Get the user
       const user = await storage.getUser(userId);
