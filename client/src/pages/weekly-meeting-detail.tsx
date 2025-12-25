@@ -31,7 +31,7 @@ export default function WeeklyMeetingDetailPage() {
     description: "",
     assignedUserIds: [] as string[],
   });
-  const [meetingNote, setMeetingNote] = useState("");
+  const [meetingNote, setMeetingNote] = useState("1. ");
   const [isEditingNote, setIsEditingNote] = useState(false);
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
   const [newComment, setNewComment] = useState<Record<number, string>>({});
@@ -262,7 +262,15 @@ export default function WeeklyMeetingDetailPage() {
                 <p className="text-xs text-purple-600 font-medium">Use numbering (1., 2., 3.) for each point</p>
                 <Textarea 
                   value={meetingNote}
-                  onChange={(e) => setMeetingNote(e.target.value)}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    // Ensure the note always starts with "1. "
+                    if (!newValue.startsWith("1. ")) {
+                      setMeetingNote("1. " + newValue.replace(/^\d+\.\s*/, ""));
+                    } else {
+                      setMeetingNote(newValue);
+                    }
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       const textarea = e.currentTarget;
