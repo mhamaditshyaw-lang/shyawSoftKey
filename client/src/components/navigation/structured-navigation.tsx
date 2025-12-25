@@ -13,6 +13,7 @@ import {
   Archive,
   FileText,
   Database,
+  CheckSquare,
   ChevronDown,
   ChevronRight,
   User,

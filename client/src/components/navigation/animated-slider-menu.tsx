@@ -18,6 +18,7 @@ import {
   TrendingUp,
   Menu,
   X,
+  CheckSquare,
   ChevronRight,
   Clock,
   BookOpen,
