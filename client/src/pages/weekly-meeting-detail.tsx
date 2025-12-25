@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2, Plus, Save, CheckCircle, Clock, Zap, Send, FileCheck, Eye, TrendingUp, Check, X, Edit2, ChevronDown } from "lucide-react";
+import { Loader2, Plus, Save, CheckCircle, Clock, Zap, Send, FileCheck, Eye, TrendingUp, Check, X, Edit2, ChevronDown, FileText } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { motion } from "framer-motion";
 import {
@@ -233,6 +233,22 @@ export default function WeeklyMeetingDetailPage() {
           <p className="text-2xl font-bold text-white mt-3 uppercase">{meeting?.status}</p>
         </div>
       </div>
+
+      {/* Meeting Notes Section */}
+      <Card className="border-purple-100 shadow-lg bg-purple-600">
+        <CardContent className="p-6">
+          <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+            <FileText className="w-5 h-5 text-white" />
+            Meeting Notes
+          </h4>
+          <p className="text-purple-100 text-sm italic">
+            "Discussed Q1 roadmap and departmental resource allocation. Team to follow up on hiring plan by Friday."
+          </p>
+          <div className="mt-2 text-xs text-purple-200">
+            Last update: Today, 10:30 AM
+          </div>
+        </CardContent>
+      </Card>
 
 
       <Card>
