@@ -7,6 +7,7 @@ import { weeklyMeetings } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { z } from "zod";
 import { insertUserSchema, loginSchema, insertTodoListSchema, insertTodoItemSchema, insertInterviewRequestSchema, changePasswordSchema, updateUserPasswordSchema, insertReminderSchema, insertInterviewCommentSchema, PAGE_PERMISSIONS } from "@shared/schema";
 import { Request, Response, NextFunction } from "express";
 
