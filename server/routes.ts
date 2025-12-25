@@ -193,25 +193,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { username, password } = loginSchema.parse(req.body);
 
-      console.log('--- Login Debug ---');
-      console.log('Username:', username);
       const user = await storage.getUserByUsername(username);
       if (!user) {
-        console.log('User NOT found');
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      console.log('User found:', user.username);
-      console.log('Status:', user.status);
-      console.log('Attempting password comparison...');
-
       if (user.status !== 'active') {
-        console.log('User inactive');
         return res.status(401).json({ message: "Account not activated" });
       }
 
       const validPassword = await bcrypt.compare(password, user.password);
-      console.log('Password valid:', validPassword);
       
       if (!validPassword) {
         // Fallback for direct comparison if bcrypt fails for some reason during testing

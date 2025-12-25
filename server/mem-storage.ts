@@ -44,8 +44,7 @@ export class MemStorage implements IStorage {
       const hashedPassword = await bcrypt.hash('password123', 12);
 
       // Create test users
-      this.users = [] as unknown[] this.users = [this.users = [ [
-
+      this.users = [
         {
           id: 1,
           username: 'admin',
@@ -69,6 +68,7 @@ export class MemStorage implements IStorage {
           department: 'IT',
           position: 'System Administrator',
           phoneNumber: '+964-770-100-1000',
+          comments: '',
           managerId: null,
           createdAt: new Date(),
           lastActiveAt: new Date()
@@ -96,6 +96,7 @@ export class MemStorage implements IStorage {
           department: 'Management',
           position: 'Operations Manager',
           phoneNumber: '+964-770-200-2000',
+          comments: '',
           managerId: null,
           createdAt: new Date(),
           lastActiveAt: new Date()
@@ -123,11 +124,11 @@ export class MemStorage implements IStorage {
           department: 'Security',
           position: 'Security Officer',
           phoneNumber: '+964-770-300-3000',
+          comments: '',
           managerId: null,
           createdAt: new Date(),
           lastActiveAt: new Date()
         },
-
       ];
 
       this.nextUserId = 4; // Increment based on the number of users added
@@ -386,24 +387,26 @@ export class MemStorage implements IStorage {
   }
 
   // Interview request methods
-  async getInterviewRequests(): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]> {
+  async getInterviewRequests(): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[]> {
     return this.interviewRequests.map(request => ({
       ...request,
       requestedBy: this.users.find(u => u.id === request.requestedById)!,
-      manager: request.managerId ? this.users.find(u => u.id === request.managerId) || null : null
+      manager: request.managerId ? this.users.find(u => u.id === request.managerId) || null : null,
+      actionTakenBy: request.actionTakenById ? this.users.find(u => u.id === request.actionTakenById) || null : null
     }));
   }
 
-  async getInterviewRequestsByManager(managerId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]> {
+  async getInterviewRequestsByManager(managerId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[]> {
     const managerRequests = this.interviewRequests.filter(request => request.managerId === managerId);
     return managerRequests.map(request => ({
       ...request,
       requestedBy: this.users.find(u => u.id === request.requestedById)!,
-      manager: this.users.find(u => u.id === managerId) || null
+      manager: this.users.find(u => u.id === managerId) || null,
+      actionTakenBy: request.actionTakenById ? this.users.find(u => u.id === request.actionTakenById) || null : null
     }));
   }
 
-  async getInterviewRequestsByUser(userId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null })[]> {
+  async getInterviewRequestsByUser(userId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[]> {
     return this.getInterviewRequests(); // User can see all requests
   }
 
@@ -562,8 +565,7 @@ export class MemStorage implements IStorage {
     const newReminder = {
       ...reminder,
       id: this.nextReminderId++,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date()
     } as Reminder & { id: number };
 
     this.reminders.push(newReminder);
@@ -576,8 +578,7 @@ export class MemStorage implements IStorage {
 
     this.reminders[reminderIndex] = { 
       ...this.reminders[reminderIndex], 
-      ...updates,
-      updatedAt: new Date()
+      ...updates
     };
     return this.reminders[reminderIndex];
   }
