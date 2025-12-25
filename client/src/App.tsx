@@ -70,11 +70,15 @@ function ProtectedRoute({ children, requiredPermission }: ProtectedRouteProps) {
 
   if (requiredPermission) {
     const isAdmin = user.role === 'admin';
+    const isManager = user.role === 'manager';
     const userPermissions = user.permissions as Record<string, boolean> || {};
     const hasPermission = userPermissions[requiredPermission] === true;
 
     // Admin should have access to everything, but we check permissions for others
-    if (!isAdmin && !hasPermission) {
+    // We also allow managers to access their dashboard and todos by default
+    const isDefaultManagerPage = ['view_manager_todos', 'view_manager_dashboard'].includes(requiredPermission);
+    
+    if (!isAdmin && !hasPermission && !(isManager && isDefaultManagerPage)) {
       return <AccessDenied />;
     }
   }
