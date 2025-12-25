@@ -1188,7 +1188,7 @@ export class DatabaseStorage implements IStorage {
 
   async updateDepartmentTaskProgress(taskId: number, departmentHeadId: number, updates: any): Promise<any> {
     const result = await db.update(departmentTaskProgress).set(updates)
-      .where((col: any) => col.and(eq(departmentTaskProgress.taskId, taskId), eq(departmentTaskProgress.departmentHeadId, departmentHeadId)))
+      .where(and(eq(departmentTaskProgress.taskId, taskId), eq(departmentTaskProgress.departmentHeadId, departmentHeadId)))
       .returning();
     return (result as any[])[0];
   }
