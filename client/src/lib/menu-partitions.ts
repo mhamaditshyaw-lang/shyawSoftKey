@@ -23,6 +23,7 @@ export const MENU_PARTITIONS: MenuPartition[] = [
     description: "Daily tasks, reminders, and activity tracking",
     items: [
       { labelKey: "menu_dailyTasks", label: "Daily Tasks", path: "/todos", iconName: "Zap", description: "Manage and complete daily tasks" },
+      { labelKey: "menu_managerTodos", label: "Manager Todos", path: "/manager-todos", iconName: "Lock", description: "Password-protected manager todo list" },
       { labelKey: "menu_weeklyMeetingTasks", label: "Weekly Meeting Tasks", path: "/weekly-meetings", iconName: "Users", description: "Manage weekly meeting department tasks" },
       { labelKey: "menu_reminders", label: "Reminders", path: "/reminders", iconName: "Clock", description: "Set and manage task reminders" },
       { labelKey: "menu_userActivity", label: "User Activity", path: "/user-activity", iconName: "Activity", description: "Track user activity logs" },
