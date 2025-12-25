@@ -237,18 +237,18 @@ export default function WeeklyMeetingDetailPage() {
       </div>
 
       {/* Meeting Notes Section */}
-      <Card className="border-purple-100 shadow-lg bg-purple-600">
+      <Card className="border-purple-100 shadow-lg bg-white">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-white font-semibold flex items-center gap-2">
-              <FileText className="w-5 h-5 text-white" />
+            <h4 className="text-purple-700 font-semibold flex items-center gap-2">
+              <FileText className="w-5 h-5 text-purple-600" />
               Meeting Notes
             </h4>
             {!isEditingNote && (
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-white hover:bg-purple-500 gap-2"
+                className="text-purple-600 hover:bg-purple-50 gap-2"
                 onClick={() => setIsEditingNote(true)}
               >
                 <Plus className="h-4 w-4" />
@@ -263,20 +263,20 @@ export default function WeeklyMeetingDetailPage() {
                 value={meetingNote}
                 onChange={(e) => setMeetingNote(e.target.value)}
                 placeholder="Write your meeting notes here..."
-                className="bg-purple-500/50 border-purple-400 text-white placeholder:text-purple-200 min-h-[100px]"
+                className="bg-white border-purple-200 text-purple-900 placeholder:text-purple-300 min-h-[100px] focus:border-purple-500 focus:ring-purple-500"
               />
               <div className="flex gap-2 justify-end">
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-white hover:bg-purple-500"
+                  className="text-purple-600 hover:bg-purple-50"
                   onClick={() => setIsEditingNote(false)}
                 >
                   Cancel
                 </Button>
                 <Button 
                   size="sm" 
-                  className="bg-white text-purple-600 hover:bg-purple-50"
+                  className="bg-purple-600 text-white hover:bg-purple-700"
                   onClick={() => setIsEditingNote(false)}
                 >
                   Save Note
@@ -286,16 +286,16 @@ export default function WeeklyMeetingDetailPage() {
           ) : (
             <>
               {meetingNote ? (
-                <p className="text-purple-100 text-sm italic">
+                <p className="text-purple-900 text-sm italic">
                   "{meetingNote}"
                 </p>
               ) : (
-                <p className="text-purple-200 text-sm italic">
+                <p className="text-purple-400 text-sm italic">
                   No notes added yet for this meeting.
                 </p>
               )}
               {meetingNote && (
-                <div className="mt-2 text-xs text-purple-200">
+                <div className="mt-2 text-xs text-purple-500">
                   Last update: Today, {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </div>
               )}
