@@ -258,12 +258,15 @@ export default function WeeklyMeetingDetailPage() {
           
           {isEditingNote ? (
             <div className="space-y-3">
-              <Textarea 
-                value={meetingNote}
-                onChange={(e) => setMeetingNote(e.target.value)}
-                placeholder="Write your meeting notes here..."
-                className="bg-white border-purple-200 text-purple-900 placeholder:text-purple-300 min-h-[100px] focus:border-purple-500 focus:ring-purple-500"
-              />
+              <div className="flex flex-col gap-2">
+                <p className="text-xs text-purple-600 font-medium">Use numbering (1., 2., 3.) for each point</p>
+                <Textarea 
+                  value={meetingNote}
+                  onChange={(e) => setMeetingNote(e.target.value)}
+                  placeholder="1. First item&#10;2. Second item..."
+                  className="bg-white border-purple-200 text-purple-900 placeholder:text-purple-300 min-h-[150px] focus:border-purple-500 focus:ring-purple-500"
+                />
+              </div>
               <div className="flex gap-2 justify-end">
                 <Button 
                   variant="ghost" 
@@ -285,9 +288,13 @@ export default function WeeklyMeetingDetailPage() {
           ) : (
             <>
               {meetingNote ? (
-                <p className="text-purple-900 text-sm italic">
-                  "{meetingNote}"
-                </p>
+                <div className="space-y-1">
+                  {meetingNote.split('\n').map((line, index) => (
+                    <p key={index} className="text-purple-900 text-sm">
+                      {line}
+                    </p>
+                  ))}
+                </div>
               ) : (
                 <p className="text-purple-400 text-sm italic">
                   No notes added yet for this meeting.
