@@ -31,6 +31,8 @@ export default function WeeklyMeetingDetailPage() {
     description: "",
     assignedUserIds: [] as string[],
   });
+  const [meetingNote, setMeetingNote] = useState("");
+  const [isEditingNote, setIsEditingNote] = useState(false);
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
   const [newComment, setNewComment] = useState<Record<number, string>>({});
   const [expandedCommentId, setExpandedCommentId] = useState<number | null>(null);
@@ -237,16 +239,68 @@ export default function WeeklyMeetingDetailPage() {
       {/* Meeting Notes Section */}
       <Card className="border-purple-100 shadow-lg bg-purple-600">
         <CardContent className="p-6">
-          <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
-            <FileText className="w-5 h-5 text-white" />
-            Meeting Notes
-          </h4>
-          <p className="text-purple-100 text-sm italic">
-            "Discussed Q1 roadmap and departmental resource allocation. Team to follow up on hiring plan by Friday."
-          </p>
-          <div className="mt-2 text-xs text-purple-200">
-            Last update: Today, 10:30 AM
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-white font-semibold flex items-center gap-2">
+              <FileText className="w-5 h-5 text-white" />
+              Meeting Notes
+            </h4>
+            {!isEditingNote && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-white hover:bg-purple-500 gap-2"
+                onClick={() => setIsEditingNote(true)}
+              >
+                <Plus className="h-4 w-4" />
+                New Note
+              </Button>
+            )}
           </div>
+          
+          {isEditingNote ? (
+            <div className="space-y-3">
+              <Textarea 
+                value={meetingNote}
+                onChange={(e) => setMeetingNote(e.target.value)}
+                placeholder="Write your meeting notes here..."
+                className="bg-purple-500/50 border-purple-400 text-white placeholder:text-purple-200 min-h-[100px]"
+              />
+              <div className="flex gap-2 justify-end">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-white hover:bg-purple-500"
+                  onClick={() => setIsEditingNote(false)}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  size="sm" 
+                  className="bg-white text-purple-600 hover:bg-purple-50"
+                  onClick={() => setIsEditingNote(false)}
+                >
+                  Save Note
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <>
+              {meetingNote ? (
+                <p className="text-purple-100 text-sm italic">
+                  "{meetingNote}"
+                </p>
+              ) : (
+                <p className="text-purple-200 text-sm italic">
+                  No notes added yet for this meeting.
+                </p>
+              )}
+              {meetingNote && (
+                <div className="mt-2 text-xs text-purple-200">
+                  Last update: Today, {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
+              )}
+            </>
+          )}
         </CardContent>
       </Card>
 
