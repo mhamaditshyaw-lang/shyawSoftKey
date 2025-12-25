@@ -99,6 +99,14 @@ export default function ManagerTodosPage() {
 
   const shouldShowPasswordDialog = showPasswordDialog && user?.role !== "admin";
 
+  // Auto-verify if admin
+  useEffect(() => {
+    if (user?.role === "admin") {
+      setIsPasswordVerified(true);
+      setShowPasswordDialog(false);
+    }
+  }, [user]);
+
   return (
     <DashboardLayout>
       <div className="space-y-6 p-8">

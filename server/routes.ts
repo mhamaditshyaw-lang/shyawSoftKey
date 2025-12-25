@@ -677,7 +677,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const sanitizedTodos = await Promise.all(filteredTodos.map(async (list) => {
-        const items = await storage.getTodoItems(list.id);
+        const items = await storage.getTodoItemsByListId(list.id);
         const creator = await storage.getUser(list.createdById);
         return {
           ...list,

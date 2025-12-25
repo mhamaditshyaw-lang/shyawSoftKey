@@ -73,6 +73,7 @@ export interface IStorage {
   deleteTodoItem(id: number): Promise<boolean>;
   deleteAllTodoItems(todoListId: number): Promise<boolean>;
   getTodoStatsByUser(userId: number): Promise<{ totalTodos: number; completedTodos: number; pendingTodos: number }>;
+  getTodoItemsByListId(todoListId: number): Promise<TodoItem[]>;
 
   // Reminder methods
   getReminders(userId: number): Promise<Reminder[]>;
@@ -812,6 +813,13 @@ export class DatabaseStorage implements IStorage {
         completedTodos: Number(stats.completedTodos),
         pendingTodos: Number(stats.pendingTodos),
       };
+    });
+  }
+
+  async getTodoItemsByListId(todoListId: number): Promise<TodoItem[]> {
+    return await executeWithRetry(async () => {
+      const result = await db.select().from(todoItems).where(eq(todoItems.todoListId, todoListId)).orderBy(desc(todoItems.createdAt));
+      return result as TodoItem[];
     });
   }
 
