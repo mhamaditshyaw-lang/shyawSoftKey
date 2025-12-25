@@ -664,13 +664,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Admins can see all todos
         filteredTodos = await storage.getTodoLists();
       } else {
-        // Get staff members where this manager is their manager
+        // Managers see their own todos PLUS their staff's todos
         const staff = await storage.getStaffForManager(req.user!.id);
         const staffIds = staff.map(s => s.id);
+        const managerId = req.user!.id;
 
-        // Get todos assigned to or created by the manager's staff
         const allTodos = await storage.getTodoLists();
         filteredTodos = allTodos.filter(todo => 
+          todo.createdById === managerId ||
+          todo.assignedToId === managerId ||
           staffIds.includes(todo.assignedToId || 0) || 
           staffIds.includes(todo.createdById)
         );

@@ -22,7 +22,7 @@ export const MENU_PARTITIONS: MenuPartition[] = [
     iconName: "ClipboardList",
     description: "Daily tasks, reminders, and activity tracking",
     items: [
-      { labelKey: "menu_manageTasks", label: "Manage Tasks", path: "/manager-todos", iconName: "CheckSquare", description: "Manager todo list overview" },
+      { labelKey: "menu_manageTasks", label: "Manage Tasks", path: "/manager-todos", iconName: "Briefcase", description: "Manager todo list overview" },
       { labelKey: "menu_dailyTasks", label: "Daily Tasks", path: "/todos", iconName: "Zap", description: "Manage and complete daily tasks" },
       { labelKey: "menu_weeklyMeetingTasks", label: "Weekly Meeting Tasks", path: "/weekly-meetings", iconName: "Users", description: "Manage weekly meeting department tasks" },
       { labelKey: "menu_reminders", label: "Reminders", path: "/reminders", iconName: "Clock", description: "Set and manage task reminders" },

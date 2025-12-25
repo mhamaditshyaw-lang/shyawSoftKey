@@ -60,8 +60,8 @@ export default function AppBar({}: AppBarProps) {
     { 
       title: "Employee Affairs", 
       subtitle: "Tasks",
-      icon: CheckSquare, 
-      href: "/todos",
+      icon: Briefcase, 
+      href: "/manager-todos",
       color: "from-purple-500 to-purple-600"
     },
     { 
