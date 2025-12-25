@@ -33,9 +33,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } else if (theme === "midnight-ocean") {
       root.classList.add("dark", "midnight-ocean");
       setIsDark(true);
-    } else {
+    } else if (theme === "dark") {
       root.classList.add(theme);
-      setIsDark(theme === "dark" || theme === "midnight-ocean");
+      setIsDark(true);
     }
     
     // Set default body background for better light mode

@@ -8,9 +8,10 @@ interface ModernButtonProps extends ButtonProps {
 }
 
 const ModernButton = forwardRef<HTMLButtonElement, ModernButtonProps>(
-  ({ className, variant = "default", gradient = false, shadow = true, ...props }, ref) => {
+  ({ className, variant = "default" as const, gradient = false, shadow = true, ...props }, ref) => {
     const getVariantClasses = () => {
-      switch (variant) {
+      const v = variant as string;
+      switch (v) {
         case "default":
           return gradient
             ? "bg-gradient-to-r from-dashboard-primary to-dashboard-primary/80 hover:from-dashboard-primary/90 hover:to-dashboard-primary/70 text-white"

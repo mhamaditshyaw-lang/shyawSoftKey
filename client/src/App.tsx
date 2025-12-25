@@ -107,17 +107,17 @@ function Router() {
     <Switch>
       <Route path="/login" component={LoginPage} />
       <Route path="/interviews">
-        <ProtectedRoute requiredPermission="manage_interviews">
+        <ProtectedRoute requiredPermission="view_interviews">
           <InterviewsPage />
         </ProtectedRoute>
       </Route>
       <Route path="/todos">
-        <ProtectedRoute requiredPermission="manage_todos">
+        <ProtectedRoute requiredPermission="view_todos">
           <TodosPage />
         </ProtectedRoute>
       </Route>
       <Route path="/reminders">
-        <ProtectedRoute requiredPermission="manage_reminders">
+        <ProtectedRoute requiredPermission="view_reminders">
           <RemindersPage />
         </ProtectedRoute>
       </Route>
@@ -138,13 +138,13 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/add-employee">
-        <ProtectedRoute requiredPermission="add_employees">
+        <ProtectedRoute requiredPermission="manage_employees">
           <AddEmployeePage />
         </ProtectedRoute>
       </Route>
 
       <Route path="/feedback">
-        <ProtectedRoute requiredPermission="manage_feedback">
+        <ProtectedRoute requiredPermission="view_feedback">
           <FeedbackPage />
         </ProtectedRoute>
       </Route>
@@ -194,12 +194,12 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/notification-test">
-        <ProtectedRoute requiredPermission="view_notification_test">
+        <ProtectedRoute requiredPermission="test_notifications">
           <NotificationTestPage />
         </ProtectedRoute>
       </Route>
       <Route path="/broadcast-notification">
-        <ProtectedRoute requiredPermission="manage_broadcast">
+        <ProtectedRoute requiredPermission="broadcast_notifications">
           <BroadcastNotificationPage />
         </ProtectedRoute>
       </Route>
@@ -220,7 +220,7 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/backup-restore">
-        <ProtectedRoute requiredPermission="manage_backup">
+        <ProtectedRoute requiredPermission="manage_backups">
           <BackupRestorePage />
         </ProtectedRoute>
       </Route>
