@@ -643,7 +643,7 @@ export default function DataViewPage() {
                         variant="secondary"
                         className="bg-white/80 text-gray-700 border border-gray-200 shadow-sm px-3 py-1"
                       >
-                        {new Date(entry.timestamp).toLocaleString()}
+                        {entry.timestamp ? new Date(entry.timestamp).toLocaleString() : "N/A"}
                       </Badge>
                       {isAdmin && (
                         <Button
@@ -680,11 +680,12 @@ export default function DataViewPage() {
                   </div>
 
                   {/* Statistics Bar */}
+                  {entry.stats && (
                   <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-100">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div className="text-center">
                         <div className="text-2xl font-bold text-blue-600 mb-1">
-                          {entry.stats.total.toFixed(1)}
+                          {entry.stats?.total?.toFixed(1) || "0"}
                         </div>
                         <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
                           {t("total")}
@@ -692,7 +693,7 @@ export default function DataViewPage() {
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-green-600 mb-1">
-                          {entry.stats.average.toFixed(1)}
+                          {entry.stats?.average?.toFixed(1) || "0"}
                         </div>
                         <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
                           {t("average")}
@@ -700,7 +701,7 @@ export default function DataViewPage() {
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-orange-600 mb-1">
-                          {entry.stats.max}
+                          {entry.stats?.max || "0"}
                         </div>
                         <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
                           {t("maximum")}
@@ -708,7 +709,7 @@ export default function DataViewPage() {
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-red-600 mb-1">
-                          {entry.stats.min}
+                          {entry.stats?.min || "0"}
                         </div>
                         <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
                           {t("minimum")}
@@ -716,6 +717,7 @@ export default function DataViewPage() {
                       </div>
                     </div>
                   </div>
+                  )}
                 </CardContent>
               </Card>
             ))}

@@ -24,6 +24,7 @@ interface TeamMember {
   lastName: string;
   email: string;
   role: string;
+  managerId?: number;
   position?: string;
   department?: string;
 }

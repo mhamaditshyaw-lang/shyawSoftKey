@@ -10,6 +10,7 @@ export interface MenuPartition {
   titleKey: string;
   title: string;
   iconName: string;
+  icon?: any;
   description: string;
   items: MenuItem[];
 }

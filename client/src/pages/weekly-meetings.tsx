@@ -230,7 +230,7 @@ export default function WeeklyMeetingsPage() {
               <Home className="h-4 w-4" />
               Dashboard
             </Button>
-            {(user?.role === "admin" || user?.role === "manager" || user?.role === "office" || user?.role === "staff_office") && (
+            {(user?.role === "admin" || user?.role === "manager" || user?.role === "office" || user?.role === "office") && (
               <Button
                 onClick={() => createMeetingMutation.mutate()}
                 disabled={isCreating || createMeetingMutation.isPending}

@@ -279,7 +279,7 @@ export default function Reports() {
                       fill="#8884d8"
                       dataKey="count"
                     >
-                      {userStats.usersByRole.map((entry, index) => (
+                      {userStats.usersByRole.map((entry: any, index: number) => (
                         <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                       ))}
                     </Pie>
@@ -431,7 +431,7 @@ export default function Reports() {
                       dataKey="count"
                       label={({ role, count, percent }) => `${role}: ${(percent * 100).toFixed(0)}%`}
                     >
-                      {userStats.usersByRole.map((entry, index) => (
+                      {userStats.usersByRole.map((entry: any, index: number) => (
                         <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                       ))}
                     </Pie>
@@ -537,7 +537,7 @@ export default function Reports() {
                       dataKey="count"
                       label={({ status, count }) => `${status}: ${count}`}
                     >
-                      {interviewStats.requestsByStatus.map((entry, index) => (
+                      {interviewStats.requestsByStatus.map((entry: any, index: number) => (
                         <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                       ))}
                     </Pie>

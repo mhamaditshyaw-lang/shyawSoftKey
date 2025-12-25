@@ -44,7 +44,8 @@ export class MemStorage implements IStorage {
       const hashedPassword = await bcrypt.hash('password123', 12);
 
       // Create test users
-      this.users = [
+      this.users = [] as unknown[] this.users = [this.users = [ [
+
         {
           id: 1,
           username: 'admin',
@@ -561,8 +562,8 @@ export class MemStorage implements IStorage {
     const newReminder = {
       ...reminder,
       id: this.nextReminderId++,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      createdAt: new Date(),
+      updatedAt: new Date()
     } as Reminder & { id: number };
 
     this.reminders.push(newReminder);
@@ -576,7 +577,7 @@ export class MemStorage implements IStorage {
     this.reminders[reminderIndex] = { 
       ...this.reminders[reminderIndex], 
       ...updates,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date()
     };
     return this.reminders[reminderIndex];
   }

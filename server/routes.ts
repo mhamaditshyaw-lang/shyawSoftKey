@@ -2050,7 +2050,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           for (const userId of req.body.assignedUserIds) {
             await DeviceNotificationService.createNotification({
               userId: userId,
-              type: "task_assignment",
+              type: "general",
               priority: "normal",
               title: "New Task Assigned",
               message: `You have a new task "${req.body.title}" assigned to you in this week's meeting.`,
