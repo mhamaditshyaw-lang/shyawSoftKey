@@ -300,6 +300,11 @@ export default function UsersPage() {
                     <div>
                       <div className="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
                         {user.firstName} {user.lastName}
+                        {user.role === 'admin' && (
+                          <Badge variant="outline" className="ml-2 bg-dashboard-primary/10 text-dashboard-primary border-dashboard-primary/20 text-[10px] px-1.5 py-0 h-4">
+                            System Admin
+                          </Badge>
+                        )}
                         {user.comments && user.comments.trim() !== '' && (
                           <TooltipProvider>
                             <Tooltip>

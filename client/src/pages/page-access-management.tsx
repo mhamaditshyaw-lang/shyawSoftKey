@@ -52,6 +52,9 @@ export default function PageAccessManagement() {
     enabled: !!selectedUserId && currentUser?.role === "admin",
   });
 
+  const selectedUser = users.find(u => u.id.toString() === selectedUserId);
+  const isSelectedUserAdmin = selectedUser?.role === 'admin';
+
   // Update page permissions state when data is fetched
   useEffect(() => {
     if (pageAccessData?.pageAccess) {
@@ -210,12 +213,21 @@ export default function PageAccessManagement() {
         {selectedUserId && (
           <Card className="border-gray-200 dark:border-gray-700 shadow-lg rounded-2xl">
             <CardHeader className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 border-b border-gray-200 dark:border-gray-600">
-              <CardTitle className="flex items-center space-x-2 text-gray-900 dark:text-white">
-                <Lock className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                <span>Page Permissions</span>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center space-x-2 text-gray-900 dark:text-white">
+                  <Lock className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                  <span>Page Permissions</span>
+                </div>
+                {isSelectedUserAdmin && (
+                  <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+                    Admin: All Access Granted
+                  </Badge>
+                )}
               </CardTitle>
               <CardDescription>
-                Enable or disable access to specific pages for this user
+                {isSelectedUserAdmin 
+                  ? "Administrators have full access to all pages by default. Permissions below are for reference." 
+                  : "Enable or disable access to specific pages for this user"}
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
@@ -233,12 +245,17 @@ export default function PageAccessManagement() {
                   {pages.map((page) => (
                     <div
                       key={page.permission}
-                      className="flex items-center space-x-3 p-4 rounded-xl border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+                      className={`flex items-center space-x-3 p-4 rounded-xl border transition-colors duration-200 ${
+                        isSelectedUserAdmin 
+                          ? "bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-700 opacity-80" 
+                          : "border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      }`}
                       data-testid={`page-permission-${page.permission}`}
                     >
                       <Checkbox
                         id={page.permission}
-                        checked={pagePermissions[page.permission] || false}
+                        checked={isSelectedUserAdmin || pagePermissions[page.permission] || false}
+                        disabled={isSelectedUserAdmin}
                         onCheckedChange={(checked) =>
                           handleTogglePageAccess(page.permission, checked as boolean)
                         }
@@ -266,7 +283,7 @@ export default function PageAccessManagement() {
         )}
 
         {/* Save Button */}
-        {selectedUserId && (
+        {selectedUserId && !isSelectedUserAdmin && (
           <div className="flex justify-end">
             <Button
               onClick={handleSave}

@@ -73,6 +73,7 @@ function ProtectedRoute({ children, requiredPermission }: ProtectedRouteProps) {
     const userPermissions = user.permissions as Record<string, boolean> || {};
     const hasPermission = userPermissions[requiredPermission] === true;
 
+    // Admin should have access to everything, but we check permissions for others
     if (!isAdmin && !hasPermission) {
       return <AccessDenied />;
     }
