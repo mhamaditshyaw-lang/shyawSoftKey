@@ -75,22 +75,11 @@ export const archivedItemsRelations = relations(archivedItems, ({ one }) => ({
 
 export const insertFeedbackSchema = createInsertSchema(feedback, {
   rating: z.enum(["1", "2", "3", "4", "5"]).optional(),
-}).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
 });
 
-export const insertFeedbackTypeSchema = createInsertSchema(feedbackTypes).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
+export const insertFeedbackTypeSchema = createInsertSchema(feedbackTypes);
 
-export const insertArchivedItemSchema = createInsertSchema(archivedItems).omit({
-  id: true,
-  archivedAt: true,
-});
+export const insertArchivedItemSchema = createInsertSchema(archivedItems);
 
 export type Feedback = typeof feedback.$inferSelect;
 export type InsertFeedback = z.infer<typeof insertFeedbackSchema>;

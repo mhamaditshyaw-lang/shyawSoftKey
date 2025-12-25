@@ -46,10 +46,7 @@ export const deviceNotificationsRelations = relations(deviceNotifications, ({ on
   }),
 }));
 
-export const insertDeviceNotificationSchema = createInsertSchema(deviceNotifications).omit({
-  id: true,
-  createdAt: true,
-});
+export const insertDeviceNotificationSchema = createInsertSchema(deviceNotifications);
 
 export type DeviceNotification = typeof deviceNotifications.$inferSelect;
 export type InsertDeviceNotification = z.infer<typeof insertDeviceNotificationSchema>;

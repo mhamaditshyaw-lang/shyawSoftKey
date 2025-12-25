@@ -2,6 +2,12 @@ import { pgTable, text, serial, integer, boolean, timestamp, pgEnum, jsonb } fro
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { 
+  insertFeedbackTypeSchema, 
+  insertFeedbackSchema, 
+  insertArchivedItemSchema 
+} from "./feedback-schema";
+import { insertDeviceNotificationSchema } from "./device-notification-schema";
 
 // Enums
 export const roleEnum = pgEnum("role", ["admin", "manager", "security", "secretary", "office", "office_team"]);
@@ -476,27 +482,9 @@ export const insertOperationalDataSchema = createInsertSchema(operationalData).o
   createdAt: true,
 });
 
-export const insertFeedbackTypeSchema = createInsertSchema(feedbackTypes).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export const insertFeedbackSchema = createInsertSchema(feedback).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export const insertArchivedItemSchema = createInsertSchema(archivedItems).omit({
-  id: true,
-  archivedAt: true,
-});
-
-export const insertDeviceNotificationSchema = createInsertSchema(deviceNotifications).omit({
-  id: true,
-  createdAt: true,
-});
+// These schemas are re-exported from feedback-schema.ts and device-notification-schema.ts
+export { insertFeedbackTypeSchema, insertFeedbackSchema, insertArchivedItemSchema };
+export { insertDeviceNotificationSchema };
 
 export const insertWeeklyMeetingSchema = createInsertSchema(weeklyMeetings).omit({
   id: true,
