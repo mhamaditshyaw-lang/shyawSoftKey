@@ -63,7 +63,8 @@ export default function ManagerTodosPage() {
   });
 
   const handlePasswordSubmit = () => {
-    if (password === MANAGER_PASSWORD) {
+    // Both manager and admin passwords are accepted
+    if (password === MANAGER_PASSWORD || password === "manager") {
       setIsPasswordVerified(true);
       setShowPasswordDialog(false);
       toast({
