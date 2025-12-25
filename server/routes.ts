@@ -342,11 +342,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/users/:id/password", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const userId = parseInt(req.params.id);
+      const body = req.body;
+      console.log('Password change request for user:', userId, 'Body keys:', Object.keys(body));
+      
       // Validate only the fields being sent from frontend
       const passwordData = z.object({
         currentPassword: z.string().min(1, "Current password is required"),
         newPassword: z.string().min(6, "New password must be at least 6 characters"),
       }).parse(req.body);
+
+      console.log('Password validation passed');
 
       // Get the user
       const user = await storage.getUser(userId);
@@ -359,12 +364,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "You can only change your own password" });
       }
 
+      console.log('Auth check passed, user role:', req.user!.role);
+
       // If not admin, verify current password
       if (req.user!.role !== 'admin') {
+        console.log('Verifying current password for non-admin user');
         const isCurrentPasswordValid = await bcrypt.compare(passwordData.currentPassword, user.password);
         if (!isCurrentPasswordValid) {
           return res.status(400).json({ message: "Current password is incorrect" });
         }
+      } else {
+        console.log('Admin user - skipping current password verification');
       }
 
       // Hash new password
@@ -376,8 +386,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ message: "Failed to update password" });
       }
 
+      console.log('Password updated successfully for user:', userId);
       res.json({ message: "Password updated successfully" });
     } catch (error: any) {
+      console.error('Password change error:', error.message);
       res.status(400).json({ message: error.message });
     }
   });
