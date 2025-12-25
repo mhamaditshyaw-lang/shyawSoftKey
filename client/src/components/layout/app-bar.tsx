@@ -23,7 +23,8 @@ import {
   CheckSquare,
   MessageSquare,
   Database,
-  Archive
+  Archive,
+  Briefcase
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
