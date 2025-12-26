@@ -134,9 +134,19 @@ export default function UserItSupportRequestPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full max-w-md grid-cols-2">
-          <TabsTrigger value="request">New Request</TabsTrigger>
-          <TabsTrigger value="list">My Requests</TabsTrigger>
+        <TabsList className="grid w-full max-w-md grid-cols-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-xl">
+          <TabsTrigger 
+            value="request" 
+            className="rounded-lg transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm"
+          >
+            New Request
+          </TabsTrigger>
+          <TabsTrigger 
+            value="list"
+            className="rounded-lg transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm"
+          >
+            My Requests
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="request" className="space-y-6">
