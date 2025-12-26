@@ -653,6 +653,12 @@ export class MemStorage implements IStorage {
   async getItSupportTickets(): Promise<any[]> {
     return [];
   }
+  async getItSupportTicketsByUser(userId: number): Promise<any[]> {
+    return [];
+  }
+  async getItSupportTicket(id: number): Promise<any> {
+    return undefined;
+  }
   async createItSupportTicket(data: any): Promise<any> {
     return { ...data, id: Math.floor(Math.random() * 1000), createdAt: new Date() };
   }
@@ -663,6 +669,7 @@ export class MemStorage implements IStorage {
     return true;
   }
 
+  // Missing methods to satisfy IStorage
   async getTodoItem(id: number): Promise<any> { return this.todoItems.find(i => i.id === id); }
   async getTodoItemsByListId(listId: number): Promise<any[]> { return this.todoItems.filter(i => i.todoListId === listId); }
   async getInterviewComments(requestId: number): Promise<any[]> { return []; }
@@ -681,13 +688,21 @@ export class MemStorage implements IStorage {
   async updateWeeklyMeetingTask(id: number, updates: any): Promise<any> { return undefined; }
   async deleteWeeklyMeetingTask(id: number): Promise<boolean> { return true; }
   async getTaskComments(taskId: number): Promise<any[]> { return []; }
+  async getTaskCommentById(commentId: number): Promise<any | null> { return null; }
+  async deleteTaskComment(commentId: number): Promise<any> { return true; }
   async createTaskComment(comment: any): Promise<any> { return comment; }
   async getTaskProofs(taskId: number): Promise<any[]> { return []; }
   async createTaskProof(proof: any): Promise<any> { return proof; }
   async verifyTaskProof(id: number, verifierId: number, notes?: string): Promise<any> { return undefined; }
   async deleteTaskProof(id: number): Promise<boolean> { return true; }
+  async completeTask(taskId: number, completedById?: number): Promise<any> { return undefined; }
+  async uncompleteTask(taskId: number): Promise<any> { return undefined; }
+  async updateTaskName(taskId: number, newTitle: string): Promise<any> { return undefined; }
+  async deleteTask(taskId: number): Promise<any> { return true; }
   async getDepartmentTaskProgress(taskId: number): Promise<any[]> { return []; }
   async updateDepartmentTaskProgress(taskId: number, departmentHeadId: number, updates: any): Promise<any> { return undefined; }
-  async archiveWeeklyMeeting(meetingId: number, archivedById: number): Promise<any> { return undefined; }
+  async getWeeklyMeetingArchive(meetingId: number): Promise<any[]> { return []; }
+  async archiveWeeklyMeeting(meetingId: number, archivedById: number, resultsData: any): Promise<any> { return undefined; }
   async getWeeklyMeetingArchives(): Promise<any[]> { return []; }
+  async getFeedbackByAccessibleUsers(accessibleUserIds: number[]): Promise<any[]> { return []; }
 }
