@@ -439,72 +439,120 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
-      {/* Modern Filter Controls */}
+      {/* Quick Actions */}
       <motion.div
         variants={cardVariants}
         className="mb-8"
       >
-        <Card className="border-purple-100 shadow-lg bg-purple-600">
-          <CardContent className="p-6">
-            <div className="space-y-6">
-              {/* Date Filter Controls */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-purple-500 p-4 rounded-lg border border-purple-400">
-                <div className="space-y-2">
-                  <Label htmlFor="date-filter" className="text-sm font-medium flex items-center gap-2 text-white">
-                    <Calendar className="w-4 h-4" />
-                    Date Filter
-                  </Label>
-                  <Select value={dateFilter} onValueChange={setDateFilter}>
-                    <SelectTrigger id="date-filter" className="border-purple-300 focus:border-purple-600 bg-white text-purple-700">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="today">Today Only</SelectItem>
-                      <SelectItem value="week">This Week</SelectItem>
-                      <SelectItem value="month">This Month</SelectItem>
-                      <SelectItem value="custom">Custom Date</SelectItem>
-                      <SelectItem value="all">All Dates</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {dateFilter === 'custom' && (
-                  <motion.div 
-                    className="space-y-2"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
+        <Card className="hover:shadow-xl transition-all duration-300 border-purple-100 bg-gradient-to-br from-purple-50 to-purple-50">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2 text-purple-700">
+              <motion.div
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+              >
+                <Sparkles className="w-5 h-5 text-purple-500" />
+              </motion.div>
+              <span>{t("quickActions")}</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {user?.role === "admin" && (
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+                  variants={iconVariants}
+                  whileHover="hover"
+                  whileTap="tap"
+                >
+                  <Button
+                    variant="outline"
+                    className="p-4 h-auto flex-col space-y-2 w-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 bg-white text-purple-700 hover:text-purple-800 transition-all duration-300 shadow-sm hover:shadow-md"
+                    onClick={() => setLocation("/users")}
                   >
-                    <Label htmlFor="custom-date" className="text-sm font-medium text-white">
-                      Select Date
-                    </Label>
-                    <Input
-                      id="custom-date"
-                      type="date"
-                      value={customDate}
-                      onChange={(e) => setCustomDate(e.target.value)}
-                      className="border-purple-300 focus:border-purple-600 focus:ring-purple-600 bg-white text-purple-700"
-                    />
-                  </motion.div>
-                )}
+                    <UserPlus className="w-6 h-6" />
+                    <span className="text-xs font-medium">{t("addEmployee")}</span>
+                  </Button>
+                </motion.div>
+              )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="auto-refresh" className="text-sm font-medium flex items-center gap-2 text-white">
-                    <RefreshCw className={`w-4 h-4 ${autoRefresh ? 'animate-spin text-white' : 'text-gray-200'}`} />
-                    Auto Refresh
-                  </Label>
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="auto-refresh"
-                      checked={autoRefresh}
-                      onCheckedChange={setAutoRefresh}
-                    />
-                    <span className="text-sm text-white">
-                      {autoRefresh ? 'Every 30s' : 'Disabled'}
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                variants={iconVariants}
+                whileHover="hover"
+                whileTap="tap"
+              >
+                <Button
+                  variant="outline"
+                  className="p-4 h-auto flex-col space-y-2 w-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 bg-white text-purple-700 hover:text-purple-800 transition-all duration-300 shadow-sm hover:shadow-md"
+                  onClick={() => setLocation("/interviews")}
+                >
+                  <Calendar className="w-6 h-6" />
+                  <span className="text-xs font-medium">{user?.role === "security" ? t("scheduleReview") : t("employeeReviews")}</span>
+                </Button>
+              </motion.div>
+
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+                variants={iconVariants}
+                whileHover="hover"
+                whileTap="tap"
+              >
+                <Button
+                  variant="outline"
+                  className="p-4 h-auto flex-col space-y-2 w-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 bg-white text-purple-700 hover:text-purple-800 transition-all duration-300 shadow-sm hover:shadow-md"
+                  onClick={() => setLocation("/todos")}
+                >
+                  <PlusCircle className="w-6 h-6" />
+                  <span className="text-xs font-medium">{t("createTask")}</span>
+                </Button>
+              </motion.div>
+
+              {user?.role === "admin" && (
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
+                  variants={iconVariants}
+                  whileHover="hover"
+                  whileTap="tap"
+                >
+                  <Button
+                    variant="outline"
+                    className="p-4 h-auto flex-col space-y-2 w-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 bg-white text-purple-700 hover:text-purple-800 transition-all duration-300 shadow-sm hover:shadow-md"
+                    onClick={() => setLocation("/reports")}
+                  >
+                    <BarChart3 className="w-6 h-6" />
+                    <span className="text-xs font-medium">{t("viewReports")}</span>
+                  </Button>
+                </motion.div>
+              )}
+
+              {user?.role === "admin" && (
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
+                  variants={iconVariants}
+                  whileHover="hover"
+                  whileTap="tap"
+                >
+                  <Button
+                    variant="outline"
+                    className="p-4 h-auto flex-col space-y-2 w-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 bg-white text-purple-700 hover:text-purple-800 transition-all duration-300 shadow-sm hover:shadow-md"
+                    onClick={() => setLocation("/broadcast-notification")}
+                  >
+                    <Radio className="w-6 h-6" />
+                    <span className="text-xs font-medium">Broadcast</span>
+                  </Button>
+                </motion.div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -641,11 +689,53 @@ export default function DashboardPage() {
         </motion.div>
       )}
 
-      {/* Top Tasks & Meeting Notes */}
       <motion.div 
         className="grid grid-cols-1 xl:grid-cols-2 gap-8"
         variants={containerVariants}
       >
+        {/* Top Tasks & Meeting Notes */}
+        <motion.div variants={itemVariants}>
+          <Card className="h-full border-purple-100 shadow-lg bg-purple-600">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 text-white">
+                <CheckCircle className="w-5 h-5" />
+                Recent Tasks
+              </CardTitle>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-white hover:bg-purple-500"
+                onClick={() => setLocation("/todos")}
+              >
+                View Tasks
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  {recentTodos?.todoLists?.slice(0, 3).map((list: any) => (
+                    <div key={list.id} className="flex items-center gap-3">
+                      <motion.div 
+                        className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0"
+                        whileHover={{ scale: 1.1 }}
+                      >
+                        <CheckCircle className="w-4 h-4 text-purple-600" />
+                      </motion.div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-white font-medium truncate">{list.title}</p>
+                        <p className="text-xs text-purple-200">
+                          {list.items.length} items • {getRelativeTime(list.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Modern Quick Actions */}
         <motion.div variants={itemVariants}>
           <Card className="hover:shadow-xl transition-all duration-300 border-purple-100 bg-gradient-to-br from-purple-50 to-purple-50">
             <CardHeader>
@@ -656,118 +746,34 @@ export default function DashboardPage() {
                 >
                   <Sparkles className="w-5 h-5 text-purple-500" />
                 </motion.div>
-                <span>{t("quickActions")}</span>
+                <span>Recent Reviews</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                {user?.role === "admin" && (
-                  <motion.div
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 1.2, type: "spring", stiffness: 200 }}
-                    variants={iconVariants}
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    <Button
-                      variant="outline"
-                      className="p-6 h-auto flex-col space-y-2 w-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 bg-white/80 text-purple-700 hover:text-purple-800 transition-all duration-300 shadow-sm hover:shadow-md"
-                      onClick={() => setLocation("/users")}
-                    >
-                      <motion.div variants={iconVariants}>
-                        <UserPlus className="w-8 h-8" />
-                      </motion.div>
-                      <span className="font-medium">{t("addEmployee")}</span>
-                    </Button>
-                  </motion.div>
-                )}
-
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 1.3, type: "spring", stiffness: 200 }}
-                  variants={iconVariants}
-                  whileHover="hover"
-                  whileTap="tap"
+              <div className="space-y-4">
+                {interviews.slice(0, 3).map((interview: any) => (
+                  <div key={interview.id} className="flex items-center justify-between p-3 rounded-xl bg-white border border-purple-100 shadow-sm">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                        <Users className="w-5 h-5 text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">{interview.candidateName}</p>
+                        <p className="text-xs text-gray-500">{interview.position}</p>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className="text-[10px] border-purple-200 text-purple-700">
+                      {interview.status}
+                    </Badge>
+                  </div>
+                ))}
+                <Button 
+                  variant="outline" 
+                  className="w-full mt-2 border-purple-200 text-purple-700 hover:bg-purple-50"
+                  onClick={() => setLocation("/interviews")}
                 >
-                  <Button
-                    variant="outline"
-                    className="p-6 h-auto flex-col space-y-2 w-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 bg-white/80 text-purple-700 hover:text-purple-800 transition-all duration-300 shadow-sm hover:shadow-md"
-                    onClick={() => setLocation("/interviews")}
-                  >
-                    <motion.div variants={iconVariants}>
-                      <Calendar className="w-8 h-8" />
-                    </motion.div>
-                    <span className="font-medium">
-                      {user?.role === "security" ? t("scheduleReview") : t("employeeReviews")}
-                    </span>
-                  </Button>
-                </motion.div>
-
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 1.4, type: "spring", stiffness: 200 }}
-                  variants={iconVariants}
-                  whileHover="hover"
-                  whileTap="tap"
-                >
-                  <Button
-                    variant="outline"
-                    className="p-6 h-auto flex-col space-y-2 w-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 bg-white/80 text-purple-700 hover:text-purple-800 transition-all duration-300 shadow-sm hover:shadow-md"
-                    onClick={() => setLocation("/todos")}
-                  >
-                    <motion.div variants={iconVariants}>
-                      <PlusCircle className="w-8 h-8" />
-                    </motion.div>
-                    <span className="font-medium">{t("createTask")}</span>
-                  </Button>
-                </motion.div>
-
-                {user?.role === "admin" && (
-                  <motion.div
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 1.5, type: "spring", stiffness: 200 }}
-                    variants={iconVariants}
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    <Button
-                      variant="outline"
-                      className="p-6 h-auto flex-col space-y-2 w-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 bg-white/80 text-purple-700 hover:text-purple-800 transition-all duration-300 shadow-sm hover:shadow-md"
-                      onClick={() => setLocation("/reports")}
-                    >
-                      <motion.div variants={iconVariants}>
-                        <BarChart3 className="w-8 h-8" />
-                      </motion.div>
-                      <span className="font-medium">{t("viewReports")}</span>
-                    </Button>
-                  </motion.div>
-                )}
-
-                {user?.role === "admin" && (
-                  <motion.div
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 1.6, type: "spring", stiffness: 200 }}
-                    variants={iconVariants}
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    <Button
-                      variant="outline"
-                      className="p-6 h-auto flex-col space-y-2 w-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 bg-white/80 text-purple-700 hover:text-purple-800 transition-all duration-300 shadow-sm hover:shadow-md"
-                      onClick={() => setLocation("/broadcast-notification")}
-                    >
-                      <motion.div variants={iconVariants}>
-                        <Radio className="w-8 h-8" />
-                      </motion.div>
-                      <span className="font-medium">Broadcast</span>
-                    </Button>
-                  </motion.div>
-                )}
+                  View All Reviews
+                </Button>
               </div>
             </CardContent>
           </Card>
