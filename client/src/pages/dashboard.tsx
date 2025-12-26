@@ -439,7 +439,7 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
-      {/* Modern Search and Filter Controls */}
+      {/* Modern Filter Controls */}
       <motion.div
         variants={cardVariants}
         className="mb-8"
@@ -448,7 +448,7 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <div className="space-y-6">
               {/* Date Filter Controls */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-purple-500 p-4 rounded-lg border border-purple-400">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-purple-500 p-4 rounded-lg border border-purple-400">
                 <div className="space-y-2">
                   <Label htmlFor="date-filter" className="text-sm font-medium flex items-center gap-2 text-white">
                     <Calendar className="w-4 h-4" />
@@ -641,62 +641,20 @@ export default function DashboardPage() {
         </motion.div>
       )}
 
+      {/* Top Tasks & Meeting Notes */}
       <motion.div 
         className="grid grid-cols-1 xl:grid-cols-2 gap-8"
         variants={containerVariants}
       >
-        {/* Top Tasks & Meeting Notes */}
-        <motion.div variants={itemVariants}>
-          <Card className="h-full border-purple-100 shadow-lg bg-purple-600">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-lg font-bold flex items-center gap-2 text-white">
-                <CheckCircle className="w-5 h-5" />
-                Top Tasks
-              </CardTitle>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-white hover:bg-purple-500"
-                onClick={() => setLocation("/todos")}
-              >
-                View Tasks
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div className="space-y-4">
-                  {recentTodos?.todoLists?.slice(0, 3).map((list: any) => (
-                    <div key={list.id} className="flex items-center gap-3">
-                      <motion.div 
-                        className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0"
-                        whileHover={{ scale: 1.1 }}
-                      >
-                        <CheckCircle className="w-4 h-4 text-purple-600" />
-                      </motion.div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-white font-medium truncate">{list.title}</p>
-                        <p className="text-xs text-purple-200">
-                          {list.items.length} items • {getRelativeTime(list.createdAt)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Modern Quick Actions */}
         <motion.div variants={itemVariants}>
           <Card className="hover:shadow-xl transition-all duration-300 border-purple-100 bg-gradient-to-br from-purple-50 to-purple-50">
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2 text-white">
+              <CardTitle className="flex items-center space-x-2 text-purple-700">
                 <motion.div
                   animate={{ scale: [1, 1.1, 1] }}
                   transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
                 >
-                  <Sparkles className="w-5 h-5 text-white" />
+                  <Sparkles className="w-5 h-5 text-purple-500" />
                 </motion.div>
                 <span>{t("quickActions")}</span>
               </CardTitle>
