@@ -628,21 +628,17 @@ export class MemStorage implements IStorage {
 
   async getAccessibleUserIds(userId: number, userRole: string): Promise<number[]> {
     if (userRole === 'admin') {
-      // Admin can see all users
       return this.users.map(u => u.id);
     } else if (userRole === 'manager') {
-      // Manager can ONLY see themselves and their direct staff
       const staffIds = this.users
         .filter(u => u.managerId === userId)
         .map(u => u.id);
       return [userId, ...staffIds];
     } else if (userRole === 'office' || userRole === 'office_team' || userRole === 'secretary') {
-      // Staff can see themselves and their manager (if assigned)
       const user = this.users.find(u => u.id === userId);
       const accessibleIds = [userId];
       if (user?.managerId) {
         accessibleIds.push(user.managerId);
-        // Also include other staff under the same manager
         const siblings = this.users
           .filter(u => u.managerId === user.managerId && u.id !== userId)
           .map(u => u.id);
@@ -650,8 +646,48 @@ export class MemStorage implements IStorage {
       }
       return accessibleIds;
     } else {
-      // Security and other roles can only see themselves
       return [userId];
     }
   }
+
+  async getItSupportTickets(): Promise<any[]> {
+    return [];
+  }
+  async createItSupportTicket(data: any): Promise<any> {
+    return { ...data, id: Math.floor(Math.random() * 1000), createdAt: new Date() };
+  }
+  async updateItSupportTicket(id: number, updates: any): Promise<any> {
+    return { id, ...updates };
+  }
+  async deleteItSupportTicket(id: number): Promise<boolean> {
+    return true;
+  }
+
+  async getTodoItem(id: number): Promise<any> { return this.todoItems.find(i => i.id === id); }
+  async getTodoItemsByListId(listId: number): Promise<any[]> { return this.todoItems.filter(i => i.todoListId === listId); }
+  async getInterviewComments(requestId: number): Promise<any[]> { return []; }
+  async createInterviewComment(comment: any): Promise<any> { return comment; }
+  async getDeviceNotifications(userId: number): Promise<any[]> { return []; }
+  async createDeviceNotification(notification: any): Promise<any> { return notification; }
+  async markNotificationAsRead(id: number): Promise<boolean> { return true; }
+  async getUnreadNotificationCount(userId: number): Promise<number> { return 0; }
+  async getWeeklyMeetings(): Promise<any[]> { return []; }
+  async createWeeklyMeeting(meeting: any): Promise<any> { return meeting; }
+  async getWeeklyMeeting(id: number): Promise<any> { return undefined; }
+  async updateWeeklyMeeting(id: number, updates: any): Promise<any> { return undefined; }
+  async deleteWeeklyMeeting(id: number): Promise<boolean> { return true; }
+  async getWeeklyMeetingTasks(meetingId: number): Promise<any[]> { return []; }
+  async createWeeklyMeetingTask(task: any): Promise<any> { return task; }
+  async updateWeeklyMeetingTask(id: number, updates: any): Promise<any> { return undefined; }
+  async deleteWeeklyMeetingTask(id: number): Promise<boolean> { return true; }
+  async getTaskComments(taskId: number): Promise<any[]> { return []; }
+  async createTaskComment(comment: any): Promise<any> { return comment; }
+  async getTaskProofs(taskId: number): Promise<any[]> { return []; }
+  async createTaskProof(proof: any): Promise<any> { return proof; }
+  async verifyTaskProof(id: number, verifierId: number, notes?: string): Promise<any> { return undefined; }
+  async deleteTaskProof(id: number): Promise<boolean> { return true; }
+  async getDepartmentTaskProgress(taskId: number): Promise<any[]> { return []; }
+  async updateDepartmentTaskProgress(taskId: number, departmentHeadId: number, updates: any): Promise<any> { return undefined; }
+  async archiveWeeklyMeeting(meetingId: number, archivedById: number): Promise<any> { return undefined; }
+  async getWeeklyMeetingArchives(): Promise<any[]> { return []; }
 }

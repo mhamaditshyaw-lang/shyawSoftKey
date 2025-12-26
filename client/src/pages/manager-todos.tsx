@@ -422,13 +422,32 @@ export default function ManagerTodosPage() {
 
                       {/* Footer Info */}
                       <div className="flex items-center justify-between pt-4 mt-2 border-t border-gray-50 dark:border-gray-700 text-[11px] text-gray-500 font-medium">
-                        <div className="flex items-center gap-1.5">
-                          <User className="w-3.5 h-3.5" />
-                          <span>{list.createdBy?.firstName || 'System'}</span>
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                            <Clock className="w-3.5 h-3.5" />
+                            <span>{new Date(list.createdAt).toLocaleDateString()}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">
+                            <User className="w-3.5 h-3.5" />
+                            <span>{list.createdBy?.firstName || 'System'}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1.5">
-                          <Clock className="w-3.5 h-3.5" />
-                          <span>{new Date(list.createdAt).toLocaleDateString()}</span>
+                        <div className="flex items-center gap-2">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8 text-gray-400 hover:text-red-500"
+                            onClick={() => {
+                              if (window.confirm("Are you sure you want to delete this task list?")) {
+                                authenticatedRequest('DELETE', `/api/todos/${list.id}`).then(() => {
+                                  queryClient.invalidateQueries({ queryKey: ["/api/manager-todos"] });
+                                  toast({ title: "Success", description: "Task list deleted" });
+                                });
+                              }
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
                     </CardContent>
