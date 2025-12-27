@@ -2312,11 +2312,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/weekly-meetings/tasks/:taskId/complete", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      if (req.user?.role !== "admin" && req.user?.role !== "manager") {
-        return res.status(403).json({ message: "Only admin and manager can complete tasks" });
+      if (req.user?.role !== "admin" && req.user?.role !== "manager" && req.user?.role !== "office") {
+        return res.status(403).json({ message: "Only admin, manager and office can complete tasks" });
       }
       const taskId = parseInt(req.params.taskId);
-      const result = await storage.completeTask(taskId, req.user?.id);
+      const completedById = req.body.completedById || req.user?.id;
+      const result = await storage.completeTask(taskId, completedById);
       res.json(result || { message: "Task completed" });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
