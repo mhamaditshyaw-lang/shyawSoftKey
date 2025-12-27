@@ -165,7 +165,9 @@ export default function WeeklyMeetingDetailPage() {
       if (isCompleted && (user?.role === "office" || user?.role === "manager" || user?.role === "admin")) {
         return apiRequest("PATCH", `/api/weekly-meetings/tasks/${taskId}/uncomplete`, {});
       }
-      return apiRequest("PATCH", `/api/weekly-meetings/tasks/${taskId}/complete`, {});
+      return apiRequest("PATCH", `/api/weekly-meetings/tasks/${taskId}/complete`, {
+        completedById: user?.id
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/weekly-meetings", id, "tasks"] });
@@ -501,9 +503,13 @@ export default function WeeklyMeetingDetailPage() {
                         {task.proofs.map((proof: any) => (
                           <div key={proof.id} className="p-2 rounded bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800">
                             {proof.description && <p className="text-xs text-slate-700 dark:text-slate-300 italic mb-1">"{proof.description}"</p>}
-                            {proof.isVerified && proof.verificationNotes && (
+                            {proof.isVerified && proof.verificationNotes ? (
                               <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
                                 <span className="font-bold">Verifier Note:</span> {proof.verificationNotes}
+                              </p>
+                            ) : (
+                              <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium italic">
+                                Pending verification
                               </p>
                             )}
                           </div>
