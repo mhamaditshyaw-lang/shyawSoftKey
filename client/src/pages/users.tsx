@@ -430,20 +430,22 @@ export default function UsersPage() {
                             <Edit className="w-4 h-4" />
                           </Button>
                         </ActionTooltip>
-                        <ActionTooltip
-                          action="Delete Employee"
-                          description="Permanently remove employee account and all associated data"
-                          danger={true}
-                        >
-                          <Button 
-                            size="sm" 
-                            variant="ghost" 
-                            onClick={() => handleDeleteUser(user)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                          >
-                            <Trash className="w-4 h-4" />
-                          </Button>
-                        </ActionTooltip>
+                            {user.id !== usersData?.currentUser?.id && user.username !== 'admin' && (
+                              <ActionTooltip
+                                action="Delete Employee"
+                                description="Permanently remove employee account and all associated data"
+                                danger={true}
+                              >
+                                <Button 
+                                  size="sm" 
+                                  variant="ghost" 
+                                  onClick={() => handleDeleteUser(user)}
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                >
+                                  <Trash className="w-4 h-4" />
+                                </Button>
+                              </ActionTooltip>
+                            )}
                       </>
                     )}
                   </div>
