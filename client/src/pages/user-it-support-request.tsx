@@ -88,7 +88,7 @@ export default function UserItSupportRequestPage() {
   const { data: ticketsData = [] } = useQuery<ItSupportTicket[]>({
     queryKey: ["/api/it-support"],
   });
-  const tickets = Array.isArray(ticketsData) ? ticketsData : [];
+  const tickets: ItSupportTicket[] = Array.isArray(ticketsData) ? ticketsData : [];
 
   const createTicketMutation = useMutation({
     mutationFn: async (data: typeof formData) => {

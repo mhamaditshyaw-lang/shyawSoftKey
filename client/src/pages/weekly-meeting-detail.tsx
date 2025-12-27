@@ -495,6 +495,21 @@ export default function WeeklyMeetingDetailPage() {
                         </p>
                       </div>
                     )}
+                    {task.proofs && task.proofs.length > 0 && (
+                      <div className="mt-2 space-y-2">
+                        <p className="text-[10px] font-bold uppercase text-indigo-600 dark:text-indigo-400">Verification Notes:</p>
+                        {task.proofs.map((proof: any) => (
+                          <div key={proof.id} className="p-2 rounded bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800">
+                            {proof.description && <p className="text-xs text-slate-700 dark:text-slate-300 italic mb-1">"{proof.description}"</p>}
+                            {proof.isVerified && proof.verificationNotes && (
+                              <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                                <span className="font-bold">Verifier Note:</span> {proof.verificationNotes}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Comments Toggle - Compact */}
