@@ -51,7 +51,7 @@ export default function UserActivityPage() {
   // Process activity data
   const userActivities = [
     // Todo activities (created, assigned, completed)
-    ...(todosData?.todoLists || []).flatMap((list: any) => [
+    ...((Array.isArray(todosData) ? todosData : (todosData as any)?.todoLists) || []).flatMap((list: any) => [
       {
         id: `todo-created-${list.id}`,
         type: "todo_created",
@@ -102,7 +102,7 @@ export default function UserActivityPage() {
     ]),
 
     // Feedback activities
-    ...(feedbackData?.feedback || []).map((feedback: any) => ({
+    ...((Array.isArray(feedbackData) ? feedbackData : (feedbackData as any)?.feedback) || []).map((feedback: any) => ({
       id: `feedback-${feedback.id}`,
       type: "feedback_submitted",
       activityType: "feedback",
@@ -118,7 +118,7 @@ export default function UserActivityPage() {
     })),
 
     // Interview activities
-    ...(interviewsData?.requests || []).map((interview: any) => ({
+    ...((Array.isArray(interviewsData) ? interviewsData : (interviewsData as any)?.requests) || []).map((interview: any) => ({
       id: `interview-${interview.id}`,
       type: "interview_scheduled",
       activityType: "interview",

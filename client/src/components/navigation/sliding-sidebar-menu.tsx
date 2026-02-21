@@ -105,7 +105,7 @@ const NAVIGATION: NavigationItem[] = [
     segment: 'all-data',
     title: 'All Data Dashboard',
     icon: <Activity className="w-5 h-5" />,
-    roles: ['admin', 'manager'],
+    roles: ['admin', 'manager', 'security'],
   },
   {
     kind: 'divider',
@@ -160,8 +160,8 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
   }, [isOpen]);
 
   const toggleExpanded = (segment: string) => {
-    setExpandedItems(prev => 
-      prev.includes(segment) 
+    setExpandedItems(prev =>
+      prev.includes(segment)
         ? prev.filter(item => item !== segment)
         : [...prev, segment]
     );
@@ -223,7 +223,7 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
               </div>
               <span className="font-medium">{item.title}</span>
             </div>
-            <ChevronRight 
+            <ChevronRight
               className={cn(
                 "w-4 h-4 transition-transform duration-200",
                 isExpanded ? "rotate-90" : "",
@@ -254,9 +254,9 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
           <div className="ml-8 mt-2 space-y-1 animate-fade-in">
             {item.children?.map((child, childIndex) => {
               if (!hasAccess(child)) return null;
-              
+
               const childActive = child.segment && isActive(child.segment);
-              
+
               return (
                 <Link key={childIndex} href={`/${child.segment}`}>
                   <div className={cn(
@@ -317,7 +317,7 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
       {/* Animated Overlay */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -335,7 +335,7 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
             initial={{ x: "-100%", opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: "-100%", opacity: 0 }}
-            transition={{ 
+            transition={{
               type: "spring",
               stiffness: 300,
               damping: 30
@@ -343,7 +343,7 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
             className="fixed inset-y-0 left-0 z-50 w-80 bg-white/95 backdrop-blur-md shadow-2xl border-r border-indigo-100"
           >
             {/* Header */}
-            <motion.div 
+            <motion.div
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1, duration: 0.4 }}
@@ -351,11 +351,11 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
             >
               <div className="flex items-center space-x-3">
                 <motion.div
-                  animate={{ 
+                  animate={{
                     scale: [1, 1.1, 1],
                     rotate: [0, 5, -5, 0]
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 2,
                     repeat: Infinity,
                     repeatType: "reverse"
@@ -369,9 +369,9 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
                   <p className="text-indigo-100 text-sm">Administration Shyaw System</p>
                 </div>
               </div>
-              
+
               {user && (
-                <motion.div 
+                <motion.div
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.2, duration: 0.4 }}
@@ -398,7 +398,7 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
                     key={index}
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    transition={{ 
+                    transition={{
                       delay: 0.1 + (index * 0.05),
                       duration: 0.3
                     }}
@@ -410,7 +410,7 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
             </div>
 
             {/* Footer */}
-            <motion.div 
+            <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.4 }}
@@ -427,15 +427,15 @@ export default function SlidingSidebarMenu({ className }: SlidingSidebarMenuProp
                   <span className="text-sm font-medium">Sign Out</span>
                 </motion.button>
               </div>
-              
+
               <div className="mt-4 pt-4 border-t border-indigo-200">
                 <div className="flex items-center justify-center space-x-2">
-                  <motion.div 
-                    animate={{ 
+                  <motion.div
+                    animate={{
                       scale: [1, 1.2, 1],
                       opacity: [1, 0.7, 1]
                     }}
-                    transition={{ 
+                    transition={{
                       duration: 2,
                       repeat: Infinity,
                       repeatType: "reverse"

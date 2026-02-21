@@ -23,11 +23,11 @@ import {
 } from "lucide-react";
 
 interface DataEntry {
-  id: string;
-  timestamp: string;
+  id: string | number;
+  timestamp?: string;
   type: string;
   data: Record<string, string>;
-  stats: {
+  stats?: {
     total: number;
     average: number;
     max: number;
@@ -125,21 +125,23 @@ export function DeleteConfirmationModal({
               <div>
                 <h4 className="font-semibold text-gray-900">{getTypeName(entry.type)}</h4>
                 <p className="text-sm text-gray-600">
-                  {Object.keys(entry.data).length} data fields • {new Date(entry.timestamp).toLocaleString()}
+                  {Object.keys(entry.data).length} data fields {entry.timestamp && `• ${new Date(entry.timestamp).toLocaleString()}`}
                 </p>
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="bg-white p-2 rounded border">
-                <span className="text-gray-500">Total:</span>
-                <span className="font-medium ml-1">{entry.stats.total.toFixed(2)}</span>
+            {entry.stats && (
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="bg-white p-2 rounded border">
+                  <span className="text-gray-500">Total:</span>
+                  <span className="font-medium ml-1">{entry.stats.total.toFixed(2)}</span>
+                </div>
+                <div className="bg-white p-2 rounded border">
+                  <span className="text-gray-500">Average:</span>
+                  <span className="font-medium ml-1">{entry.stats.average.toFixed(2)}</span>
+                </div>
               </div>
-              <div className="bg-white p-2 rounded border">
-                <span className="text-gray-500">Average:</span>
-                <span className="font-medium ml-1">{entry.stats.average.toFixed(2)}</span>
-              </div>
-            </div>
+            )}
           </div>
         )}
 

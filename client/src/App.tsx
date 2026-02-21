@@ -77,7 +77,7 @@ function ProtectedRoute({ children, requiredPermission }: ProtectedRouteProps) {
     // Admin should have access to everything, but we check permissions for others
     // We also allow managers to access their dashboard and todos by default
     const isDefaultManagerPage = ['view_manager_todos', 'view_manager_dashboard'].includes(requiredPermission);
-    
+
     if (!isAdmin && !hasPermission && !(isManager && isDefaultManagerPage)) {
       return <AccessDenied />;
     }
@@ -92,7 +92,7 @@ function RTLHandler() {
   useEffect(() => {
     const isRTL = i18n.language === 'ar' || i18n.language === 'ku';
     const htmlElement = document.documentElement;
-    
+
     if (isRTL) {
       htmlElement.setAttribute('dir', 'rtl');
       htmlElement.lang = i18n.language;
@@ -131,7 +131,7 @@ function Router() {
           <UsersPage />
         </ProtectedRoute>
       </Route>
-      
+
       <Route path="/employee-management">
         <ProtectedRoute requiredPermission="manage_employees">
           <EmployeeManagementPage />
@@ -164,12 +164,12 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/data-view">
-        <ProtectedRoute requiredPermission="view_data">
+        <ProtectedRoute>
           <DataViewPage />
         </ProtectedRoute>
       </Route>
       <Route path="/all-data">
-        <ProtectedRoute requiredPermission="view_all_data">
+        <ProtectedRoute>
           <AllDataPage />
         </ProtectedRoute>
       </Route>
@@ -218,7 +218,7 @@ function Router() {
           <MultilingualDemoPage />
         </ProtectedRoute>
       </Route>
-      
+
       <Route path="/page-access-management">
         <ProtectedRoute requiredPermission="manage_page_access">
           <PageAccessManagement />

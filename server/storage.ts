@@ -88,6 +88,7 @@ export interface IStorage {
   getInterviewRequestsByUser(userId: number): Promise<(InterviewRequest & { requestedBy: User; manager: User | null; actionTakenBy: User | null })[]>;
   createInterviewRequest(request: InsertInterviewRequest): Promise<InterviewRequest>;
   updateInterviewRequest(id: number, updates: Partial<InterviewRequest>): Promise<InterviewRequest | undefined>;
+  deleteInterviewRequest(id: number): Promise<boolean>;
 
   // Interview comment methods
   getInterviewComments(interviewRequestId: number): Promise<(InterviewComment & { author: User })[]>;
@@ -228,9 +229,24 @@ export class DatabaseStorage implements IStorage {
           .set({ requestedById: 1 })
           .where(eq(interviewRequests.requestedById, id));
 
+        // Update interview requests where this user is the action taker
+        await tx
+          .update(interviewRequests)
+          .set({ actionTakenById: null })
+          .where(eq(interviewRequests.actionTakenById, id));
+
         // Delete related data first
         await tx.delete(feedback).where(eq(feedback.submittedById, id));
         await tx.delete(archivedItems).where(eq(archivedItems.archivedById, id));
+
+        // Delete reminders created by this user
+        await tx.delete(reminders).where(eq(reminders.createdById, id));
+
+        // Delete todo items completed by this user
+        await tx
+          .update(todoItems)
+          .set({ completedById: null })
+          .where(eq(todoItems.completedById, id));
 
         // Finally, delete the user
         const result = await tx
@@ -722,6 +738,28 @@ export class DatabaseStorage implements IStorage {
     });
   }
 
+  async deleteInterviewRequest(id: number): Promise<boolean> {
+    return await executeWithRetry(async () => {
+      try {
+        // First delete all comments associated with this interview
+        await db
+          .delete(interviewComments)
+          .where(eq(interviewComments.interviewRequestId, id));
+
+        // Then delete the interview request
+        const result = await db
+          .delete(interviewRequests)
+          .where(eq(interviewRequests.id, id))
+          .returning();
+
+        return result.length > 0;
+      } catch (error) {
+        console.error(`Failed to delete interview request ${id}:`, error);
+        throw error;
+      }
+    });
+  }
+
   // Interview comment methods
   async getInterviewComments(interviewRequestId: number): Promise<(InterviewComment & { author: User })[]> {
     return await executeWithRetry(async () => {
@@ -1015,16 +1053,38 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getOperationalData(): Promise<any[]> {
-    const entries = await db
-      .select()
-      .from(operationalData)
-      .leftJoin(users, eq(operationalData.createdById, users.id))
-      .orderBy(desc(operationalData.createdAt));
+    return await executeWithRetry(async () => {
+      const entries = await db.query.operationalData.findMany({
+        with: {
+          createdBy: true,
+        },
+        orderBy: (operationalData, { desc }) => [desc(operationalData.createdAt)],
+      });
 
-    return entries.map(entry => ({
-      ...entry.operational_data,
-      createdBy: entry.users!,
-    }));
+      console.log(`[Storage.getOperationalData] Raw entries from DB: ${entries?.length || 0}`);
+      if (entries && entries.length > 0) {
+        console.log(`[Storage.getOperationalData] First entry:`, JSON.stringify(entries[0], null, 2));
+      }
+
+      const result = entries.map((entry: any) => ({
+        id: entry.id,
+        type: entry.type,
+        data: entry.data,
+        stats: entry.stats,
+        createdById: entry.createdById,
+        createdAt: entry.createdAt,
+        timestamp: entry.createdAt,
+        createdBy: entry.createdBy ? {
+          id: entry.createdBy.id,
+          username: entry.createdBy.username,
+          firstName: entry.createdBy.firstName,
+          lastName: entry.createdBy.lastName,
+        } : null,
+      }));
+
+      console.log(`[Storage.getOperationalData] Mapped entries: ${result.length}`);
+      return result;
+    });
   }
 
   async deleteOperationalData(id: number): Promise<boolean> {

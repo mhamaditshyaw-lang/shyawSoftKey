@@ -633,6 +633,49 @@ export default function InterviewsPage() {
                         {t("archiveInterview")}
                       </Button>
                     )}
+
+                    {(user?.role === "admin" || user?.role === "manager") && (
+                      <Button
+                        variant="destructive"
+                        onClick={() => {
+                          // Show confirmation dialog
+                          if (confirm(`Are you sure you want to delete the interview request for ${request.candidateName}? This action cannot be undone.`)) {
+                            const deleteRequest = async () => {
+                              try {
+                                const response = await authenticatedRequest("DELETE", `/api/interviews/${request.id}`);
+
+                                if (response.ok) {
+                                  queryClient.invalidateQueries({ queryKey: ["/api/interviews"] });
+                                  toast({
+                                    title: "Success",
+                                    description: "Interview request deleted successfully",
+                                  });
+                                } else {
+                                  const error = await response.json();
+                                  toast({
+                                    title: "Error",
+                                    description: error.message || "Failed to delete interview request",
+                                    variant: "destructive",
+                                  });
+                                }
+                              } catch (error: any) {
+                                toast({
+                                  title: "Error",
+                                  description: error.message || "Failed to delete interview request",
+                                  variant: "destructive",
+                                });
+                              }
+                            };
+
+                            deleteRequest();
+                          }
+                        }}
+                        className="bg-red-600 hover:bg-red-700"
+                      >
+                        <X className="w-4 h-4 mr-2" />
+                        {t("deleteInterview")}
+                      </Button>
+                    )}
                   </div>
                 </div>
               </CardContent>

@@ -1,0 +1,1119 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management System - Professional Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2563EB',
+                        secondary: '#1E293B',
+                        success: '#059669',
+                        warning: '#D97706',
+                        error: '#DC2626',
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-inter">
+    <!-- @COMPONENT: AppContainer -->
+    <div id="app-container" class="min-h-screen">
+        
+        <!-- Login/Register Section -->
+        <!-- @COMPONENT: AuthSection -->
+        <div id="auth-section" class="flex min-h-screen">
+            <!-- Left Panel - Branding -->
+            <div class="hidden lg:flex lg:w-1/2 bg-primary flex-col justify-center items-center p-12">
+                <div class="text-center text-white">
+                    <i class="fas fa-building text-6xl mb-6"></i>
+                    <h1 class="text-4xl font-bold mb-4">ManageFlow</h1>
+                    <p class="text-xl text-blue-100">Professional Management System</p>
+                    <p class="text-blue-200 mt-2">Streamline your workflow with role-based management</p>
+                </div>
+            </div>
+            
+            <!-- Right Panel - Auth Forms -->
+            <div class="w-full lg:w-1/2 flex items-center justify-center p-8">
+                <div class="w-full max-w-md">
+                    <!-- Login Form -->
+                    <div id="login-form" class="bg-white rounded-xl shadow-lg p-8">
+                        <div class="text-center mb-8">
+                            <h2 class="text-3xl font-bold text-gray-900">Welcome Back</h2>
+                            <p class="text-gray-600 mt-2">Sign in to your account</p>
+                        </div>
+                        
+                        <form class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                <input type="email" data-mock="true" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Enter your email">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                                <input type="password" data-mock="true" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Enter your password">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                                <select data-mock="true" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                                    <option>Select your role</option>
+                                    <option>Admin</option>
+                                    <option>Manager</option>
+                                    <option>Secretary</option>
+                                </select>
+                            </div>
+                            
+                            <button type="button" onclick="showDashboard('admin')" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                Sign In
+                            </button>
+                        </form>
+                        
+                        <div class="mt-6 text-center">
+                            <button onclick="toggleAuthMode()" class="text-primary hover:text-blue-700 font-medium">
+                                Don't have an account? Register here
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Registration Form (Hidden by default) -->
+                    <div id="register-form" class="bg-white rounded-xl shadow-lg p-8 hidden">
+                        <div class="text-center mb-8">
+                            <h2 class="text-3xl font-bold text-gray-900">Create Account</h2>
+                            <p class="text-gray-600 mt-2">Join our management system</p>
+                        </div>
+                        
+                        <form class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                    <input type="text" data-mock="true" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="John">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                    <input type="text" data-mock="true" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Doe">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                <input type="email" data-mock="true" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="john.doe@company.com">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                                <input type="password" data-mock="true" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Create a strong password">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Requested Role</label>
+                                <select data-mock="true" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                                    <option>Select role to request</option>
+                                    <option>Manager</option>
+                                    <option>Secretary</option>
+                                </select>
+                            </div>
+                            
+                            <button type="button" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                Create Account
+                            </button>
+                        </form>
+                        
+                        <div class="mt-6 text-center">
+                            <button onclick="toggleAuthMode()" class="text-primary hover:text-blue-700 font-medium">
+                                Already have an account? Sign in
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: AuthSection -->
+
+        <!-- Dashboard Section (Hidden by default) -->
+        <!-- @COMPONENT: DashboardContainer -->
+        <div id="dashboard-section" class="hidden">
+            <!-- Header -->
+            <!-- @COMPONENT: DashboardHeader -->
+            <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <div class="flex items-center space-x-4">
+                        <i class="fas fa-building text-2xl text-primary"></i>
+                        <h1 class="text-2xl font-bold text-gray-900">ManageFlow</h1>
+                        <span id="role-badge" class="px-3 py-1 bg-primary text-white text-sm rounded-full font-medium">Admin</span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <button class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span class="absolute -top-1 -right-1 bg-error text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                        </button>
+                        
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white text-sm"></i>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-medium text-gray-900" data-bind="user.name">John Admin</p>
+                                <p class="text-xs text-gray-600" data-bind="user.email">admin@company.com</p>
+                            </div>
+                            <button onclick="logout()" class="p-2 text-gray-600 hover:text-gray-900 transition-colors">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- @END_COMPONENT: DashboardHeader -->
+
+            <div class="flex min-h-screen">
+                <!-- Sidebar -->
+                <!-- @COMPONENT: DashboardSidebar -->
+                <aside class="w-64 bg-white shadow-sm border-r border-gray-200">
+                    <nav class="p-6">
+                        <div class="space-y-2">
+                            <!-- Admin Navigation -->
+                            <div id="admin-nav">
+                                <button onclick="showSection('dashboard')" class="nav-item active w-full flex items-center px-4 py-3 text-left text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+                                    <i class="fas fa-chart-line mr-3"></i>
+                                    Dashboard Overview
+                                </button>
+                                <button onclick="showSection('users')" class="nav-item w-full flex items-center px-4 py-3 text-left text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+                                    <i class="fas fa-users mr-3"></i>
+                                    User Management
+                                </button>
+                                <button onclick="showSection('requests')" class="nav-item w-full flex items-center px-4 py-3 text-left text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+                                    <i class="fas fa-tasks mr-3"></i>
+                                    Interview Requests
+                                </button>
+                                <button onclick="showSection('todos')" class="nav-item w-full flex items-center px-4 py-3 text-left text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+                                    <i class="fas fa-check-square mr-3"></i>
+                                    Todo Management
+                                </button>
+                                <button onclick="showSection('reports')" class="nav-item w-full flex items-center px-4 py-3 text-left text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+                                    <i class="fas fa-chart-bar mr-3"></i>
+                                    Reports & Analytics
+                                </button>
+                            </div>
+                        </div>
+                    </nav>
+                </aside>
+                <!-- @END_COMPONENT: DashboardSidebar -->
+
+                <!-- Main Content -->
+                <!-- @COMPONENT: DashboardMain -->
+                <main class="flex-1 p-8">
+                    <!-- Dashboard Overview Section -->
+                    <!-- @COMPONENT: DashboardOverview -->
+                    <div id="dashboard-content" class="dashboard-section">
+                        <div class="mb-8">
+                            <h2 class="text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h2>
+                            <p class="text-gray-600">Welcome back, here's what's happening in your organization</p>
+                        </div>
+
+                        <!-- Stats Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+                            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-600">Total Users</p>
+                                        <p class="text-3xl font-bold text-gray-900 mt-2">156</p>
+                                        <p class="text-sm text-success mt-2">
+                                            <i class="fas fa-arrow-up mr-1"></i>
+                                            12% from last month
+                                        </p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-users text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-600">Pending Requests</p>
+                                        <p class="text-3xl font-bold text-gray-900 mt-2">23</p>
+                                        <p class="text-sm text-warning mt-2">
+                                            <i class="fas fa-clock mr-1"></i>
+                                            Needs attention
+                                        </p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-clock text-warning"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-600">Completed Tasks</p>
+                                        <p class="text-3xl font-bold text-gray-900 mt-2">89</p>
+                                        <p class="text-sm text-success mt-2">
+                                            <i class="fas fa-check mr-1"></i>
+                                            This week
+                                        </p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-check-circle text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-600">System Health</p>
+                                        <p class="text-3xl font-bold text-gray-900 mt-2">98%</p>
+                                        <p class="text-sm text-success mt-2">
+                                            <i class="fas fa-arrow-up mr-1"></i>
+                                            All systems operational
+                                        </p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-server text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity & Quick Actions -->
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                            <!-- Recent Activity -->
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                                <div class="p-6 border-b border-gray-200">
+                                    <h3 class="text-lg font-semibold text-gray-900">Recent Activity</h3>
+                                </div>
+                                <div class="p-6">
+                                    <div class="space-y-4">
+                                        <!-- @MAP: activities.map(activity => ( -->
+                                        <div class="flex items-start space-x-3">
+                                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                                <i class="fas fa-user-plus text-primary text-sm"></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm text-gray-900">New user registration</p>
+                                                <p class="text-xs text-gray-600 mt-1">Sarah Johnson requested Manager role</p>
+                                                <p class="text-xs text-gray-500 mt-1">2 hours ago</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start space-x-3">
+                                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                                <i class="fas fa-check text-success text-sm"></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm text-gray-900">Interview request approved</p>
+                                                <p class="text-xs text-gray-600 mt-1">Marketing position interview scheduled</p>
+                                                <p class="text-xs text-gray-500 mt-1">4 hours ago</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start space-x-3">
+                                            <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                                <i class="fas fa-tasks text-warning text-sm"></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm text-gray-900">Todo list updated</p>
+                                                <p class="text-xs text-gray-600 mt-1">Q4 Planning tasks assigned to team</p>
+                                                <p class="text-xs text-gray-500 mt-1">6 hours ago</p>
+                                            </div>
+                                        </div>
+                                        <!-- @END_MAP )) -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                                <div class="p-6 border-b border-gray-200">
+                                    <h3 class="text-lg font-semibold text-gray-900">Quick Actions</h3>
+                                </div>
+                                <div class="p-6">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <button onclick="showSection('users')" class="p-4 bg-blue-50 rounded-lg text-center hover:bg-blue-100 transition-colors">
+                                            <i class="fas fa-user-plus text-2xl text-primary mb-2"></i>
+                                            <p class="text-sm font-medium text-gray-900">Add User</p>
+                                        </button>
+                                        
+                                        <button onclick="showSection('requests')" class="p-4 bg-green-50 rounded-lg text-center hover:bg-green-100 transition-colors">
+                                            <i class="fas fa-calendar-check text-2xl text-success mb-2"></i>
+                                            <p class="text-sm font-medium text-gray-900">Review Requests</p>
+                                        </button>
+                                        
+                                        <button onclick="showSection('todos')" class="p-4 bg-purple-50 rounded-lg text-center hover:bg-purple-100 transition-colors">
+                                            <i class="fas fa-plus-circle text-2xl text-purple-600 mb-2"></i>
+                                            <p class="text-sm font-medium text-gray-900">Create Todo</p>
+                                        </button>
+                                        
+                                        <button onclick="showSection('reports')" class="p-4 bg-orange-50 rounded-lg text-center hover:bg-orange-100 transition-colors">
+                                            <i class="fas fa-chart-line text-2xl text-warning mb-2"></i>
+                                            <p class="text-sm font-medium text-gray-900">View Reports</p>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: DashboardOverview -->
+
+                    <!-- User Management Section -->
+                    <!-- @COMPONENT: UserManagement -->
+                    <div id="users-content" class="dashboard-section hidden">
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h2 class="text-3xl font-bold text-gray-900 mb-2">User Management</h2>
+                                    <p class="text-gray-600">Manage system users and their roles</p>
+                                </div>
+                                <button onclick="openModal('add-user-modal')" class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Add New User
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Filter Bar -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-200">
+                            <div class="flex flex-wrap items-center gap-4">
+                                <div class="flex-1 min-w-64">
+                                    <input type="text" placeholder="Search users..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                </div>
+                                <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option>All Roles</option>
+                                    <option>Admin</option>
+                                    <option>Manager</option>
+                                    <option>Secretary</option>
+                                </select>
+                                <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option>All Status</option>
+                                    <option>Active</option>
+                                    <option>Inactive</option>
+                                    <option>Pending</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Users Table -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-gray-50 border-b border-gray-200">
+                                        <tr>
+                                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Active</th>
+                                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <!-- @MAP: users.map(user => ( -->
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                                                        <i class="fas fa-user text-white text-sm"></i>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900" data-bind="user.name">John Smith</div>
+                                                        <div class="text-sm text-gray-500" data-bind="user.email">john.smith@company.com</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-medium">Manager</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">Active</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2 hours ago</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                                <button class="text-primary hover:text-blue-700 transition-colors">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="text-error hover:text-red-700 transition-colors">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
+                                                        <i class="fas fa-user text-white text-sm"></i>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">Sarah Johnson</div>
+                                                        <div class="text-sm text-gray-500">sarah.j@company.com</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">Secretary</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">Active</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">1 day ago</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                                <button class="text-primary hover:text-blue-700 transition-colors">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="text-error hover:text-red-700 transition-colors">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
+                                                        <i class="fas fa-user text-white text-sm"></i>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">Mike Chen</div>
+                                                        <div class="text-sm text-gray-500">mike.chen@company.com</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full font-medium">Manager</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full font-medium">Pending</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Never</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                                <button class="text-success hover:text-green-700 transition-colors">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="text-error hover:text-red-700 transition-colors">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <!-- @END_MAP )) -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: UserManagement -->
+
+                    <!-- Interview Requests Section -->
+                    <!-- @COMPONENT: InterviewRequests -->
+                    <div id="requests-content" class="dashboard-section hidden">
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Interview Requests</h2>
+                                    <p class="text-gray-600">Manage interview scheduling and approvals</p>
+                                </div>
+                                <div class="flex space-x-3">
+                                    <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                        <option>All Statuses</option>
+                                        <option>Pending</option>
+                                        <option>Approved</option>
+                                        <option>Rejected</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Requests Grid -->
+                        <div class="grid gap-6">
+                            <!-- @MAP: requests.map(request => ( -->
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-3 mb-4">
+                                            <h3 class="text-lg font-semibold text-gray-900">Marketing Manager Position</h3>
+                                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full font-medium">Pending</span>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-500">Candidate</p>
+                                                <p class="text-sm text-gray-900 mt-1">Emma Wilson</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-500">Requested by</p>
+                                                <p class="text-sm text-gray-900 mt-1">Sarah Johnson</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-500">Proposed Date</p>
+                                                <p class="text-sm text-gray-900 mt-1">Nov 15, 2024 at 2:00 PM</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-500">Duration</p>
+                                                <p class="text-sm text-gray-900 mt-1">60 minutes</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <p class="text-sm font-medium text-gray-500 mb-2">Interview Details</p>
+                                            <p class="text-sm text-gray-700">Technical interview for senior marketing position. Candidate has 5+ years experience in digital marketing and team leadership. Interview will cover strategy, analytics, and team management skills.</p>
+                                        </div>
+
+                                        <div class="flex items-center space-x-2 text-sm text-gray-500">
+                                            <i class="fas fa-clock"></i>
+                                            <span>Submitted 2 hours ago</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-col space-y-2 ml-6">
+                                        <button class="bg-success text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors">
+                                            <i class="fas fa-check mr-2"></i>
+                                            Approve
+                                        </button>
+                                        <button class="bg-error text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition-colors">
+                                            <i class="fas fa-times mr-2"></i>
+                                            Reject
+                                        </button>
+                                        <button class="bg-gray-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-600 transition-colors">
+                                            <i class="fas fa-edit mr-2"></i>
+                                            Modify
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-3 mb-4">
+                                            <h3 class="text-lg font-semibold text-gray-900">Software Developer Interview</h3>
+                                            <span class="px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">Approved</span>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-500">Candidate</p>
+                                                <p class="text-sm text-gray-900 mt-1">David Park</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-500">Requested by</p>
+                                                <p class="text-sm text-gray-900 mt-1">Sarah Johnson</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-500">Scheduled Date</p>
+                                                <p class="text-sm text-gray-900 mt-1">Nov 12, 2024 at 10:00 AM</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-500">Duration</p>
+                                                <p class="text-sm text-gray-900 mt-1">90 minutes</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <p class="text-sm font-medium text-gray-500 mb-2">Interview Details</p>
+                                            <p class="text-sm text-gray-700">Full-stack developer position. Technical coding assessment and system design discussion. Candidate will present their portfolio projects.</p>
+                                        </div>
+
+                                        <div class="flex items-center space-x-2 text-sm text-gray-500">
+                                            <i class="fas fa-check-circle text-success"></i>
+                                            <span>Approved yesterday</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-col space-y-2 ml-6">
+                                        <button class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                                            <i class="fas fa-calendar mr-2"></i>
+                                            View Details
+                                        </button>
+                                        <button class="bg-gray-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-600 transition-colors">
+                                            <i class="fas fa-edit mr-2"></i>
+                                            Reschedule
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: InterviewRequests -->
+
+                    <!-- Todo Management Section -->
+                    <!-- @COMPONENT: TodoManagement -->
+                    <div id="todos-content" class="dashboard-section hidden">
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Todo Management</h2>
+                                    <p class="text-gray-600">Organize and assign tasks across your organization</p>
+                                </div>
+                                <button onclick="openModal('add-todo-modal')" class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Create Todo List
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Todo Lists Grid -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                            <!-- @MAP: todoLists.map(list => ( -->
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                                <div class="p-6 border-b border-gray-200">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h3 class="text-lg font-semibold text-gray-900">Q4 Marketing Plans</h3>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                        <span class="flex items-center">
+                                            <i class="fas fa-tasks mr-1"></i>
+                                            8 tasks
+                                        </span>
+                                        <span class="flex items-center">
+                                            <i class="fas fa-user mr-1"></i>
+                                            Marketing Team
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="p-6">
+                                    <div class="space-y-3">
+                                        <!-- @MAP: list.tasks.map(task => ( -->
+                                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                                            <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                            <div class="flex-1">
+                                                <p class="text-sm font-medium text-gray-900">Create holiday campaign strategy</p>
+                                                <p class="text-xs text-gray-500 mt-1">Due: Nov 20, 2024</p>
+                                            </div>
+                                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">High</span>
+                                        </div>
+
+                                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                                            <input type="checkbox" checked class="rounded border-gray-300 text-primary focus:ring-primary">
+                                            <div class="flex-1">
+                                                <p class="text-sm font-medium text-gray-500 line-through">Review Q3 performance metrics</p>
+                                                <p class="text-xs text-gray-400 mt-1">Completed</p>
+                                            </div>
+                                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Done</span>
+                                        </div>
+
+                                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                                            <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                            <div class="flex-1">
+                                                <p class="text-sm font-medium text-gray-900">Plan Black Friday promotions</p>
+                                                <p class="text-xs text-gray-500 mt-1">Due: Nov 15, 2024</p>
+                                            </div>
+                                            <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Urgent</span>
+                                        </div>
+                                        <!-- @END_MAP )) -->
+                                    </div>
+
+                                    <div class="mt-4 pt-4 border-t border-gray-200">
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Progress</span>
+                                            <span class="font-medium text-gray-900">3/8 completed</span>
+                                        </div>
+                                        <div class="mt-2 bg-gray-200 rounded-full h-2">
+                                            <div class="bg-primary h-2 rounded-full" style="width: 37.5%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                                <div class="p-6 border-b border-gray-200">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h3 class="text-lg font-semibold text-gray-900">HR Operations</h3>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                        <span class="flex items-center">
+                                            <i class="fas fa-tasks mr-1"></i>
+                                            5 tasks
+                                        </span>
+                                        <span class="flex items-center">
+                                            <i class="fas fa-user mr-1"></i>
+                                            HR Department
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="p-6">
+                                    <div class="space-y-3">
+                                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                                            <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                            <div class="flex-1">
+                                                <p class="text-sm font-medium text-gray-900">Update employee handbook</p>
+                                                <p class="text-xs text-gray-500 mt-1">Due: Dec 1, 2024</p>
+                                            </div>
+                                            <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Medium</span>
+                                        </div>
+
+                                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                                            <input type="checkbox" checked class="rounded border-gray-300 text-primary focus:ring-primary">
+                                            <div class="flex-1">
+                                                <p class="text-sm font-medium text-gray-500 line-through">Process new hire paperwork</p>
+                                                <p class="text-xs text-gray-400 mt-1">Completed</p>
+                                            </div>
+                                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Done</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4 pt-4 border-t border-gray-200">
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Progress</span>
+                                            <span class="font-medium text-gray-900">2/5 completed</span>
+                                        </div>
+                                        <div class="mt-2 bg-gray-200 rounded-full h-2">
+                                            <div class="bg-success h-2 rounded-full" style="width: 40%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+
+                            <!-- Add New Todo List Card -->
+                            <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center p-12 hover:border-primary hover:bg-blue-50 transition-colors cursor-pointer">
+                                <div class="text-center">
+                                    <i class="fas fa-plus text-3xl text-gray-400 mb-4"></i>
+                                    <p class="text-lg font-medium text-gray-600">Create New Todo List</p>
+                                    <p class="text-sm text-gray-500 mt-2">Organize tasks for your team</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: TodoManagement -->
+
+                    <!-- Reports Section -->
+                    <!-- @COMPONENT: Reports -->
+                    <div id="reports-content" class="dashboard-section hidden">
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Reports & Analytics</h2>
+                                    <p class="text-gray-600">Track system performance and user activity</p>
+                                </div>
+                                <div class="flex space-x-3">
+                                    <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                        <option>Last 30 days</option>
+                                        <option>Last 7 days</option>
+                                        <option>Last 90 days</option>
+                                        <option>Custom range</option>
+                                    </select>
+                                    <button class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                                        <i class="fas fa-download mr-2"></i>
+                                        Export
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Report Cards -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                            <!-- User Activity Chart -->
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">User Activity Trends</h3>
+                                <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+                                    <!-- Placeholder for chart -->
+                                    <div class="text-center text-gray-500">
+                                        <i class="fas fa-chart-line text-4xl mb-4"></i>
+                                        <p>User Activity Chart</p>
+                                        <p class="text-sm mt-2">Shows daily active users over time</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Task Completion Chart -->
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Task Completion Rate</h3>
+                                <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+                                    <!-- Placeholder for chart -->
+                                    <div class="text-center text-gray-500">
+                                        <i class="fas fa-chart-pie text-4xl mb-4"></i>
+                                        <p>Task Completion Chart</p>
+                                        <p class="text-sm mt-2">Breakdown by department and role</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Performance Metrics Table -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div class="p-6 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900">Performance Metrics</h3>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase">Metric</th>
+                                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase">Current</th>
+                                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase">Previous</th>
+                                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase">Change</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="px-6 py-4 text-sm font-medium text-gray-900">Average Response Time</td>
+                                            <td class="px-6 py-4 text-sm text-gray-600">2.3 hours</td>
+                                            <td class="px-6 py-4 text-sm text-gray-600">3.1 hours</td>
+                                            <td class="px-6 py-4 text-sm text-success">-25.8% ↓</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 text-sm font-medium text-gray-900">Task Completion Rate</td>
+                                            <td class="px-6 py-4 text-sm text-gray-600">87%</td>
+                                            <td class="px-6 py-4 text-sm text-gray-600">82%</td>
+                                            <td class="px-6 py-4 text-sm text-success">+6.1% ↑</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 text-sm font-medium text-gray-900">User Satisfaction</td>
+                                            <td class="px-6 py-4 text-sm text-gray-600">4.6/5</td>
+                                            <td class="px-6 py-4 text-sm text-gray-600">4.4/5</td>
+                                            <td class="px-6 py-4 text-sm text-success">+4.5% ↑</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 text-sm font-medium text-gray-900">Interview Approval Rate</td>
+                                            <td class="px-6 py-4 text-sm text-gray-600">76%</td>
+                                            <td class="px-6 py-4 text-sm text-gray-600">71%</td>
+                                            <td class="px-6 py-4 text-sm text-success">+7.0% ↑</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: Reports -->
+                </main>
+                <!-- @END_COMPONENT: DashboardMain -->
+            </div>
+        </div>
+        <!-- @END_COMPONENT: DashboardContainer -->
+
+        <!-- Modals -->
+        <!-- Add User Modal -->
+        <!-- @COMPONENT: AddUserModal -->
+        <div id="add-user-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-gray-900">Add New User</h3>
+                        <button onclick="closeModal('add-user-modal')" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <form class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                <input type="text" data-mock="true" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                <input type="text" data-mock="true" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" data-mock="true" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                            <select data-mock="true" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option>Select role</option>
+                                <option>Admin</option>
+                                <option>Manager</option>
+                                <option>Secretary</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button type="button" onclick="closeModal('add-user-modal')" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="button" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                Add User
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: AddUserModal -->
+
+        <!-- Add Todo Modal -->
+        <!-- @COMPONENT: AddTodoModal -->
+        <div id="add-todo-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-gray-900">Create Todo List</h3>
+                        <button onclick="closeModal('add-todo-modal')" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">List Name</label>
+                            <input type="text" data-mock="true" placeholder="e.g., Q4 Marketing Campaign" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <textarea data-mock="true" rows="3" placeholder="Brief description of this todo list..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Assign to</label>
+                            <select data-mock="true" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option>Select team or user</option>
+                                <option>Marketing Team</option>
+                                <option>HR Department</option>
+                                <option>Development Team</option>
+                                <option>Individual User...</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                            <select data-mock="true" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option>Medium</option>
+                                <option>Low</option>
+                                <option>High</option>
+                                <option>Urgent</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button type="button" onclick="closeModal('add-todo-modal')" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="button" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                Create Todo List
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: AddTodoModal -->
+    </div>
+
+    <script>
+        // Application state management
+        (function() {
+            let currentUser = null;
+            let currentRole = 'admin';
+
+            // Authentication functions
+            window.showDashboard = function(role) {
+                currentRole = role;
+                document.getElementById('auth-section').classList.add('hidden');
+                document.getElementById('dashboard-section').classList.remove('hidden');
+                
+                // Update role badge
+                const roleBadge = document.getElementById('role-badge');
+                roleBadge.textContent = role.charAt(0).toUpperCase() + role.slice(1);
+                
+                // Show appropriate navigation
+                updateNavigation(role);
+                
+                // Show dashboard by default
+                showSection('dashboard');
+            };
+
+            window.toggleAuthMode = function() {
+                const loginForm = document.getElementById('login-form');
+                const registerForm = document.getElementById('register-form');
+                
+                if (loginForm.classList.contains('hidden')) {
+                    loginForm.classList.remove('hidden');
+                    registerForm.classList.add('hidden');
+                } else {
+                    loginForm.classList.add('hidden');
+                    registerForm.classList.remove('hidden');
+                }
+            };
+
+            window.logout = function() {
+                document.getElementById('dashboard-section').classList.add('hidden');
+                document.getElementById('auth-section').classList.remove('hidden');
+                currentUser = null;
+                currentRole = null;
+            };
+
+            // Navigation functions
+            window.showSection = function(section) {
+                // Hide all sections
+                const sections = document.querySelectorAll('.dashboard-section');
+                sections.forEach(s => s.classList.add('hidden'));
+                
+                // Show selected section
+                const targetSection = document.getElementById(section + '-content');
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                }
+                
+                // Update navigation active state
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => item.classList.remove('active', 'bg-primary', 'text-white'));
+                
+                // Find and activate the clicked nav item
+                const activeNav = document.querySelector(`[onclick="showSection('${section}')"]`);
+                if (activeNav) {
+                    activeNav.classList.add('active', 'bg-primary', 'text-white');
+                }
+            };
+
+            function updateNavigation(role) {
+                // TODO: Implement role-based navigation updates
+                // For now, showing all navigation items for demo purposes
+                console.log('Navigation updated for role:', role);
+            }
+
+            // Modal functions
+            window.openModal = function(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.remove('hidden');
+                }
+            };
+
+            window.closeModal = function(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.add('hidden');
+                }
+            };
+
+            // Close modals when clicking outside
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('bg-black') && e.target.classList.contains('bg-opacity-50')) {
+                    e.target.classList.add('hidden');
+                }
+            });
+
+            // Initialize application
+            console.log('ManageFlow application initialized');
+        })();
+    </script>
+</body>
+</html>

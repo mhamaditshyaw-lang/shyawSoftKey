@@ -93,9 +93,7 @@ export default function NotificationManagement() {
     refetchInterval: 5000, // Refetch every 5 seconds
   });
 
-  const notifications = (notificationsData?.notifications as Notification[]) || [];
-
-  const markAsReadMutation = useMutation({
+  const notifications = (Array.isArray(notificationsData) ? notificationsData : (notificationsData as any)?.notifications) as Notification[] || [];  const markAsReadMutation = useMutation({
     mutationFn: (notificationId: number) => 
       apiRequest('PATCH', `/api/device-notifications/${notificationId}`, { isRead: true }),
     onSuccess: () => {

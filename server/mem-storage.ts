@@ -434,6 +434,13 @@ export class MemStorage implements IStorage {
     return this.interviewRequests[requestIndex];
   }
 
+  async deleteInterviewRequest(id: number): Promise<boolean> {
+    const idx = this.interviewRequests.findIndex(r => r.id === id);
+    if (idx === -1) return false;
+    this.interviewRequests.splice(idx, 1);
+    return true;
+  }
+
   // Analytics methods
   async getUserStats(): Promise<{ totalUsers: number; activeUsers: number; pendingUsers: number }> {
     const totalUsers = this.users.length;

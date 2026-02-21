@@ -49,13 +49,15 @@ export default function WeeklyMeetingsDataPage() {
 
   // Get unique departments
   const departments = useMemo(() => {
-    const depts = new Set((tasks || []).map((t: any) => t.departmentName));
+    const tasksList = Array.isArray(tasks) ? tasks : (tasks as any) || [];
+    const depts = new Set(tasksList.map((t: any) => t.departmentName));
     return Array.from(depts);
   }, [tasks]);
 
   // Filter tasks
   const filteredTasks = useMemo(() => {
-    return (tasks || []).filter((task: any) => {
+    const tasksList = Array.isArray(tasks) ? tasks : (tasks as any) || [];
+    return tasksList.filter((task: any) => {
       const deptMatch = departmentFilter === "all" || task.departmentName === departmentFilter;
       const userMatch = userFilter === "all" || task.assignedUserId?.toString() === userFilter;
       const searchMatch = searchQuery === "" || task.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -68,13 +70,17 @@ export default function WeeklyMeetingsDataPage() {
     series: [
       {
         name: "Total Tasks",
-        data: departments.map((dept: any) => (tasks || []).filter((t: any) => t.departmentName === dept).length),
+        data: departments.map((dept: any) => {
+          const tasksList = Array.isArray(tasks) ? tasks : (tasks as any) || [];
+          return tasksList.filter((t: any) => t.departmentName === dept).length;
+        }),
       },
       {
         name: "Assigned Tasks",
-        data: departments.map((dept: any) =>
-          (tasks || []).filter((t: any) => t.departmentName === dept && t.assignedUserId).length
-        ),
+        data: departments.map((dept: any) => {
+          const tasksList = Array.isArray(tasks) ? tasks : (tasks as any) || [];
+          return tasksList.filter((t: any) => t.departmentName === dept && t.assignedUserId).length;
+        }),
       },
     ],
     options: {
@@ -162,9 +168,9 @@ export default function WeeklyMeetingsDataPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Departments</SelectItem>
-                  {departments.map((dept) => (
-                    <SelectItem key={dept} value={dept}>
-                      {dept}
+                  {departments.map((dept: any) => (
+                    <SelectItem key={dept as string} value={dept as string}>
+                      {dept as string}
                     </SelectItem>
                   ))}
                 </SelectContent>

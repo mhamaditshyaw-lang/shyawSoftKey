@@ -72,8 +72,8 @@ export default function WeeklyMeetingsPage() {
     
     const yearMatch = meetingYear === selectedYear;
     const monthMatch = monthFilter === "all" || meetingMonth === parseInt(monthFilter);
-    
-    return statusMatch && nameMatch && monthMatch && yearMatch;
+
+  return statusMatch && nameMatch && monthMatch && yearMatch;
   });
 
   const totalPages = Math.ceil(filteredMeetings.length / itemsPerPage);
@@ -230,7 +230,7 @@ export default function WeeklyMeetingsPage() {
               <Home className="h-4 w-4" />
               Dashboard
             </Button>
-            {(user?.role === "admin" || user?.role === "manager" || user?.role === "office" || user?.role === "office") && (
+            {(user?.role === "admin" || user?.role === "manager" || user?.role === "office_team") && (
               <Button
                 onClick={() => createMeetingMutation.mutate()}
                 disabled={isCreating || createMeetingMutation.isPending}
@@ -582,7 +582,8 @@ export default function WeeklyMeetingsPage() {
             <div className="p-6 space-y-6">
               {(() => {
                 const meetingTasks = allTasks.filter((t: any) => t.meeting_id === selectedMeetingId);
-                const departments = [...new Set(meetingTasks.map((t: any) => t.department_name))];
+                const deptSet = new Set(meetingTasks.map((t: any) => t.department_name));
+                const departments = Array.from(deptSet);
                 
                 return (
                   <>

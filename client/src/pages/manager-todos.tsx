@@ -14,7 +14,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
-import { AlertCircle, CheckCircle2, Circle, Sparkles, Eye, Search, Filter, Plus, RefreshCw, Clock, User, Award, Trash2, Edit, X, Bell } from "lucide-react";
+import { AlertCircle, CheckCircle2, Circle, Sparkles, Eye, Search, Filter, Plus, RefreshCw, Clock, User, Award, Trash2, Edit, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface TodoItem {
@@ -44,11 +44,17 @@ export default function ManagerTodosPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newListTitle, setNewListTitle] = useState("");
   const [newListDescription, setNewListDescription] = useState("");
   const [newListPriority, setNewListPriority] = useState<"low" | "medium" | "high">("medium");
   const [newItemTexts, setNewItemTexts] = useState<Record<number, string>>({});
+  const [reminderDialog, setReminderDialog] = useState<{ isOpen: boolean; itemId?: number; itemText?: string }>({ isOpen: false });
+  const [reminderDate, setReminderDate] = useState("");
+  const [reminderMessage, setReminderMessage] = useState("");
+  const [editingDateForList, setEditingDateForList] = useState<number | null>(null);
+  const [editingDateValue, setEditingDateValue] = useState("");
 
   // Fetch manager-specific todos data
   const { data: todosData, isLoading, refetch } = useQuery({
@@ -118,6 +124,74 @@ export default function ManagerTodosPage() {
     },
   });
 
+  const deleteTodoItemMutation = useMutation({
+    mutationFn: async (itemId: number) => {
+      const response = await authenticatedRequest("DELETE", `/api/todos/items/${itemId}`);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/manager-todos"] });
+      toast({
+        title: "Success",
+        description: "Task deleted successfully!",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete task",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateListDateMutation = useMutation({
+    mutationFn: async (data: { listId: number; date: string }) => {
+      const response = await authenticatedRequest('PATCH', `/api/todos/${data.listId}/date`, { createdAt: data.date });
+      if (!response.ok) throw new Error('Failed to update list date');
+      return response.json();
+    },
+    onSuccess: (_, variables) => {
+      // set the date filter to the newly selected date and refetch
+      setDateFilter(variables.date);
+      queryClient.invalidateQueries({ queryKey: ["/api/manager-todos"] });
+      setEditingDateForList(null);
+      setEditingDateValue("");
+      toast({ title: 'Success', description: 'List date updated' });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Error', description: error.message || 'Failed to update date', variant: 'destructive' });
+    }
+  });
+
+  const createReminderMutation = useMutation({
+    mutationFn: async (data: { todoItemId: number; reminderDate: string; message?: string }) => {
+      const response = await authenticatedRequest("POST", "/api/reminders", data);
+      if (!response.ok) throw new Error("Failed to create reminder");
+      return response.json();
+    },
+    onSuccess: () => {
+      setReminderDialog({ isOpen: false });
+      setReminderDate("");
+      setReminderMessage("");
+      // Invalidate reminder queries to refresh the reminders page
+      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/reminders/today"] });
+      toast({
+        title: "Success",
+        description: "Reminder created successfully! Check the Reminders page to view it.",
+      });
+    },
+    onError: (error: any) => {
+      console.error("Create reminder error:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create reminder",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleCreateTodoList = () => {
     if (!newListTitle.trim()) return;
     createTodoListMutation.mutate({
@@ -160,7 +234,22 @@ export default function ManagerTodosPage() {
     } else if (statusFilter === "pending") {
       matchesStatus = list.items.some(item => !item.isCompleted);
     }
-    return matchesSearch && matchesPriority && matchesStatus;
+
+    let matchesDate = true;
+    if (dateFilter) {
+      // Compare using local date (YYYY-MM-DD) to respect user's timezone
+      const toLocalDateString = (iso: string) => {
+        const d = new Date(iso);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      };
+      const listDate = toLocalDateString(list.createdAt);
+      matchesDate = listDate === dateFilter;
+    }
+
+    return matchesSearch && matchesPriority && matchesStatus && matchesDate;
   });
 
   if (user?.role !== "manager" && user?.role !== "admin") {
@@ -205,7 +294,7 @@ export default function ManagerTodosPage() {
         {/* Search and Filters */}
         <Card className="border-2 border-blue-50 dark:border-gray-700 shadow-sm">
           <CardContent className="p-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                 <Input
@@ -229,8 +318,8 @@ export default function ManagerTodosPage() {
               </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger>
-                  <CheckCircle2 className="w-4 h-4 mr-2" />
-                  <SelectValue placeholder="Status" />
+                  <Circle className="w-4 h-4 mr-2" />
+                  <SelectValue placeholder="All Status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Status</SelectItem>
@@ -238,6 +327,21 @@ export default function ManagerTodosPage() {
                   <SelectItem value="pending">Pending</SelectItem>
                 </SelectContent>
               </Select>
+              <div className="flex items-center gap-2 w-full">
+                <Label className="sr-only">Filter by date</Label>
+                <div className="relative flex-1">
+                  <Input
+                    type="date"
+                    value={dateFilter}
+                    onChange={(e) => setDateFilter(e.target.value)}
+                    className="w-full"
+                    aria-label="Filter by date"
+                  />
+                </div>
+                {dateFilter && (
+                  <Button size="sm" variant="ghost" onClick={() => setDateFilter("")}>Clear</Button>
+                )}
+              </div>
               <Button variant="outline" onClick={() => refetch()} className="flex items-center gap-2">
                 <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
                 {t("refresh") || "Refresh"}
@@ -383,12 +487,17 @@ export default function ManagerTodosPage() {
                             </span>
                             <div className="flex items-center gap-1">
                               <Sparkles className="w-4 h-4 text-green-500 opacity-60" />
-                              <div className="p-1.5 rounded-lg border border-amber-200 bg-amber-50 text-amber-600">
-                                <Bell className="w-4 h-4" />
-                              </div>
-                              <div className="p-1.5 rounded-lg border border-red-200 bg-red-50 text-red-600">
+                              {/* Reminder button removed as requested */}
+                              <button
+                                onClick={() => {
+                                  if (window.confirm(`Delete task "${item.title}"?`)) {
+                                    deleteTodoItemMutation.mutate(item.id);
+                                  }
+                                }}
+                                className="p-1.5 rounded-lg border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 hover:border-red-300 transition-colors"
+                              >
                                 <X className="w-4 h-4" />
-                              </div>
+                              </button>
                             </div>
                           </div>
                         ))}
@@ -425,7 +534,36 @@ export default function ManagerTodosPage() {
                         <div className="flex items-center gap-2">
                           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                             <Clock className="w-3.5 h-3.5" />
-                            <span>{new Date(list.createdAt).toLocaleDateString()}</span>
+                            {editingDateForList === list.id ? (
+                              <div className="flex items-center gap-2">
+                                <Input
+                                  type="date"
+                                  value={editingDateValue}
+                                  onChange={(e) => setEditingDateValue(e.target.value)}
+                                  className="h-8"
+                                />
+                                <Button size="sm" onClick={() => {
+                                  if (!editingDateValue) return;
+                                  updateListDateMutation.mutate({ listId: list.id, date: editingDateValue });
+                                }}>Save</Button>
+                                <Button size="sm" variant="ghost" onClick={() => { setEditingDateForList(null); setEditingDateValue(""); }}>Cancel</Button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => {
+                                  // open date picker prefilled with current list date (YYYY-MM-DD)
+                                  const d = new Date(list.createdAt);
+                                  const y = d.getFullYear();
+                                  const m = String(d.getMonth() + 1).padStart(2, '0');
+                                  const day = String(d.getDate()).padStart(2, '0');
+                                  setEditingDateValue(`${y}-${m}-${day}`);
+                                  setEditingDateForList(list.id);
+                                }}
+                                className="text-left"
+                              >
+                                <span>{new Date(list.createdAt).toLocaleDateString()}</span>
+                              </button>
+                            )}
                           </div>
                           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">
                             <User className="w-3.5 h-3.5" />
@@ -436,13 +574,32 @@ export default function ManagerTodosPage() {
                           <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="h-8 w-8 text-gray-400 hover:text-red-500"
-                            onClick={() => {
+                            className="h-8 w-8 text-gray-400 hover:text-red-500 hover:bg-red-50"
+                            onClick={async () => {
                               if (window.confirm("Are you sure you want to delete this task list?")) {
-                                authenticatedRequest('DELETE', `/api/todos/${list.id}`).then(() => {
-                                  queryClient.invalidateQueries({ queryKey: ["/api/manager-todos"] });
-                                  toast({ title: "Success", description: "Task list deleted" });
-                                });
+                                try {
+                                  const response = await authenticatedRequest('DELETE', `/api/todos/${list.id}`);
+                                  if (response.ok || response.status === 204) {
+                                    queryClient.invalidateQueries({ queryKey: ["/api/manager-todos"] });
+                                    toast({ 
+                                      title: "Success", 
+                                      description: "Task list deleted successfully" 
+                                    });
+                                  } else {
+                                    const error = await response.json();
+                                    toast({ 
+                                      title: "Error", 
+                                      description: error.message || "Failed to delete task list",
+                                      variant: "destructive"
+                                    });
+                                  }
+                                } catch (error: any) {
+                                  toast({ 
+                                    title: "Error", 
+                                    description: error.message || "Failed to delete task list",
+                                    variant: "destructive"
+                                  });
+                                }
                               }
                             }}
                           >
@@ -470,6 +627,72 @@ export default function ManagerTodosPage() {
           </Card>
         )}
       </div>
+
+      {/* Reminder Dialog */}
+      <Dialog open={reminderDialog.isOpen} onOpenChange={(isOpen) => setReminderDialog({ ...reminderDialog, isOpen })}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create Reminder</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Task</Label>
+              <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{reminderDialog.itemText}</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Reminder Date & Time</Label>
+              <Input
+                type="datetime-local"
+                value={reminderDate}
+                onChange={(e) => setReminderDate(e.target.value)}
+                className="rounded-lg"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Message (Optional)</Label>
+              <Textarea
+                value={reminderMessage}
+                onChange={(e) => setReminderMessage(e.target.value)}
+                placeholder="Add a message for this reminder..."
+                className="rounded-lg"
+              />
+            </div>
+          </div>
+          <div className="flex gap-2 justify-end">
+            <Button 
+              variant="outline" 
+              onClick={() => setReminderDialog({ isOpen: false })}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={() => {
+                if (!reminderDate) {
+                  toast({
+                    title: "Error",
+                    description: "Please select a reminder date and time",
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                if (reminderDialog.itemId) {
+                  createReminderMutation.mutate({
+                    todoItemId: reminderDialog.itemId,
+                    reminderDate: new Date(reminderDate).toISOString(),
+                    message: reminderMessage || undefined,
+                  });
+                }
+              }}
+              className="bg-blue-600 hover:bg-blue-700"
+              disabled={createReminderMutation.isPending}
+            >
+              {createReminderMutation.isPending ? "Creating..." : "Create Reminder"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

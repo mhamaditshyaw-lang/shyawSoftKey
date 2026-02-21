@@ -81,10 +81,13 @@ async function authenticateToken(req: AuthRequest, res: Response, next: NextFunc
 // Middleware to check user role
 function requireRole(roles: string[]) {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
+    console.log(`requireRole check: User=${req.user?.username}, Role=${req.user?.role}, Required=${roles.join(',')}, Path=${req.path}`);
     if (!req.user || !roles.includes(req.user.role)) {
       // This message can be translated on the frontend using the "insufficientPermissions" key
+      console.log(`requireRole DENIED: User=${req.user?.username}, Role=${req.user?.role}, Required=${roles.join(',')}`);
       return res.status(403).json({ message: 'Insufficient permissions' });
     }
+    console.log(`requireRole ALLOWED: User=${req.user?.username}, Role=${req.user?.role}`);
     next();
   };
 }
@@ -118,7 +121,7 @@ async function assertTodoListInScope(todoListId: number, accessibleUserIds: numb
     throw new Error('Todo list not found');
   }
 
-  const isInScope = 
+  const isInScope =
     accessibleUserIds.includes(todoList.createdById) ||
     (todoList.assignedToId && accessibleUserIds.includes(todoList.assignedToId));
 
@@ -142,7 +145,7 @@ async function assertInterviewInScope(interviewId: number, accessibleUserIds: nu
     throw new Error('Interview request not found');
   }
 
-  const isInScope = 
+  const isInScope =
     accessibleUserIds.includes(interview.requestedById) ||
     (interview.managerId && accessibleUserIds.includes(interview.managerId));
 
@@ -203,13 +206,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const validPassword = await bcrypt.compare(password, user.password);
-      
+
       if (!validPassword) {
         // Fallback for direct comparison if bcrypt fails for some reason during testing
         if (password === 'admin123' && user.username === 'admin') {
-           console.log('CRITICAL: Using fallback direct comparison for admin');
+          console.log('CRITICAL: Using fallback direct comparison for admin');
         } else {
-           return res.status(401).json({ message: "Invalid credentials" });
+          return res.status(401).json({ message: "Invalid credentials" });
         }
       }
 
@@ -223,15 +226,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
 
       const { password: _, ...userWithoutPassword } = user;
-      res.json({ 
-        token, 
-        user: userWithoutPassword 
+      res.json({
+        token,
+        user: userWithoutPassword
       });
     } catch (error: any) {
       console.error('Login error:', error);
       if (error.message?.includes('endpoint has been disabled')) {
-        return res.status(503).json({ 
-          message: "Database connection issue. Please wait a moment and try again." 
+        return res.status(503).json({
+          message: "Database connection issue. Please wait a moment and try again."
         });
       }
       res.status(400).json({ message: error.message || "Login failed" });
@@ -260,21 +263,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/users", authenticateToken, requireRole(['admin', 'office_team']), async (req: AuthRequest, res) => {
+  app.post("/api/users", authenticateToken, requireRole(['admin', 'office_team', 'manager']), async (req: AuthRequest, res) => {
     try {
+      console.log("POST /api/users - Request received from user:", req.user?.username, "Role:", req.user?.role);
+      console.log("POST /api/users - Request body:", JSON.stringify(req.body, null, 2));
+
       const userData = insertUserSchema.parse(req.body);
+      console.log("POST /api/users - Parsed userData:", JSON.stringify(userData, null, 2));
 
       const existingUser = await storage.getUserByUsername(userData.username);
       if (existingUser) {
+        console.log("POST /api/users - Username already exists:", userData.username);
         return res.status(400).json({ message: "Username already exists" });
       }
 
       const existingEmail = await storage.getUserByEmail(userData.email);
       if (existingEmail) {
+        console.log("POST /api/users - Email already exists:", userData.email);
         return res.status(400).json({ message: "Email already exists" });
       }
 
+      console.log("POST /api/users - Hashing password for user:", userData.username);
       const hashedPassword = await bcrypt.hash(userData.password, 12);
+      console.log("POST /api/users - Creating user:", userData.username);
       const user = await storage.createUser({
         ...userData,
         password: hashedPassword,
@@ -288,7 +299,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { password, ...userWithoutPassword } = user;
       res.status(201).json({ user: userWithoutPassword });
     } catch (error: any) {
-      res.status(400).json({ message: error.message });
+      console.error("Error creating user:", error.message, error.code, error.stack);
+      res.status(400).json({ message: error.message || "Failed to create user" });
     }
   });
 
@@ -298,7 +310,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const isAdmin = req.user?.role === 'admin';
 
       // Define allowed fields based on role
-      const allowedFields = isAdmin 
+      const allowedFields = isAdmin
         ? ['firstName', 'lastName', 'email', 'role', 'status', 'permissions', 'department', 'position', 'phoneNumber', 'managerId', 'comments']
         : ['firstName', 'lastName', 'department', 'position', 'phoneNumber']; // managers can only update profile fields
 
@@ -350,7 +362,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = parseInt(req.params.id);
       const body = req.body;
       console.log('Password change request for user:', userId, 'Body keys:', Object.keys(body));
-      
+
       // Validate only the fields being sent from frontend
       const passwordData = z.object({
         currentPassword: z.string().min(1, "Current password is required"),
@@ -531,7 +543,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const pages = Object.entries(PAGE_PERMISSIONS).map(([path, permission]) => ({
         path,
         permission,
-        label: pageLabels[path] || path.split('/').pop()?.split('-').map(word => 
+        label: pageLabels[path] || path.split('/').pop()?.split('-').map(word =>
           word.charAt(0).toUpperCase() + word.slice(1)
         ).join(' ') || path
       }));
@@ -677,11 +689,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const managerId = req.user!.id;
 
         const allTodos = await storage.getTodoLists();
-        filteredTodos = allTodos.filter(todo => 
+        filteredTodos = allTodos.filter(todo =>
           todo.title.startsWith("[MANAGER] ") && (
             todo.createdById === managerId ||
             todo.assignedToId === managerId ||
-            staffIds.includes(todo.assignedToId || 0) || 
+            staffIds.includes(todo.assignedToId || 0) ||
             staffIds.includes(todo.createdById)
           )
         );
@@ -935,6 +947,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update todo list createdAt (date) - allow managers/admins to adjust the list date
+  app.patch("/api/todos/:id/date", authenticateToken, attachUserScope, async (req: AuthRequest, res) => {
+    try {
+      const todoListId = parseInt(req.params.id);
+
+      // Verify todoList is in accessible scope (for non-admin roles)
+      if (req.user?.role !== 'admin') {
+        await assertTodoListInScope(todoListId, req.accessibleUserIds!);
+      }
+
+      const bodySchema = z.object({ createdAt: z.string().min(1) });
+      const parsed = bodySchema.parse(req.body);
+
+      const newDate = new Date(parsed.createdAt);
+      if (isNaN(newDate.getTime())) {
+        return res.status(400).json({ message: 'Invalid date' });
+      }
+
+      const todoList = await storage.updateTodoList(todoListId, { createdAt: newDate } as any);
+      if (!todoList) {
+        return res.status(404).json({ message: 'Todo list not found' });
+      }
+
+      res.json({ todoList: sanitizeTodoList(todoList) });
+    } catch (error: any) {
+      console.error('Error updating todo list date:', error);
+      if (error.name === 'ZodError') {
+        return res.status(400).json({ message: 'Invalid input', errors: error.errors });
+      }
+      res.status(500).json({ message: error.message || 'Failed to update todo list date' });
+    }
+  });
+
   // Reminder routes
   app.get("/api/reminders", authenticateToken, async (req: AuthRequest, res) => {
     try {
@@ -1126,8 +1171,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const allFeedback = await storage.getAllFeedback();
       const feedbackStats = {
         totalFeedback: allFeedback.length,
-        averageRating: allFeedback.length > 0 
-          ? allFeedback.reduce((sum, f) => sum + parseInt(f.rating), 0) / allFeedback.length 
+        averageRating: allFeedback.length > 0
+          ? allFeedback.reduce((sum, f) => sum + parseInt(f.rating), 0) / allFeedback.length
           : 0,
         feedbackByType: allFeedback.reduce((acc: any[], feedback) => {
           const existing = acc.find(item => item.type === feedback.type);
@@ -1227,7 +1272,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error.issues) {
         console.error('Validation issues:', error.issues);
       }
-      res.status(400).json({ 
+      res.status(400).json({
         message: error.message,
         details: error.issues || error
       });
@@ -1266,7 +1311,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Send device notification if status changed
       if (updates.status && (updates.status === 'approved' || updates.status === 'rejected')) {
         const { DeviceNotificationService } = await import("./device-notification-service");
-        const message = updates.status === 'approved' 
+        const message = updates.status === 'approved'
           ? 'تم الموافقة على طلب الاجتماع الخاص بك'
           : 'تم رفض طلب الاجتماع الخاص بك';
         await DeviceNotificationService.createUserNotification(
@@ -1280,6 +1325,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ request });
     } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Delete interview request (only manager and admin)
+  app.delete("/api/interviews/:id", authenticateToken, attachUserScope, requireRole(['manager', 'admin']), async (req: AuthRequest, res) => {
+    try {
+      const id = parseInt(req.params.id);
+
+      // Verify interview is in accessible scope (for non-admin roles)
+      if (req.user?.role !== 'admin') {
+        await assertInterviewInScope(id, req.accessibleUserIds!);
+      }
+
+      // Get the interview request to verify it exists
+      const interview = await storage.getInterviewRequest(id);
+      if (!interview) {
+        return res.status(404).json({ message: "Interview request not found" });
+      }
+
+      // Delete the interview request
+      const success = await storage.deleteInterviewRequest(id);
+
+      if (!success) {
+        return res.status(500).json({ message: "Failed to delete interview request" });
+      }
+
+      // Send notification to the user who requested the interview
+      const { DeviceNotificationService } = await import("./device-notification-service");
+      await DeviceNotificationService.createUserNotification(
+        interview.requestedBy.id,
+        "security_alert",
+        "حذف طلب الاجتماع",
+        `تم حذف طلب الاجتماع للمرشح ${interview.candidateName}`,
+        "normal"
+      );
+
+      res.json({ message: "Interview request deleted successfully" });
+    } catch (error: any) {
+      console.error("Error deleting interview:", error);
       res.status(400).json({ message: error.message });
     }
   });
@@ -1546,8 +1631,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         existingData.reports.push(reportData);
 
-        const updatedItem = await storage.updateArchivedItem(id, { 
-          itemData: JSON.stringify(existingData) 
+        const updatedItem = await storage.updateArchivedItem(id, {
+          itemData: JSON.stringify(existingData)
         });
         res.json({ success: true, item: updatedItem });
       } else if (itemData) {
@@ -1594,26 +1679,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/operational-data", authenticateToken, async (req: AuthRequest, res) => {
     try {
       let entries = await storage.getOperationalData();
+      console.log(`[Operational Data] Total entries from DB: ${entries?.length || 0}`);
+      console.log(`[Operational Data] User role: ${req.user?.role}, User ID: ${req.user?.id}`);
 
-      // Filter data based on manager-staff relationships
-      if (req.user?.role === 'admin') {
-        // Admin can see all data
-        res.json({ entries });
-      } else if (req.user?.role === 'manager') {
-        // Manager can only see their own data
-        const filteredEntries = entries.filter(entry => entry.createdById === req.user?.id);
-        res.json({ entries: filteredEntries });
-      } else {
-        // Staff members (secretary, office, office_team) can only see their manager's data
-        const currentUser = await storage.getUser(req.user!.id);
-        if (currentUser?.managerId) {
-          const filteredEntries = entries.filter(entry => entry.createdById === currentUser.managerId);
-          res.json({ entries: filteredEntries });
-        } else {
-          // If staff has no manager assigned, they see no data
-          res.json({ entries: [] });
-        }
-      }
+      // Allow all authenticated users to view operational data
+      // (Previously filtered by role; now returning all entries to authenticated users)
+      console.log(`[Operational Data] Returning all ${entries.length} entries to user ${req.user?.username} (Role: ${req.user?.role})`);
+      res.json({ entries });
     } catch (error) {
       console.error("Error fetching operational data:", error);
       res.status(500).json({ message: "Failed to fetch operational data" });
@@ -1622,12 +1694,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/operational-data", authenticateToken, async (req: AuthRequest, res) => {
     try {
+      // Ensure createdAt is set to current time from the client
+      // This prevents issues with server system time being incorrect
+      const now = new Date();
+      console.log(`[Operational Data POST] Creating entry at ${now.toLocaleString()}`);
+
       const operationalDataEntry = {
         ...req.body,
         createdById: req.user!.id,
+        createdAt: now, // Explicitly set to current time
       };
 
       const entry = await storage.createOperationalData(operationalDataEntry);
+      console.log(`[Operational Data POST] Entry created:`, entry);
       res.json(entry);
     } catch (error) {
       console.error("Error creating operational data:", error);
@@ -1724,7 +1803,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         "Test Notification",
         "This is a test device notification to verify the system is working correctly.",
         "normal",
-        { 
+        {
           icon: "🧪",
           actionUrl: "/dashboard"
         }
@@ -1777,7 +1856,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           title,
           message,
           "normal",
-          { 
+          {
             icon: "📢",
             actionUrl: "/"
           }
@@ -1786,9 +1865,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       await Promise.all(notificationPromises);
 
-      res.json({ 
+      res.json({
         message: "Broadcast notification sent successfully",
-        usersCount 
+        usersCount
       });
     } catch (error) {
       console.error("Error sending broadcast notification:", error);
@@ -2060,16 +2139,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Only admin, manager, and office users can delete weekly meetings" });
       }
       const meetingId = parseInt(req.params.id);
-      
+
       // Delete the meeting
       const result = await db.delete(weeklyMeetings)
         .where(eq(weeklyMeetings.id, meetingId))
         .returning();
-      
+
       if (result.length === 0) {
         return res.status(404).json({ message: "Meeting not found" });
       }
-      
+
       res.json({ message: "Meeting deleted successfully", meeting: result[0] });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -2283,14 +2362,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/users", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const allUsers = await storage.getAllUsers();
-      res.json(allUsers);
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
-  });
 
   app.patch("/api/weekly-meetings/tasks/:taskId/progress", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
@@ -2372,7 +2443,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userRole = req.user?.role;
       const userId = req.user?.id;
-      
+
       // Admin, manager, and office can see all tickets
       if (userRole === "admin" || userRole === "manager" || userRole === "office") {
         const tickets = await storage.getItSupportTickets();
@@ -2436,7 +2507,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userRole = req.user?.role;
       const ticketId = parseInt(req.params.id);
-      
+
       // Only admin, manager, office can update tickets (except status updates by the requester)
       if (userRole !== "admin" && userRole !== "manager" && userRole !== "office") {
         const ticket = await storage.getItSupportTicket(ticketId);
@@ -2448,15 +2519,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(403).json({ message: "You can only cancel your own tickets" });
         }
       }
-      
+
       const updates: any = { ...req.body };
-      
+
       // If marking as completed, set completedById and completedAt
       if (updates.status === "completed") {
         updates.completedById = req.user?.id;
         updates.completedAt = new Date();
       }
-      
+
       const result = await storage.updateItSupportTicket(ticketId, updates);
       res.json(result);
     } catch (error: any) {

@@ -70,12 +70,15 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Use PORT env var if set (for local development), otherwise default to 5000 (for Replit)
-  // In Replit: port 5000 is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || "5000", 10);
-  server.listen(port, "0.0.0.0", () => {
-    log(`serving on port ${port}`);
-    
+  // Use PORT env var if set (for local development), otherwise default to 3000 (for Replit)
+  // Use HOST env var to control the bind address (defaults to 0.0.0.0)
+  // In Replit: port 3000 is the only port that is not firewalled.
+  const port = parseInt(process.env.PORT || "3000", 10);
+  const host = process.env.HOST || "0.0.0.0";
+
+  server.listen(port, host, () => {
+    log(`serving on ${host}:${port}`);
+
     // Start the reminder notification service
     ReminderNotificationService.start();
   });

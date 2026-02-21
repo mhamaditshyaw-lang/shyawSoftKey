@@ -10,7 +10,7 @@ import {
 import { insertDeviceNotificationSchema } from "./device-notification-schema";
 
 // Enums
-export const roleEnum = pgEnum("role", ["admin", "manager", "security", "secretary", "office", "office_team"]);
+export const roleEnum = pgEnum("role", ["admin", "manager", "security", "secretary", "office", "office_team", "employee"]);
 export const statusEnum = pgEnum("status", ["active", "inactive", "pending"]);
 export const priorityEnum = pgEnum("priority", ["low", "medium", "high", "urgent"]);
 export const requestStatusEnum = pgEnum("request_status", ["pending", "approved", "rejected"]);
@@ -86,6 +86,8 @@ export const todoItems = pgTable("todo_items", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   completedAt: timestamp("completed_at"),
+  completedByNote: text("completed_by_note"),
+  completedById: integer("completed_by_id").references(() => users.id),
 });
 
 // Reminders table
@@ -220,6 +222,8 @@ export const weeklyMeetingTasks = pgTable("weekly_meeting_tasks", {
   assignedUserIds: integer("assigned_user_ids").array(),
   isCompleted: boolean("is_completed").notNull().default(false),
   completedAt: timestamp("completed_at"),
+  completedById: integer("completed_by_id").references(() => users.id, { onDelete: "set null" }),
+  createdById: integer("created_by_id").references(() => users.id).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -230,6 +234,22 @@ export const taskComments = pgTable("task_comments", {
   authorId: integer("author_id").references(() => users.id).notNull(),
   comment: text("comment").notNull(),
   proofUrl: text("proof_url"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Task Proof table - for tracking task completion evidence
+export const taskProof = pgTable("task_proof", {
+  id: serial("id").primaryKey(),
+  taskId: integer("task_id").references(() => weeklyMeetingTasks.id, { onDelete: "cascade" }).notNull(),
+  proofType: text("proof_type").notNull(), // 'file', 'image', 'document', 'report'
+  proofUrl: text("proof_url").notNull(),
+  description: text("description"),
+  submittedById: integer("submitted_by_id").references(() => users.id).notNull(),
+  submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+  isVerified: boolean("is_verified").notNull().default(false),
+  verifiedById: integer("verified_by_id").references(() => users.id, { onDelete: "set null" }),
+  verifiedAt: timestamp("verified_at"),
+  verificationNotes: text("verification_notes"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -390,6 +410,7 @@ export const weeklyMeetingTasksRelations = relations(weeklyMeetingTasks, ({ one,
   }),
   progress: many(departmentTaskProgress),
   comments: many(taskComments),
+  proofs: many(taskProof),
 }));
 
 export const taskCommentsRelations = relations(taskComments, ({ one }) => ({
@@ -399,6 +420,21 @@ export const taskCommentsRelations = relations(taskComments, ({ one }) => ({
   }),
   author: one(users, {
     fields: [taskComments.authorId],
+    references: [users.id],
+  }),
+}));
+
+export const taskProofRelations = relations(taskProof, ({ one }) => ({
+  task: one(weeklyMeetingTasks, {
+    fields: [taskProof.taskId],
+    references: [weeklyMeetingTasks.id],
+  }),
+  submittedBy: one(users, {
+    fields: [taskProof.submittedById],
+    references: [users.id],
+  }),
+  verifiedBy: one(users, {
+    fields: [taskProof.verifiedById],
     references: [users.id],
   }),
 }));

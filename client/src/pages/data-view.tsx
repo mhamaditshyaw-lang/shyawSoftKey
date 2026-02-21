@@ -90,6 +90,7 @@ export default function DataViewPage() {
   const [dateFilter, setDateFilter] = useState<string>("today");
   const [customDate, setCustomDate] = useState<string>("");
   const [autoRefresh, setAutoRefresh] = useState<boolean>(true);
+  const [systemTime, setSystemTime] = useState<Date>(new Date());
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     entry?: DataEntry;
@@ -99,27 +100,117 @@ export default function DataViewPage() {
   const { toast } = useToast();
 
   // Fetch operational data from API using authenticated request
-  const { data: operationalDataResponse, refetch, isLoading } = useQuery({
+  const { data: operationalDataResponse, refetch, isLoading, error: fetchError } = useQuery({
     queryKey: ["/api/operational-data"],
     queryFn: async () => {
-      const { authenticatedRequest } = await import("@/lib/auth");
-      const response = await authenticatedRequest("GET", "/api/operational-data");
-      return await response.json();
+      try {
+        console.log("[DataView Query] Starting fetch...");
+        const { authenticatedRequest } = await import("@/lib/auth");
+        const response = await authenticatedRequest("GET", "/api/operational-data");
+        console.log("[DataView Query] Response status:", response.status);
+        console.log("[DataView Query] Response object:", response);
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("[DataView Query] Response JSON data:", data);
+        console.log("[DataView Query] Data type:", typeof data);
+        console.log("[DataView Query] Data keys:", data ? Object.keys(data) : "null/undefined");
+        console.log("[DataView Query] Entries:", data?.entries);
+        console.log("[DataView Query] Entries count:", data?.entries?.length || 0);
+        return data;
+      } catch (error) {
+        console.error("[DataView Query] Error:", error);
+        throw error;
+      }
     },
     refetchInterval: autoRefresh ? 30000 : false,
     retry: false,
     enabled: !!user, // Only fetch when user is authenticated
   });
 
-  const allData: DataEntry[] = (operationalDataResponse?.entries || []).map((entry: any) => ({
-    ...entry,
-    createdAt: entry.createdAt || entry.created_at, // Handle both field names
-    createdBy: entry.createdBy || { 
-      username: 'System', 
-      firstName: 'Auto', 
-      lastName: 'Generated' 
+  // Synchronize with system time automatically
+  useEffect(() => {
+    // Update system time every second to keep in sync
+    const interval = setInterval(() => {
+      setSystemTime(new Date());
+    }, 1000);
+
+    console.log(`[SystemTime] Initialized - Current time: ${new Date().toLocaleString()}`);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const allData: DataEntry[] = (() => {
+    // Handle various response formats from the API
+    const responseData = operationalDataResponse;
+    console.log("[DataView] Processing response:", responseData);
+
+    let entries = [];
+
+    // Check if response has 'entries' property (standard format)
+    if (responseData?.entries && Array.isArray(responseData.entries)) {
+      entries = responseData.entries;
+      console.log("[DataView] Found entries in response.entries:", entries.length);
     }
-  }));
+    // Check if response itself is an array
+    else if (Array.isArray(responseData)) {
+      entries = responseData;
+      console.log("[DataView] Response is an array:", entries.length);
+    }
+    // Check if response is an object with other possible property names
+    else if (responseData && typeof responseData === 'object') {
+      console.log("[DataView] Response is an object with keys:", Object.keys(responseData));
+      const possibleArrays = Object.values(responseData).filter(v => Array.isArray(v));
+      if (possibleArrays.length > 0) {
+        entries = possibleArrays[0] as any[];
+        console.log("[DataView] Found array in response:", entries.length);
+      }
+    }
+
+    console.log("[DataView] Final entries to map:", entries.length);
+
+    // Map the entries
+    return entries.map((entry: any) => ({
+      ...entry,
+      createdAt: entry.createdAt || entry.created_at, // Handle both field names
+      createdBy: entry.createdBy || {
+        username: 'System',
+        firstName: 'Auto',
+        lastName: 'Generated'
+      }
+    }));
+  })();
+
+  // Log raw API response for debugging
+  useEffect(() => {
+    console.log("[DataView] operationalDataResponse:", operationalDataResponse);
+    console.log("[DataView] operationalDataResponse?.entries:", operationalDataResponse?.entries);
+    console.log("[DataView] allData:", allData);
+    console.log("[DataView] allData.length:", allData.length);
+    if (allData.length > 0) {
+      console.log("[DataView] First entry:", allData[0]);
+    }
+  }, [operationalDataResponse]);
+
+  // Log data for debugging
+  useEffect(() => {
+    console.log(`[DataView] operationalDataResponse:`, operationalDataResponse);
+    console.log(`[DataView] Total entries received: ${allData.length}`);
+    console.log(`[DataView] User info:`, user);
+    console.log(`[DataView] System time: ${systemTime.toLocaleString()}`);
+    console.log(`[DataView] Date filter: ${dateFilter}`);
+    if (fetchError) {
+      console.error(`[DataView] Fetch error:`, fetchError);
+    }
+    if (allData.length > 0) {
+      console.log(`[DataView] First entry:`, allData[0]);
+      console.log(`[DataView] First entry createdAt:`, allData[0].createdAt);
+      console.log(`[DataView] Date parsed:`, new Date(allData[0].createdAt));
+    }
+  }, [allData, fetchError, user]);
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -157,42 +248,91 @@ export default function DataViewPage() {
 
 
 
+  // Helper function to get local date string in YYYY-MM-DD format
+  const getLocalDateString = (date: Date | string): string => {
+    const d = typeof date === 'string' ? new Date(date) : date;
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   // Date filtering functions
   const isToday = (date: string): boolean => {
-    const today = new Date();
-    const entryDate = new Date(date);
+    try {
+      // Parse the entry date
+      const entryDate = new Date(date);
 
-    // Reset time to compare only dates
-    today.setHours(0, 0, 0, 0);
-    entryDate.setHours(0, 0, 0, 0);
+      // Get the date part only (without time)
+      const entryYear = entryDate.getFullYear();
+      const entryMonth = entryDate.getMonth();
+      const entryDay = entryDate.getDate();
 
-    return entryDate.getTime() === today.getTime();
+      // Get today's date part only
+      const today = new Date(systemTime);
+      const todayYear = today.getFullYear();
+      const todayMonth = today.getMonth();
+      const todayDay = today.getDate();
+
+      // Compare ONLY the date parts, ignoring time and timezone
+      const result = entryYear === todayYear &&
+        entryMonth === todayMonth &&
+        entryDay === todayDay;
+
+      console.log(`[isToday] Entry: ${entryDate.toLocaleString()} => ${entryYear}-${entryMonth}-${entryDay}, Today: ${todayYear}-${todayMonth}-${todayDay}, Match: ${result}`);
+      return result;
+    } catch (error) {
+      console.error('[isToday] Error:', error, 'for date:', date);
+      return false;
+    }
   };
 
   const isThisWeek = (date: string): boolean => {
-    const today = new Date();
-    const entryDate = new Date(date);
+    try {
+      const entryDate = new Date(date);
+      const today = new Date(systemTime);
 
-    // Get start of current week (Sunday)
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay());
-    startOfWeek.setHours(0, 0, 0, 0);
+      // Get the day of the week for both dates (0 = Sunday, 1 = Monday, etc.)
+      const entryDayOfWeek = entryDate.getDay();
+      const todayDayOfWeek = today.getDay();
 
-    // Get end of current week (Saturday)
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
-    endOfWeek.setHours(23, 59, 59, 999);
+      // Calculate the Monday of the entry's week
+      const entryMonday = new Date(entryDate);
+      entryMonday.setDate(entryDate.getDate() - (entryDayOfWeek === 0 ? 6 : entryDayOfWeek - 1));
 
-    return entryDate >= startOfWeek && entryDate <= endOfWeek;
+      // Calculate the Monday of the current week
+      const currentMonday = new Date(today);
+      currentMonday.setDate(today.getDate() - (todayDayOfWeek === 0 ? 6 : todayDayOfWeek - 1));
+
+      // Compare year, month, and day to see if they're in the same week
+      const result = entryMonday.getFullYear() === currentMonday.getFullYear() &&
+        entryMonday.getMonth() === currentMonday.getMonth() &&
+        entryMonday.getDate() === currentMonday.getDate();
+
+      console.log(`[isThisWeek] Entry: ${entryDate.toLocaleString()}, EntryWeekStart: ${entryMonday.toLocaleDateString()}, CurrentWeekStart: ${currentMonday.toLocaleDateString()}, Match: ${result}`);
+      return result;
+    } catch (error) {
+      console.error('[isThisWeek] Error:', error, 'for date:', date);
+      return false;
+    }
   };
 
   const isThisMonth = (date: string): boolean => {
-    const today = new Date();
-    const entryDate = new Date(date);
-    return (
-      entryDate.getMonth() === today.getMonth() &&
-      entryDate.getFullYear() === today.getFullYear()
-    );
+    try {
+      const entryDate = new Date(date);
+
+      const result = entryDate.getMonth() === systemTime.getMonth() &&
+        entryDate.getFullYear() === systemTime.getFullYear();
+
+      const monthYear = `${systemTime.getFullYear()}-${String(systemTime.getMonth() + 1).padStart(2, '0')}`;
+      const entryMonthYear = `${entryDate.getFullYear()}-${String(entryDate.getMonth() + 1).padStart(2, '0')}`;
+
+      console.log(`[isThisMonth] Entry: ${entryMonthYear}, Current: ${monthYear}, Match: ${result}`);
+      return result;
+    } catch (error) {
+      console.error('[isThisMonth] Error:', error, 'for date:', date);
+      return false;
+    }
   };
 
   const isCustomDate = (date: string): boolean => {
@@ -202,44 +342,73 @@ export default function DataViewPage() {
       const entryDate = new Date(date);
       const filterDate = new Date(customDate);
 
-      // Get date parts for accurate comparison
-      const entryYear = entryDate.getFullYear();
-      const entryMonth = entryDate.getMonth();
-      const entryDay = entryDate.getDate();
+      const entryString = getLocalDateString(entryDate);
+      const filterString = getLocalDateString(filterDate);
 
-      const filterYear = filterDate.getFullYear();
-      const filterMonth = filterDate.getMonth();
-      const filterDay = filterDate.getDate();
-
-      return entryYear === filterYear && entryMonth === filterMonth && entryDay === filterDay;
+      const result = entryString === filterString;
+      console.log(`[isCustomDate] Entry: ${entryString}, Filter: ${filterString}, Match: ${result}`);
+      return result;
     } catch (error) {
+      console.error('[isCustomDate] Error:', error, 'for date:', date);
       return false;
     }
   };
 
   // Filter data
   const filteredData = (() => {
-    let data =
-      filter === "all" ? allData : allData.filter((d) => d.type === filter);
+    console.log("[Filter] Starting with allData.length:", allData.length);
+    console.log("[Filter] filter:", filter, "dateFilter:", dateFilter);
 
-    // Apply date filtering
-    if (dateFilter !== "all") {
-      data = data.filter((entry) => {
-        switch (dateFilter) {
-          case "today":
-            return isToday(entry.createdAt);
-          case "week":
-            return isThisWeek(entry.createdAt);
-          case "month":
-            return isThisMonth(entry.createdAt);
-          case "custom":
-            return isCustomDate(entry.createdAt);
-          default:
-            return true;
-        }
-      });
+    // Apply type filter first
+    let data = allData;
+    if (filter && filter !== "all") {
+      data = data.filter((d) => d.type === filter);
+      console.log(`[Filter] After type filter '${filter}': ${data.length}`);
+    } else {
+      console.log("[Filter] Using all types (no type filter)");
     }
 
+    // Apply date filter
+    if (dateFilter && dateFilter !== "all") {
+      console.log(`[Filter] Applying date filter: ${dateFilter}`);
+
+      if (dateFilter === "today") {
+        // For today filter, ONLY show today's data
+        const todayFiltered = data.filter((entry) => isToday(entry.createdAt));
+        console.log(`[Filter] Today filter found: ${todayFiltered.length} entries`);
+
+        // Don't use fallback - show only today's data or nothing
+        data = todayFiltered;
+        console.log(`[Filter] Showing ${todayFiltered.length} entries for today (no fallback)`);
+      } else {
+        // For other date filters
+        const dateFilteredData = data.filter((entry) => {
+          let matches = false;
+
+          switch (dateFilter) {
+            case "week":
+              matches = isThisWeek(entry.createdAt);
+              break;
+            case "month":
+              matches = isThisMonth(entry.createdAt);
+              break;
+            case "custom":
+              matches = isCustomDate(entry.createdAt);
+              break;
+            default:
+              matches = true;
+          }
+          return matches;
+        });
+
+        console.log(`[Filter] After date filter '${dateFilter}': ${dateFilteredData.length}`);
+        data = dateFilteredData;
+      }
+    } else {
+      console.log("[Filter] No date filter (showing all dates)");
+    }
+
+    // Apply search filter
     if (searchTerm) {
       data = data.filter(
         (entry) =>
@@ -251,10 +420,23 @@ export default function DataViewPage() {
           ) ||
           new Date(entry.createdAt).toLocaleDateString().includes(searchTerm),
       );
+      console.log(`[Filter] After search filter: ${data.length}`);
     }
 
+    console.log(`[Filter] Final result: ${data.length} entries. Current User Role: ${user?.role}`);
     return data;
   })();
+
+  // Enhanced logging for filtered data and user role
+  useEffect(() => {
+    console.log("[DataView] render - filteredData.length:", filteredData.length);
+    console.log("[DataView] active filter:", filter);
+    console.log("[DataView] active dateFilter:", dateFilter);
+    console.log("[DataView] user role:", user?.role);
+    if (allData.length > 0 && filteredData.length === 0) {
+      console.warn("[DataView] Warning: Data exists but is completely filtered out!");
+    }
+  }, [filteredData, filter, dateFilter, user]);
 
   const refreshData = () => {
     refetch();
@@ -344,6 +526,33 @@ export default function DataViewPage() {
     );
   }
 
+  if (fetchError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-6">
+        <div className="max-w-md w-full">
+          <Card className="border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800">
+            <CardHeader>
+              <CardTitle className="text-red-700 dark:text-red-400">Error Fetching Data</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-red-600 dark:text-red-300">
+                {fetchError instanceof Error ? fetchError.message : "Failed to fetch operational data"}
+              </p>
+              <div className="bg-white dark:bg-gray-800 p-3 rounded text-sm font-mono text-gray-700 dark:text-gray-300 overflow-auto max-h-40">
+                {fetchError instanceof Error ? fetchError.stack : JSON.stringify(fetchError)}
+              </div>
+              <Button
+                onClick={() => refetch()}
+                className="w-full bg-blue-600 hover:bg-blue-700"
+              >
+                Retry
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-6">
@@ -351,12 +560,12 @@ export default function DataViewPage() {
         {/* Back to Dashboard Button */}
         <div className="mb-6">
           <Link href="/">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="flex items-center gap-2 hover:bg-dashboard-primary hover:text-white transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-{t("backToDashboard")}
+              {t("backToDashboard")}
             </Button>
           </Link>
         </div>
@@ -364,10 +573,10 @@ export default function DataViewPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
-{t("dataViewAnalytics")}
+            {t("dataViewAnalytics")}
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-{t("viewFilterAnalyzeData")}
+            {t("viewFilterAnalyzeData")}
           </p>
         </div>
 
@@ -391,7 +600,7 @@ export default function DataViewPage() {
                 <div className="space-y-2">
                   <Label htmlFor="date-filter" className="text-sm font-medium flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
-{t("filterByDate")}
+                    {t("filterByDate")}
                   </Label>
                   <Select value={dateFilter} onValueChange={setDateFilter}>
                     <SelectTrigger id="date-filter">
@@ -426,7 +635,7 @@ export default function DataViewPage() {
                 <div className="space-y-2">
                   <Label htmlFor="auto-refresh" className="text-sm font-medium flex items-center gap-2">
                     <RefreshCw className={`w-4 h-4 ${autoRefresh ? 'animate-spin text-green-600' : 'text-gray-400'}`} />
-{t("autoRefresh")}
+                    {t("autoRefresh")}
                   </Label>
                   <div className="flex items-center space-x-2">
                     <Switch
@@ -435,7 +644,7 @@ export default function DataViewPage() {
                       onCheckedChange={setAutoRefresh}
                     />
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-{autoRefresh ? t("refreshEvery30Seconds") : t("disabled")}
+                      {autoRefresh ? t("refreshEvery30Seconds") : t("disabled")}
                     </span>
                   </div>
                 </div>
@@ -471,7 +680,7 @@ export default function DataViewPage() {
                     }}
                     className="text-xs h-6 px-2"
                   >
-{t("clearAll")}
+                    {t("clearAll")}
                   </Button>
                 </div>
               )}
@@ -482,52 +691,48 @@ export default function DataViewPage() {
                   variant={filter === "all" ? "default" : "outline"}
                   size="lg"
                   onClick={() => setFilter("all")}
-                  className={`${
-                    filter === "all"
+                  className={`${filter === "all"
                       ? "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg"
                       : "hover:bg-blue-50 hover:border-blue-300"
-                  } transition-all duration-200`}
+                    } transition-all duration-200`}
                 >
-{t("allData")}
+                  {t("allData")}
                 </Button>
                 <Button
                   variant={filter === "employee" ? "default" : "outline"}
                   size="lg"
                   onClick={() => setFilter("employee")}
-                  className={`${
-                    filter === "employee"
+                  className={`${filter === "employee"
                       ? "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg"
                       : "hover:bg-blue-50 hover:border-blue-300"
-                  } transition-all duration-200`}
+                    } transition-all duration-200`}
                 >
                   <Users className="w-4 h-4 mr-2" />
-{t("employee")}
+                  {t("employee")}
                 </Button>
                 <Button
                   variant={filter === "operations" ? "default" : "outline"}
                   size="lg"
                   onClick={() => setFilter("operations")}
-                  className={`${
-                    filter === "operations"
+                  className={`${filter === "operations"
                       ? "bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-lg"
                       : "hover:bg-green-50 hover:border-green-300"
-                  } transition-all duration-200`}
+                    } transition-all duration-200`}
                 >
                   <BarChart3 className="w-4 h-4 mr-2" />
-{t("operations")}
+                  {t("operations")}
                 </Button>
                 <Button
                   variant={filter === "staffCount" ? "default" : "outline"}
                   size="lg"
                   onClick={() => setFilter("staffCount")}
-                  className={`${
-                    filter === "staffCount"
+                  className={`${filter === "staffCount"
                       ? "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg"
                       : "hover:bg-purple-50 hover:border-purple-300"
-                  } transition-all duration-200`}
+                    } transition-all duration-200`}
                 >
                   <TrendingUp className="w-4 h-4 mr-2" />
-{t("staffCount")}
+                  {t("staffCount")}
                 </Button>
                 <Button
                   variant={
@@ -535,14 +740,13 @@ export default function DataViewPage() {
                   }
                   size="lg"
                   onClick={() => setFilter("yesterdayProduction")}
-                  className={`${
-                    filter === "yesterdayProduction"
+                  className={`${filter === "yesterdayProduction"
                       ? "bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 shadow-lg"
                       : "hover:bg-orange-50 hover:border-orange-300"
-                  } transition-all duration-200`}
+                    } transition-all duration-200`}
                 >
                   <Clock className="w-4 h-4 mr-2" />
-{t("production")}
+                  {t("production")}
                 </Button>
                 <Button
                   variant={
@@ -550,14 +754,13 @@ export default function DataViewPage() {
                   }
                   size="lg"
                   onClick={() => setFilter("yesterdayLoading")}
-                  className={`${
-                    filter === "yesterdayLoading"
+                  className={`${filter === "yesterdayLoading"
                       ? "bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 shadow-lg"
                       : "hover:bg-teal-50 hover:border-teal-300"
-                  } transition-all duration-200`}
+                    } transition-all duration-200`}
                 >
                   <Truck className="w-4 h-4 mr-2" />
-{t("loadingVehicles")}
+                  {t("loadingVehicles")}
                 </Button>
               </div>
 
@@ -569,7 +772,7 @@ export default function DataViewPage() {
                   className="bg-white hover:bg-gray-50 border-gray-200 shadow-sm"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
-{t("refreshData")}
+                  {t("refreshData")}
                 </Button>
                 <Button
                   variant="outline"
@@ -577,7 +780,7 @@ export default function DataViewPage() {
                   className="bg-white hover:bg-gray-50 border-gray-200 shadow-sm"
                 >
                   <Download className="w-4 h-4 mr-2" />
-{t("exportData")}
+                  {t("exportData")}
                 </Button>
                 {isAdmin && allData.length > 0 && (
                   <Button
@@ -586,7 +789,7 @@ export default function DataViewPage() {
                     className="bg-red-50 hover:bg-red-100 border-red-200 text-red-700 hover:text-red-800 shadow-sm"
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
-{t("adminClearAllData")}
+                    {t("adminClearAllData")}
                   </Button>
                 )}
               </div>
@@ -681,42 +884,42 @@ export default function DataViewPage() {
 
                   {/* Statistics Bar */}
                   {entry.stats && (
-                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-100">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-600 mb-1">
-                          {entry.stats?.total?.toFixed(1) || "0"}
+                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-100">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-blue-600 mb-1">
+                            {entry.stats?.total?.toFixed(1) || "0"}
+                          </div>
+                          <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                            {t("total")}
+                          </div>
                         </div>
-                        <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                          {t("total")}
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-green-600 mb-1">
+                            {entry.stats?.average?.toFixed(1) || "0"}
+                          </div>
+                          <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                            {t("average")}
+                          </div>
                         </div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-green-600 mb-1">
-                          {entry.stats?.average?.toFixed(1) || "0"}
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-orange-600 mb-1">
+                            {entry.stats?.max || "0"}
+                          </div>
+                          <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                            {t("maximum")}
+                          </div>
                         </div>
-                        <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                          {t("average")}
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-orange-600 mb-1">
-                          {entry.stats?.max || "0"}
-                        </div>
-                        <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                          {t("maximum")}
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-red-600 mb-1">
-                          {entry.stats?.min || "0"}
-                        </div>
-                        <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                          {t("minimum")}
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-red-600 mb-1">
+                            {entry.stats?.min || "0"}
+                          </div>
+                          <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                            {t("minimum")}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
                   )}
                 </CardContent>
               </Card>

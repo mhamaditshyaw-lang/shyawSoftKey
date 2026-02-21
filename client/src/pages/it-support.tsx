@@ -108,6 +108,7 @@ export default function ItSupportPage() {
   const { data: tickets = [], isLoading } = useQuery<ItSupportTicket[]>({
     queryKey: ["/api/it-support"],
   });
+  const { refetch: refetchTickets } = useQuery({ queryKey: ["/api/it-support"], queryFn: async () => apiRequest('GET', '/api/it-support').then(r => r.json()).then(j => j) , enabled: false });
 
   const { data: users = [] } = useQuery<any[]>({
     queryKey: ["/api/users"],
@@ -402,6 +403,18 @@ export default function ItSupportPage() {
                     placeholder="To Date"
                     data-testid="filter-date-to"
                   />
+                  <Button size="sm" variant="ghost" onClick={async () => {
+                    // Quick set today
+                    const d = new Date();
+                    const y = d.getFullYear();
+                    const m = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const today = `${y}-${m}-${day}`;
+                    setDateFrom(today);
+                    setDateTo(today);
+                    await queryClient.invalidateQueries({ queryKey: ['/api/it-support'] });
+                  }} title="Set to today">Today</Button>
+                  <Button size="sm" variant="outline" onClick={async () => { await queryClient.invalidateQueries({ queryKey: ['/api/it-support'] }); toast({ title: 'Refreshed', description: 'Tickets refreshed' }); }}>Refresh</Button>
                 </div>
               </div>
             </CardHeader>
