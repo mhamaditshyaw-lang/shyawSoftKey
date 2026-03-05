@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Edit, Trash, User, Search, Filter, Users } from "lucide-react";
+import { Plus, Edit, Trash, User, Search, Filter, Users, ChevronLeft, ChevronRight } from "lucide-react";
 import { HelpTooltip, FeatureTooltip, RoleTooltip, StatusTooltip, ActionTooltip } from "@/components/ui/help-tooltip";
 import { useTranslation } from "react-i18next";
 import { Link } from "wouter";
@@ -24,6 +24,13 @@ export default function EmployeeManagementPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const handleSearchChange = (val: string) => { setSearchTerm(val); setCurrentPage(1); };
+  const handleRoleChange = (val: string) => { setRoleFilter(val); setCurrentPage(1); };
+  const handleStatusChange = (val: string) => { setStatusFilter(val); setCurrentPage(1); };
+
   const [editingEmployee, setEditingEmployee] = useState<any>(null);
   const [employeeToDelete, setEmployeeToDelete] = useState<any>(null);
   const [assigningManager, setAssigningManager] = useState<any>(null);
@@ -121,6 +128,9 @@ export default function EmployeeManagementPage() {
     return matchesSearch && matchesRole && matchesStatus;
   }) || [];
 
+  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
+  const paginatedEmployees = filteredEmployees.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
       case "admin": return "destructive";
@@ -187,12 +197,12 @@ export default function EmployeeManagementPage() {
                   <Input
                     placeholder={t("searchEmployees")}
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => handleSearchChange(e.target.value)}
                     className="pl-10"
                   />
                 </div>
               </div>
-              <Select value={roleFilter} onValueChange={setRoleFilter}>
+              <Select value={roleFilter} onValueChange={handleRoleChange}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder={t("filterByRole")} />
                 </SelectTrigger>
@@ -206,7 +216,7 @@ export default function EmployeeManagementPage() {
                   <SelectItem value="office_team">{t("officeTeam")}</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <Select value={statusFilter} onValueChange={handleStatusChange}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder={t("filterByStatus")} />
                 </SelectTrigger>
@@ -224,6 +234,7 @@ export default function EmployeeManagementPage() {
         <Card className="bg-white dark:bg-dashboard-card-dark border-dashboard-border-light dark:border-dashboard-border-dark">
           <CardHeader>
             <CardTitle>{t("employees")} ({filteredEmployees.length})</CardTitle>
+
             <CardDescription>
               {t("manageEmployeeAccounts")}
             </CardDescription>
@@ -252,14 +263,14 @@ export default function EmployeeManagementPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredEmployees.length === 0 ? (
+                  {paginatedEmployees.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                         {t("noEmployeesFound")}
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredEmployees.map((employee: any) => (
+                    paginatedEmployees.map((employee: any) => (
                       <TableRow key={employee.id}>
                         <TableCell className="flex items-center space-x-2">
                           <Avatar className="h-8 w-8">
@@ -328,6 +339,36 @@ export default function EmployeeManagementPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-1">
+            <p className="text-sm text-gray-500">
+              Showing <span className="font-semibold text-gray-700">{(currentPage - 1) * itemsPerPage + 1}–{Math.min(currentPage * itemsPerPage, filteredEmployees.length)}</span> of <span className="font-semibold text-gray-700">{filteredEmployees.length}</span>
+            </p>
+            <div className="flex items-center gap-1">
+              <Button size="sm" variant="outline" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="h-8 w-8 p-0">
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1).reduce<(number | string)[]>((acc, p, idx, arr) => {
+                if (idx > 0 && (p as number) - (arr[idx - 1] as number) > 1) acc.push('...');
+                acc.push(p);
+                return acc;
+              }, []).map((p, i) =>
+                p === '...' ? (
+                  <span key={`ellipsis-${i}`} className="px-1 text-gray-400 text-sm">…</span>
+                ) : (
+                  <Button key={p} size="sm" variant={currentPage === p ? "default" : "outline"} onClick={() => setCurrentPage(p as number)} className="h-8 w-8 p-0 text-sm">
+                    {p}
+                  </Button>
+                )
+              )}
+              <Button size="sm" variant="outline" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="h-8 w-8 p-0">
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Edit Employee Dialog */}
         {editingEmployee && (

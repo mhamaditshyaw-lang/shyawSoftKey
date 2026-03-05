@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { ArrowLeft, Loader2, Filter, Download, BarChart3 } from "lucide-react";
+import { ArrowLeft, Loader2, Filter, Download, BarChart3, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import Chart from "react-apexcharts";
 import {
@@ -31,6 +31,8 @@ export default function WeeklyMeetingsDataPage() {
   const [departmentFilter, setDepartmentFilter] = useState<string>("all");
   const [userFilter, setUserFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const { data: meetings = [] as any[], isLoading: meetingsLoading } = useQuery({
     queryKey: ["/api/weekly-meetings"],
@@ -64,6 +66,12 @@ export default function WeeklyMeetingsDataPage() {
       return deptMatch && userMatch && searchMatch;
     });
   }, [tasks, departmentFilter, userFilter, searchQuery]);
+
+  // Reset page on filter change
+  useEffect(() => { setCurrentPage(1); }, [departmentFilter, userFilter, searchQuery]);
+
+  const totalPages = Math.ceil((filteredTasks || []).length / itemsPerPage);
+  const paginatedTasks = (filteredTasks || []).slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   // Chart data - Tasks by Department
   const tasksByDeptChart = {
@@ -375,7 +383,7 @@ export default function WeeklyMeetingsDataPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(filteredTasks || []).map((task: any) => (
+                  {paginatedTasks.map((task: any) => (
                     <tr key={task.id} className="border-b hover:bg-slate-50 dark:hover:bg-slate-800">
                       <td className="py-2 px-4 font-medium">{task.title}</td>
                       <td className="py-2 px-4 text-slate-600 dark:text-slate-400">{task.departmentName}</td>
@@ -393,6 +401,36 @@ export default function WeeklyMeetingsDataPage() {
                 </tbody>
               </table>
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between pt-3 border-t">
+                <p className="text-sm text-gray-500">
+                  Showing <span className="font-semibold text-gray-700">{(currentPage - 1) * itemsPerPage + 1}–{Math.min(currentPage * itemsPerPage, (filteredTasks || []).length)}</span> of <span className="font-semibold text-gray-700">{(filteredTasks || []).length}</span>
+                </p>
+                <div className="flex items-center gap-1">
+                  <Button size="sm" variant="outline" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="h-8 w-8 p-0">
+                    <ChevronLeft className="w-4 h-4" />
+                  </Button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1).reduce<(number | string)[]>((acc, p, idx, arr) => {
+                    if (idx > 0 && (p as number) - (arr[idx - 1] as number) > 1) acc.push('...');
+                    acc.push(p);
+                    return acc;
+                  }, []).map((p, i) =>
+                    p === '...' ? (
+                      <span key={`ellipsis-${i}`} className="px-1 text-gray-400 text-sm">…</span>
+                    ) : (
+                      <Button key={p} size="sm" variant={currentPage === p ? "default" : "outline"} onClick={() => setCurrentPage(p as number)} className="h-8 w-8 p-0 text-sm">
+                        {p}
+                      </Button>
+                    )
+                  )}
+                  <Button size="sm" variant="outline" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="h-8 w-8 p-0">
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </motion.div>

@@ -15,7 +15,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { authenticatedRequest } from "@/lib/auth";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Edit, Trash, User, MessageSquare } from "lucide-react";
+import { Plus, Edit, Trash, User, MessageSquare, ChevronLeft, ChevronRight } from "lucide-react";
 import AddUserModal from "@/components/modals/add-user-modal";
 import { HelpTooltip, FeatureTooltip, RoleTooltip, StatusTooltip, ActionTooltip } from "@/components/ui/help-tooltip";
 import { useTranslation } from "react-i18next";
@@ -25,6 +25,8 @@ export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [userToDelete, setUserToDelete] = useState<any>(null);
@@ -97,6 +99,14 @@ export default function UsersPage() {
 
     return matchesSearch && matchesRole && matchesStatus;
   });
+
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const paginatedUsers = filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  // Reset page on filter change — inline since useState is already imported
+  const handleUserSearch = (v: string) => { setSearchTerm(v); setCurrentPage(1); };
+  const handleUserRoleFilter = (v: string) => { setRoleFilter(v); setCurrentPage(1); };
+  const handleUserStatusFilter = (v: string) => { setStatusFilter(v); setCurrentPage(1); };
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
@@ -228,7 +238,7 @@ export default function UsersPage() {
               >
                 <Input
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => handleUserSearch(e.target.value)}
                   aria-label="Search employees"
                 />
               </FeatureTooltip>
@@ -237,7 +247,7 @@ export default function UsersPage() {
               content="Filter employees by their assigned role. Each role has different access permissions and responsibilities within the system."
               type="tip"
             >
-              <Select value={roleFilter} onValueChange={setRoleFilter}>
+              <Select value={roleFilter} onValueChange={handleUserRoleFilter}>
                 <SelectTrigger className="w-32">
                   <SelectValue />
                 </SelectTrigger>
@@ -258,7 +268,7 @@ export default function UsersPage() {
               description="Filter employees by their account status"
               nextAction="Select status to filter"
             >
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <Select value={statusFilter} onValueChange={handleUserStatusFilter}>
                 <SelectTrigger className="w-32">
                   <SelectValue />
                 </SelectTrigger>
@@ -288,7 +298,7 @@ export default function UsersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredUsers.map((user: any) => (
+            {paginatedUsers.map((user: any) => (
               <TableRow key={user.id}>
                 <TableCell>
                   <div className="flex items-center space-x-3">
@@ -455,6 +465,36 @@ export default function UsersPage() {
           </TableBody>
         </Table>
       </Card>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-1">
+          <p className="text-sm text-gray-500">
+            Showing <span className="font-semibold text-gray-700">{(currentPage - 1) * itemsPerPage + 1}–{Math.min(currentPage * itemsPerPage, filteredUsers.length)}</span> of <span className="font-semibold text-gray-700">{filteredUsers.length}</span>
+          </p>
+          <div className="flex items-center gap-1">
+            <Button size="sm" variant="outline" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="h-8 w-8 p-0">
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1).reduce<(number | string)[]>((acc, p, idx, arr) => {
+              if (idx > 0 && (p as number) - (arr[idx - 1] as number) > 1) acc.push('...');
+              acc.push(p);
+              return acc;
+            }, []).map((p, i) =>
+              p === '...' ? (
+                <span key={`ellipsis-${i}`} className="px-1 text-gray-400 text-sm">…</span>
+              ) : (
+                <Button key={p} size="sm" variant={currentPage === p ? "default" : "outline"} onClick={() => setCurrentPage(p as number)} className="h-8 w-8 p-0 text-sm">
+                  {p}
+                </Button>
+              )
+            )}
+            <Button size="sm" variant="outline" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="h-8 w-8 p-0">
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       <AddUserModal open={showAddModal} onOpenChange={setShowAddModal} />
 

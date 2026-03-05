@@ -1,6 +1,7 @@
 import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,7 @@ export default function WeeklyMeetingDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
 
   const [newTask, setNewTask] = useState({
@@ -220,20 +222,20 @@ export default function WeeklyMeetingDetailPage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 space-y-6 p-6">
       <Button variant="outline" onClick={() => setLocation("/weekly-meetings")} className="border-slate-300 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
-        ← Back to Meetings
+        ← {t("backToMeetings")}
       </Button>
 
       <div className="grid grid-cols-3 gap-6">
         <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 p-6 rounded-2xl shadow-xl">
-          <p className="text-indigo-100 text-sm font-semibold">Week Number</p>
+          <p className="text-indigo-100 text-sm font-semibold">{t("weekNumber")}</p>
           <p className="text-4xl font-bold text-white mt-3">{meeting?.weekNumber}</p>
         </div>
         <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl shadow-xl">
-          <p className="text-blue-100 text-sm font-semibold">Total Tasks</p>
+          <p className="text-blue-100 text-sm font-semibold">{t("totalTasks")}</p>
           <p className="text-4xl font-bold text-white mt-3">{tasks.length}</p>
         </div>
         <div className="bg-gradient-to-br from-teal-500 to-cyan-600 p-6 rounded-2xl shadow-xl">
-          <p className="text-teal-100 text-sm font-semibold">Meeting Status</p>
+          <p className="text-teal-100 text-sm font-semibold">{t("meetingStatus")}</p>
           <p className="text-2xl font-bold text-white mt-3 uppercase">{meeting?.status}</p>
         </div>
       </div>
@@ -244,7 +246,7 @@ export default function WeeklyMeetingDetailPage() {
           <div className="flex items-center justify-between mb-2">
             <h4 className="text-purple-700 font-semibold flex items-center gap-2">
               <FileText className="w-5 h-5 text-purple-600" />
-              Meeting Notes
+              {t("meetingNotes")}
             </h4>
             {!isEditingNote && (
               <Button 
@@ -253,7 +255,7 @@ export default function WeeklyMeetingDetailPage() {
                 onClick={() => setIsEditingNote(true)}
               >
                 <Plus className="h-4 w-4" />
-                New Note
+                {t("newNote")}
               </Button>
             )}
           </div>
@@ -309,14 +311,14 @@ export default function WeeklyMeetingDetailPage() {
                   className="text-purple-600 hover:bg-purple-50"
                   onClick={() => setIsEditingNote(false)}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   className="bg-purple-600 text-white hover:bg-purple-700 border-none shadow-none"
                   onClick={() => setIsEditingNote(false)}
                 >
-                  Update
+                  {t("updateBtn")}
                 </Button>
               </div>
             </div>
@@ -336,7 +338,7 @@ export default function WeeklyMeetingDetailPage() {
                     onClick={() => setIsEditingNote(true)}
                   >
                     <Edit2 className="h-4 w-4 mr-2" />
-                    Update
+                    {t("updateBtn")}
                   </Button>
                 </div>
               ) : (
@@ -358,8 +360,8 @@ export default function WeeklyMeetingDetailPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>Tasks</CardTitle>
-            <CardDescription>Department work points for this week</CardDescription>
+            <CardTitle>{t("tasks")}</CardTitle>
+            <CardDescription>{t("departmentWorkPoints")}</CardDescription>
           </div>
           {(user?.role === "admin" || user?.role === "manager") && (
             <Button
@@ -368,7 +370,7 @@ export default function WeeklyMeetingDetailPage() {
               size="sm"
             >
               <Plus className="h-4 w-4" />
-              Add Task
+              {t("addTask")}
             </Button>
           )}
         </CardHeader>
@@ -499,17 +501,17 @@ export default function WeeklyMeetingDetailPage() {
                     )}
                     {task.proofs && task.proofs.length > 0 && (
                       <div className="mt-2 space-y-2">
-                        <p className="text-[10px] font-bold uppercase text-indigo-600 dark:text-indigo-400">Verification Notes:</p>
+                        <p className="text-[10px] font-bold uppercase text-indigo-600 dark:text-indigo-400">{t("verificationNotesLabel")}</p>
                         {task.proofs.map((proof: any) => (
                           <div key={proof.id} className="p-2 rounded bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800">
                             {proof.description && <p className="text-xs text-slate-700 dark:text-slate-300 italic mb-1">"{proof.description}"</p>}
                             {proof.isVerified && proof.verificationNotes ? (
                               <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
-                                <span className="font-bold">Verifier Note:</span> {proof.verificationNotes}
+                                <span className="font-bold">{t("verifierNote")}</span> {proof.verificationNotes}
                               </p>
                             ) : (
                               <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium italic">
-                                Pending verification
+                                {t("pendingVerification")}
                               </p>
                             )}
                           </div>
@@ -603,7 +605,7 @@ export default function WeeklyMeetingDetailPage() {
 
                       <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-700">
                         <Textarea
-                          placeholder="Add update..."
+                          placeholder={t("addUpdate")}
                           value={newComment[task.id] || ""}
                           onChange={(e) => setNewComment(prev => ({ ...prev, [task.id]: e.target.value }))}
                           rows={1}
@@ -620,7 +622,7 @@ export default function WeeklyMeetingDetailPage() {
                           ) : (
                             <Send className="h-3 w-3" />
                           )}
-                          Send
+                          {t("send")}
                         </Button>
                       </div>
                     </div>
@@ -641,7 +643,7 @@ export default function WeeklyMeetingDetailPage() {
             className="bg-white dark:bg-slate-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
           >
             <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Add New Task</h2>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t("addTask")}</h2>
               <button
                 onClick={() => setShowAddTaskModal(false)}
                 className="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
@@ -709,14 +711,14 @@ export default function WeeklyMeetingDetailPage() {
                 rows={3}
               />
               <div className="flex gap-2 justify-end">
-                <Button variant="outline" onClick={() => setShowAddTaskModal(false)}>Cancel</Button>
+                <Button variant="outline" onClick={() => setShowAddTaskModal(false)}>{t("cancel")}</Button>
                 <Button
                   onClick={() => addTaskMutation.mutate()}
                   disabled={!newTask.department || !newTask.title || addTaskMutation.isPending}
                   className="gap-2"
                 >
                   {addTaskMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                  Add Task
+                  {t("addTask")}
                 </Button>
               </div>
             </div>

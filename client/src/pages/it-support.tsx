@@ -39,6 +39,7 @@ import {
   PlayCircle,
 } from "lucide-react";
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 interface ItSupportTicket {
   id: number;
@@ -87,6 +88,7 @@ const statuses = [
 export default function ItSupportPage() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
@@ -203,22 +205,22 @@ export default function ItSupportPage() {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Monitor className="h-8 w-8 text-blue-600" />
-            IT Helpdesk
+            {t("itHelpdesk")}
           </h1>
           <p className="text-muted-foreground mt-1">
-            {isManager ? "Manage IT helpdesk requests and tasks" : "Submit and track your IT helpdesk requests"}
+            {isManager ? t("manageItRequests") : t("submitTrackRequests")}
           </p>
         </div>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
             <Button className="gap-2" data-testid="button-create-ticket">
               <Plus className="h-4 w-4" />
-              New Request
+              {t("newRequest")}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create IT Support Request</DialogTitle>
+              <DialogTitle>{t("createItSupportRequest")}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 mt-4">
               <div>
@@ -300,7 +302,7 @@ export default function ItSupportPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Total Requests</p>
+                    <p className="text-sm text-muted-foreground">{t("totalRequests")}</p>
                     <p className="text-2xl font-bold">{stats.total}</p>
                   </div>
                   <Monitor className="h-8 w-8 text-blue-600" />
@@ -311,7 +313,7 @@ export default function ItSupportPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Pending</p>
+                    <p className="text-sm text-muted-foreground">{t("pending")}</p>
                     <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
                   </div>
                   <Clock className="h-8 w-8 text-yellow-600" />
@@ -322,7 +324,7 @@ export default function ItSupportPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">In Progress</p>
+                    <p className="text-sm text-muted-foreground">{t("inProgress")}</p>
                     <p className="text-2xl font-bold text-blue-600">{stats.inProgress}</p>
                   </div>
                   <PlayCircle className="h-8 w-8 text-blue-600" />
@@ -333,7 +335,7 @@ export default function ItSupportPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Completed</p>
+                    <p className="text-sm text-muted-foreground">{t("completed")}</p>
                     <p className="text-2xl font-bold text-green-600">{stats.completed}</p>
                   </div>
                   <CheckCircle className="h-8 w-8 text-green-600" />
@@ -347,7 +349,7 @@ export default function ItSupportPage() {
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <CardTitle className="flex items-center gap-2">
                   <Filter className="h-5 w-5" />
-                  Filters
+                  {t("filters")}
                 </CardTitle>
                 <div className="flex gap-2 flex-wrap">
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -355,7 +357,7 @@ export default function ItSupportPage() {
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="all">{t("allStatus")}</SelectItem>
                       {statuses.map((s) => (
                         <SelectItem key={s.value} value={s.value}>
                           {s.label}
@@ -368,7 +370,7 @@ export default function ItSupportPage() {
                       <SelectValue placeholder="Priority" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Priority</SelectItem>
+                      <SelectItem value="all">{t("allPriority")}</SelectItem>
                       {priorities.map((p) => (
                         <SelectItem key={p.value} value={p.value}>
                           {p.label}
@@ -425,8 +427,8 @@ export default function ItSupportPage() {
           <Card>
             <CardContent className="py-12 text-center">
               <Monitor className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-lg font-medium">No support requests found</p>
-              <p className="text-muted-foreground">Create a new request to get IT support</p>
+              <p className="text-lg font-medium">{t("noSupportRequestsFound")}</p>
+              <p className="text-muted-foreground">{t("createNewRequestHelp")}</p>
             </CardContent>
           </Card>
         ) : (
@@ -567,12 +569,12 @@ export default function ItSupportPage() {
       <Dialog open={!!editingTicket} onOpenChange={() => setEditingTicket(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Ticket</DialogTitle>
+            <DialogTitle>{t("editTicket")}</DialogTitle>
           </DialogHeader>
           {editingTicket && (
             <div className="space-y-4 mt-4">
               <div>
-                <label className="text-sm font-medium">Status</label>
+                <label className="text-sm font-medium">{t("status")}</label>
                 <Select
                   value={editingTicket.status}
                   onValueChange={(value) =>
@@ -592,7 +594,7 @@ export default function ItSupportPage() {
                 </Select>
               </div>
               <div>
-                <label className="text-sm font-medium">Priority</label>
+                <label className="text-sm font-medium">{t("priority")}</label>
                 <Select
                   value={editingTicket.priority}
                   onValueChange={(value) =>
@@ -612,7 +614,7 @@ export default function ItSupportPage() {
                 </Select>
               </div>
               <div>
-                <label className="text-sm font-medium">Planned Date</label>
+                <label className="text-sm font-medium">{t("plannedDateLabel")}</label>
                 <Input
                   type="date"
                   value={
@@ -629,7 +631,7 @@ export default function ItSupportPage() {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">Notes</label>
+                <label className="text-sm font-medium">{t("notesLabel")}</label>
                 <Textarea
                   placeholder="Add notes about the ticket..."
                   value={editingTicket.notes || ""}
@@ -657,7 +659,7 @@ export default function ItSupportPage() {
                 {updateTicketMutation.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
                 ) : null}
-                Save Changes
+                {t("saveChanges")}
               </Button>
             </div>
           )}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +23,7 @@ import {
 export default function WeeklyMeetingsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const [isCreating, setIsCreating] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -218,8 +220,8 @@ export default function WeeklyMeetingsPage() {
       <div className="space-y-6 max-w-7xl mx-auto">
         <div className="flex justify-between items-center bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-8 rounded-2xl shadow-2xl">
           <div>
-            <h1 className="text-4xl font-bold text-white drop-shadow-lg">📊 Weekly Meeting Tasks</h1>
-            <p className="text-blue-100 mt-2 text-lg">Manage departmental work points and progress</p>
+            <h1 className="text-4xl font-bold text-white drop-shadow-lg">📊 {t("weeklyMeetingTasks")}</h1>
+            <p className="text-blue-100 mt-2 text-lg">{t("manageDepartmentalWork")}</p>
           </div>
           <div className="flex gap-2">
             <Button
@@ -228,7 +230,7 @@ export default function WeeklyMeetingsPage() {
               className="gap-2"
             >
               <Home className="h-4 w-4" />
-              Dashboard
+              {t("dashboard")}
             </Button>
             {(user?.role === "admin" || user?.role === "manager" || user?.role === "office_team") && (
               <Button
@@ -241,7 +243,7 @@ export default function WeeklyMeetingsPage() {
                 ) : (
                   <Plus className="h-4 w-4" />
                 )}
-                New Meeting
+                {t("newMeeting")}
               </Button>
             )}
           </div>
@@ -253,7 +255,7 @@ export default function WeeklyMeetingsPage() {
           <div className="bg-gradient-to-br from-emerald-500 to-green-600 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-100 text-sm font-semibold">Completed</p>
+                <p className="text-green-100 text-sm font-semibold">{t("completed")}</p>
                 <p className="text-4xl font-bold text-white mt-2">{meetings.filter((m: any) => m.status === "completed").length}</p>
               </div>
               <TrendingUp className="h-12 w-12 text-green-200 opacity-50" />
@@ -263,7 +265,7 @@ export default function WeeklyMeetingsPage() {
           <div className="bg-gradient-to-br from-blue-500 to-cyan-600 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-100 text-sm font-semibold">In Progress</p>
+                <p className="text-blue-100 text-sm font-semibold">{t("inProgress")}</p>
                 <p className="text-4xl font-bold text-white mt-2">{meetings.filter((m: any) => m.status === "in_progress").length}</p>
               </div>
               <Clock className="h-12 w-12 text-blue-200 opacity-50" />
@@ -273,7 +275,7 @@ export default function WeeklyMeetingsPage() {
           <div className="bg-gradient-to-br from-purple-500 to-indigo-600 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-purple-100 text-sm font-semibold">Planned</p>
+                <p className="text-purple-100 text-sm font-semibold">{t("planned")}</p>
                 <p className="text-4xl font-bold text-white mt-2">{meetings.filter((m: any) => m.status === "planned").length}</p>
               </div>
               <Zap className="h-12 w-12 text-purple-200 opacity-50" />
@@ -283,7 +285,7 @@ export default function WeeklyMeetingsPage() {
           <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-orange-100 text-sm font-semibold">Total Meetings</p>
+                <p className="text-orange-100 text-sm font-semibold">{t("totalMeetings")}</p>
                 <p className="text-4xl font-bold text-white mt-2">{meetings.length}</p>
               </div>
               <BarChart3 className="h-12 w-12 text-orange-200 opacity-50" />
@@ -295,15 +297,15 @@ export default function WeeklyMeetingsPage() {
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-slate-500" />
-          <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Filters:</span>
+          <span className="text-sm font-medium text-slate-600 dark:text-slate-400">{t("filters")}:</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Select value={monthFilter} onValueChange={(value) => { setMonthFilter(value); setCurrentPage(1); }}>
             <SelectTrigger className="w-40" data-testid="select-month-filter">
-              <SelectValue placeholder="All Months" />
+              <SelectValue placeholder={t("allMonths")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Months</SelectItem>
+              <SelectItem value="all">{t("allMonths")}</SelectItem>
               {months.map((month) => (
                 <SelectItem key={month.value} value={month.value}>{month.label}</SelectItem>
               ))}
@@ -339,7 +341,7 @@ export default function WeeklyMeetingsPage() {
               ) : (
                 <Plus className="h-3 w-3" />
               )}
-              Create Week
+              {t("createWeek")}
             </Button>
           )}
           <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -347,15 +349,15 @@ export default function WeeklyMeetingsPage() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="planned">Planned</SelectItem>
-              <SelectItem value="in_progress">In Progress</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
+              <SelectItem value="all">{t("allStatus")}</SelectItem>
+              <SelectItem value="planned">{t("planned")}</SelectItem>
+              <SelectItem value="in_progress">{t("inProgress")}</SelectItem>
+              <SelectItem value="completed">{t("completed")}</SelectItem>
+              <SelectItem value="archived">{t("archived")}</SelectItem>
             </SelectContent>
           </Select>
           <Input
-            placeholder="Search by week..."
+            placeholder={t("searchByWeek")}
             value={nameSearch}
             onChange={(e) => setNameSearch(e.target.value)}
             className="w-40 h-9"
@@ -371,7 +373,7 @@ export default function WeeklyMeetingsPage() {
               className="gap-1"
             >
               <X className="h-3 w-3" />
-              Clear
+              {t("clear")}
             </Button>
           )}
           {filteredMeetings.length > 0 && (
@@ -453,9 +455,9 @@ export default function WeeklyMeetingsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="planned">Planning</SelectItem>
-                      <SelectItem value="completed">Complete</SelectItem>
-                      <SelectItem value="archived">Archived</SelectItem>
+                      <SelectItem value="planned">{t("planned")}</SelectItem>
+                      <SelectItem value="completed">{t("completed")}</SelectItem>
+                      <SelectItem value="archived">{t("archived")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -483,7 +485,7 @@ export default function WeeklyMeetingsPage() {
                           }`}
                         />
                         <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400">
-                          Description
+                          {t("description")}
                         </span>
                       </button>
                       {expandedMeetings.has(meeting.id) && (
@@ -497,7 +499,7 @@ export default function WeeklyMeetingsPage() {
                     <Link href={`/weekly-meetings/${meeting.id}`} asChild>
                       <Button variant="outline" size="sm" className="flex-1 gap-1">
                         <Eye className="h-3 w-3" />
-                        View Tasks
+                        {t("viewTasks")}
                       </Button>
                     </Link>
                     <Button
@@ -507,7 +509,7 @@ export default function WeeklyMeetingsPage() {
                       onClick={() => setExpandedDataWeek(expandedDataWeek === meeting.id ? null : meeting.id)}
                     >
                       <PieChart className="h-3 w-3" />
-                      View Data
+                      {t("viewData")}
                     </Button>
                   </div>
                   {expandedDataWeek === meeting.id && (
@@ -519,13 +521,13 @@ export default function WeeklyMeetingsPage() {
                     >
                       <div className="grid grid-cols-2 gap-2">
                         <div className="bg-white dark:bg-slate-800 p-2 rounded">
-                          <p className="text-slate-600 dark:text-slate-400">Total Tasks</p>
+                          <p className="text-slate-600 dark:text-slate-400">{t("totalTasks")}</p>
                           <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
                             {meetings.find((m: any) => m.id === meeting.id)?.tasksCount || 0}
                           </p>
                         </div>
                         <div className="bg-white dark:bg-slate-800 p-2 rounded">
-                          <p className="text-slate-600 dark:text-slate-400">Status</p>
+                          <p className="text-slate-600 dark:text-slate-400">{t("status")}</p>
                           <p className="text-lg font-bold text-green-600 dark:text-green-400 capitalize">
                             {meeting.status}
                           </p>
@@ -540,7 +542,7 @@ export default function WeeklyMeetingsPage() {
                         }}
                       >
                         <BarChart3 className="h-3 w-3" />
-                        View Full Analysis
+                        {t("viewFullAnalysis")}
                       </Button>
                     </motion.div>
                   )}
@@ -554,7 +556,7 @@ export default function WeeklyMeetingsPage() {
                       }}
                     >
                       <Archive className="h-3 w-3" />
-                      Archive
+                      {t("archive")}
                     </Button>
                   )}
                 </div>
@@ -571,7 +573,7 @@ export default function WeeklyMeetingsPage() {
             className="bg-white dark:bg-slate-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
           >
             <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Weekly Tasks Analysis</h2>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t("weeklyTasksAnalysis")}</h2>
               <button
                 onClick={() => setShowAnalysisModal(false)}
                 className="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
@@ -590,19 +592,19 @@ export default function WeeklyMeetingsPage() {
                     <div className="grid grid-cols-3 gap-4">
                       <Card>
                         <CardContent className="pt-6">
-                          <p className="text-sm text-slate-600 dark:text-slate-400">Total Tasks</p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">{t("totalTasks")}</p>
                           <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{meetingTasks.length}</p>
                         </CardContent>
                       </Card>
                       <Card>
                         <CardContent className="pt-6">
-                          <p className="text-sm text-slate-600 dark:text-slate-400">Departments</p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">{t("departments")}</p>
                           <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{departments.length}</p>
                         </CardContent>
                       </Card>
                       <Card>
                         <CardContent className="pt-6">
-                          <p className="text-sm text-slate-600 dark:text-slate-400">Assigned</p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">{t("assigned")}</p>
                           <p className="text-2xl font-bold text-green-600 dark:text-green-400">{meetingTasks.filter((t: any) => t.assigned_user_id).length}</p>
                         </CardContent>
                       </Card>
@@ -611,7 +613,7 @@ export default function WeeklyMeetingsPage() {
                     {meetingTasks.length > 0 && (
                       <>
                         <div>
-                          <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Tasks by Department</h3>
+                          <h3 className="font-semibold text-slate-900 dark:text-white mb-4">{t("tasksByDepartment")}</h3>
                           <Chart
                             type="bar"
                             series={[
@@ -630,7 +632,7 @@ export default function WeeklyMeetingsPage() {
                         </div>
 
                         <div>
-                          <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Assignment Status</h3>
+                          <h3 className="font-semibold text-slate-900 dark:text-white mb-4">{t("assignmentStatus")}</h3>
                           <Chart
                             type="donut"
                             series={[
@@ -639,7 +641,7 @@ export default function WeeklyMeetingsPage() {
                             ]}
                             options={{
                               chart: { type: "donut" },
-                              labels: ["Unassigned", "Assigned"],
+                              labels: [t("unassigned"), t("assigned")],
                               colors: ["#f59e0b", "#10b981"],
                             }}
                             height={300}
@@ -664,7 +666,7 @@ export default function WeeklyMeetingsPage() {
             variant="outline"
             className="gap-1"
           >
-            ← Previous
+            ← {t("previous")}
           </Button>
           
           <div className="flex gap-1">
@@ -689,7 +691,7 @@ export default function WeeklyMeetingsPage() {
             variant="outline"
             className="gap-1"
           >
-            Next →
+            {t("next")} →
           </Button>
         </div>
       )}
@@ -697,7 +699,7 @@ export default function WeeklyMeetingsPage() {
       {/* Page info */}
       {filteredMeetings.length > 0 && (
         <div className="text-center text-sm text-slate-600 dark:text-slate-400 pb-4">
-          Showing {(currentPage - 1) * itemsPerPage + 1}–{Math.min(currentPage * itemsPerPage, filteredMeetings.length)} of {filteredMeetings.length} meetings
+          {t("showing")} {(currentPage - 1) * itemsPerPage + 1}–{Math.min(currentPage * itemsPerPage, filteredMeetings.length)} {t("of")} {filteredMeetings.length} {t("meetings")}
         </div>
       )}
 
@@ -705,10 +707,10 @@ export default function WeeklyMeetingsPage() {
         <Card className="text-center py-12">
           <Calendar className="h-12 w-12 mx-auto text-slate-400 mb-3" />
           <p className="text-slate-600 dark:text-slate-400">
-            {statusFilter === "all" ? "No weekly meetings yet" : "No meetings found matching your filter"}
+            {statusFilter === "all" ? t("noWeeklyMeetingsYet") : t("noMeetingsMatchingFilter")}
           </p>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            {statusFilter === "all" ? "Create one to get started" : "Try adjusting your filter"}
+            {statusFilter === "all" ? t("createOneToGetStarted") : t("tryAdjustingFilter")}
           </p>
         </Card>
       )}

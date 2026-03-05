@@ -22,26 +22,23 @@ import {
   Calendar,
   Clock,
   User,
-  Filter,
   Search,
   RefreshCw,
   Trash2,
   Edit,
-  Star,
-  Target,
   TrendingUp,
   ListTodo,
   Sparkles,
   Award,
   Bell,
   X,
-  Archive,
-  Undo2,
-  CheckSquare,
   Eye,
   AlertCircle,
   ChevronLeft,
   ChevronRight,
+  Building2,
+  LayoutGrid,
+  Zap,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -79,8 +76,7 @@ export default function TodosPage() {
   const [dateFilter, setDateFilter] = useState("today");
   const [customDate, setCustomDate] = useState("");
   const [autoRefresh, setAutoRefresh] = useState(true);
-  const [priorityFilter, setPriorityFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [departmentFilter, setDepartmentFilter] = useState("all");
   const [userFilter, setUserFilter] = useState("all");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingList, setEditingList] = useState<TodoList | null>(null);
@@ -191,15 +187,12 @@ export default function TodosPage() {
         break;
     }
 
-    // Priority filter
-    const matchesPriority = priorityFilter === "all" || list.priority === priorityFilter;
-
-    // Status filter
-    let matchesStatus = true;
-    if (statusFilter === "completed") {
-      matchesStatus = list.items.every(item => item.isCompleted);
-    } else if (statusFilter === "pending") {
-      matchesStatus = list.items.some(item => !item.isCompleted);
+    // Department filter
+    let matchesDepartment = true;
+    if (departmentFilter !== "all") {
+      const createdByDept = list.createdBy?.department || '';
+      const assignedToDept = list.assignedTo?.department || '';
+      matchesDepartment = createdByDept === departmentFilter || assignedToDept === departmentFilter;
     }
 
     // User filter
@@ -210,7 +203,7 @@ export default function TodosPage() {
       matchesUser = createdByName === userFilter || assignedToName === userFilter;
     }
 
-    return matchesSearch && matchesDate && matchesPriority && matchesStatus && matchesUser;
+    return matchesSearch && matchesDate && matchesDepartment && matchesUser;
   });
 
   // Pagination logic
@@ -222,7 +215,7 @@ export default function TodosPage() {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, dateFilter, customDate, priorityFilter, statusFilter, userFilter]);
+  }, [searchTerm, dateFilter, customDate, departmentFilter, userFilter]);
 
   // Auto-refresh effect
   useEffect(() => {
@@ -614,14 +607,27 @@ export default function TodosPage() {
     }
   };
 
+  const canSeeDepartments = user?.role === 'admin' || user?.role === 'manager' || user?.role === 'office' || user?.role === 'office_team';
+
+  const availableDepartments = Array.from(new Set(
+    todoLists.flatMap(list => [
+      list.assignedTo?.department,
+      list.createdBy?.department,
+    ]).filter(Boolean)
+  )) as string[];
+
+  const totalTasks = todoLists.reduce((acc, l) => acc + l.items.length, 0);
+  const completedTasks = todoLists.reduce((acc, l) => acc + l.items.filter(i => i.isCompleted).length, 0);
+  const todayLists = todoLists.filter(l => isToday(l.createdAt)).length;
+
   if (isLoading) {
     return (
       <DashboardLayout>
         <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-200 rounded w-64"></div>
-          <div className="grid gap-6">
+          <div className="h-32 bg-gradient-to-r from-violet-200 to-indigo-200 rounded-2xl"></div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-48 bg-gray-200 rounded-xl"></div>
+              <div key={i} className="h-56 bg-gray-100 rounded-2xl"></div>
             ))}
           </div>
         </div>
@@ -657,154 +663,184 @@ export default function TodosPage() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="space-y-8"
+        className="space-y-6"
       >
 
-
-      {/* Search and Filter Controls */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="space-y-6">
-            {/* Search Bar */}
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                    aria-label={t("searchPlaceholder")}
-                  />
-                </div>
+      {/* Hero Header */}
+      <motion.div
+        variants={itemVariants}
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 via-indigo-600 to-blue-600 p-6 text-white shadow-xl"
+      >
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=60 height=60 viewBox=0 0 60 60 xmlns=http://www.w3.org/2000/svg%3E%3Cg fill=none fill-rule=evenodd%3E%3Cg fill=%23ffffff opacity=.05%3E%3Cpath d=M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                <ListTodo className="w-5 h-5 text-white" />
               </div>
-              <div className="flex gap-2">
-
-                <Button
-                  onClick={() => setShowCreateForm(true)}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  {t("createNewList")}
-                </Button>
+              <h1 className="text-2xl font-bold tracking-tight">{t("dailyTasks")}</h1>
+            </div>
+            <p className="text-white/70 text-sm">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-2.5 backdrop-blur-sm border border-white/20">
+              <div className="text-center">
+                <div className="text-xl font-bold">{todayLists}</div>
+                <div className="text-xs text-white/70">{t("todaysLists")}</div>
+              </div>
+              <div className="w-px h-8 bg-white/20"></div>
+              <div className="text-center">
+                <div className="text-xl font-bold">{completedTasks}</div>
+                <div className="text-xs text-white/70">{t("done")}</div>
+              </div>
+              <div className="w-px h-8 bg-white/20"></div>
+              <div className="text-center">
+                <div className="text-xl font-bold">{totalTasks}</div>
+                <div className="text-xs text-white/70">{t("total")}</div>
               </div>
             </div>
-
-            {/* Filter Controls */}
-            <div className="grid grid-cols-1 md:grid-cols-6 gap-4 bg-gray-50 p-4 rounded-lg border">
-              <div className="space-y-2">
-                <Label htmlFor="date-filter" className="text-sm font-medium flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
-                  {t("filter")} {t("today")}
-                </Label>
-                <Select value={dateFilter} onValueChange={setDateFilter}>
-                  <SelectTrigger id="date-filter">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="today">{t("today")}</SelectItem>
-                    <SelectItem value="week">{t("thisWeek")}</SelectItem>
-                    <SelectItem value="month">{t("thisMonth")}</SelectItem>
-                    <SelectItem value="custom">{t("custom")}</SelectItem>
-                    <SelectItem value="all">{t("allTasks")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {dateFilter === 'custom' && (
-                <div className="space-y-2">
-                  <Label htmlFor="custom-date" className="text-sm font-medium">
-                    Select Date
-                  </Label>
-                  <Input
-                    id="custom-date"
-                    type="date"
-                    value={customDate}
-                    onChange={(e) => setCustomDate(e.target.value)}
-                  />
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <Star className="w-4 h-4" />
-                  {t("priority")}
-                </Label>
-                <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t("priority")}</SelectItem>
-                    <SelectItem value="high">{t("highPriority")}</SelectItem>
-                    <SelectItem value="medium">{t("mediumPriority")}</SelectItem>
-                    <SelectItem value="low">{t("lowPriority")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4" />
-                  {t("status")}
-                </Label>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t("status")}</SelectItem>
-                    <SelectItem value="pending">{t("pending")}</SelectItem>
-                    <SelectItem value="completed">{t("completed")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <User className="w-4 h-4" />
-                  {t("filterByUser")}
-                </Label>
-                <Select value={userFilter} onValueChange={setUserFilter}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Users</SelectItem>
-                    {Array.from(new Set(
-                      todoLists.flatMap(list => [
-                        list.createdBy ? `${list.createdBy.firstName} ${list.createdBy.lastName}` : '',
-                        list.assignedTo ? `${list.assignedTo.firstName} ${list.assignedTo.lastName}` : ''
-                      ]).filter(name => name !== '')
-                    )).map(userName => (
-                      <SelectItem key={userName} value={userName}>
-                        {userName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="auto-refresh" className="text-sm font-medium flex items-center gap-2">
-                  <RefreshCw className={`w-4 h-4 ${autoRefresh ? 'animate-spin text-green-600' : 'text-gray-400'}`} />
-                  Auto Refresh
-                </Label>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="auto-refresh"
-                    checked={autoRefresh}
-                    onCheckedChange={setAutoRefresh}
-                  />
-                  <span className="text-sm text-gray-600">
-                    {autoRefresh ? 'Every 5s' : 'Off'}
-                  </span>
-                </div>
-              </div>
+            <Button
+              onClick={() => setShowCreateForm(true)}
+              className="bg-white text-indigo-700 hover:bg-white/90 font-semibold shadow-lg"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {t("newList")}
+            </Button>
+          </div>
+        </div>
+        {/* Progress bar */}
+        {totalTasks > 0 && (
+          <div className="relative mt-4">
+            <div className="flex justify-between text-xs text-white/70 mb-1">
+              <span>{t("overallProgress")}</span>
+              <span>{Math.round((completedTasks / totalTasks) * 100)}%</span>
+            </div>
+            <div className="w-full bg-white/20 rounded-full h-1.5">
+              <motion.div
+                className="h-1.5 rounded-full bg-white"
+                initial={{ width: 0 }}
+                animate={{ width: `${Math.round((completedTasks / totalTasks) * 100)}%` }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              />
             </div>
           </div>
-        </CardContent>
-      </Card>
+        )}
+      </motion.div>
+
+      {/* Filter Bar */}
+      <motion.div variants={itemVariants}>
+        <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center bg-white rounded-2xl shadow-sm border border-gray-100 p-3">
+          {/* Search */}
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder={t("searchTasks")}
+              className="pl-9 border-0 bg-gray-50 rounded-xl focus-visible:ring-1 focus-visible:ring-indigo-400"
+            />
+          </div>
+
+          <div className="flex gap-2 flex-wrap">
+            {/* Date Filter */}
+            <Select value={dateFilter} onValueChange={setDateFilter}>
+              <SelectTrigger className="h-9 w-auto gap-1 rounded-xl border-gray-200 text-sm px-3 bg-gray-50">
+                <Calendar className="w-3.5 h-3.5 text-gray-500" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="today">{t("today")}</SelectItem>
+                <SelectItem value="week">{t("thisWeek")}</SelectItem>
+                <SelectItem value="month">{t("thisMonth")}</SelectItem>
+                <SelectItem value="custom">{t("custom")}</SelectItem>
+                <SelectItem value="all">{t("allTasks")}</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {dateFilter === 'custom' && (
+              <Input
+                type="date"
+                value={customDate}
+                onChange={(e) => setCustomDate(e.target.value)}
+                className="h-9 rounded-xl border-gray-200 text-sm bg-gray-50 w-auto"
+              />
+            )}
+
+            {/* User Filter */}
+            <Select value={userFilter} onValueChange={setUserFilter}>
+              <SelectTrigger className="h-9 w-auto gap-1 rounded-xl border-gray-200 text-sm px-3 bg-gray-50">
+                <User className="w-3.5 h-3.5 text-gray-500" />
+                <SelectValue placeholder="All Users" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Users</SelectItem>
+                {Array.from(new Set(
+                  todoLists.flatMap(list => [
+                    list.createdBy ? `${list.createdBy.firstName} ${list.createdBy.lastName}` : '',
+                    list.assignedTo ? `${list.assignedTo.firstName} ${list.assignedTo.lastName}` : '',
+                  ]).filter(Boolean)
+                )).map(name => (
+                  <SelectItem key={name} value={name}>{name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Department Filter — office / manager / admin only */}
+            {canSeeDepartments && (
+              <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+                <SelectTrigger className="h-9 w-auto gap-1 rounded-xl border-gray-200 text-sm px-3 bg-gray-50">
+                  <Building2 className="w-3.5 h-3.5 text-gray-500" />
+                  <SelectValue placeholder="All Departments" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Departments</SelectItem>
+                  {availableDepartments.map(dept => (
+                    <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+
+            {/* Auto-refresh toggle */}
+            <button
+              onClick={() => setAutoRefresh(v => !v)}
+              className={`h-9 px-3 rounded-xl border text-sm flex items-center gap-1.5 transition-colors ${
+                autoRefresh
+                  ? 'bg-green-50 border-green-200 text-green-700'
+                  : 'bg-gray-50 border-gray-200 text-gray-500'
+              }`}
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${autoRefresh ? 'animate-spin' : ''}`} />
+              {autoRefresh ? t("liveStatus") : t("pausedStatus")}
+            </button>
+          </div>
+        </div>
+
+        {/* Active filter chips */}
+        {(departmentFilter !== 'all' || userFilter !== 'all' || dateFilter !== 'today') && (
+          <div className="flex gap-2 mt-2 flex-wrap">
+            {dateFilter !== 'today' && (
+              <span className="inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 text-xs px-2.5 py-1 rounded-full border border-indigo-100">
+                <Calendar className="w-3 h-3" />
+                {dateFilter === 'all' ? 'All time' : dateFilter === 'week' ? 'This week' : dateFilter === 'month' ? 'This month' : customDate || 'Custom'}
+                <button onClick={() => setDateFilter('today')} className="ml-0.5 hover:text-indigo-900"><X className="w-3 h-3" /></button>
+              </span>
+            )}
+            {userFilter !== 'all' && (
+              <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-full border border-blue-100">
+                <User className="w-3 h-3" />{userFilter}
+                <button onClick={() => setUserFilter('all')} className="ml-0.5 hover:text-blue-900"><X className="w-3 h-3" /></button>
+              </span>
+            )}
+            {departmentFilter !== 'all' && (
+              <span className="inline-flex items-center gap-1 bg-violet-50 text-violet-700 text-xs px-2.5 py-1 rounded-full border border-violet-100">
+                <Building2 className="w-3 h-3" />{departmentFilter}
+                <button onClick={() => setDepartmentFilter('all')} className="ml-0.5 hover:text-violet-900"><X className="w-3 h-3" /></button>
+              </span>
+            )}
+          </div>
+        )}
+      </motion.div>
 
 
 
@@ -827,11 +863,11 @@ export default function TodosPage() {
             >
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-purple-600" />
-                Create Daily Work List
+                {t("createDailyWorkList")}
               </h3>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="title">List Title</Label>
+                  <Label htmlFor="title">{t("listTitle")}</Label>
                   <Input
                     id="title"
                     value={newListTitle}
@@ -839,7 +875,7 @@ export default function TodosPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description">{t("description")}</Label>
                   <Textarea
                     id="description"
                     value={newListDescription}
@@ -847,15 +883,15 @@ export default function TodosPage() {
                   />
                 </div>
                 <div>
-                  <Label>Priority Level</Label>
+                  <Label>{t("priorityLevel")}</Label>
                   <Select value={newListPriority} onValueChange={(value: "low" | "medium" | "high") => setNewListPriority(value)}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="high">High Priority</SelectItem>
-                      <SelectItem value="medium">Medium Priority</SelectItem>
-                      <SelectItem value="low">Low Priority</SelectItem>
+                      <SelectItem value="high">{t("highPriority")}</SelectItem>
+                      <SelectItem value="medium">{t("mediumPriority")}</SelectItem>
+                      <SelectItem value="low">{t("lowPriority")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -865,13 +901,13 @@ export default function TodosPage() {
                     disabled={!newListTitle.trim() || createTodoListMutation.isPending}
                     className="flex-1"
                   >
-                    {createTodoListMutation.isPending ? "Creating..." : "Create List"}
+                    {createTodoListMutation.isPending ? t("creating") : t("createList")}
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => setShowCreateForm(false)}
                   >
-                    Cancel
+                    {t("cancel")}
                   </Button>
                 </div>
               </div>
@@ -1072,255 +1108,223 @@ export default function TodosPage() {
         )}
       </AnimatePresence>
 
+      {/* Results summary */}
+      <div className="flex items-center justify-between px-1">
+        <p className="text-sm text-gray-500">
+          {t("showing")} <span className="font-semibold text-gray-700">{filteredTodoLists.length}</span> {t("lists")}
+        </p>
+        {totalPages > 1 && (
+          <div className="flex items-center gap-1">
+            <Button size="sm" variant="ghost" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="h-7 w-7 p-0">
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+            <span className="text-xs text-gray-500 px-1">{currentPage} / {totalPages}</span>
+            <Button size="sm" variant="ghost" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="h-7 w-7 p-0">
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
+      </div>
+
       {/* Todo Lists Grid */}
       {filteredTodoLists.length === 0 ? (
         <motion.div
           variants={itemVariants}
-          className="text-center py-12"
+          className="flex flex-col items-center justify-center py-20 rounded-2xl bg-white border border-dashed border-gray-200"
         >
-          <ListTodo className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-600 mb-2">No Task Lists Found</h3>
-          <p className="text-gray-500">
-            {todoLists.length === 0 
-              ? "Create your first daily work list to get started!"
-              : "No task lists match your current filters"}
+          <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center mb-4">
+            <LayoutGrid className="w-8 h-8 text-indigo-400" />
+          </div>
+          <h3 className="text-base font-semibold text-gray-700 mb-1">{t("noTaskListsFound")}</h3>
+          <p className="text-sm text-gray-400 mb-5">
+            {todoLists.length === 0
+              ? t("createFirstListMessage")
+              : t("noMatchingFiltersMessage")}
           </p>
           {todoLists.length === 0 && (
             <Button
               onClick={() => setShowCreateForm(true)}
-              className="mt-4"
+              className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Create Your First List
+              {t("createYourFirstList")}
             </Button>
           )}
         </motion.div>
       ) : (
         <motion.div
           variants={containerVariants}
-          className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+          className="grid gap-5 md:grid-cols-2 lg:grid-cols-3"
         >
           {paginatedTodoLists.map((list: TodoList, index: number) => {
             const completionPercentage = getCompletionPercentage(list.items);
             const isCompleted = completionPercentage === 100;
+            const department = list.assignedTo?.department || list.createdBy?.department;
 
             return (
               <motion.div
                 key={list.id}
                 variants={itemVariants}
-                whileHover={{ y: -5 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                whileHover={{ y: -4, scale: 1.01 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
-                <Card className={`hover:shadow-lg transition-all duration-300 ${isCompleted ? 'ring-2 ring-green-200 bg-green-50' : ''}`}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                          {isCompleted && (
-                            <motion.div
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ type: "spring", stiffness: 300 }}
-                            >
-                              <Award className="w-5 h-5 text-green-600" />
-                            </motion.div>
-                          )}
-                          {editingListId === list.id ? (
-                            <div className="flex items-center gap-2 flex-1">
-                              <Input
-                                value={editedTitle}
-                                onChange={(e) => setEditedTitle(e.target.value)}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter") {
-                                    e.preventDefault();
-                                    handleSaveTitle();
-                                  } else if (e.key === "Escape") {
-                                    e.preventDefault();
-                                    handleCancelEdit();
-                                  }
-                                }}
-                                className="text-lg font-semibold h-7 px-2"
-                                autoFocus
-                                data-testid={`input-edit-title-${list.id}`}
-                              />
-                              <Button
-                                size="sm"
-                                onClick={handleSaveTitle}
-                                disabled={!editedTitle.trim() || editTodoListMutation.isPending}
-                                className="h-7 px-2"
-                                data-testid={`button-save-title-${list.id}`}
-                              >
-                                <CheckCircle2 className="w-4 h-4" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={handleCancelEdit}
-                                className="h-7 px-2"
-                                data-testid={`button-cancel-edit-${list.id}`}
-                              >
-                                <X className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          ) : (
-                            <>
-                              {list.title}
-                              {isToday(list.createdAt) && (
-                                <Badge className="bg-blue-100 text-blue-800 text-xs">Today</Badge>
-                              )}
-                            </>
-                          )}
-                        </CardTitle>
-                        <p className="text-sm text-gray-600 mt-1">{list.description}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge className={`${getPriorityColor(list.priority)} text-xs`}>
-                          {list.priority}
-                        </Badge>
-                        {editingListId !== list.id && (
-                          <div className="flex items-center gap-1">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleStartEditTitle(list)}
-                              className="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-1 h-6 w-6"
-                              title="Edit list title"
-                              data-testid={`button-edit-list-${list.id}`}
-                            >
-                              <Edit className="w-3 h-3" />
+                <div className={`relative rounded-2xl bg-white border shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden
+                  ${isCompleted ? 'border-green-200' : 'border-gray-100'}`}>
+                  {/* Top accent bar */}
+                  <div className={`h-1 w-full ${isCompleted ? 'bg-gradient-to-r from-green-400 to-emerald-500' : 'bg-gradient-to-r from-violet-500 to-indigo-500'}`} />
+
+                  <div className="p-4">
+                    {/* Header */}
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <div className="flex-1 min-w-0">
+                        {editingListId === list.id ? (
+                          <div className="flex items-center gap-2">
+                            <Input
+                              value={editedTitle}
+                              onChange={(e) => setEditedTitle(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") { e.preventDefault(); handleSaveTitle(); }
+                                else if (e.key === "Escape") { e.preventDefault(); handleCancelEdit(); }
+                              }}
+                              className="h-7 text-sm font-semibold px-2"
+                              autoFocus
+                              data-testid={`input-edit-title-${list.id}`}
+                            />
+                            <Button size="sm" onClick={handleSaveTitle} disabled={!editedTitle.trim() || editTodoListMutation.isPending} className="h-7 px-2 bg-indigo-600 hover:bg-indigo-700" data-testid={`button-save-title-${list.id}`}>
+                              <CheckCircle2 className="w-3.5 h-3.5" />
                             </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleDeleteTodoList(list.id)}
-                              disabled={deleteTodoListMutation.isPending}
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 h-6 w-6"
-                              title="Delete entire list"
-                              data-testid={`button-delete-list-${list.id}`}
-                            >
-                              <Trash2 className="w-3 h-3" />
+                            <Button size="sm" variant="outline" onClick={handleCancelEdit} className="h-7 px-2" data-testid={`button-cancel-edit-${list.id}`}>
+                              <X className="w-3.5 h-3.5" />
                             </Button>
                           </div>
+                        ) : (
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {isCompleted && <Award className="w-4 h-4 text-green-500 flex-shrink-0" />}
+                            <h3 className="font-semibold text-gray-900 text-sm leading-tight truncate">{list.title}</h3>
+                            {isToday(list.createdAt) && (
+                              <span className="inline-flex items-center gap-0.5 bg-blue-50 text-blue-600 text-[10px] font-medium px-1.5 py-0.5 rounded-full border border-blue-100">
+                                <Zap className="w-2.5 h-2.5" />Today
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {list.description && (
+                          <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{list.description}</p>
                         )}
                       </div>
+
+                      {editingListId !== list.id && (
+                        <div className="flex items-center gap-0.5 flex-shrink-0">
+                          <Button size="sm" variant="ghost" onClick={() => handleStartEditTitle(list)}
+                            className="h-6 w-6 p-0 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg"
+                            title="Edit title" data-testid={`button-edit-list-${list.id}`}>
+                            <Edit className="w-3 h-3" />
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={() => handleDeleteTodoList(list.id)}
+                            disabled={deleteTodoListMutation.isPending}
+                            className="h-6 w-6 p-0 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                            title="Delete list" data-testid={`button-delete-list-${list.id}`}>
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Progress Bar */}
-                    <div className="mt-3">
-                      <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-                        <span>Progress</span>
-                        <span>{completionPercentage}%</span>
+                    {/* Meta row */}
+                    <div className="flex items-center gap-2 mb-3 flex-wrap">
+                      <span className="inline-flex items-center gap-1 text-[11px] text-gray-400">
+                        <User className="w-3 h-3" />
+                        {list.assignedTo?.firstName || list.createdBy?.firstName || 'Unassigned'}
+                      </span>
+                      {department && canSeeDepartments && (
+                        <span className="inline-flex items-center gap-1 text-[11px] bg-violet-50 text-violet-600 px-1.5 py-0.5 rounded-full border border-violet-100">
+                          <Building2 className="w-2.5 h-2.5" />
+                          {department}
+                        </span>
+                      )}
+                      <span className="inline-flex items-center gap-1 text-[11px] text-gray-400 ml-auto">
+                        <Clock className="w-3 h-3" />
+                        {new Date(list.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+
+                    {/* Progress */}
+                    <div className="mb-4">
+                      <div className="flex justify-between text-[11px] text-gray-400 mb-1">
+                        <span>{list.items.filter(i => i.isCompleted).length} / {list.items.length} tasks</span>
+                        <span className={`font-semibold ${isCompleted ? 'text-green-600' : 'text-indigo-600'}`}>{completionPercentage}%</span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="w-full bg-gray-100 rounded-full h-1.5">
                         <motion.div
-                          className={`h-2 rounded-full ${isCompleted ? 'bg-green-500' : 'bg-blue-500'}`}
+                          className={`h-1.5 rounded-full ${isCompleted ? 'bg-gradient-to-r from-green-400 to-emerald-500' : 'bg-gradient-to-r from-violet-500 to-indigo-500'}`}
                           initial={{ width: 0 }}
                           animate={{ width: `${completionPercentage}%` }}
-                          transition={{ duration: 0.5, delay: index * 0.1 }}
+                          transition={{ duration: 0.6, delay: index * 0.05 }}
                         />
                       </div>
                     </div>
-                  </CardHeader>
 
-                  <CardContent className="space-y-3">
-                    {/* Todo Items */}
-                    <AnimatePresence>
-                      {list.items.map((item: TodoItem) => (
-                        <motion.div
-                          key={item.id}
-                          variants={completionVariants}
-                          initial="initial"
-                          animate={item.isCompleted ? "completed" : "initial"}
-                          exit={{ opacity: 0, x: -20 }}
-                          className={`group flex items-center gap-3 p-2 rounded-lg transition-colors ${
-                            item.isCompleted ? 'bg-green-50 border border-green-200' : 'bg-gray-50 hover:bg-gray-100'
-                          }`}
-                        >
-                          <motion.button
-                            onClick={() => handleToggleItem(item.id, item.isCompleted)}
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="flex-shrink-0"
+                    {/* Task Items */}
+                    <div className="space-y-1.5">
+                      <AnimatePresence>
+                        {list.items.map((item: TodoItem) => (
+                          <motion.div
+                            key={item.id}
+                            variants={completionVariants}
+                            initial="initial"
+                            animate={item.isCompleted ? "completed" : "initial"}
+                            exit={{ opacity: 0, height: 0 }}
+                            className={`group flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-sm transition-colors
+                              ${item.isCompleted ? 'bg-green-50 border border-green-100' : 'bg-gray-50 hover:bg-gray-100 border border-transparent'}`}
                           >
-                            {item.isCompleted ? (
-                              <motion.div
-                                initial={{ scale: 0, rotate: -180 }}
-                                animate={{ scale: 1, rotate: 0 }}
-                                transition={{ type: "spring", stiffness: 300 }}
-                              >
-                                <CheckCircle2 className="w-5 h-5 text-green-600" />
-                              </motion.div>
-                            ) : (
-                              <Circle className="w-5 h-5 text-gray-400 hover:text-blue-500" />
-                            )}
-                          </motion.button>
-                          <span className={`flex-1 text-sm font-medium break-words overflow-hidden ${
-                            item.isCompleted ? 'text-green-700' : 'text-gray-900'
-                          }`}>
-                            {item.title}
-                          </span>
-                          <div className="flex items-center gap-2">
-                            {item.isCompleted && (
-                              <motion.div
-                                initial={{ scale: 0, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                transition={{ delay: 0.2 }}
-                              >
-                                <Sparkles className="w-4 h-4 text-green-500" />
-                              </motion.div>
-                            )}
-                            {item.isCompleted && item.completedByNote && (
-                              <motion.div
-                                initial={{ scale: 0, rotate: -180 }}
-                                animate={{ scale: 1, rotate: 0 }}
-                                transition={{ type: "spring", stiffness: 300 }}
-                              >
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => {
-                                    setSelectedCompletedItem(item);
-                                    setShowCompletionDetailsDialog(true);
-                                  }}
-                                  className="flex items-center gap-1 bg-blue-100 text-blue-700 hover:text-blue-800 hover:bg-blue-200 p-1.5 h-7 px-2 rounded text-xs font-bold border border-blue-300"
-                                  title="Click to view completion details"
-                                  data-testid={`button-view-proof-${item.id}`}
-                                >
-                                  <Eye className="w-4 h-4 flex-shrink-0" />
+                            <motion.button
+                              onClick={() => handleToggleItem(item.id, item.isCompleted)}
+                              whileHover={{ scale: 1.15 }}
+                              whileTap={{ scale: 0.85 }}
+                              className="flex-shrink-0"
+                            >
+                              {item.isCompleted ? (
+                                <CheckCircle2 className="w-4.5 h-4.5 w-[18px] h-[18px] text-green-500" />
+                              ) : (
+                                <Circle className="w-[18px] h-[18px] text-gray-300 hover:text-indigo-400" />
+                              )}
+                            </motion.button>
+
+                            <span className={`flex-1 text-[13px] leading-tight break-words min-w-0 ${
+                              item.isCompleted ? 'line-through text-gray-400' : 'text-gray-700'
+                            }`}>
+                              {item.title}
+                            </span>
+
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                              {item.isCompleted && item.completedByNote && (
+                                <Button size="sm" variant="ghost"
+                                  onClick={() => { setSelectedCompletedItem(item); setShowCompletionDetailsDialog(true); }}
+                                  className="h-6 w-6 p-0 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg"
+                                  title="View proof" data-testid={`button-view-proof-${item.id}`}>
+                                  <Eye className="w-3 h-3" />
                                 </Button>
-                              </motion.div>
-                            )}
-                            <div className="flex items-center gap-1 border border-amber-300 rounded-md px-1.5 py-0.5 bg-amber-50">
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => {
-                                  setSelectedItemForReminder(item);
-                                  setShowReminderDialog(true);
-                                }}
-                                className="text-amber-600 hover:text-amber-700 hover:bg-amber-100 p-0.5 h-6 w-6"
-                                title="Set reminder"
-                                data-testid={`button-reminder-${item.id}`}
-                              >
-                                <Bell className="w-4 h-4" />
+                              )}
+                              <Button size="sm" variant="ghost"
+                                onClick={() => { setSelectedItemForReminder(item); setShowReminderDialog(true); }}
+                                className="h-6 w-6 p-0 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded-lg"
+                                title="Set reminder" data-testid={`button-reminder-${item.id}`}>
+                                <Bell className="w-3 h-3" />
                               </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
+                              <Button size="sm" variant="ghost"
                                 onClick={() => handleRemoveTask(item.id)}
-                                className="text-red-500 hover:text-red-700 hover:bg-red-50 p-0.5 h-6 w-6"
-                                title="Delete task"
-                              >
-                                <X className="w-4 h-4" />
+                                className="h-6 w-6 p-0 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                                title="Delete task">
+                                <X className="w-3 h-3" />
                               </Button>
                             </div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
 
-                    {/* Add New Item */}
-                    <div className="flex gap-2 mt-4 pt-3 border-t">
+                    {/* Add new item */}
+                    <div className="flex gap-2 mt-3 pt-3 border-t border-gray-100">
                       <Input
                         value={newItemText}
                         onChange={(e) => setNewItemText(e.target.value)}
@@ -1330,41 +1334,23 @@ export default function TodosPage() {
                             handleAddTodoItem(list.id);
                           }
                         }}
-                        className="text-sm"
+                        placeholder={t("addATask")}
+                        className="h-8 text-sm rounded-xl bg-gray-50 border-gray-200 focus-visible:ring-1 focus-visible:ring-indigo-400"
                         disabled={addTodoItemMutation.isPending}
                       />
                       <Button
                         size="sm"
                         onClick={() => handleAddTodoItem(list.id)}
                         disabled={!newItemText.trim() || addTodoItemMutation.isPending}
-                        className="shrink-0"
+                        className="h-8 w-8 p-0 shrink-0 rounded-xl bg-indigo-600 hover:bg-indigo-700"
                       >
-                        {addTodoItemMutation.isPending ? (
-                          <RefreshCw className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Plus className="w-4 h-4" />
-                        )}
+                        {addTodoItemMutation.isPending
+                          ? <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                          : <Plus className="w-3.5 h-3.5" />}
                       </Button>
                     </div>
-
-
-                    {/* Footer Info */}
-                    <div className="text-xs text-gray-500 pt-2 border-t">
-                      <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-1">
-                          <User className="w-3 h-3" />
-                          {list.assignedTo?.firstName || list.createdBy?.firstName || 'Unassigned'}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {new Date(list.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-
-
-                    </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </motion.div>
             );
           })}

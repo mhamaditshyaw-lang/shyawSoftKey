@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, Monitor, CheckCircle, AlertCircle, User, Calendar, Home } from "lucide-react";
 import { format } from "date-fns";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 
 const categories = [
   { value: "hardware", label: "Hardware" },
@@ -75,6 +76,7 @@ const getStatusColor = (status: string) => {
 export default function UserItSupportRequestPage() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [, navigate] = useLocation();
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("request");
@@ -122,15 +124,15 @@ export default function UserItSupportRequestPage() {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Monitor className="h-8 w-8 text-blue-600" />
-            IT Helpdesk Request
+            {t("itHelpdeskRequest")}
           </h1>
           <p className="text-muted-foreground mt-1">
-            Submit and track your IT helpdesk requests
+            {t("submitTrackRequests")}
           </p>
         </div>
         <Button variant="outline" className="gap-2" onClick={() => navigate("/")} data-testid="button-go-dashboard">
           <Home className="h-4 w-4" />
-          Go Dashboard
+          {t("goDashboard")}
         </Button>
       </div>
 
@@ -140,13 +142,13 @@ export default function UserItSupportRequestPage() {
             value="request" 
             className="rounded-lg transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm"
           >
-            New Request
+            {t("newRequest")}
           </TabsTrigger>
           <TabsTrigger 
             value="list"
             className="rounded-lg transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm"
           >
-            My Requests
+            {t("myRequests")}
           </TabsTrigger>
         </TabsList>
 
@@ -155,24 +157,24 @@ export default function UserItSupportRequestPage() {
             <Card className="border-2 border-green-500 shadow-lg">
               <CardContent className="pt-12 pb-12 text-center">
                 <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-green-600 mb-2">Request Submitted!</h2>
+                <h2 className="text-2xl font-bold text-green-600 mb-2">{t("requestSubmitted")}</h2>
                 <p className="text-gray-600 dark:text-gray-300 mb-2">
-                  Your IT support request has been submitted successfully.
+                  {t("requestSubmittedMsg")}
                 </p>
                 <p className="text-gray-500 dark:text-gray-400">
-                  Our IT team will review your request and contact you shortly.
+                  {t("ourItTeamWillReview")}
                 </p>
               </CardContent>
             </Card>
           ) : (
             <Card className="shadow-lg">
               <CardHeader>
-                <CardTitle>Describe Your Issue</CardTitle>
+                <CardTitle>{t("describeYourIssue")}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
                   <label className="block text-sm font-semibold mb-2">
-                    Issue Title <span className="text-red-500">*</span>
+                    {t("issueTitle")} <span className="text-red-500">*</span>
                   </label>
                   <Input
                     placeholder="e.g., Laptop won't connect to WiFi"
@@ -185,7 +187,7 @@ export default function UserItSupportRequestPage() {
 
                 <div>
                   <label className="block text-sm font-semibold mb-2">
-                    Description <span className="text-red-500">*</span>
+                    {t("description")} <span className="text-red-500">*</span>
                   </label>
                   <Textarea
                     placeholder="Please describe your issue in detail..."
@@ -199,7 +201,7 @@ export default function UserItSupportRequestPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold mb-2">Category</label>
+                    <label className="block text-sm font-semibold mb-2">{t("category")}</label>
                     <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
                       <SelectTrigger data-testid="select-support-category">
                         <SelectValue />
@@ -215,7 +217,7 @@ export default function UserItSupportRequestPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold mb-2">Priority</label>
+                    <label className="block text-sm font-semibold mb-2">{t("priority")}</label>
                     <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
                       <SelectTrigger data-testid="select-support-priority">
                         <SelectValue />
@@ -240,10 +242,10 @@ export default function UserItSupportRequestPage() {
                   {createTicketMutation.isPending ? (
                     <>
                       <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                      Submitting...
+                      {t("submitting")}
                     </>
                   ) : (
-                    "Submit Request"
+                    t("submitRequest")
                   )}
                 </Button>
               </CardContent>
@@ -256,7 +258,7 @@ export default function UserItSupportRequestPage() {
             <Card>
               <CardContent className="pt-6 text-center text-muted-foreground">
                 <AlertCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p>No requests found</p>
+                <p>{t("noRequestsFound")}</p>
               </CardContent>
             </Card>
           ) : (

@@ -18,6 +18,7 @@ import { Shield, Save, Users, Lock, ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import type { User } from "@shared/schema";
+import { useTranslation } from "react-i18next";
 
 interface Page {
   path: string;
@@ -32,6 +33,7 @@ interface PageAccessResponse {
 export default function PageAccessManagement() {
   const { user: currentUser } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [pagePermissions, setPagePermissions] = useState<Record<string, boolean>>({});
 
@@ -148,7 +150,7 @@ export default function PageAccessManagement() {
           <Link href="/">
             <Button variant="outline" size="sm">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Dashboard
+              {t("dashboard")}
             </Button>
           </Link>
         </div>
@@ -163,10 +165,10 @@ export default function PageAccessManagement() {
               </div>
               <div>
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  Manage Page Access
+                  {t("managePageAccess")}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-300 text-lg">
-                  Control which pages users can access in the application
+                  {t("controlWhichPages")}
                 </p>
               </div>
             </div>
@@ -178,9 +180,9 @@ export default function PageAccessManagement() {
           <CardHeader className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 border-b border-gray-200 dark:border-gray-600">
             <CardTitle className="flex items-center space-x-2 text-gray-900 dark:text-white">
               <Users className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-              <span>Select User</span>
+              <span>{t("selectUser")}</span>
             </CardTitle>
-            <CardDescription>Choose a user to manage their page access permissions</CardDescription>
+            <CardDescription>{t("chooseUserManage")}</CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="space-y-2">
@@ -218,18 +220,18 @@ export default function PageAccessManagement() {
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center space-x-2 text-gray-900 dark:text-white">
                   <Lock className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                  <span>Page Permissions</span>
+                  <span>{t("pagePermissions")}</span>
                 </div>
                 {isSelectedUserAdmin && (
                   <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
-                    Admin: All Access Granted
+                    {t("adminAllAccess")}
                   </Badge>
                 )}
               </CardTitle>
               <CardDescription>
-                {isSelectedUserAdmin 
-                  ? "Administrators have full access to all pages by default. Permissions below are for reference." 
-                  : "Enable or disable access to specific pages for this user"}
+                {isSelectedUserAdmin
+                  ? t("adminFullAccessDesc")
+                  : t("enableOrDisableAccess")}
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
@@ -238,7 +240,7 @@ export default function PageAccessManagement() {
                   <div className="inline-flex items-center space-x-2">
                     <div className="w-6 h-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full animate-pulse" />
                     <span className="text-lg text-gray-600 dark:text-gray-300">
-                      Loading page access...
+                      {t("loadingPageAccess")}
                     </span>
                   </div>
                 </div>
@@ -295,7 +297,7 @@ export default function PageAccessManagement() {
               data-testid="button-save"
             >
               <Save className="h-5 w-5 mr-2" />
-              {updatePageAccessMutation.isPending ? "Saving..." : "Save Changes"}
+              {updatePageAccessMutation.isPending ? t("saving") : t("saveChanges")}
             </Button>
           </div>
         )}

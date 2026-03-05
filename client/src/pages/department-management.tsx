@@ -14,6 +14,7 @@ import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Building2, Users, Plus, UserPlus, Edit, Trash2, User } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useTranslation } from "react-i18next";
 
 interface Department {
   name: string;
@@ -24,6 +25,7 @@ interface Department {
 export default function DepartmentManagementPage() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [showCreateDept, setShowCreateDept] = useState(false);
   const [showAddEmployee, setShowAddEmployee] = useState(false);
   const [showEditEmployee, setShowEditEmployee] = useState(false);
@@ -345,7 +347,7 @@ export default function DepartmentManagementPage() {
           <div className="flex items-center space-x-2">
             <Building2 className="h-6 w-6 text-dashboard-primary" />
             <h1 className="text-2xl font-bold text-dashboard-text-dark dark:text-dashboard-text-light">
-              Department Management
+              {t("departmentManagement")}
             </h1>
           </div>
           <div className="flex gap-2">
@@ -355,14 +357,14 @@ export default function DepartmentManagementPage() {
               className="border-dashboard-primary text-dashboard-primary hover:bg-dashboard-primary/10"
             >
               <UserPlus className="mr-2 h-4 w-4" />
-              Add Employee
+              {t("addEmployee")}
             </Button>
             <Button 
               onClick={() => setShowCreateDept(true)}
               className="bg-dashboard-primary hover:bg-dashboard-primary/90"
             >
               <Plus className="mr-2 h-4 w-4" />
-              Create Department
+              {t("createDepartment")}
             </Button>
           </div>
         </div>
@@ -414,14 +416,14 @@ export default function DepartmentManagementPage() {
                       <span>Manager: {dept.manager.firstName} {dept.manager.lastName}</span>
                     </div>
                   ) : (
-                    <span className="text-muted-foreground">No manager assigned</span>
+                    <span className="text-muted-foreground">{t("noManagerAssigned")}</span>
                   )}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   <div className="text-sm font-semibold text-dashboard-text-dark dark:text-dashboard-text-light">
-                    Team Members:
+                    {t("teamMembers")}:
                   </div>
                   {dept.employees.length > 0 ? (
                     <div className="space-y-2 max-h-40 overflow-y-auto">
@@ -470,7 +472,7 @@ export default function DepartmentManagementPage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-muted-foreground">No employees</p>
+                    <p className="text-sm text-muted-foreground">{t("noEmployeesInDept")}</p>
                   )}
                 </div>
               </CardContent>
@@ -482,14 +484,14 @@ export default function DepartmentManagementPage() {
         <Dialog open={showCreateDept} onOpenChange={setShowCreateDept}>
           <DialogContent className="bg-white dark:bg-dashboard-card-dark">
             <DialogHeader>
-              <DialogTitle>Create New Department</DialogTitle>
+              <DialogTitle>{t("createNewDepartment")}</DialogTitle>
               <DialogDescription>
-                Enter department details and assign a manager
+                {t("enterDepartmentDetails")}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="deptName">Department Name *</Label>
+                <Label htmlFor="deptName">{t("departmentNameLabel")} *</Label>
                 <Input
                   id="deptName"
                   placeholder="e.g., Finance, Operations, Legal"
@@ -499,10 +501,10 @@ export default function DepartmentManagementPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="deptManager">Assign Manager *</Label>
+                <Label htmlFor="deptManager">{t("assignManagerLabel")} *</Label>
                 <Select value={newDeptManagerId} onValueChange={setNewDeptManagerId}>
                   <SelectTrigger id="deptManager" data-testid="select-department-manager">
-                    <SelectValue placeholder="Select a manager" />
+                    <SelectValue placeholder={t("selectManagerPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {allManagers.map((manager: any) => (
@@ -514,20 +516,20 @@ export default function DepartmentManagementPage() {
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  The manager will be assigned to this department
+                  {t("managerWillBeAssigned")}
                 </p>
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowCreateDept(false)}>
-                Cancel
+                {t("cancel")}
               </Button>
-              <Button 
+              <Button
                 onClick={handleCreateDepartment}
                 disabled={updateUserMutation.isPending}
                 data-testid="button-create-department"
               >
-                {updateUserMutation.isPending ? "Creating..." : "Create Department"}
+                {updateUserMutation.isPending ? t("creating") : t("createDepartment")}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -537,15 +539,15 @@ export default function DepartmentManagementPage() {
         <Dialog open={showAddEmployee} onOpenChange={setShowAddEmployee}>
           <DialogContent className="bg-white dark:bg-dashboard-card-dark max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Add New Employee</DialogTitle>
+              <DialogTitle>{t("addEmployee")}</DialogTitle>
               <DialogDescription>
-                Create a new employee and assign them to a department
+                {t("createEmployeeAndAssign")}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name *</Label>
+                  <Label htmlFor="firstName">{t("firstName")} *</Label>
                   <Input
                     id="firstName"
                     value={employeeForm.firstName}
@@ -554,7 +556,7 @@ export default function DepartmentManagementPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name *</Label>
+                  <Label htmlFor="lastName">{t("lastName")} *</Label>
                   <Input
                     id="lastName"
                     value={employeeForm.lastName}
@@ -566,7 +568,7 @@ export default function DepartmentManagementPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="username">Username *</Label>
+                  <Label htmlFor="username">{t("username")} *</Label>
                   <Input
                     id="username"
                     value={employeeForm.username}
@@ -575,7 +577,7 @@ export default function DepartmentManagementPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email *</Label>
+                  <Label htmlFor="email">{t("email")} *</Label>
                   <Input
                     id="email"
                     type="email"
@@ -587,7 +589,7 @@ export default function DepartmentManagementPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password *</Label>
+                <Label htmlFor="password">{t("password")} *</Label>
                 <Input
                   id="password"
                   type="password"
@@ -599,7 +601,7 @@ export default function DepartmentManagementPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="role">Role *</Label>
+                  <Label htmlFor="role">{t("role")} *</Label>
                   <Select value={employeeForm.role} onValueChange={(value) => setEmployeeForm({...employeeForm, role: value})}>
                     <SelectTrigger id="role" data-testid="select-employee-role">
                       <SelectValue />
@@ -612,7 +614,7 @@ export default function DepartmentManagementPage() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="position">Position</Label>
+                  <Label htmlFor="position">{t("positionLabel")}</Label>
                   <Input
                     id="position"
                     placeholder="e.g., Senior Analyst"
@@ -624,7 +626,7 @@ export default function DepartmentManagementPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="department">Department *</Label>
+                <Label htmlFor="department">{t("departmentNameLabel")} *</Label>
                 <Select 
                   value={employeeForm.department} 
                   onValueChange={(value) => {
@@ -668,7 +670,7 @@ export default function DepartmentManagementPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">{t("phoneNumberLabel")}</Label>
                 <Input
                   id="phone"
                   placeholder="+1-555-0000"
@@ -680,14 +682,14 @@ export default function DepartmentManagementPage() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowAddEmployee(false)}>
-                Cancel
+                {t("cancel")}
               </Button>
-              <Button 
+              <Button
                 onClick={handleCreateEmployee}
                 disabled={createEmployeeMutation.isPending}
                 data-testid="button-add-employee"
               >
-                {createEmployeeMutation.isPending ? "Creating..." : "Add Employee"}
+                {createEmployeeMutation.isPending ? t("creating") : t("addEmployee")}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -697,14 +699,14 @@ export default function DepartmentManagementPage() {
         <Dialog open={showEditEmployee} onOpenChange={setShowEditEmployee}>
           <DialogContent className="bg-white dark:bg-dashboard-card-dark">
             <DialogHeader>
-              <DialogTitle>Edit Employee Department</DialogTitle>
+              <DialogTitle>{t("editEmployeeDepartment")}</DialogTitle>
               <DialogDescription>
                 Change the department assignment for {selectedEmployee?.firstName} {selectedEmployee?.lastName}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="editDepartment">Department</Label>
+                <Label htmlFor="editDepartment">{t("departmentNameLabel")}</Label>
                 <Select value={editDepartment} onValueChange={setEditDepartment}>
                   <SelectTrigger id="editDepartment" data-testid="select-edit-department">
                     <SelectValue placeholder="Select department or leave unassigned" />
@@ -730,17 +732,17 @@ export default function DepartmentManagementPage() {
                 className="mr-auto"
                 data-testid="button-remove-from-department"
               >
-                Remove from Department
+                {t("removeFromDepartment")}
               </Button>
               <Button variant="outline" onClick={() => setShowEditEmployee(false)}>
-                Cancel
+                {t("cancel")}
               </Button>
-              <Button 
+              <Button
                 onClick={handleUpdateEmployeeDepartment}
                 disabled={updateUserMutation.isPending}
                 data-testid="button-update-department"
               >
-                {updateUserMutation.isPending ? "Updating..." : "Update Department"}
+                {updateUserMutation.isPending ? t("updating") : t("updateDepartment")}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -750,14 +752,14 @@ export default function DepartmentManagementPage() {
         <Dialog open={showEditDept} onOpenChange={setShowEditDept}>
           <DialogContent className="bg-white dark:bg-dashboard-card-dark">
             <DialogHeader>
-              <DialogTitle>Rename Department</DialogTitle>
+              <DialogTitle>{t("renameDepartment")}</DialogTitle>
               <DialogDescription>
                 Change the name of "{selectedDepartment}". All employees in this department will be updated.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="renameDept">New Department Name *</Label>
+                <Label htmlFor="renameDept">{t("newDepartmentNameLabel")} *</Label>
                 <Input
                   id="renameDept"
                   placeholder="e.g., Finance, Operations, Legal"
@@ -772,14 +774,14 @@ export default function DepartmentManagementPage() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowEditDept(false)}>
-                Cancel
+                {t("cancel")}
               </Button>
-              <Button 
+              <Button
                 onClick={handleRenameDepartment}
                 disabled={!renameDeptName}
                 data-testid="button-save-rename"
               >
-                Rename Department
+                {t("renameDepartment")}
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -73,11 +73,11 @@ export default function BroadcastNotification() {
           <div className="flex items-center gap-3">
             <Send className="h-8 w-8 text-dashboard-primary" />
             <h1 className="text-3xl font-bold text-dashboard-text-light dark:text-dashboard-text-dark">
-              Broadcast Notification
+              {t("broadcastNotification")}
             </h1>
           </div>
           <p className="text-dashboard-secondary dark:text-dashboard-text-dark/60">
-            Send messages to all users in the system
+            {t("sendMessagesToAllUsers")}
           </p>
         </div>
 
@@ -86,14 +86,14 @@ export default function BroadcastNotification() {
           <div className="md:col-span-2 space-y-6">
             <Card className="border-dashboard-secondary/10 bg-white dark:bg-dashboard-bg-dark">
               <CardHeader>
-                <CardTitle className="text-lg">Compose Message</CardTitle>
-                <CardDescription>Create a notification to send to all system users</CardDescription>
+                <CardTitle className="text-lg">{t("composeMessage")}</CardTitle>
+                <CardDescription>{t("createNotificationForAll")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Title Input */}
                 <div className="space-y-2">
                   <Label htmlFor="title" className="text-sm font-semibold">
-                    Notification Title
+                    {t("notificationTitleLabel")}
                   </Label>
                   <Input
                     id="title"
@@ -108,7 +108,7 @@ export default function BroadcastNotification() {
                 {/* Message Input */}
                 <div className="space-y-2">
                   <Label htmlFor="message" className="text-sm font-semibold">
-                    Message Content
+                    {t("messageContentLabel")}
                   </Label>
                   <Textarea
                     id="message"
@@ -120,7 +120,7 @@ export default function BroadcastNotification() {
                     data-testid="textarea-notification-message"
                   />
                   <p className="text-xs text-dashboard-secondary dark:text-dashboard-text-dark/50">
-                    {message.length} characters
+                    {message.length} {t("charactersCount")}
                   </p>
                 </div>
 
@@ -132,7 +132,7 @@ export default function BroadcastNotification() {
                     className="border-dashboard-secondary/20 hover:bg-dashboard-secondary/5"
                     data-testid="button-preview"
                   >
-                    {isPreview ? "Hide Preview" : "Preview"}
+                    {isPreview ? t("hidePreview") : t("showPreview")}
                   </Button>
                   <Button
                     onClick={handleSend}
@@ -141,7 +141,7 @@ export default function BroadcastNotification() {
                     data-testid="button-send-notification"
                   >
                     <Send className="h-4 w-4" />
-                    {broadcastMutation.isPending ? "Sending..." : "Send to All Users"}
+                    {broadcastMutation.isPending ? t("sending") : t("sendToAllUsers")}
                   </Button>
                 </div>
               </CardContent>
@@ -155,7 +155,7 @@ export default function BroadcastNotification() {
               <CardHeader>
                 <CardTitle className="text-sm flex items-center gap-2">
                   <AlertCircle className="h-4 w-4 text-dashboard-primary" />
-                  Broadcasting Info
+                  {t("broadcastingInfo")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm">
@@ -163,10 +163,10 @@ export default function BroadcastNotification() {
                   <Users className="h-4 w-4 mt-0.5 text-dashboard-primary flex-shrink-0" />
                   <div>
                     <p className="font-medium text-dashboard-text-light dark:text-dashboard-text-dark">
-                      All Active Users
+                      {t("allActiveUsers")}
                     </p>
                     <p className="text-xs text-dashboard-secondary dark:text-dashboard-text-dark/60">
-                      Message will reach every user in the system
+                      {t("messageWillReach")}
                     </p>
                   </div>
                 </div>
@@ -174,10 +174,10 @@ export default function BroadcastNotification() {
                   <MessageSquare className="h-4 w-4 mt-0.5 text-dashboard-accent flex-shrink-0" />
                   <div>
                     <p className="font-medium text-dashboard-text-light dark:text-dashboard-text-dark">
-                      Real-time Delivery
+                      {t("realTimeDelivery")}
                     </p>
                     <p className="text-xs text-dashboard-secondary dark:text-dashboard-text-dark/60">
-                      Users see notifications instantly
+                      {t("usersSeePronto")}
                     </p>
                   </div>
                 </div>
@@ -188,7 +188,7 @@ export default function BroadcastNotification() {
             {isPreview && (title || message) && (
               <Card className="border-dashboard-primary/30 bg-dashboard-primary/5 dark:bg-dashboard-primary/10">
                 <CardHeader>
-                  <CardTitle className="text-sm">Preview</CardTitle>
+                  <CardTitle className="text-sm">{t("showPreview")}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="p-4 rounded-lg bg-white dark:bg-dashboard-bg-dark border border-dashboard-primary/20">
@@ -216,10 +216,10 @@ export default function BroadcastNotification() {
             <CheckCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-medium text-blue-900 dark:text-blue-400">
-                Important: Broadcast notifications are critical communications
+                {t("importantBroadcastNote")}
               </p>
               <p className="text-xs text-blue-700 dark:text-blue-300/80 mt-1">
-                Only send messages that require immediate attention from all users. All notifications are logged in the system.
+                {t("broadcastCriticalMsg")}
               </p>
             </div>
           </CardContent>

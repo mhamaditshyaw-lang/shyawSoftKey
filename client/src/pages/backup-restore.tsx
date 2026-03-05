@@ -151,10 +151,10 @@ export default function BackupRestorePage() {
           <Database className="h-8 w-8 text-dashboard-primary" />
           <div>
             <h1 className="text-3xl font-bold text-dashboard-text-light dark:text-dashboard-text-dark">
-              Backup & Restore
+              {t("backupRestore")}
             </h1>
             <p className="text-dashboard-secondary dark:text-dashboard-text-dark/60">
-              Manage your database backups for local and cloud deployments
+              {t("manageDatabaseBackups")}
             </p>
           </div>
         </div>
@@ -171,10 +171,10 @@ export default function BackupRestorePage() {
           <CardHeader className="bg-gradient-to-r from-dashboard-primary/10 to-dashboard-accent/10">
             <div className="flex items-center gap-2">
               <Download className="h-5 w-5 text-dashboard-primary" />
-              <CardTitle>Download Backup</CardTitle>
+              <CardTitle>{t("downloadBackup")}</CardTitle>
             </div>
             <CardDescription>
-              Create a backup of your entire database and download it as a SQL file
+              {t("createBackupDatabase")}
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
@@ -183,10 +183,10 @@ export default function BackupRestorePage() {
                 <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5" />
                 <div className="flex-1">
                   <p className="text-sm text-green-800 dark:text-green-200 font-medium">
-                    Safe Operation
+                    {t("safeOperation")}
                   </p>
                   <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                    Downloading a backup does not affect your current database. The backup file will be saved to your local computer.
+                    {t("downloadingDoesNotAffect")}
                   </p>
                 </div>
               </div>
@@ -201,12 +201,12 @@ export default function BackupRestorePage() {
                 {isBackingUp ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
-                    Creating Backup...
+                    {t("creatingBackup")}
                   </>
                 ) : (
                   <>
                     <Download className="mr-2 h-5 w-5" />
-                    Download Database Backup
+                    {t("downloadDatabaseBackup")}
                   </>
                 )}
               </Button>
@@ -218,10 +218,10 @@ export default function BackupRestorePage() {
           <CardHeader className="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950 dark:to-red-950">
             <div className="flex items-center gap-2">
               <Upload className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-              <CardTitle>Restore from Backup</CardTitle>
+              <CardTitle>{t("restoreFromBackup")}</CardTitle>
             </div>
             <CardDescription>
-              Upload and restore a database backup file
+              {t("uploadAndRestoreBackup")}
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
@@ -236,7 +236,7 @@ export default function BackupRestorePage() {
 
               <div className="space-y-2">
                 <Label htmlFor="backup-file" className="text-dashboard-text-light dark:text-dashboard-text-dark">
-                  Select Backup File (.sql)
+                  {t("selectBackupFileSql")}
                 </Label>
                 <Input
                   id="backup-file"
@@ -265,12 +265,12 @@ export default function BackupRestorePage() {
                 {isRestoring ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
-                    Restoring Database...
+                    {t("restoringDatabase")}
                   </>
                 ) : (
                   <>
                     <Upload className="mr-2 h-5 w-5" />
-                    Restore Database from Backup
+                    {t("restoreDatabaseFromBackup")}
                   </>
                 )}
               </Button>
@@ -280,29 +280,29 @@ export default function BackupRestorePage() {
 
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="text-lg">Best Practices</CardTitle>
+            <CardTitle className="text-lg">{t("bestPractices")}</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm text-dashboard-secondary dark:text-dashboard-text-dark/80">
               <li className="flex items-start gap-2">
                 <CheckCircle className="h-4 w-4 text-dashboard-primary mt-0.5 flex-shrink-0" />
-                <span>Create regular backups before making major changes to your data</span>
+                <span>{t("backupPractice1")}</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle className="h-4 w-4 text-dashboard-primary mt-0.5 flex-shrink-0" />
-                <span>Store backup files in a secure location separate from your server</span>
+                <span>{t("backupPractice2")}</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle className="h-4 w-4 text-dashboard-primary mt-0.5 flex-shrink-0" />
-                <span>Test your backups periodically to ensure they can be restored</span>
+                <span>{t("backupPractice3")}</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle className="h-4 w-4 text-dashboard-primary mt-0.5 flex-shrink-0" />
-                <span>Always download a current backup before performing a restore</span>
+                <span>{t("backupPractice4")}</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle className="h-4 w-4 text-dashboard-primary mt-0.5 flex-shrink-0" />
-                <span>Only restore backups from trusted sources to prevent data corruption</span>
+                <span>{t("backupPractice5")}</span>
               </li>
             </ul>
           </CardContent>

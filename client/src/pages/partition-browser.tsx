@@ -3,17 +3,19 @@ import { Link } from "wouter";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "react-i18next";
 
 export default function PartitionBrowserPage() {
+  const { t } = useTranslation();
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Page Partitions
+            {t("pagePartitions")}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Browse all pages organized by partition
+            {t("browseAllPages")}
           </p>
         </div>
 
@@ -30,7 +32,7 @@ export default function PartitionBrowserPage() {
                 </p>
               </div>
               <Badge variant="secondary" className="ml-auto">
-                {partition.items.length} pages
+                {partition.items.length} {t("pagesCount")}
               </Badge>
             </div>
 
