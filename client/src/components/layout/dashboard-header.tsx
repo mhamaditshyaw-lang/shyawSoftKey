@@ -49,7 +49,7 @@ export function DashboardHeader({ onMenuClick, notificationCount = 0 }: Dashboar
             <Search className="h-4 w-4 text-muted-foreground" />
             <input 
               type="text" 
-              placeholder="Search..."
+              placeholder={t("searchPlaceholder")}
               className="bg-transparent border-none outline-none text-sm w-full placeholder:text-muted-foreground"
               data-testid="input-search"
             />
@@ -82,20 +82,20 @@ export function DashboardHeader({ onMenuClick, notificationCount = 0 }: Dashboar
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setChangePasswordOpen(true)} data-testid="btn-change-password">
                 <Lock className="w-4 h-4 mr-2" />
-                Change Password
+                {t("changePassword")}
               </DropdownMenuItem>
               <DropdownMenuItem data-testid="btn-settings">
                 <Settings className="w-4 h-4 mr-2" />
-                Settings
+                {t("settings")}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                onClick={handleLogout} 
+              <DropdownMenuItem
+                onClick={handleLogout}
                 className="text-destructive focus:text-destructive"
                 data-testid="btn-logout"
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                Logout
+                {t("logout")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -1205,6 +1205,10 @@ const resources = {
       menu_backupRestore: "پاسەکاندنی پاشە و بێگومانکردنەوە",
       menu_demo: "نمایش",
       menu_notificationTest: "تاقیکردنەوەی ئاگاداری",
+      menu_weeklyMeetingTasks: "ئەرکەکانی کۆبوونەوەی هەفتانە",
+      menu_itSupport: "یارمەتی IT",
+      menu_itSupportRequest: "داواکاری یارمەتی IT",
+      menu_manageTasks: "بەڕێوەبردنی ئەرکەکان",
 
       // Common actions
       add: "زیادکردن",
@@ -2487,6 +2491,10 @@ const resources = {
       menu_backupRestore: "النسخ الاحتياطي والاستعادة",
       menu_demo: "عرض توضيحي",
       menu_notificationTest: "اختبار الإشعارات",
+      menu_manageTasks: "إدارة المهام",
+      menu_weeklyMeetingTasks: "مهام الاجتماع الأسبوعي",
+      menu_itSupport: "دعم تقنية المعلومات",
+      menu_itSupportRequest: "طلب دعم تقني",
 
       // Common actions
       add: "إضافة",

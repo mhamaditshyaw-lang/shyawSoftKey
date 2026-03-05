@@ -167,7 +167,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
             data-testid="link-dashboard"
           >
             <LayoutDashboard className="w-5 h-5 flex-shrink-0" />
-            {!isCollapsed && <span>Dashboard</span>}
+            {!isCollapsed && <span>{t("dashboard")}</span>}
           </div>
         </Link>
 
@@ -240,7 +240,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
             {!isCollapsed && (
               <div className="px-3 py-2">
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-white/40">
-                  Administration
+                  {t("administrationSubtitle")}
                 </span>
               </div>
             )}
@@ -254,7 +254,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
                 data-testid="link-page-access"
               >
                 <Shield className="w-5 h-5 flex-shrink-0 opacity-80" />
-                {!isCollapsed && <span className="text-sm">Page Access</span>}
+                {!isCollapsed && <span className="text-sm">{t("menu_pageAccess")}</span>}
               </div>
             </Link>
             
@@ -267,7 +267,7 @@ export function DashboardSidebar({ isCollapsed = false, onToggle, className }: S
                 data-testid="link-backup-restore"
               >
                 <HardDrive className="w-5 h-5 flex-shrink-0 opacity-80" />
-                {!isCollapsed && <span className="text-sm">Backup & Restore</span>}
+                {!isCollapsed && <span className="text-sm">{t("menu_backupRestore")}</span>}
               </div>
             </Link>
           </>
